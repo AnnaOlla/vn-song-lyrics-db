@@ -1,0 +1,30 @@
+form > table {
+	width: 100%;
+	table-layout: fixed;
+}
+
+tr:first-child > * > * {
+	text-align: center;
+}
+
+tr > :nth-child(1), tr > :nth-child(2) {
+	width: 7%;
+}
+
+tr > :last-child {
+	width: 10%;
+}
+
+tr > :nth-child(1) > *, tr > :nth-child(2) > *, tr > :last-child > * {
+	text-align: center;
+}
+
+tr > * > * {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* It just works */
+tr > * > section.select-fake-filler {
+	margin: 0;
+}

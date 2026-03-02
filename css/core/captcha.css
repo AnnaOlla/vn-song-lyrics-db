@@ -1,0 +1,22 @@
+@font-face {
+	font-family: Juliamo;
+	src: url('/css/fonts/juliamo.woff2') format('woff2'),
+	     url('/css/fonts/juliamo.ttf') format('truetype');
+}
+
+:root {
+	--font-captcha: Juliamo;
+}
+
+#captcha-input {
+	font-family: var(--font-captcha);
+	padding-top: 0px;
+	padding-bottom: 0px;
+	font-size: 32px;
+}
+
+#captcha-image {
+	border-radius: var(--border-radius);
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+}

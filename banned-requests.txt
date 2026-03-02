@@ -1,0 +1,5 @@
+wp-admin
+wordpress
+setup-config.php
+banned-requests.txt
+banned-ip-list.txt

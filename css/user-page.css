@@ -1,0 +1,8 @@
+.account-control {
+	display: flex;
+	gap: var(--section-padding);
+}
+
+.account-control > * {
+	flex: 1 1 0;
+}

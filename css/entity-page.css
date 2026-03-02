@@ -1,0 +1,35 @@
+article {
+	background-color: var(--color-background);
+}
+
+article > section {
+	background-color: var(--color-background-section);
+	border-radius: var(--border-radius);
+}
+
+article > section:last-child {
+	padding: var(--section-padding);
+	display: flex;
+	gap: var(--section-padding);
+}
+
+article > section:last-child > * {
+	flex: 1 1 0;
+}
+
+article > section:has(p) {
+	padding: var(--section-padding);
+}
+
+article > section > p {
+	padding: 0px;
+}
+
+/* Mobile Devices */
+
+@media (max-width: 1023px) {
+	article > section:last-child > a:nth-child(1),
+	article > section:last-child > a:nth-child(2) {
+		display: none;
+	}
+}

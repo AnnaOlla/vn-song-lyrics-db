@@ -1,0 +1,14 @@
+:root {
+	--color-background:         #323232;
+	--color-background-section: #404040;
+	
+	--color-clickable-item-primary:   #FF9800;
+	--color-clickable-item-secondary: #FFFFFF;
+	--color-clickable-item-disabled:  #565656;
+	
+	--color-input-primary:   #565656;
+	--color-input-secondary: #646464;
+	
+	--color-text: #FFFFFF;
+	--color-text-placeholder: #A0A0A0;
+}

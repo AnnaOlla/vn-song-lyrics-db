@@ -1,0 +1,63 @@
+main {
+	display: flex;
+}
+
+main > article {
+	flex: 4 1 0;
+	display: flex;
+}
+
+article > section:first-child {
+	flex: 1 1 0;
+	margin-right: calc(var(--section-margin) / 2);
+}
+
+article > section:last-child {
+	flex: 1 1 0;
+	margin-left: calc(var(--section-margin) / 2);
+	margin-right: calc(var(--section-margin) / 2);
+}
+
+main > aside {
+	flex: 1 1 0;
+	align-self: flex-start;
+	position: sticky;
+	top: 0px;
+}
+
+#tooltip-window {
+	margin-left: calc(var(--section-margin) / 2);
+}
+
+form > section, section.form-replacement > section {
+	display: flex;
+	flex-direction: column;
+}
+
+.related-entity-controls, .page-controls, .disc-track-controls {
+	display: flex;
+	gap: var(--section-padding);
+	align-items: center;
+}
+
+.related-entity-controls > select,
+.related-entity-controls > section.select-fake-filler,
+.related-entity-controls > option
+.related-entity-controls > button {
+	flex: 1 1 0;
+}
+
+.disc-track-controls > button {
+	flex: 1 1 0;
+}
+
+.page-controls > section {
+	flex-grow: 1;
+}
+
+/* It's a terrible solution, but it works */
+/* Do not apply margin-bottom to last child AND to select if select and fake are last*/
+h2 ~ *:not(:last-child):not(select:nth-last-child(2)),
+section:has(h2) {
+	margin-bottom: var(--section-padding);
+}

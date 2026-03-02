@@ -1,0 +1,24 @@
+#no-lyrics {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#no-lyrics > section {
+	align-items: center;
+	text-align: center;
+}
+
+#no-lyrics > section > * {
+	margin: var(--section-margin);
+}
+
+#no-lyrics a {
+	display: block;
+}
+
+@media (max-width: 1023px) {
+	#no-lyrics a {
+		display: none;
+	}
+}

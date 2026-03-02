@@ -1,0 +1,568 @@
+html {
+	overflow-y: scroll;
+	scrollbar-color: var(--color-clickable-item-primary) var(--color-background-section);
+}
+
+body {
+	font-family: var(--font-family);
+	
+	background-color: var(--color-background);
+	color: var(--color-text);
+	
+	margin: 0px;
+	
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+/* Selected text */
+
+::selection {
+	background: var(--color-clickable-item-primary);
+	color: var(--color-text);
+	text-shadow: none;
+}
+
+/* Header & footer */
+
+header {
+	background-color: var(--color-clickable-item-primary);
+	width: 100%;
+	margin: 0px;
+}
+
+footer {
+	background-color: var(--color-clickable-item-primary);
+	width: 100%;
+	margin-top: auto;
+}
+
+header > nav,
+footer > nav {
+	display: flex;
+}
+
+header > nav > section,
+footer > nav > section {
+	width: 0;
+	
+	display: flex;
+	text-align: center;
+	
+	font-size: var(--font-size-plain);
+}
+
+header > nav > section > *,
+footer > nav > section > * {
+	flex-grow: 1;
+	width: 0;
+	
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	
+	border-image: linear-gradient(
+		to bottom,
+		var(--color-clickable-item-primary) 25%,
+		var(--color-clickable-item-secondary) 50%,
+		var(--color-clickable-item-primary) 75%
+	) 1;
+	border-right-width: 2px;
+	border-right-style: solid;
+	
+	color: var(--color-clickable-item-secondary);
+	text-align: center;
+	text-decoration: none;
+	padding: var(--text-padding);
+}
+
+header > nav > section > *::selection,
+footer > nav > section > *::selection {
+	background: var(--color-clickable-item-secondary);
+	color: var(--color-clickable-item-primary);
+	text-shadow: none;
+}
+
+header > nav > section:last-child > *:last-child,
+footer > nav > section:last-child > *:last-child {
+	border-right-width: 0px;
+}
+
+header > nav > section.home-page {
+	flex-grow: 4;
+}
+
+header > nav > section.main-pages {
+	flex-grow: 13;
+}
+
+header > nav > section.localization {
+	flex-grow: 3;
+}
+
+header > nav > section.authorization {
+	flex-grow: 8;
+}
+
+header > nav > section.filler,
+footer > nav > section.filler {
+	flex-grow: 1;
+}
+
+footer > nav > section.links {
+	flex-grow: 14;
+}
+
+footer > nav > section.contacts {
+	flex-grow: 6;
+}
+
+header > nav > section > a:hover,
+footer > nav > section > a:hover {
+	background-color: var(--color-clickable-item-secondary);
+	color: var(--color-clickable-item-primary);
+}
+
+/* General */
+
+main h1 {
+	font-size: var(--font-size-h1);
+	margin: 0px;
+}
+
+main h2 {
+	font-size: var(--font-size-h2);
+	margin: 0px;
+}
+
+main h3 {
+	font-size: var(--font-size-h3);
+	margin: 0px;
+}
+
+main a {
+	color: var(--color-clickable-item-primary);
+}
+
+main a:hover {
+	color: var(--color-clickable-item-secondary);
+}
+
+main > article > section,
+main > aside   > section {
+	background-color: var(--color-background-section);
+	border-radius: var(--border-radius);
+	margin: var(--section-margin);
+	padding: var(--section-padding);
+}
+
+main p, main span {
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+	font-size: var(--font-size-plain);
+	padding: 0px;
+}
+
+main > article > section > *,
+main > aside   > section > * {
+	margin: var(--section-padding);
+}
+
+.required-input {
+	color: var(--color-clickable-item-primary);
+}
+
+/* Buttons */
+
+button, input[type="submit"], a.custom-button {
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+	padding: var(--section-padding);
+	
+	background-color: var(--color-clickable-item-primary);
+	color: var(--color-clickable-item-secondary);
+	border-radius: var(--border-radius);
+	
+	font-family: var(--font-family);
+	font-size: var(--font-size-plain);
+	text-decoration: none;
+	
+	text-align: center;
+	align-content: center;
+	
+	cursor: pointer;
+	
+	outline: 0;
+	border: 0;
+}
+
+button:hover, input[type="submit"]:hover, a.custom-button:hover {
+	background-color: var(--color-clickable-item-secondary);
+	color: var(--color-clickable-item-primary);
+}
+
+button:disabled, input[type="submit"]:disabled, a.custom-button.disabled {
+	background-color: var(--color-clickable-item-disabled);
+	color: var(--color-text-placeholder);
+	text-decoration: line-through;
+	cursor: not-allowed;
+}
+
+input[type="file"] {
+	position: absolute;
+}
+
+/* Inputs */
+
+input:not([type="submit"]):not([type="checkbox"]),
+textarea,
+.custom-file-upload > section {
+	display: inline-block;
+	
+	background-color: var(--color-input-primary);
+	color: var(--color-text);
+	
+	border-radius: var(--border-radius);
+	font: var(--font-family);
+	font-size: var(--font-size-plain);
+	border: 0;
+	
+	box-sizing: border-box;
+	padding: var(--section-padding);
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+	
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	white-space: nowrap;
+	
+	outline: 0;
+}
+
+textarea {
+	resize: none;
+	overflow-x: scroll;
+	overflow-y: hidden;
+}
+
+input[readonly],
+input[disabled],
+textarea[readonly],
+textarea[disabled] {
+	cursor: not-allowed;
+}
+
+.custom-file-upload > section {
+	color: var(--color-text-placeholder);
+}
+
+.custom-file-upload > section.has-file {
+	color: var(--color-text);
+}
+
+input:hover:not([disabled]):not([readonly]):not([type="submit"]):not([type="checkbox"]),
+input:focus:not([disabled]):not([readonly]):not([type="submit"]):not([type="checkbox"]),
+textarea:hover:not([disabled]):not([readonly]),
+textarea:focus:not([disabled]):not([readonly]),
+.custom-file-upload > section:hover,
+.custom-file-upload > section:focus {
+	background-color: var(--color-input-secondary);
+	outline: none;
+}
+
+input::placeholder, textarea::placeholder {
+	color: var(--color-text-placeholder);
+}
+
+input[type="file"] {
+	opacity: 0;
+	width: 0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.custom-file-upload {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
+
+.custom-file-upload > section {
+	flex: 1;
+}
+
+/* Selects */
+
+select {
+	background-color: var(--color-input-primary);
+	color: var(--color-text);
+	
+	scrollbar-color: var(--color-clickable-item-primary) var(--color-input-primary);
+	
+	border: 0;
+	border-radius: var(--border-radius);
+	outline: none;
+	
+	font: var(--font-family);
+	font-size: var(--font-size-plain);
+	
+	box-sizing: border-box;
+	padding: var(--section-padding);
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+
+	appearance: none;
+	
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	white-space: nowrap;
+	
+	cursor: pointer;
+	
+	/* Hack to decrease select's width and use ellipses when it's too long */
+	width: calc(100%);
+}
+
+select[disabled] {
+	cursor: not-allowed;
+}
+
+select:hover, select:focus {
+	background-color: var(--color-input-secondary);
+}
+
+/* A triangle on the select to show that it's a select */
+select:not([multiple]) {
+	background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+	                  linear-gradient(135deg, currentColor 50%, transparent 50%);
+	background-repeat: no-repeat;
+	background-position: right 15px top calc(50%), right 11px top calc(50%);
+	background-size: 5px 5px, 5px 5px;
+	
+	/* It just works and makes the height of select correct */
+	height: 42.4px;
+}
+
+section.select-fake-filler {
+	box-sizing: border-box;
+	padding: var(--section-padding);
+	display: none;
+	color: transparent;
+	z-index: -9999;
+	
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+}
+
+option {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	box-sizing: border-box;
+	padding: 0;
+}
+
+/* I don't know why, but if you join [option:anything] it does not work */
+
+option:hover {
+	background: var(--color-clickable-item-primary)
+	            linear-gradient(0deg, var(--color-clickable-item-primary) 0%,
+				var(--color-clickable-item-primary) 100%);
+}
+
+option:checked {
+	background: var(--color-clickable-item-primary)
+	            linear-gradient(0deg, var(--color-clickable-item-primary) 0%,
+				var(--color-clickable-item-primary) 100%);
+}
+
+option:selected {
+	background: var(--color-clickable-item-primary)
+	            linear-gradient(0deg, var(--color-clickable-item-primary) 0%,
+				var(--color-clickable-item-primary) 100%);
+}
+
+option:disabled {
+	color: var(--color-text-placeholder);
+}
+
+/* Checkboxes */
+
+label.custom-checkbox:has(input[type="checkbox"]) {
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+	margin-left: var(--text-margin);
+	margin-right: var(--text-margin);
+	
+	padding: 0px;
+	
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	
+	cursor: pointer;
+}
+
+label.custom-checkbox:has(input[type="checkbox"]) > span {
+	margin: 0px;
+	padding: var(--section-padding);
+	box-sizing: border-box;
+	
+	color: var(--color-text-placeholder);
+	
+	/* The text can be splitted into two lines, this prevents it */
+	white-space: nowrap;
+}
+
+label.custom-checkbox:has(input[type="checkbox"]:hover) > span {
+	color: var(--color-clickable-item-secondary);
+}
+
+label.custom-checkbox:has(input[type="checkbox"]:checked) > span {
+	color: var(--color-clickable-item-secondary);
+}
+
+label.custom-checkbox:has(input[type="checkbox"]:disabled) > span {
+	color: var(--color-text-placeholder);
+	text-decoration: line-through;
+	cursor: not-allowed;
+}
+
+input[type="checkbox"] {
+	appearance: none;
+	
+	aspect-ratio: 1/1;
+	width: auto;
+	height: 100%;
+	
+	background-color: var(--color-input-primary);
+	border-radius: var(--border-radius);
+	border: 0.25em solid var(--color-input-primary);
+	cursor: pointer;
+	
+	margin: 0px;
+	padding: var(--section-padding);
+	box-sizing: border-box;
+	
+	/* For the checkmark */
+	position: relative;
+}
+
+input[type="checkbox"]:checked {
+	background-color: var(--color-clickable-item-primary);
+	border-radius: var(--border-radius);
+	border: 0.25em solid var(--color-clickable-item-primary);
+}
+
+input[type="checkbox"]:hover {
+	border: 0.25em solid var(--color-clickable-item-secondary);
+}
+
+input[type="checkbox"]:disabled {
+	background-color: var(--color-clickable-item-disabled);
+	border-radius: var(--border-radius);
+	border: 0.25em solid var(--color-clickable-item-disabled);
+	cursor: not-allowed;
+}
+
+input[type="checkbox"]::after {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%,-50%);
+	
+	font-size: var(--font-size-plain);
+	color: var(--color-text-placeholder);
+	content: "\2713";
+}
+
+input[type="checkbox"]:checked::after {
+	color: var(--color-clickable-item-secondary);
+}
+
+input[type="checkbox"]:hover::after {
+	color: var(--color-clickable-item-secondary);
+}
+
+input[type="checkbox"]:disabled::after {
+	font-size: var(--font-size-plain);
+	color: var(--color-text-placeholder);
+	content: "\2716";
+}
+
+/* Mobile Devices */
+
+@media (max-width: 1023px) {
+	header > nav {
+		flex-direction: column;
+	}
+	
+	header > nav > section.home-page {
+		flex-grow: 1;
+		width: 100%;
+	}
+
+	header > nav > section.main-pages {
+		flex-grow: 3;
+		width: 100%;
+	}
+	
+	header > nav > section.home-page > a {
+		border-right-width: 0px;
+	}
+	
+	header > nav > section.main-pages > a:nth-child(1),
+	header > nav > section.main-pages > a:nth-child(3),
+	header > nav > section.main-pages > a:nth-child(4) {
+		display: none;
+	}
+	
+	header > nav > section.main-pages > a:nth-child(6) {
+		border-right-width: 0px;
+	}
+	
+	header > nav > section.localization > a:nth-child(3) {
+		border-right-width: 0px;
+	}
+	
+	header > nav > section.localization {
+		flex-grow: 1;
+		width: 100%;
+	}
+
+	header > nav > section.authorization {
+		display: none;
+	}
+
+	header > nav > section.filler {
+		display: none;
+	}
+	
+	/* Footer: */
+	
+	footer > nav > section.filler {
+		display: none;
+	}
+	
+	footer > nav > section.contacts {
+		display: none;
+	}
+	
+	footer > nav > section.links {
+		flex-direction: column;
+	}
+	
+	footer > nav > section.links > a {
+		width: auto;
+	}
+	
+	footer > nav > section.links > a:nth-child(4) {
+		display: none;
+	}
+	
+	footer > nav > section.links > a {
+		border-right-width: 0px;
+	}
+}
