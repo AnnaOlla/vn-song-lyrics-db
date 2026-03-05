@@ -175,6 +175,8 @@ namespace Localization\AlbumPage
 namespace Localization\ArtistPage
 {
 	const Details      = '詳細：';
+	const AliasOf      = '通称名を持っているアーチスト：';
+	const Aliases      = '通称名';
 	const RelatedSongs = '関係があるウタ';
 }
 
@@ -279,6 +281,7 @@ namespace Localization\ArtistEditorPage
 	const OldPhoto           = '今の写真';
 	const NewPhoto           = '新しい写真';
 	const Photo              = '写真';
+	const OriginalArtist     = 'この通称名を使うアーチスト';
 }
 
 namespace Localization\CharacterEditorPage
@@ -622,6 +625,7 @@ namespace Localization\ArtistEditorPage\TooltipHeading
 	const NewPhoto           = '新しい写真';
 	const Photo              = '写真';
 	const VgmdbLink          = 'vgmdb.netにリンク';
+	const OriginalArtist     = 'この通称名を使うアーチスト';
 	const Controls           = 'コントロール';
 }
 
@@ -647,6 +651,7 @@ namespace Localization\ArtistEditorPage\TooltipContent
 	                           'vgmdb.netはゲームのサウンドトラックのデータベースです。たくさんの人が参加していて、情報が詳しいです。<br/><br/>'.
 							   'このサイトは詳しい情報ではありません。<br/><br/>'.
 							   'そして、vgmdb.netにリンクを入力してください。';
+	const OriginalArtist     = '今のアーチストは通称名なら、アーチストを選んでください。今のアーチストは通称名ではないなら、何も選らないでください。';
 	const Controls           = '「戻る」というボタンを押して、キャンセルして前のページに戻ります。<br/><br/>「出す」というボタンを押して、情報を出します。';
 }
 

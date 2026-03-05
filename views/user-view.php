@@ -576,6 +576,7 @@ class UserView extends ViolatorView
 	private function renderArtistEditorPage
 	(
 		array|null $artist,
+		array      $originalArtists,
 		string     $heading
 	): void
 	{
@@ -591,6 +592,8 @@ class UserView extends ViolatorView
 			else
 				$vgmdbLink      = '';
 			
+			$originalArtist     = array_find($originalArtists, function (array $original) use ($artist) { return $artist['alias_of_artist_id'] === $original['id']; });
+			
 			$cancelLink = buildInternalLink($this->language, 'artist', $artist['uri']);
 		}
 		else
@@ -600,6 +603,7 @@ class UserView extends ViolatorView
 			$localizedName      = '';
 			$isImageUploaded    = false;
 			$vgmdbLink          = '';
+			$originalArtist     = null;
 			
 			$cancelLink = buildInternalLink($this->language, 'artist-list');
 		}
@@ -663,7 +667,31 @@ class UserView extends ViolatorView
 						<h2>'.\Localization\ArtistEditorPage\VgmdbLink.'</h2>
 						<input name="vgmdb-link" placeholder="https://vgmdb.net/artist/69" value="'.$vgmdbLink.'"/>
 					</section>
+		';
+		
+		$originalArtistSelect = $this->createSelect
+		(
+			'original-artist-id',
+			'original-artist-select',
+			true,
+			false,
+			$originalArtists,
+			'transliterated_name',
+			'id',
+			$originalArtist
+		);
+		
+		$html .=
+		'
 					<section class="has-tooltip" tooltip-id="8">
+						<h2>'.\Localization\ArtistEditorPage\OriginalArtist.'</h2>
+						'.$originalArtistSelect.'
+					</section>
+		';
+		
+		$html .=
+		'
+					<section class="has-tooltip" tooltip-id="9">
 						<section class="page-controls">
 							'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
 							<section></section>
@@ -688,6 +716,7 @@ class UserView extends ViolatorView
 			\Localization\ArtistEditorPage\TooltipHeading\NewPhoto,
 			\Localization\ArtistEditorPage\TooltipHeading\Photo,
 			\Localization\ArtistEditorPage\TooltipHeading\VgmdbLink,
+			\Localization\ArtistEditorPage\TooltipHeading\OriginalArtist,
 			\Localization\ArtistEditorPage\TooltipHeading\Controls
 		);
 		$tooltipContents = $this->createTooltipContentDatalist
@@ -700,6 +729,7 @@ class UserView extends ViolatorView
 			\Localization\ArtistEditorPage\TooltipContent\NewPhoto,
 			\Localization\ArtistEditorPage\TooltipContent\Photo,
 			\Localization\ArtistEditorPage\TooltipContent\VgmdbLink,
+			\Localization\ArtistEditorPage\TooltipContent\OriginalArtist,
 			\Localization\ArtistEditorPage\TooltipContent\Controls
 		);
 		
@@ -1405,6 +1435,8 @@ class UserView extends ViolatorView
 					</section>
 		';
 		
+		$originalSong = array_find($originalSongs, function (array $original) use ($song) { return $song['original_song_id'] === $original['id']; });
+		
 		$originalSongSelect = $this->createSelect
 		(
 			'original-song-id',
@@ -1414,7 +1446,7 @@ class UserView extends ViolatorView
 			$originalSongs,
 			'transliterated_name',
 			'id',
-			null
+			$originalSong
 		);
 		
 		$html .= 
@@ -1712,12 +1744,13 @@ class UserView extends ViolatorView
 	
 	final public function renderAddArtistPage
 	(
-		
+		array $originalArtists
 	): void
 	{
 		$this->renderArtistEditorPage
 		(
 			null,
+			$originalArtists,
 			\Localization\ArtistEditorPage\HeadingAdd
 		);
 	}
@@ -1853,12 +1886,14 @@ class UserView extends ViolatorView
 	
 	final public function renderEditArtistPage
 	(
-		array $artist
+		array $artist,
+		array $originalArtists
 	): void
 	{
 		$this->renderArtistEditorPage
 		(
 			$artist,
+			$originalArtists,
 			\Localization\ArtistEditorPage\HeadingEdit.$artist['transliterated_name']
 		);
 	}

@@ -303,8 +303,22 @@ class UserModel extends ViolatorModel
 		return $albumList;
 	}
 	
-	final public function getArtistIdList(): array
+	final public function getArtistIdList
+	(
+		bool|null $mayBeAlias = null
+	): array
 	{
+		$whereMayBeAlias = '';
+		
+		if ($mayBeAlias === false)
+		{
+			$whereMayBeAlias = 
+			'
+			AND
+				alias_of_artist_id IS NULL
+			';
+		}
+		
 		$stmt = $this->pdo->query
 		(
 			'
@@ -313,7 +327,9 @@ class UserModel extends ViolatorModel
 				transliterated_name
 			FROM
 				artists
-			'
+			WHERE
+				TRUE = TRUE
+			'.$whereMayBeAlias
 		);
 		
 		$artists = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -1033,7 +1049,7 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':localized_name',      $localizedName,      PDO::PARAM_STR);
 		$stmt->bindParam(':uri',                 $uri,                PDO::PARAM_STR);
 		$stmt->bindParam(':is_image_uploaded',   $isImageUploaded,    PDO::PARAM_BOOL);
-		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_STR);
+		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_INT);
 		$stmt->bindParam(':user_added_id',       $userAddedId,        PDO::PARAM_INT);
 		
 		$stmt->execute();
@@ -1105,7 +1121,7 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':localized_name',      $localizedName,      PDO::PARAM_STR);
 		$stmt->bindParam(':uri',                 $uri,                PDO::PARAM_STR);
 		$stmt->bindParam(':is_image_uploaded',   $isImageUploaded,    PDO::PARAM_BOOL);
-		$stmt->bindParam(':vgmdb_id',            $vgmdbId,            PDO::PARAM_STR);
+		$stmt->bindParam(':vgmdb_id',            $vgmdbId,            PDO::PARAM_INT);
 		$stmt->bindParam(':song_count',          $songCount,          PDO::PARAM_INT);
 		$stmt->bindParam(':user_added_id',       $userAddedId,        PDO::PARAM_INT);
 		
@@ -1132,6 +1148,7 @@ class UserModel extends ViolatorModel
 		string|null $localizedName,
 		array |null $photo,
 		int   |null $vgmdbId,
+		int   |null $aliasOfId,
 		int         $userAddedId
 	): array
 	{
@@ -1151,6 +1168,7 @@ class UserModel extends ViolatorModel
 				uri,
 				is_image_uploaded,
 				vgmdb_id,
+				alias_of_artist_id,
 				user_added_id,
 				timestamp_added,
 				status
@@ -1163,6 +1181,7 @@ class UserModel extends ViolatorModel
 				:uri,
 				:is_image_uploaded,
 				:vgmdb_id,
+				:alias_of_artist_id,
 				:user_added_id,
 				NOW(),
 				"unchecked"
@@ -1175,7 +1194,8 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':localized_name',      $localizedName,      PDO::PARAM_STR);
 		$stmt->bindParam(':uri',                 $uri,                PDO::PARAM_STR);
 		$stmt->bindParam(':is_image_uploaded',   $isImageUploaded,    PDO::PARAM_BOOL);
-		$stmt->bindParam(':vgmdb_id',            $vgmdbId,            PDO::PARAM_STR);
+		$stmt->bindParam(':vgmdb_id',            $vgmdbId,            PDO::PARAM_INT);
+		$stmt->bindParam(':alias_of_artist_id',  $aliasOfId,          PDO::PARAM_INT);
 		$stmt->bindParam(':user_added_id',       $userAddedId,        PDO::PARAM_INT);
 		
 		$stmt->execute();
@@ -1244,7 +1264,7 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':localized_name',      $localizedName,      PDO::PARAM_STR);
 		$stmt->bindParam(':uri',                 $uri,                PDO::PARAM_STR);
 		$stmt->bindParam(':is_image_uploaded',   $isImageUploaded,    PDO::PARAM_BOOL);
-		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_STR);
+		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_INT);
 		$stmt->bindParam(':user_added_id',       $userAddedId,        PDO::PARAM_INT);
 		
 		$stmt->execute();
@@ -1902,7 +1922,7 @@ class UserModel extends ViolatorModel
 		if ($isImageUploaded)
 			$stmt->bindParam(':is_image_uploaded',   $isImageUploaded,    PDO::PARAM_BOOL);
 		
-		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_STR);
+		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_INT);
 		$stmt->bindParam(':user_updated_id',     $userUpdatedId,      PDO::PARAM_INT);
 		$stmt->bindParam(':old_uri',             $oldUri,             PDO::PARAM_STR);
 		
@@ -1997,7 +2017,7 @@ class UserModel extends ViolatorModel
 		if ($isImageUploaded)
 			$stmt->bindParam(':is_image_uploaded',   $isImageUploaded,    PDO::PARAM_BOOL);
 		
-		$stmt->bindParam(':vgmdb_id',            $vgmdbId,            PDO::PARAM_STR);
+		$stmt->bindParam(':vgmdb_id',            $vgmdbId,            PDO::PARAM_INT);
 		$stmt->bindParam(':song_count',          $songCount,          PDO::PARAM_INT);
 		$stmt->bindParam(':user_updated_id',     $userUpdatedId,      PDO::PARAM_INT);
 		$stmt->bindParam(':old_uri',             $oldUri,             PDO::PARAM_STR);
@@ -2043,6 +2063,7 @@ class UserModel extends ViolatorModel
 		string|null $localizedName,
 		array |null $photo,
 		int   |null $vgmdbId,
+		int   |null $aliasOfId,
 		int         $userUpdatedId
 	): array
 	{
@@ -2073,6 +2094,7 @@ class UserModel extends ViolatorModel
 				uri                 = :new_uri,
 				'.$setIsImageUploaded.'
 				vgmdb_id            = :vgmdb_id,
+				alias_of_artist_id  = :alias_of_artist_id,
 				user_updated_id     = :user_updated_id,
 				timestamp_updated   = NOW(),
 				status              = "unchecked"
@@ -2091,7 +2113,8 @@ class UserModel extends ViolatorModel
 		if ($isImageUploaded)
 			$stmt->bindParam(':is_image_uploaded',   $isImageUploaded,    PDO::PARAM_BOOL);
 		
-		$stmt->bindParam(':vgmdb_id',            $vgmdbId,            PDO::PARAM_STR);
+		$stmt->bindParam(':vgmdb_id',            $vgmdbId,            PDO::PARAM_INT);
+		$stmt->bindParam(':alias_of_artist_id',  $aliasOfId,          PDO::PARAM_INT);
 		$stmt->bindParam(':user_updated_id',     $userUpdatedId,      PDO::PARAM_INT);
 		$stmt->bindParam(':old_uri',             $oldUri,             PDO::PARAM_STR);
 		
@@ -2184,7 +2207,7 @@ class UserModel extends ViolatorModel
 		if ($isImageUploaded)
 			$stmt->bindParam(':is_image_uploaded',   $isImageUploaded,    PDO::PARAM_BOOL);
 		
-		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_STR);
+		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_INT);
 		$stmt->bindParam(':user_updated_id',     $userUpdatedId,      PDO::PARAM_INT);
 		$stmt->bindParam(':old_uri',             $oldUri,             PDO::PARAM_STR);
 		

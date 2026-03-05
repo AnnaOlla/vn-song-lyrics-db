@@ -426,6 +426,14 @@ class VisitorView extends View
 		$textEntities[] = $this->createParagraph($artist['localized_name']);
 		$textEntities[] = $this->createVgmdbLink(\Localization\ArtistPage\Details, $artist, 'artist');
 		
+		if ($artist['alias_of_transliterated_name'] && $artist['alias_of_uri'])
+		{
+			$href = buildInternalLink($this->language, 'artist', $artist['alias_of_uri']);
+			$text = $artist['alias_of_transliterated_name'];
+			
+			$textEntities[] = '<p>'.\Localization\ArtistPage\AliasOf.$this->createLink($href, $text).'</p>';
+		}
+		
 		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
 	}
 	
@@ -998,7 +1006,7 @@ class VisitorView extends View
 		echo $html;
 	}
 	
-	final public function renderArtistPage(array $artist, array $songs): void
+	final public function renderArtistPage(array $artist, array $aliases, array $songs): void
 	{
 		$html = $this->startRender($artist['transliterated_name'], ['/css/entity-page.css', '/css/entity.css']);
 		
@@ -1007,6 +1015,17 @@ class VisitorView extends View
 		<article>
 			'.$this->createArtist($artist, 1).'
 		';
+		
+		if ($aliases)
+		{
+			$html .= 
+			'
+			<section>
+				'.$this->createHeading(\Localization\ArtistPage\Aliases, 2).'
+			</section>
+			'.$this->createArtistList($aliases, 3, 'related-entity').'
+			';
+		}
 		
 		if ($songs)
 		{

@@ -435,9 +435,10 @@ class VisitorController extends Controller
 			return;
 		}
 		
-		$songList = $this->model->getSongList(artistUri: $artistUri);
+		$artistAliases = $this->model->getArtistList(aliasesOfId: $artist['id']);
+		$songList      = $this->model->getSongList(artistUri: $artistUri);
 		
-		$this->view->renderArtistPage($artist, $songList);
+		$this->view->renderArtistPage($artist, $artistAliases, $songList);
 	}
 	
 	final public function handleCharacterPage(string $characterUri): void

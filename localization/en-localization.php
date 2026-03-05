@@ -174,8 +174,10 @@ namespace Localization\AlbumPage
 
 namespace Localization\ArtistPage
 {
-	const Details      = 'Details: ';
-	const RelatedSongs = 'Related Songs';
+	const Details        = 'Details: ';
+	const AliasOf        = 'Alias of: ';
+	const Aliases        = 'Aliases';
+	const RelatedSongs   = 'Related Songs';
 }
 
 namespace Localization\CharacterPage
@@ -279,6 +281,7 @@ namespace Localization\ArtistEditorPage
 	const OldPhoto           = 'Current Photo';
 	const NewPhoto           = 'New Photo';
 	const Photo              = 'Photo';
+	const OriginalArtist     = 'Alias of';
 }
 
 namespace Localization\CharacterEditorPage
@@ -622,6 +625,7 @@ namespace Localization\ArtistEditorPage\TooltipHeading
 	const NewPhoto           = 'New Photo';
 	const Photo              = 'Photo';
 	const VgmdbLink          = 'Link to vgmdb.net';
+	const OriginalArtist     = 'Alias of';
 	const Controls           = 'Controls';
 }
 
@@ -647,6 +651,7 @@ namespace Localization\ArtistEditorPage\TooltipContent
 	                           'vgmdb.net mainly focuses on game soundtracks and has a big community supporting the website.<br/><br/>'.
 							   'Detailed information on the artist is not the purpose of this website.<br/><br/>'.
 							   'Please, find the artist there and paste the link in this field.';
+	const OriginalArtist     = 'If the current artist is an alias of another one, fill this field, else leave it empty.';
 	const Controls           = 'Click the cancel button to go back.<br/><br/>Click the submit button to send the entry.';
 }
 

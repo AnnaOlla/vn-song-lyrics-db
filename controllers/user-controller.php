@@ -165,15 +165,21 @@ class UserController extends ViolatorController
 	{
 		if (empty($_POST))
 		{
-			$this->view->renderAddArtistPage();
+			$originalArtists = $this->model->getArtistIdList(mayBeAlias: false);
+			
+			$this->view->renderAddArtistPage($originalArtists);
 			return;
 		}
+		
+		$originalArtists    = $this->model->getArtistIdList(mayBeAlias: false);
+		$originalArtists    = array_column($originalArtists, 'id');
 		
 		$originalName       = $_POST['original-name']       ?? null;
 		$transliteratedName = $_POST['transliterated-name'] ?? null;
 		$localizedName      = $_POST['localized-name']      ?? null;
 		$photo              = $_FILES['photo']              ?? null;
 		$vgmdbLink          = $_POST['vgmdb-link']          ?? null;
+		$aliasOfId          = $_POST['original-artist-id']  ?? null;
 		$userAddedId        = $_SESSION['user']['id'];
 		
 		$originalName       = $this->trimNullableString($originalName);
@@ -181,6 +187,7 @@ class UserController extends ViolatorController
 		$localizedName      = $this->trimNullableString($localizedName);
 		$photo              = $this->getNullableFile($photo);
 		$vgmdbId            = $this->parseNullableVgmdbId($vgmdbLink, 'artist');
+		$aliasOfId          = $this->parseNullableInteger($aliasOfId, 1);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName))
 		{
@@ -194,6 +201,12 @@ class UserController extends ViolatorController
 			return;
 		}
 		
+		if ($aliasOfId && !in_array($aliasOfId, $originalArtists))
+		{
+			$this->handleBadRequest();
+			return;
+		}
+		
 		[$artistId, $artistUri] = $this->model->addArtist
 		(
 			$originalName,
@@ -201,6 +214,7 @@ class UserController extends ViolatorController
 			$localizedName,
 			$photo,
 			$vgmdbId,
+			$aliasOfId,
 			$userAddedId
 		);
 		
@@ -1234,6 +1248,7 @@ class UserController extends ViolatorController
 		if (empty($_POST))
 		{
 			$artist = $this->model->getArtist($artistUri);
+			$originalArtists = $this->model->getArtistIdList(mayBeAlias: false);
 			
 			if (!$artist)
 			{
@@ -1253,17 +1268,20 @@ class UserController extends ViolatorController
 				return;
 			}
 			
-			$this->view->renderEditArtistPage($artist);
+			$this->view->renderEditArtistPage($artist, $originalArtists);
 			return;
 		}
 		
 		$artist              = $this->model->getArtistId($artistUri);
+		$originalArtists     = $this->model->getArtistIdList(mayBeAlias: false);
+		$originalArtists     = array_column($originalArtists, 'id');
 		
 		$originalName        = $_POST['original-name']       ?? null;
 		$transliteratedName  = $_POST['transliterated-name'] ?? null;
 		$localizedName       = $_POST['localized-name']      ?? null;
 		$photo               = $_FILES['photo']              ?? null;
 		$vgmdbLink           = $_POST['vgmdb-link']          ?? null;
+		$aliasOfId           = $_POST['original-artist-id']  ?? null;
 		$userUpdatedId       = $_SESSION['user']['id'];
 		
 		$originalName        = $this->trimNullableString($originalName);
@@ -1271,6 +1289,7 @@ class UserController extends ViolatorController
 		$localizedName       = $this->trimNullableString($localizedName);
 		$photo               = $this->getNullableFile($photo);
 		$vgmdbId             = $this->parseNullableVgmdbId($vgmdbLink, 'artist');
+		$aliasOfId           = $this->parseNullableInteger($aliasOfId, 1);
 		
 		if (!$artist)
 		{
@@ -1302,6 +1321,12 @@ class UserController extends ViolatorController
 			return;
 		}
 		
+		if ($aliasOfId && !in_array($aliasOfId, $originalArtists))
+		{
+			$this->handleBadRequest();
+			return;
+		}
+		
 		[$artistId, $artistUri] = $this->model->updateArtist
 		(
 			$artistUri,
@@ -1310,6 +1335,7 @@ class UserController extends ViolatorController
 			$localizedName,
 			$photo,
 			$vgmdbId,
+			$aliasOfId,
 			$userUpdatedId
 		);
 		

@@ -175,6 +175,8 @@ namespace Localization\AlbumPage
 namespace Localization\ArtistPage
 {
 	const Details      = 'Подробности: ';
+	const AliasOf      = 'Является псевдонимом исполнителя: ';
+	const Aliases      = 'Псевдонимы';
 	const RelatedSongs = 'Связанные с исполнителем песни';
 }
 
@@ -279,6 +281,7 @@ namespace Localization\ArtistEditorPage
 	const OldPhoto           = 'Текущая фотография';
 	const NewPhoto           = 'Новая фотография';
 	const Photo              = 'Фотография';
+	const OriginalArtist     = 'Является псевдонимом исполнителя';
 }
 
 namespace Localization\CharacterEditorPage
@@ -622,6 +625,7 @@ namespace Localization\ArtistEditorPage\TooltipHeading
 	const NewPhoto           = 'Новая фотография';
 	const Photo              = 'Фотография';
 	const VgmdbLink          = 'Ссылка на исполнителя на vgmdb.net';
+	const OriginalArtist     = 'Является псевдонимом исполнителя';
 	const Controls           = 'Управление';
 }
 
@@ -647,6 +651,7 @@ namespace Localization\ArtistEditorPage\TooltipContent
 	                           'vgmdb.net — это база данных для официальных саундтреков из всех жанров игр, которая поддерживается большим сообществом.<br/><br/>'.
 							   'Нет никакого смысла дублировать информацию оттуда.<br/><br/>'.
 							   'Поэтому, просим просто указать ссылку на подробности с этого сайта.';
+	const OriginalArtist     = 'Если текущий исполнитель является псевдонимом другого, то укажите это здесь. Иначе, оставьте поле пустым.';
 	const Controls           = 'Нажмите «Отменить», чтобы вернуться назад.<br/><br/>Нажмите «Отправить», чтобы сохранить изменения.';
 }
 

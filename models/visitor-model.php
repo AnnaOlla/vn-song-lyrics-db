@@ -599,26 +599,39 @@ class VisitorModel extends Model
 	
 	final public function getArtistList
 	(
-		string|null $userUri = null
+		string|null $userUri     = null,
+		int   |null $aliasesOfId = null
 	): array
 	{
 		$joinUsers    = '';
 		$whereUserUri = '';
 		
+		$joinArtists    = '';
+		$whereAliasesOfId = '';
+		
 		if (!is_null($userUri))
 		{
 			$joinUsers =
 			'
-				JOIN
-					users as u
-				ON
-					a.user_added_id = u.id
+			JOIN
+				users as u
+			ON
+				a.user_added_id = u.id
 			';
 			
 			$whereUserUri =
 			'
-				AND
-					u.username = :user_uri
+			AND
+				u.username = :user_uri
+			';
+		}
+		
+		if (!is_null($aliasesOfId))
+		{
+			$whereAliasesOfId =
+			'
+			AND
+				a.alias_of_artist_id = :aliases_of_id
 			';
 		}
 		
@@ -634,11 +647,13 @@ class VisitorModel extends Model
 				a.uri
 			FROM
 				artists AS a'.
-			$joinUsers.'
+			$joinUsers.
+			$joinArtists.'
 			WHERE
 				TRUE = TRUE
 			'.
-			$whereUserUri.'
+			$whereUserUri.
+			$whereAliasesOfId.'
 			ORDER BY
 				a.transliterated_name ASC
 			'
@@ -646,6 +661,8 @@ class VisitorModel extends Model
 		
 		if (!is_null($userUri))
 			$stmt->bindParam(':user_uri', $userUri, PDO::PARAM_STR);
+		if (!is_null($aliasesOfId))
+			$stmt->bindParam(':aliases_of_id', $aliasesOfId, PDO::PARAM_INT);
 		
 		$stmt->execute();
 		
@@ -1273,6 +1290,7 @@ class VisitorModel extends Model
 				ar.uri,
 				ar.vgmdb_id,
 				ar.is_image_uploaded,
+				ar.alias_of_artist_id,
 				ar.status,
 				ar.timestamp_added,
 				ar.timestamp_updated,
@@ -1282,7 +1300,9 @@ class VisitorModel extends Model
 				ar.user_reviewed_id,
 				u1.username              AS user_added,
 				u2.username              AS user_updated,
-				u3.username              AS user_reviewed
+				u3.username              AS user_reviewed,
+				al.transliterated_name   AS alias_of_transliterated_name,
+				al.uri                   AS alias_of_uri
 			FROM
 				artists AS ar
 			LEFT JOIN
@@ -1297,6 +1317,10 @@ class VisitorModel extends Model
 				users AS u3
 			ON
 				u3.id = ar.user_reviewed_id
+			LEFT JOIN
+				artists AS al
+			ON
+				ar.alias_of_artist_id = al.id
 			WHERE
 				ar.uri = :artist_uri
 			'

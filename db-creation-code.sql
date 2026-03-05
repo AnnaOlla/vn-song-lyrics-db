@@ -97,6 +97,7 @@ CREATE TABLE artists
 	uri                 VARCHAR(64)   NOT NULL       UNIQUE,
 	vgmdb_id            INT UNSIGNED,
 	is_image_uploaded   BOOLEAN       NOT NULL,
+	alias_of_artist_id  INT UNSIGNED,
 	
 	user_added_id       INT UNSIGNED,
 	timestamp_added     TIMESTAMP,
