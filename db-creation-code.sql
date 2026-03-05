@@ -108,9 +108,11 @@ CREATE TABLE artists
 	
 	status              ENUM('unchecked', 'checked', 'hidden') NOT NULL,
 	
-	FOREIGN KEY (user_added_id)    REFERENCES users(id) ON DELETE SET NULL,
-	FOREIGN KEY (user_updated_id)  REFERENCES users(id) ON DELETE SET NULL,
-	FOREIGN KEY (user_reviewed_id) REFERENCES users(id) ON DELETE SET NULL
+	FOREIGN KEY (alias_of_artist_id) REFERENCES artists(id) ON DELETE SET NULL,
+	
+	FOREIGN KEY (user_added_id)      REFERENCES users(id)   ON DELETE SET NULL,
+	FOREIGN KEY (user_updated_id)    REFERENCES users(id)   ON DELETE SET NULL,
+	FOREIGN KEY (user_reviewed_id)   REFERENCES users(id)   ON DELETE SET NULL
 );
 
 CREATE TABLE characters
