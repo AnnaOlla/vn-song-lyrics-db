@@ -542,4 +542,204 @@ class AdministratorController extends UserController
 		$users = $this->model->getUserList();
 		$this->view->renderUserListPage($users);
 	}
+	
+	final public function handleFillAlbumPage(string $albumUri): void
+	{
+		if (empty($_POST))
+		{
+			$album            = $this->model->getAlbumId($albumUri);
+			$currentSongCount = $this->model->getSongCurrentCount($albumUri);
+			$discography      = $this->model->fetchDataFromVgmdbPage($albumUri);
+			
+			if (!$album)
+			{
+				$this->handleNotFound();
+				return;
+			}
+			
+			if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+			{
+				$this->handleUnavailableForLegalReasons();
+				return;
+			}
+			
+			if ($album['status'] === 'checked' && !isCurrentUserModerator())
+			{
+				$this->handleForbidden();
+				return;
+			}
+			
+			if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
+			{
+				$this->handleForbidden();
+				return;
+			}
+			
+			if ($currentSongCount !== 0)
+			{
+				$this->handleForbidden();
+				return;
+			}
+			
+			if (!$discography)
+			{
+				$this->handleBadRequest();
+				return;
+			}
+			
+			$this->view->renderFillAlbumPage($album, $discography);
+			return;
+		}
+		
+		$album            = $this->model->getAlbumId($albumUri);
+		$currentSongCount = $this->model->getSongCurrentCount($albumUri);
+		
+		$discNumbers         = $_POST['disc-number']         ?? [];
+		$trackNumbers        = $_POST['track-number']        ?? [];
+		$originalNames       = $_POST['original-name']       ?? [];
+		$transliteratedNames = $_POST['transliterated-name'] ?? [];
+		$localizedNames      = $_POST['localized-name']      ?? [];
+		$hasVocal            = $_POST['has-vocal']           ?? [];
+		$userAddedId         = $_SESSION['user']['id'];
+		
+		$originalNames       = $this->trimNullableStringArray($originalNames);
+		$transliteratedNames = $this->trimNullableStringArray($transliteratedNames);
+		$localizedNames      = $this->trimNullableStringArray($localizedNames);
+		$discNumbers         = $this->parseNullableIntegerArray($discNumbers, 1);
+		$trackNumbers        = $this->parseNullableIntegerArray($trackNumbers, 1);
+		$haveVocal           = $this->parseNullableIntegerArray($hasVocal, 0, 1);
+		
+		if (!$album)
+		{
+			$this->handleNotFound();
+			return;
+		}
+		
+		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		{
+			$this->handleUnavailableForLegalReasons();
+			return;
+		}
+		
+		if ($album['status'] === 'checked' && !isCurrentUserModerator())
+		{
+			$this->handleForbidden();
+			return;
+		}
+		
+		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
+		{
+			$this->handleForbidden();
+			return;
+		}
+		
+		if ($currentSongCount !== 0)
+		{
+			$this->handleForbidden();
+			return;
+		}
+		
+		$haveArraysSameLength = $this->haveArraysSameLength
+		(
+			$discNumbers,
+			$trackNumbers,
+			$originalNames,
+			$transliteratedNames,
+			$localizedNames,
+			$haveVocal
+		);
+		
+		if (!$haveArraysSameLength)
+		{
+			$this->handleBadRequest();
+			return;
+		}
+		
+		// need a function for this?
+		
+		foreach ($transliteratedNames as $transliteratedName)
+		{
+			if (!$this->isPrintableAscii($transliteratedName))
+			{
+				$this->handleBadRequest();
+				return;
+			}
+		}
+		
+		// Check that arrays are not empty
+		// Don't check all of them because they have the same length
+		
+		if (count($discNumbers) === 0)
+		{
+			$this->handleBadRequest();
+			return;
+		}
+		
+		// Check that certain values in arrays are not empty
+		// They must meet the requirement being "NOT NULL"
+		
+		$isInputInvalid = haveNullOrEmpty
+		(
+			...$discNumbers,
+			...$trackNumbers,
+			...$originalNames,
+			...$transliteratedNames,
+			...$haveVocal
+		);
+		
+		if ($isInputInvalid)
+		{
+			$this->handleBadRequest();
+			return;
+		}
+		
+		// Checking that all discs and tracks have consequent numbers
+		// starting from [1, 1]
+		//
+		// P.S. Is it possible to do it without a separate 'if'?
+		//      It doesn't look nice and clean
+		
+		if (!($discNumbers[0] === 1 && $trackNumbers[0] === 1))
+		{
+			$this->handleBadRequest();
+			return;
+		}
+		
+		for ($i = 1; $i < count($discNumbers); $i++)
+		{
+			$isNextDiscFirstTrack =
+			(
+				($discNumbers[$i] === $discNumbers[$i - 1] + 1)
+				&&
+				($trackNumbers[$i] === 1)
+			);
+			
+			$isSameDiscNextTrack =
+			(
+				($discNumbers[$i] === $discNumbers[$i - 1])
+				&&
+				($trackNumbers[$i] === $trackNumbers[$i - 1] + 1)
+			);
+			
+			if (!$isNextDiscFirstTrack && !$isSameDiscNextTrack)
+			{
+				$this->handleBadRequest();
+				return;
+			}
+		}
+		
+		$this->model->fillAlbum
+		(
+			$albumUri,
+			$discNumbers,
+			$trackNumbers,
+			$originalNames,
+			$transliteratedNames,
+			$localizedNames,
+			$haveVocal,
+			$userAddedId
+		);
+		
+		$this->handleRedirect(buildInternalLink($this->language, 'album', $albumUri));
+	}
 }
