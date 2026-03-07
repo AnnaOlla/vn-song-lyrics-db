@@ -27,7 +27,7 @@ function trimNullableString(string|null $value): string|null
 function trimNullableStringArray(array $values): array
 {
 	for ($i = 0; $i < count($values); $i++)
-		$values[$i] = $this->trimNullableString($values[$i]);
+		$values[$i] = trimNullableString($values[$i]);
 	
 	return $values;
 }
