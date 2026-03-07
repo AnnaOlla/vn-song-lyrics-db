@@ -69,7 +69,7 @@ namespace Localization\SignUpPage
 	const AwaitingVerification = 'На указанную почту отправлено письмо. Пожалуйста, проверьте входящие письма, а также папку со спамом.';
 }
 
-namespace Localization\AuthorizationError
+namespace Localization\AuthenticationError
 {
 	const CaptchaInvalid           = 'Код captcha был введён неверно.';
 	

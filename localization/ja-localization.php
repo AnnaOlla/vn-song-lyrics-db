@@ -69,7 +69,7 @@ namespace Localization\SignUpPage
 	const AwaitingVerification = 'アカウントは確認するために、メールを送りました。受信箱とスパムチェックしてください。';
 }
 
-namespace Localization\AuthorizationError
+namespace Localization\AuthenticationError
 {
 	const CaptchaInvalid           = 'キャプチャーは正しくなかったです。';
 	

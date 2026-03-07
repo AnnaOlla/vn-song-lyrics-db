@@ -69,7 +69,7 @@ namespace Localization\SignUpPage
 	const AwaitingVerification = 'We have sent you a verification mail. Please, check your inbox and spam folder.';
 }
 
-namespace Localization\AuthorizationError
+namespace Localization\AuthenticationError
 {
 	const CaptchaInvalid           = 'Captcha was incorrect.';
 	

@@ -1907,55 +1907,55 @@ class UserView extends ViolatorView
 		$this->renderDeletePage($heading, $cancelLink);
 	}
 	
-	final public function renderChangeAccountDataPage(array $user, AuthorizationError $error = AuthorizationError::None)
+	final public function renderChangeAccountDataPage(array $user, AuthenticationError $error = AuthenticationError::None)
 	{
 		$heading = $user['user_username'].\Localization\UserAccountDataPage\Edit;
 		$cancelLink = buildInternalLink($this->language, 'user', $user['user_username']);
 		
 		switch ($error)
 		{
-			case AuthorizationError::IncorrectPassword:
-				$errorMessage = \Localization\AuthorizationError\IncorrectPassword;
+			case AuthenticationError::IncorrectPassword:
+				$errorMessage = \Localization\AuthenticationError\IncorrectPassword;
 				break;
 			
-			case AuthorizationError::UsernameTrimmable:
-				$errorMessage = \Localization\AuthorizationError\UsernameTrimmable;
+			case AuthenticationError::UsernameTrimmable:
+				$errorMessage = \Localization\AuthenticationError\UsernameTrimmable;
 				break;
 			
-			case AuthorizationError::UsernameForbiddenSymbols:
-				$errorMessage = \Localization\AuthorizationError\UsernameForbiddenSymbols;
+			case AuthenticationError::UsernameForbiddenSymbols:
+				$errorMessage = \Localization\AuthenticationError\UsernameForbiddenSymbols;
 				break;
 			
-			case AuthorizationError::UsernameLengthIncorrect:
-				$errorMessage = \Localization\AuthorizationError\UsernameLengthIncorrect;
+			case AuthenticationError::UsernameLengthIncorrect:
+				$errorMessage = \Localization\AuthenticationError\UsernameLengthIncorrect;
 				break;
 			
-			case AuthorizationError::UsernameTaken:
-				$errorMessage = \Localization\AuthorizationError\UsernameTaken;
+			case AuthenticationError::UsernameTaken:
+				$errorMessage = \Localization\AuthenticationError\UsernameTaken;
 				break;
 			
-			case AuthorizationError::PasswordTrimmable:
-				$errorMessage = \Localization\AuthorizationError\PasswordTrimmable;
+			case AuthenticationError::PasswordTrimmable:
+				$errorMessage = \Localization\AuthenticationError\PasswordTrimmable;
 				break;
 				
-			case AuthorizationError::PasswordForbiddenSymbols:
-				$errorMessage = \Localization\AuthorizationError\PasswordForbiddenSymbols;
+			case AuthenticationError::PasswordForbiddenSymbols:
+				$errorMessage = \Localization\AuthenticationError\PasswordForbiddenSymbols;
 				break;
 			
-			case AuthorizationError::UsernameLengthIncorrect:
-				$errorMessage = \Localization\AuthorizationError\UsernameLengthIncorrect;
+			case AuthenticationError::UsernameLengthIncorrect:
+				$errorMessage = \Localization\AuthenticationError\UsernameLengthIncorrect;
 				break;
 			
-			case AuthorizationError::EmailTaken:
-				$errorMessage = \Localization\AuthorizationError\EmailTaken;
+			case AuthenticationError::EmailTaken:
+				$errorMessage = \Localization\AuthenticationError\EmailTaken;
 				break;
 			
-			case AuthorizationError::EmailInvalid:
-				$errorMessage = \Localization\AuthorizationError\EmailInvalid;
+			case AuthenticationError::EmailInvalid:
+				$errorMessage = \Localization\AuthenticationError\EmailInvalid;
 				break;
 			
-			case AuthorizationError::EmailNotExists:
-				$errorMessage = \Localization\AuthorizationError\EmailNotExists;
+			case AuthenticationError::EmailNotExists:
+				$errorMessage = \Localization\AuthenticationError\EmailNotExists;
 				break;
 			
 			default:
@@ -2006,15 +2006,15 @@ class UserView extends ViolatorView
 		echo $html;
 	}
 	
-	final public function renderDeleteAccountPage(array $user, AuthorizationError $error = AuthorizationError::None)
+	final public function renderDeleteAccountPage(array $user, AuthenticationError $error = AuthenticationError::None)
 	{
 		$heading = $user['user_username'].\Localization\UserAccountDeletePage\Delete;
 		$cancelLink = buildInternalLink($this->language, 'user', $user['user_username']);
 		
 		switch ($error)
 		{
-			case AuthorizationError::IncorrectPassword:
-				$errorMessage = \Localization\AuthorizationError\IncorrectPassword;
+			case AuthenticationError::IncorrectPassword:
+				$errorMessage = \Localization\AuthenticationError\IncorrectPassword;
 				break;
 			
 			default:

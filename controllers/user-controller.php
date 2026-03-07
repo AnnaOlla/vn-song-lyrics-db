@@ -2190,55 +2190,55 @@ class UserController extends ViolatorController
 		
 		if (!$this->model->isPasswordCorrect($user['user_email'], $oldPassword))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthorizationError::IncorrectPassword);
+			$this->view->renderChangeAccountDataPage($user, AuthenticationError::IncorrectPassword);
 			return;
 		}
 		
 		if (trimNullableString($newUsername) !== $newUsername)
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthorizationError::UsernameTrimmable);
+			$this->view->renderChangeAccountDataPage($user, AuthenticationError::UsernameTrimmable);
 			return;
 		}
 		
 		if (!isLatinAlphabetAndNumbers($newUsername))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthorizationError::UsernameForbiddenSymbols);
+			$this->view->renderChangeAccountDataPage($user, AuthenticationError::UsernameForbiddenSymbols);
 			return;
 		}
 		
 		if (mb_strlen($newUsername) < $MIN_LENGTH || mb_strlen($newUsername) > $MAX_LENGTH)
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthorizationError::UsernameShort);
+			$this->view->renderChangeAccountDataPage($user, AuthenticationError::UsernameShort);
 			return;
 		}
 		
 		if ($user['user_username'] !== $newUsername && $this->model->isUserRegistered($newUsername))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthorizationError::UsernameTaken);
+			$this->view->renderChangeAccountDataPage($user, AuthenticationError::UsernameTaken);
 			return;
 		}
 		
 		if (!isEmailValid($newEmail))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthorizationError::EmailInvalid);
+			$this->view->renderChangeAccountDataPage($user, AuthenticationError::EmailInvalid);
 			return;
 		}
 		
 		if ($user['user_email'] !== $newEmail && $this->model->isEmailRegistered($newEmail))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthorizationError::EmailTaken);
+			$this->view->renderChangeAccountDataPage($user, AuthenticationError::EmailTaken);
 			return;
 		}
 		
 		if ($newPassword && !isLatinAlphabetAndNumbers($newPassword))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthorizationError::PasswordForbiddenSymbols);
+			$this->view->renderChangeAccountDataPage($user, AuthenticationError::PasswordForbiddenSymbols);
 			return;
 		}
 		
 		if ($newPassword && (mb_strlen($newPassword) < $MIN_LENGTH || mb_strlen($newPassword) > $MAX_LENGTH))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthorizationError::PasswordShort);
+			$this->view->renderChangeAccountDataPage($user, AuthenticationError::PasswordShort);
 			return;
 		}
 		
@@ -2307,7 +2307,7 @@ class UserController extends ViolatorController
 		
 		if (!$this->model->isPasswordCorrect($user['user_email'], $password))
 		{
-			$this->view->renderDeleteAccountPage($user, AuthorizationError::IncorrectPassword);
+			$this->view->renderDeleteAccountPage($user, AuthenticationError::IncorrectPassword);
 			return;
 		}
 		

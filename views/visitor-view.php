@@ -580,28 +580,28 @@ class VisitorView extends View
 	//      Log-In Pages      //
 	//------------------------//
 	
-	final public function renderLogInPage(AuthorizationError $error = AuthorizationError::None): void
+	final public function renderLogInPage(AuthenticationError $error = AuthenticationError::None): void
 	{
 		switch ($error)
 		{
-			case AuthorizationError::EmptyEmail:
-				$errorMessage = \Localization\AuthorizationError\EmptyEmail;
+			case AuthenticationError::EmptyEmail:
+				$errorMessage = \Localization\AuthenticationError\EmptyEmail;
 				break;
 			
-			case AuthorizationError::EmptyPassword:
-				$errorMessage = \Localization\AuthorizationError\EmptyPassword;
+			case AuthenticationError::EmptyPassword:
+				$errorMessage = \Localization\AuthenticationError\EmptyPassword;
 				break;
 			
-			case AuthorizationError::EmailNotFound:
-				$errorMessage = \Localization\AuthorizationError\EmailNotFound;
+			case AuthenticationError::EmailNotFound:
+				$errorMessage = \Localization\AuthenticationError\EmailNotFound;
 				break;
 			
-			case AuthorizationError::IncorrectPassword:
-				$errorMessage = \Localization\AuthorizationError\IncorrectPassword;
+			case AuthenticationError::IncorrectPassword:
+				$errorMessage = \Localization\AuthenticationError\IncorrectPassword;
 				break;
 				
-			case AuthorizationError::AccountNotVerified:
-				$errorMessage = \Localization\AuthorizationError\AccountNotVerified;
+			case AuthenticationError::AccountNotVerified:
+				$errorMessage = \Localization\AuthenticationError\AccountNotVerified;
 				break;
 				
 			default:
@@ -642,52 +642,52 @@ class VisitorView extends View
 		echo $html;
 	}
 	
-	final public function renderSignUpPage(AuthorizationError $error = AuthorizationError::None, string $captchaBase64Image = ''): void
+	final public function renderSignUpPage(AuthenticationError $error = AuthenticationError::None, string $captchaBase64Image = ''): void
 	{
 		switch ($error)
 		{
-			case AuthorizationError::CaptchaInvalid:
-				$errorMessage = \Localization\AuthorizationError\CaptchaInvalid;
+			case AuthenticationError::CaptchaInvalid:
+				$errorMessage = \Localization\AuthenticationError\CaptchaInvalid;
 				break;
 			
-			case AuthorizationError::UsernameTrimmable:
-				$errorMessage = \Localization\AuthorizationError\UsernameTrimmable;
+			case AuthenticationError::UsernameTrimmable:
+				$errorMessage = \Localization\AuthenticationError\UsernameTrimmable;
 				break;
 			
-			case AuthorizationError::UsernameForbiddenSymbols:
-				$errorMessage = \Localization\AuthorizationError\UsernameForbiddenSymbols;
+			case AuthenticationError::UsernameForbiddenSymbols:
+				$errorMessage = \Localization\AuthenticationError\UsernameForbiddenSymbols;
 				break;
 			
-			case AuthorizationError::UsernameLengthIncorrect:
-				$errorMessage = \Localization\AuthorizationError\UsernameLengthIncorrect;
+			case AuthenticationError::UsernameLengthIncorrect:
+				$errorMessage = \Localization\AuthenticationError\UsernameLengthIncorrect;
 				break;
 			
-			case AuthorizationError::UsernameTaken:
-				$errorMessage = \Localization\AuthorizationError\UsernameTaken;
+			case AuthenticationError::UsernameTaken:
+				$errorMessage = \Localization\AuthenticationError\UsernameTaken;
 				break;
 			
-			case AuthorizationError::PasswordTrimmable:
-				$errorMessage = \Localization\AuthorizationError\PasswordTrimmable;
+			case AuthenticationError::PasswordTrimmable:
+				$errorMessage = \Localization\AuthenticationError\PasswordTrimmable;
 				break;
 				
-			case AuthorizationError::PasswordForbiddenSymbols:
-				$errorMessage = \Localization\AuthorizationError\PasswordForbiddenSymbols;
+			case AuthenticationError::PasswordForbiddenSymbols:
+				$errorMessage = \Localization\AuthenticationError\PasswordForbiddenSymbols;
 				break;
 			
-			case AuthorizationError::UsernameLengthIncorrect:
-				$errorMessage = \Localization\AuthorizationError\UsernameLengthIncorrect;
+			case AuthenticationError::UsernameLengthIncorrect:
+				$errorMessage = \Localization\AuthenticationError\UsernameLengthIncorrect;
 				break;
 			
-			case AuthorizationError::EmailTaken:
-				$errorMessage = \Localization\AuthorizationError\EmailTaken;
+			case AuthenticationError::EmailTaken:
+				$errorMessage = \Localization\AuthenticationError\EmailTaken;
 				break;
 			
-			case AuthorizationError::EmailInvalid:
-				$errorMessage = \Localization\AuthorizationError\EmailInvalid;
+			case AuthenticationError::EmailInvalid:
+				$errorMessage = \Localization\AuthenticationError\EmailInvalid;
 				break;
 				
-			case AuthorizationError::MailSendFailed:
-				$errorMessage = \Localization\AuthorizationError\MailSendFailed;
+			case AuthenticationError::MailSendFailed:
+				$errorMessage = \Localization\AuthenticationError\MailSendFailed;
 				break;
 			
 			default:

@@ -87,26 +87,26 @@ class VisitorController extends Controller
 		if (!isset($_SESSION['lastPageBeforeLogIn']))
 			$_SESSION['lastPageBeforeLogIn'] = $_SERVER['HTTP_REFERER'] ?? buildInternalLink($this->language);
 		
-		$error = AuthorizationError::None;
+		$error = AuthenticationError::None;
 		
 		if (isset($_POST['email']) && isset($_POST['password']))
 		{
 			if ($_POST['email'] === '')
-				$error = AuthorizationError::EmptyEmail;
+				$error = AuthenticationError::EmptyEmail;
 			
 			if ($_POST['password'] === '')
-				$error = AuthorizationError::EmptyPassword;
+				$error = AuthenticationError::EmptyPassword;
 			
 			if (!$this->model->isEmailRegistered($_POST['email']))
-				$error = AuthorizationError::EmailNotFound;
+				$error = AuthenticationError::EmailNotFound;
 			
 			if (!$this->model->isPasswordCorrect($_POST['email'], $_POST['password']))
-				$error = AuthorizationError::IncorrectPassword;
+				$error = AuthenticationError::IncorrectPassword;
 			
 			if (!$this->model->isAccountVerified($_POST['email']))
-				$error = AuthorizationError::AccountNotVerified;
+				$error = AuthenticationError::AccountNotVerified;
 			
-			if ($error = AuthorizationError::None)
+			if ($error = AuthenticationError::None)
 			{
 				$this->model->updateLastLogInTimestamp($_POST['email']);
 				$userData = $this->model->getUserData(email: $_POST['email']);
@@ -131,7 +131,7 @@ class VisitorController extends Controller
 			return;
 		}
 		
-		$error = AuthorizationError::None;
+		$error = AuthenticationError::None;
 		
 		if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email']) && isset($_POST['captcha-code']))
 		{
@@ -140,36 +140,36 @@ class VisitorController extends Controller
 			$MAX_LENGTH = 32;
 			
 			if (!isset($_SESSION['signUpCaptchaCode']))
-				$error = AuthorizationError::CaptchaInvalid;
+				$error = AuthenticationError::CaptchaInvalid;
 			
 			if (mb_strtolower($_POST['captcha-code']) !== mb_strtolower($_SESSION['signUpCaptchaCode']))
-				$error = AuthorizationError::CaptchaInvalid;
+				$error = AuthenticationError::CaptchaInvalid;
 			
 			if ($this->trimNullableString($_POST['username']) !== $_POST['username'])
-				$error = AuthorizationError::UsernameTrimmable;
+				$error = AuthenticationError::UsernameTrimmable;
 			
 			if (!$this->isLatinAlphabetAndNumbers($_POST['username']))
-				$error = AuthorizationError::UsernameForbiddenSymbols;
+				$error = AuthenticationError::UsernameForbiddenSymbols;
 			
 			if (mb_strlen($_POST['username']) < $MIN_LENGTH || mb_strlen($_POST['username']) > $MAX_LENGTH)
-				$error = AuthorizationError::UsernameLengthIncorrect;
+				$error = AuthenticationError::UsernameLengthIncorrect;
 			
 			if ($this->model->isUserRegistered($_POST['username']))
-				$error = AuthorizationError::UsernameTaken;
+				$error = AuthenticationError::UsernameTaken;
 			
 			if (!$this->isEmailValid($_POST['email']))
-				$error = AuthorizationError::EmailInvalid;
+				$error = AuthenticationError::EmailInvalid;
 			
 			if ($this->model->isEmailRegistered($_POST['email']))
-				$error = AuthorizationError::EmailTaken;
+				$error = AuthenticationError::EmailTaken;
 			
 			if (!$this->isLatinAlphabetAndNumbers($_POST['password']))
-				$error = AuthorizationError::PasswordForbiddenSymbols;
+				$error = AuthenticationError::PasswordForbiddenSymbols;
 			
 			if (mb_strlen($_POST['password']) < $MIN_LENGTH || mb_strlen($_POST['password']) > $MAX_LENGTH)
-				$error = AuthorizationError::PasswordLengthIncorrect;
+				$error = AuthenticationError::PasswordLengthIncorrect;
 			
-			if ($error !== AuthorizationError::None)
+			if ($error !== AuthenticationError::None)
 			{
 				unset($_SESSION['signUpCaptchaCode']);
 				
