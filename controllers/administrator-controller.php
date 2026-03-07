@@ -663,7 +663,7 @@ class AdministratorController extends UserController
 		
 		foreach ($transliteratedNames as $transliteratedName)
 		{
-			if (!$this->isPrintableAscii($transliteratedName))
+			if (!isPrintableAscii($transliteratedName))
 			{
 				$this->handleBadRequest();
 				return;
