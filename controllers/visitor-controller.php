@@ -433,8 +433,8 @@ class VisitorController extends Controller
 	
 	final public function handleLyricsPage(string $albumUri, string $songUri): void
 	{
-		$album = $this->model->getAlbum($albumUri);
-		$song  = $this->model->getSong($albumUri, $songUri);
+		$album         = $this->model->getAlbum($albumUri);
+		$song          = $this->model->getSong($albumUri, $songUri);
 		$performerList = $this->model->getPerformerList(albumUri: $albumUri, songUri: $songUri);
 		
 		if (!$album)

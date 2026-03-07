@@ -602,12 +602,12 @@ class AdministratorController extends UserController
 		$hasVocal            = $_POST['has-vocal']           ?? [];
 		$userAddedId         = $_SESSION['user']['id'];
 		
-		$originalNames       = $this->trimNullableStringArray($originalNames);
-		$transliteratedNames = $this->trimNullableStringArray($transliteratedNames);
-		$localizedNames      = $this->trimNullableStringArray($localizedNames);
-		$discNumbers         = $this->parseNullableIntegerArray($discNumbers, 1);
-		$trackNumbers        = $this->parseNullableIntegerArray($trackNumbers, 1);
-		$haveVocal           = $this->parseNullableIntegerArray($hasVocal, 0, 1);
+		$originalNames       = trimNullableStringArray($originalNames);
+		$transliteratedNames = trimNullableStringArray($transliteratedNames);
+		$localizedNames      = trimNullableStringArray($localizedNames);
+		$discNumbers         = parseNullableIntegerArray($discNumbers, 1);
+		$trackNumbers        = parseNullableIntegerArray($trackNumbers, 1);
+		$haveVocal           = parseNullableIntegerArray($hasVocal, 0, 1);
 		
 		if (!$album)
 		{
@@ -639,7 +639,7 @@ class AdministratorController extends UserController
 			return;
 		}
 		
-		$haveArraysSameLength = $this->haveArraysSameLength
+		$haveArraysSameLength = haveArraysSameLength
 		(
 			$discNumbers,
 			$trackNumbers,
@@ -655,7 +655,11 @@ class AdministratorController extends UserController
 			return;
 		}
 		
-		// need a function for this?
+		if (count($discNumbers) === 0)
+		{
+			$this->handleBadRequest();
+			return;
+		}
 		
 		foreach ($transliteratedNames as $transliteratedName)
 		{
@@ -665,18 +669,6 @@ class AdministratorController extends UserController
 				return;
 			}
 		}
-		
-		// Check that arrays are not empty
-		// Don't check all of them because they have the same length
-		
-		if (count($discNumbers) === 0)
-		{
-			$this->handleBadRequest();
-			return;
-		}
-		
-		// Check that certain values in arrays are not empty
-		// They must meet the requirement being "NOT NULL"
 		
 		$isInputInvalid = haveNullOrEmpty
 		(
@@ -692,12 +684,6 @@ class AdministratorController extends UserController
 			$this->handleBadRequest();
 			return;
 		}
-		
-		// Checking that all discs and tracks have consequent numbers
-		// starting from [1, 1]
-		//
-		// P.S. Is it possible to do it without a separate 'if'?
-		//      It doesn't look nice and clean
 		
 		if (!($discNumbers[0] === 1 && $trackNumbers[0] === 1))
 		{

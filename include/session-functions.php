@@ -1,8 +1,5 @@
 <?php
 
-//-----
-//----- 
-
 function buildInternalLink(string ...$linkParts): string
 {
 	for ($i = 0; $i < count($linkParts); $i++)

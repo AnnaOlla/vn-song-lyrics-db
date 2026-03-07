@@ -40,15 +40,15 @@ class UserController extends ViolatorController
 		$characterIds       = $_POST['character-ids']       ?? [];
 		$userAddedId        = $_SESSION['user']['id'];
 		
-		$originalName       = $this->trimNullableString($originalName);
-		$transliteratedName = $this->trimNullableString($transliteratedName);
-		$localizedName      = $this->trimNullableString($localizedName);
-		$logo               = $this->getNullableFile($logo);
-		$vndbId             = $this->parseNullableVndbId($vndbLink, 'v');
-		$albumIds           = $this->parseNullableIntegerArray($albumIds, 1);
-		$albumIds           = $this->removeNullValues($albumIds);
-		$characterIds       = $this->parseNullableIntegerArray($characterIds, 1);
-		$characterIds       = $this->removeNullValues($characterIds);
+		$originalName       = trimNullableString($originalName);
+		$transliteratedName = trimNullableString($transliteratedName);
+		$localizedName      = trimNullableString($localizedName);
+		$logo               = getNullableFile($logo);
+		$vndbId             = parseNullableVndbId($vndbLink, 'v');
+		$albumIds           = parseNullableIntegerArray($albumIds, 1);
+		$albumIds           = removeNullValues($albumIds);
+		$characterIds       = parseNullableIntegerArray($characterIds, 1);
+		$characterIds       = removeNullValues($characterIds);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName))
 		{
@@ -56,7 +56,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!$this->isPrintableAscii($transliteratedName))
+		if (!isPrintableAscii($transliteratedName))
 		{
 			$this->handleBadRequest();
 			return;
@@ -116,14 +116,14 @@ class UserController extends ViolatorController
 		$gameIds            = $_POST['game-ids']            ?? [];
 		$userAddedId        = $_SESSION['user']['id'];
 		
-		$originalName       = $this->trimNullableString($originalName);
-		$transliteratedName = $this->trimNullableString($transliteratedName);
-		$localizedName      = $this->trimNullableString($localizedName);
-		$cover              = $this->getNullableFile($cover);
-		$vgmdbId            = $this->parseNullableVgmdbId($vgmdbLink, 'album');
-		$songCount          = $this->parseNullableInteger($songCount, 1);
-		$gameIds            = $this->parseNullableIntegerArray($gameIds, 1);
-		$gameIds            = $this->removeNullValues($gameIds);
+		$originalName       = trimNullableString($originalName);
+		$transliteratedName = trimNullableString($transliteratedName);
+		$localizedName      = trimNullableString($localizedName);
+		$cover              = getNullableFile($cover);
+		$vgmdbId            = parseNullableVgmdbId($vgmdbLink, 'album');
+		$songCount          = parseNullableInteger($songCount, 1);
+		$gameIds            = parseNullableIntegerArray($gameIds, 1);
+		$gameIds            = removeNullValues($gameIds);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName, $songCount))
 		{
@@ -131,7 +131,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!$this->isPrintableAscii($transliteratedName))
+		if (!isPrintableAscii($transliteratedName))
 		{
 			$this->handleBadRequest();
 			return;
@@ -182,12 +182,12 @@ class UserController extends ViolatorController
 		$aliasOfId          = $_POST['original-artist-id']  ?? null;
 		$userAddedId        = $_SESSION['user']['id'];
 		
-		$originalName       = $this->trimNullableString($originalName);
-		$transliteratedName = $this->trimNullableString($transliteratedName);
-		$localizedName      = $this->trimNullableString($localizedName);
-		$photo              = $this->getNullableFile($photo);
-		$vgmdbId            = $this->parseNullableVgmdbId($vgmdbLink, 'artist');
-		$aliasOfId          = $this->parseNullableInteger($aliasOfId, 1);
+		$originalName       = trimNullableString($originalName);
+		$transliteratedName = trimNullableString($transliteratedName);
+		$localizedName      = trimNullableString($localizedName);
+		$photo              = getNullableFile($photo);
+		$vgmdbId            = parseNullableVgmdbId($vgmdbLink, 'artist');
+		$aliasOfId          = parseNullableInteger($aliasOfId, 1);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName))
 		{
@@ -195,7 +195,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!$this->isPrintableAscii($transliteratedName))
+		if (!isPrintableAscii($transliteratedName))
 		{
 			$this->handleBadRequest();
 			return;
@@ -243,13 +243,13 @@ class UserController extends ViolatorController
 		$gameIds            = $_POST['game-ids']            ?? [];
 		$userAddedId        = $_SESSION['user']['id'];
 		
-		$originalName       = $this->trimNullableString($originalName);
-		$transliteratedName = $this->trimNullableString($transliteratedName);
-		$localizedName      = $this->trimNullableString($localizedName);
-		$image              = $this->getNullableFile($image);
-		$vndbId             = $this->parseNullableVndbId($vndbLink, 'c');
-		$gameIds            = $this->parseNullableIntegerArray($gameIds, 1);
-		$gameIds            = $this->removeNullValues($gameIds);
+		$originalName       = trimNullableString($originalName);
+		$transliteratedName = trimNullableString($transliteratedName);
+		$localizedName      = trimNullableString($localizedName);
+		$image              = getNullableFile($image);
+		$vndbId             = parseNullableVndbId($vndbLink, 'c');
+		$gameIds            = parseNullableIntegerArray($gameIds, 1);
+		$gameIds            = removeNullValues($gameIds);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName))
 		{
@@ -257,7 +257,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!$this->isPrintableAscii($transliteratedName))
+		if (!isPrintableAscii($transliteratedName))
 		{
 			$this->handleBadRequest();
 			return;
@@ -290,7 +290,7 @@ class UserController extends ViolatorController
 	{
 		if (empty($_POST))
 		{
-			$album        = $this->model->getAlbumId($albumUri);
+			$album = $this->model->getAlbumId($albumUri);
 			
 			if (!$album)
 			{
@@ -346,12 +346,12 @@ class UserController extends ViolatorController
 		$hasVocal           = $_POST['has-vocal']           ?? null;
 		$userAddedId        = $_SESSION['user']['id'];
 		
-		$discNumber         = $this->parseNullableInteger($discNumber, 1);
-		$trackNumber        = $this->parseNullableInteger($trackNumber, 1);
-		$originalName       = $this->trimNullableString($originalName);
-		$transliteratedName = $this->trimNullableString($transliteratedName);
-		$localizedName      = $this->trimNullableString($localizedName);
-		$hasVocal           = $this->parseNullableInteger($hasVocal, 0, 1);
+		$discNumber         = parseNullableInteger($discNumber, 1);
+		$trackNumber        = parseNullableInteger($trackNumber, 1);
+		$originalName       = trimNullableString($originalName);
+		$transliteratedName = trimNullableString($transliteratedName);
+		$localizedName      = trimNullableString($localizedName);
+		$hasVocal           = parseNullableInteger($hasVocal, 0, 1);
 		
 		if (!$album)
 		{
@@ -389,7 +389,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!$this->isPrintableAscii($transliteratedName))
+		if (!isPrintableAscii($transliteratedName))
 		{
 			$this->handleBadRequest();
 			return;
@@ -530,17 +530,17 @@ class UserController extends ViolatorController
 		$notes             = $_POST['notes']            ?? null;
 		$userAddedId       = $_SESSION['user']['id'];
 		
-		$artistIds         = $this->parseNullableIntegerArray($artistIds, 1);
-		$characterIds      = $this->parseNullableIntegerArray($characterIds, 1);
-		$originalSongId    = $this->parseNullableInteger($originalSongId, 1);
-		$languageId        = $this->parseNullableInteger($languageId, 1);
-		$lyrics            = $this->trimNullableText($lyrics);
-		$notes             = $this->trimNullableText($notes);
+		$artistIds         = parseNullableIntegerArray($artistIds, 1);
+		$characterIds      = parseNullableIntegerArray($characterIds, 1);
+		$originalSongId    = parseNullableInteger($originalSongId, 1);
+		$languageId        = parseNullableInteger($languageId, 1);
+		$lyrics            = trimNullableText($lyrics);
+		$notes             = trimNullableText($notes);
 		
 		// $this->trimNullableText does not remove empty lines (because they may be part of lyrics)
-		// The problem is what if empty lines was the only content?
-		$lyrics            = $this->trimNullableString($lyrics);
-		$notes             = $this->trimNullableString($notes);
+		// The problem is what if empty lines was the only content? This fixes it:
+		$lyrics            = trimNullableString($lyrics);
+		$notes             = trimNullableString($notes);
 		
 		if (!$album)
 		{
@@ -712,15 +712,15 @@ class UserController extends ViolatorController
 		$notes                = $_POST['translation-notes']       ?? null;
 		$userAddedId          = $_SESSION['user']['id'];
 		
-		$languageId           = $this->parseNullableInteger($languageId, 1);
-		$name                 = $this->trimNullableString($name);
-		$lyrics               = $this->trimNullableText($lyrics);
-		$notes                = $this->trimNullableText($notes);
+		$languageId           = parseNullableInteger($languageId, 1);
+		$name                 = trimNullableString($name);
+		$lyrics               = trimNullableText($lyrics);
+		$notes                = trimNullableText($notes);
 		
 		// $this->trimNullableText does not remove empty lines (because they may be part of lyrics)
 		// The problem is what if empty lines was the only content?
-		$lyrics               = $this->trimNullableString($lyrics);
-		$notes                = $this->trimNullableString($notes);
+		$lyrics               = trimNullableString($lyrics);
+		$notes                = trimNullableString($notes);
 		
 		if (!$album)
 		{
@@ -839,15 +839,15 @@ class UserController extends ViolatorController
 		$characterIds        = $_POST['character-ids']       ?? [];
 		$userUpdatedId       = $_SESSION['user']['id'];
 		
-		$originalName        = $this->trimNullableString($originalName);
-		$transliteratedName  = $this->trimNullableString($transliteratedName);
-		$localizedName       = $this->trimNullableString($localizedName);
-		$logo                = $this->getNullableFile($logo);
-		$vndbId              = $this->parseNullableVndbId($vndbLink, 'v');
-		$albumIds            = $this->parseNullableIntegerArray($albumIds, 1);
-		$albumIds            = $this->removeNullValues($albumIds);
-		$characterIds        = $this->parseNullableIntegerArray($characterIds, 1);
-		$characterIds        = $this->removeNullValues($characterIds);
+		$originalName        = trimNullableString($originalName);
+		$transliteratedName  = trimNullableString($transliteratedName);
+		$localizedName       = trimNullableString($localizedName);
+		$logo                = getNullableFile($logo);
+		$vndbId              = parseNullableVndbId($vndbLink, 'v');
+		$albumIds            = parseNullableIntegerArray($albumIds, 1);
+		$albumIds            = removeNullValues($albumIds);
+		$characterIds        = parseNullableIntegerArray($characterIds, 1);
+		$characterIds        = removeNullValues($characterIds);
 		
 		if (!$game)
 		{
@@ -873,7 +873,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!$this->isPrintableAscii($transliteratedName))
+		if (!isPrintableAscii($transliteratedName))
 		{
 			$this->handleBadRequest();
 			return;
@@ -885,7 +885,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (array_diff($characterIds, $characterIds))
+		if (array_diff($characterIds, $allCharacterIds))
 		{
 			$this->handleBadRequest();
 			return;
@@ -1002,7 +1002,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!$this->isPrintableAscii($transliteratedName))
+		if (!isPrintableAscii($transliteratedName))
 		{
 			$this->handleBadRequest();
 			return;
@@ -1044,7 +1044,7 @@ class UserController extends ViolatorController
 	{
 		if (empty($_POST))
 		{
-			$artist = $this->model->getArtist($artistUri);
+			$artist          = $this->model->getArtist($artistUri);
 			$originalArtists = $this->model->getArtistIdList(mayBeAlias: false);
 			
 			if (!$artist)
@@ -1081,12 +1081,12 @@ class UserController extends ViolatorController
 		$aliasOfId           = $_POST['original-artist-id']  ?? null;
 		$userUpdatedId       = $_SESSION['user']['id'];
 		
-		$originalName        = $this->trimNullableString($originalName);
-		$transliteratedName  = $this->trimNullableString($transliteratedName);
-		$localizedName       = $this->trimNullableString($localizedName);
-		$photo               = $this->getNullableFile($photo);
-		$vgmdbId             = $this->parseNullableVgmdbId($vgmdbLink, 'artist');
-		$aliasOfId           = $this->parseNullableInteger($aliasOfId, 1);
+		$originalName        = trimNullableString($originalName);
+		$transliteratedName  = trimNullableString($transliteratedName);
+		$localizedName       = trimNullableString($localizedName);
+		$photo               = getNullableFile($photo);
+		$vgmdbId             = parseNullableVgmdbId($vgmdbLink, 'artist');
+		$aliasOfId           = parseNullableInteger($aliasOfId, 1);
 		
 		if (!$artist)
 		{
@@ -1112,7 +1112,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!$this->isPrintableAscii($transliteratedName))
+		if (!isPrintableAscii($transliteratedName))
 		{
 			$this->handleBadRequest();
 			return;
@@ -1181,13 +1181,13 @@ class UserController extends ViolatorController
 		$gameIds             = $_POST['game-ids']            ?? [];
 		$userUpdatedId       = $_SESSION['user']['id'];
 		
-		$originalName        = $this->trimNullableString($originalName);
-		$transliteratedName  = $this->trimNullableString($transliteratedName);
-		$localizedName       = $this->trimNullableString($localizedName);
-		$image               = $this->getNullableFile($image);
-		$vndbId              = $this->parseNullableVndbId($vndbLink, 'c');
-		$gameIds             = $this->parseNullableIntegerArray($gameIds, 1);
-		$gameIds             = $this->removeNullValues($gameIds);
+		$originalName        = trimNullableString($originalName);
+		$transliteratedName  = trimNullableString($transliteratedName);
+		$localizedName       = trimNullableString($localizedName);
+		$image               = getNullableFile($image);
+		$vndbId              = parseNullableVndbId($vndbLink, 'c');
+		$gameIds             = parseNullableIntegerArray($gameIds, 1);
+		$gameIds             = removeNullValues($gameIds);
 		
 		if (!$character)
 		{
@@ -1213,7 +1213,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!$this->isPrintableAscii($transliteratedName))
+		if (!isPrintableAscii($transliteratedName))
 		{
 			$this->handleBadRequest();
 			return;
@@ -1294,10 +1294,10 @@ class UserController extends ViolatorController
 		$hasVocal           = $_POST['has-vocal']           ?? null;
 		$userUpdatedId      = $_SESSION['user']['id'];
 		
-		$originalName       = $this->trimNullableString($originalName);
-		$transliteratedName = $this->trimNullableString($transliteratedName);
-		$localizedName      = $this->trimNullableString($localizedName);
-		$hasVocal           = $this->parseNullableInteger($hasVocal, 0, 1);
+		$originalName       = trimNullableString($originalName);
+		$transliteratedName = trimNullableString($transliteratedName);
+		$localizedName      = trimNullableString($localizedName);
+		$hasVocal           = parseNullableInteger($hasVocal, 0, 1);
 		
 		if (!$album)
 		{
@@ -1335,7 +1335,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!$this->isPrintableAscii($transliteratedName))
+		if (!isPrintableAscii($transliteratedName))
 		{
 			$this->handleBadRequest();
 			return;
@@ -1452,17 +1452,15 @@ class UserController extends ViolatorController
 		$notes               = $_POST['notes']            ?? null;
 		$userUpdatedId       = $_SESSION['user']['id'];
 		
-		$artistIds           = $this->parseNullableIntegerArray($artistIds, 1);
-		$characterIds        = $this->parseNullableIntegerArray($characterIds, 1);
-		$originalSongId      = $this->parseNullableInteger($originalSongId, 1);
-		$languageId          = $this->parseNullableInteger($languageId, 1);
-		$lyrics              = $this->trimNullableText($lyrics);
-		$notes               = $this->trimNullableText($notes);
+		$artistIds           = parseNullableIntegerArray($artistIds, 1);
+		$characterIds        = parseNullableIntegerArray($characterIds, 1);
+		$originalSongId      = parseNullableInteger($originalSongId, 1);
+		$languageId          = parseNullableInteger($languageId, 1);
+		$lyrics              = trimNullableText($lyrics);
+		$notes               = trimNullableText($notes);
 		
-		// $this->trimNullableText does not remove empty lines (because they may be part of lyrics)
-		// The problem is what if empty lines was the only content?
-		$lyrics              = $this->trimNullableString($lyrics);
-		$notes               = $this->trimNullableString($notes);
+		$lyrics              = trimNullableString($lyrics);
+		$notes               = trimNullableString($notes);
 		
 		if (!$album)
 		{
@@ -1648,14 +1646,12 @@ class UserController extends ViolatorController
 		$notes         = $_POST['translation-notes']  ?? null;
 		$userUpdatedId = $_SESSION['user']['id'];
 		
-		$name          = $this->trimNullableString($name);
-		$lyrics        = $this->trimNullableText($lyrics);
-		$notes         = $this->trimNullableText($notes);
+		$name          = trimNullableString($name);
+		$lyrics        = trimNullableText($lyrics);
+		$notes         = trimNullableText($notes);
 		
-		// $this->trimNullableText does not remove empty lines (because they may be part of lyrics)
-		// The problem is what if empty lines was the only content?
-		$lyrics        = $this->trimNullableString($lyrics);
-		$notes         = $this->trimNullableString($notes);
+		$lyrics        = trimNullableString($lyrics);
+		$notes         = trimNullableString($notes);
 		
 		if (!$album)
 		{
@@ -2198,13 +2194,13 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if ($this->trimNullableString($newUsername) !== $newUsername)
+		if (trimNullableString($newUsername) !== $newUsername)
 		{
 			$this->view->renderChangeAccountDataPage($user, AuthorizationError::UsernameTrimmable);
 			return;
 		}
 		
-		if (!$this->isLatinAlphabetAndNumbers($newUsername))
+		if (!isLatinAlphabetAndNumbers($newUsername))
 		{
 			$this->view->renderChangeAccountDataPage($user, AuthorizationError::UsernameForbiddenSymbols);
 			return;
@@ -2222,7 +2218,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!$this->isEmailValid($newEmail))
+		if (!isEmailValid($newEmail))
 		{
 			$this->view->renderChangeAccountDataPage($user, AuthorizationError::EmailInvalid);
 			return;
@@ -2234,7 +2230,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if ($newPassword && !$this->isLatinAlphabetAndNumbers($newPassword))
+		if ($newPassword && !isLatinAlphabetAndNumbers($newPassword))
 		{
 			$this->view->renderChangeAccountDataPage($user, AuthorizationError::PasswordForbiddenSymbols);
 			return;
@@ -2282,7 +2278,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		$user = $this->model->getUserData(username: $userUri);
+		$user     = $this->model->getUserData(username: $userUri);
 		$password = $_POST['password'] ?? null;
 		
 		if (!$user)
@@ -2317,12 +2313,5 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteUser($user);
 		$this->handleLogOutPage();
-		
-		/*
-		if (isCurrentUserModerator())
-			$this->handleRedirect(buildInternalLink($this->language));
-		else
-			$this->handleLogOutPage();
-		*/
 	}
 }
