@@ -106,7 +106,7 @@ class VisitorController extends Controller
 			if (!$this->model->isAccountVerified($_POST['email']))
 				$error = AuthenticationError::AccountNotVerified;
 			
-			if ($error = AuthenticationError::None)
+			if ($error === AuthenticationError::None)
 			{
 				$this->model->updateLastLogInTimestamp($_POST['email']);
 				$userData = $this->model->getUserData(email: $_POST['email']);
@@ -169,7 +169,7 @@ class VisitorController extends Controller
 			if (mb_strlen($_POST['password']) < $MIN_LENGTH || mb_strlen($_POST['password']) > $MAX_LENGTH)
 				$error = AuthenticationError::PasswordLengthIncorrect;
 			
-			if ($error !== AuthenticationError::None)
+			if ($error === AuthenticationError::None)
 			{
 				unset($_SESSION['signUpCaptchaCode']);
 				
