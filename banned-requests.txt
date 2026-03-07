@@ -1,5 +1,17 @@
+admin
+manager
+wp-login.php
 wp-admin
+wp-includes
 wordpress
 setup-config.php
+wlwmanifest.xml
+xmlrpc.php
+.env.production
+.env.staging
+backend
+frontend
+config
+.git
 banned-requests.txt
 banned-ip-list.txt
