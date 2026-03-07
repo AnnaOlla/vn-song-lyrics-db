@@ -84,52 +84,43 @@ class VisitorController extends Controller
 			return;
 		}
 		
+		if (!isset($_SESSION['lastPageBeforeLogIn']))
+			$_SESSION['lastPageBeforeLogIn'] = $_SERVER['HTTP_REFERER'] ?? buildInternalLink($this->language);
+		
+		$error = AuthorizationError::None;
+		
 		if (isset($_POST['email']) && isset($_POST['password']))
 		{
 			if ($_POST['email'] === '')
-			{
-				$this->view->renderLogInPage(AuthorizationError::EmptyEmail);
-				return;
-			}
+				$error = AuthorizationError::EmptyEmail;
 			
 			if ($_POST['password'] === '')
-			{
-				$this->view->renderLogInPage(AuthorizationError::EmptyPassword);
-				return;
-			}
+				$error = AuthorizationError::EmptyPassword;
 			
 			if (!$this->model->isEmailRegistered($_POST['email']))
-			{
-				$this->view->renderLogInPage(AuthorizationError::EmailNotFound);
-				return;
-			}
+				$error = AuthorizationError::EmailNotFound;
 			
 			if (!$this->model->isPasswordCorrect($_POST['email'], $_POST['password']))
-			{
-				$this->view->renderLogInPage(AuthorizationError::IncorrectPassword);
-				return;
-			}
+				$error = AuthorizationError::IncorrectPassword;
 			
 			if (!$this->model->isAccountVerified($_POST['email']))
+				$error = AuthorizationError::AccountNotVerified;
+			
+			if ($error = AuthorizationError::None)
 			{
-				$this->view->renderLogInPage(AuthorizationError::AccountNotVerified);
+				$this->model->updateLastLogInTimestamp($_POST['email']);
+				$userData = $this->model->getUserData(email: $_POST['email']);
+				
+				session_regenerate_id();
+				$this->createUserSession($userData);
+				
+				$this->handleRedirect($_SESSION['lastPageBeforeLogIn']);
+				unset($_SESSION['lastPageBeforeLogIn']);
 				return;
 			}
-			
-			$this->model->updateLastLogInTimestamp($_POST['email']);
-			$userData = $this->model->getUserData(email: $_POST['email']);
-			
-			session_regenerate_id();
-			$this->createUserSession($userData);
-			
-			$this->handleRedirect($_SESSION['lastPageBeforeAuthorization']);
-			unset($_SESSION['lastPageBeforeAuthorization']);
-			return;
 		}
 		
-		$_SESSION['lastPageBeforeAuthorization'] = $_SERVER['HTTP_REFERER'] ?? buildInternalLink($this->language);
-		
-		$this->view->renderLogInPage();
+		$this->view->renderLogInPage($error);
 	}
 	
 	public function handleSignUpPage(): void
@@ -140,9 +131,7 @@ class VisitorController extends Controller
 			return;
 		}
 		
-		$_SESSION['oldCaptchaCode'] = $_SESSION['newCaptchaCode'] ?? null;
-		$_SESSION['newCaptchaCode'] = $this->model->generateStrongCaptchaString(length: 6);
-		$captchaBase64Image         = $this->model->generateBase64Captcha($_SESSION['newCaptchaCode']);
+		$error = AuthorizationError::None;
 		
 		if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email']) && isset($_POST['captcha-code']))
 		{
@@ -150,86 +139,65 @@ class VisitorController extends Controller
 			$MIN_LENGTH = 4;
 			$MAX_LENGTH = 32;
 			
-			if (mb_strtolower($_POST['captcha-code']) !== mb_strtolower($_SESSION['oldCaptchaCode']))
-			{
-				$this->view->renderSignUpPage(AuthorizationError::CaptchaInvalid, $captchaBase64Image);
-				return;
-			}
+			if (!isset($_SESSION['signUpCaptchaCode']))
+				$error = AuthorizationError::CaptchaInvalid;
+			
+			if (mb_strtolower($_POST['captcha-code']) !== mb_strtolower($_SESSION['signUpCaptchaCode']))
+				$error = AuthorizationError::CaptchaInvalid;
 			
 			if ($this->trimNullableString($_POST['username']) !== $_POST['username'])
-			{
-				$this->view->renderSignUpPage(AuthorizationError::UsernameTrimmable, $captchaBase64Image);
-				return;
-			}
+				$error = AuthorizationError::UsernameTrimmable;
 			
 			if (!$this->isLatinAlphabetAndNumbers($_POST['username']))
-			{
-				$this->view->renderSignUpPage(AuthorizationError::UsernameForbiddenSymbols, $captchaBase64Image);
-				return;
-			}
+				$error = AuthorizationError::UsernameForbiddenSymbols;
 			
 			if (mb_strlen($_POST['username']) < $MIN_LENGTH || mb_strlen($_POST['username']) > $MAX_LENGTH)
-			{
-				$this->view->renderSignUpPage(AuthorizationError::UsernameLengthIncorrect, $captchaBase64Image);
-				return;
-			}
+				$error = AuthorizationError::UsernameLengthIncorrect;
 			
 			if ($this->model->isUserRegistered($_POST['username']))
-			{
-				$this->view->renderSignUpPage(AuthorizationError::UsernameTaken, $captchaBase64Image);
-				return;
-			}
+				$error = AuthorizationError::UsernameTaken;
 			
 			if (!$this->isEmailValid($_POST['email']))
-			{
-				$this->view->renderSignUpPage(AuthorizationError::EmailInvalid, $captchaBase64Image);
-				return;
-			}
+				$error = AuthorizationError::EmailInvalid;
 			
 			if ($this->model->isEmailRegistered($_POST['email']))
-			{
-				$this->view->renderSignUpPage(AuthorizationError::EmailTaken, $captchaBase64Image);
-				return;
-			}
+				$error = AuthorizationError::EmailTaken;
 			
 			if (!$this->isLatinAlphabetAndNumbers($_POST['password']))
-			{
-				$this->view->renderSignUpPage(AuthorizationError::PasswordForbiddenSymbols, $captchaBase64Image);
-				return;
-			}
+				$error = AuthorizationError::PasswordForbiddenSymbols;
 			
 			if (mb_strlen($_POST['password']) < $MIN_LENGTH || mb_strlen($_POST['password']) > $MAX_LENGTH)
+				$error = AuthorizationError::PasswordLengthIncorrect;
+			
+			if ($error !== AuthorizationError::None)
 			{
-				$this->view->renderSignUpPage(AuthorizationError::PasswordLengthIncorrect, $captchaBase64Image);
+				unset($_SESSION['signUpCaptchaCode']);
+				
+				// Generating a token to verify the account
+				//$verificationToken = createToken($_POST['username']);
+				//$this->sendMail($_POST['email'], $verificationToken);
+				
+				$this->model->createUser
+				(
+					$_POST['username'],
+					$_POST['password'],
+					$_POST['email'],
+					$_SERVER['REMOTE_ADDR']
+				);
+				
+				$this->model->updateLastLogInTimestamp($_POST['email']);
+				$userData = $this->model->getUserData(email: $_POST['email']);
+				
+				session_regenerate_id();
+				$this->createUserSession($userData);
+				
+				$this->handleRedirect(buildInternalLink($this->language));
 				return;
 			}
-			
-			unset($_SESSION['oldCaptchaCode']);
-			unset($_SESSION['newCaptchaCode']);
-			
-			// Generating a token to verify the account
-			//$verificationToken = createToken($_POST['username']);
-			//$this->sendMail($_POST['email'], $verificationToken);
-			
-			$this->model->createUser
-			(
-				$_POST['username'],
-				$_POST['password'],
-				$_POST['email'],
-				$_SERVER['REMOTE_ADDR']
-			);
-			
-			$this->model->updateLastLogInTimestamp($_POST['email']);
-			$userData = $this->model->getUserData(email: $_POST['email']);
-			
-			session_regenerate_id();
-			$this->createUserSession($userData);
-			
-			$this->handleRedirect(buildInternalLink($this->language));
-			return;
 		}
 		
-		$this->view->renderSignUpPage(captchaBase64Image: $captchaBase64Image);
+		[$_SESSION['signUpCaptchaCode'], $captchaBase64Image] = $this->model->getRandomCaptcha(6, 3);
+		$this->view->renderSignUpPage($error, $captchaBase64Image);
 	}
 	
 	/*
@@ -619,12 +587,9 @@ class VisitorController extends Controller
 	
 	final public function handleFeedbackPage(): void
 	{
-		$_SESSION['oldCaptchaCode'] = $_SESSION['newCaptchaCode'] ?? null;
-		$_SESSION['newCaptchaCode'] = $this->model->generateWeakCaptchaString(length: 4);
-		$captchaBase64Image         = $this->model->generateBase64Captcha($_SESSION['newCaptchaCode']);
-		
 		if (empty($_POST))
 		{
+			[$_SESSION['feedbackCaptchaCode'], $captchaBase64Image] = $this->model->getRandomCaptcha(4, 0);
 			$feedbacks = $this->model->getFeedbackList();
 			
 			$this->view->renderFeedbackPage($feedbacks, $captchaBase64Image);
@@ -642,7 +607,7 @@ class VisitorController extends Controller
 			return;
 		}
 		
-		if (mb_strtolower($_SESSION['oldCaptchaCode']) !== mb_strtolower($captcha))
+		if (mb_strtolower($_SESSION['feedbackCaptchaCode']) !== mb_strtolower($captcha))
 		{
 			$this->handleBadRequest();
 			return;
