@@ -969,14 +969,14 @@ class UserController extends ViolatorController
 		$gameIds             = $_POST['game-ids']            ?? [];
 		$userUpdatedId       = $_SESSION['user']['id'];
 		
-		$originalName        = $this->trimNullableString($originalName);
-		$transliteratedName  = $this->trimNullableString($transliteratedName);
-		$localizedName       = $this->trimNullableString($localizedName);
-		$cover               = $this->getNullableFile($cover);
-		$vgmdbId             = $this->parseNullableVgmdbId($vgmdbLink, 'album');
-		$songCount           = $this->parseNullableInteger($songCount, 1);
-		$gameIds             = $this->parseNullableIntegerArray($gameIds, 1);
-		$gameIds             = $this->removeNullValues($gameIds);
+		$originalName        = trimNullableString($originalName);
+		$transliteratedName  = trimNullableString($transliteratedName);
+		$localizedName       = trimNullableString($localizedName);
+		$cover               = getNullableFile($cover);
+		$vgmdbId             = parseNullableVgmdbId($vgmdbLink, 'album');
+		$songCount           = parseNullableInteger($songCount, 1);
+		$gameIds             = parseNullableIntegerArray($gameIds, 1);
+		$gameIds             = removeNullValues($gameIds);
 		
 		if (!$album)
 		{
