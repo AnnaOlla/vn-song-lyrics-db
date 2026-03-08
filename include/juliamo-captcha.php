@@ -4,8 +4,8 @@ final class JuliamoCaptcha
 {
 	private static function generateCharacters(int $length, int $strength): array
 	{
-		$strongCharacters = mb_str_split('bfgwBFGW');
-		$weakCharacters   = mb_str_split('acdehijklmnopqrstuvxyzACDEHIJKLMNOPQRSTUVXYZ');
+		$strongCharacters = mb_str_split('bfgrvwzBFGRVWZ');
+		$weakCharacters   = mb_str_split('acdehijklmnopqstuxyACDEHIJKLMNOPQSTUXY');
 		
 		$randomCharacters = [];
 		
