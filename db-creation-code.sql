@@ -142,10 +142,10 @@ CREATE TABLE characters
 CREATE TABLE songs
 (
 	id                  INT UNSIGNED      AUTO_INCREMENT PRIMARY KEY,
-    original_name       VARCHAR(96)       NOT NULL,
-	transliterated_name VARCHAR(96)       NOT NULL,
-	localized_name      VARCHAR(96),
-	uri                 VARCHAR(96)       NOT NULL,
+    original_name       VARCHAR(128)      NOT NULL,
+	transliterated_name VARCHAR(128)      NOT NULL,
+	localized_name      VARCHAR(128),
+	uri                 VARCHAR(128)      NOT NULL,
 	
     album_id            INT UNSIGNED,
     disc_number         TINYINT UNSIGNED  NOT NULL,
