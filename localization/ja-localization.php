@@ -223,7 +223,7 @@ namespace Localization\LyricsPage
 	const TranslationNotes            = 'コメント';
 	const TranslationNoNotes          = 'コメントはありません。';
 	
-	const OriginalSong                = '原作の歌';
+	const OriginalSong                = '原作の歌：';
 	const Album                       = 'アルバム：';
 	const ShowLyricsOnly              = '歌：';
 	const TranslationList             = '翻訳：';
