@@ -145,10 +145,10 @@ class VisitorController extends Controller
 			if (mb_strtolower($_POST['captcha-code']) !== mb_strtolower($_SESSION['signUpCaptchaCode']))
 				$error = AuthenticationError::CaptchaInvalid;
 			
-			if ($this->trimNullableString($_POST['username']) !== $_POST['username'])
+			if (trimNullableString($_POST['username']) !== $_POST['username'])
 				$error = AuthenticationError::UsernameTrimmable;
 			
-			if (!$this->isLatinAlphabetAndNumbers($_POST['username']))
+			if (!isLatinAlphabetAndNumbers($_POST['username']))
 				$error = AuthenticationError::UsernameForbiddenSymbols;
 			
 			if (mb_strlen($_POST['username']) < $MIN_LENGTH || mb_strlen($_POST['username']) > $MAX_LENGTH)
@@ -157,13 +157,13 @@ class VisitorController extends Controller
 			if ($this->model->isUserRegistered($_POST['username']))
 				$error = AuthenticationError::UsernameTaken;
 			
-			if (!$this->isEmailValid($_POST['email']))
+			if (!isEmailValid($_POST['email']))
 				$error = AuthenticationError::EmailInvalid;
 			
 			if ($this->model->isEmailRegistered($_POST['email']))
 				$error = AuthenticationError::EmailTaken;
 			
-			if (!$this->isLatinAlphabetAndNumbers($_POST['password']))
+			if (!isLatinAlphabetAndNumbers($_POST['password']))
 				$error = AuthenticationError::PasswordForbiddenSymbols;
 			
 			if (mb_strlen($_POST['password']) < $MIN_LENGTH || mb_strlen($_POST['password']) > $MAX_LENGTH)
