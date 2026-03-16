@@ -35,14 +35,14 @@ function detectUserLanguages(): array|null
 	{
 		$parts = explode(';', $preference);
 		
-		if (count($parts) !== 2)
-			continue;
-		
-		// en-GB,en => en
+		// If there is no country code then, it stays as it is ('en' => 'en')
+		// Else it is trimmed 'en-GB' => 'en'
 		$language = mb_substr($parts[0], 0, 2);
 		
-		// q=0.9 => 0.9 as float
-		$weight = (float)mb_substr($parts[1], 2);
+		if (count($parts) >= 2)
+			$weight = (float)mb_substr($parts[1], 2);
+		else
+			$weight = 1.0;
 		
 		$languages[$language] = $weight;
 	}
