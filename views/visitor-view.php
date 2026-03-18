@@ -1958,13 +1958,13 @@ class VisitorView extends View
 								<th>ｖ－</th>
 								<td><ruby>ゔぁ<rt>va</rt></ruby></td>
 								<td><ruby>ゔぃ<rt>vi</rt></ruby></td>
-								<td><ruby>ゔぅ<rt>vu</rt></ruby></td>
+								<td><ruby>ゔ<rt>vu</rt></ruby></td>
 								<td><ruby>ゔぇ<rt>ve</rt></ruby></td>
 								<td><ruby>ゔぉ<rt>vo</rt></ruby></td>
 								<td><ruby>ゔゃ<rt>vya</rt></ruby></td>
 								<td><ruby>ゔゅ<rt>vyu</rt></ruby></td>
 								<td><ruby>ゔょ<rt>vyo</rt></ruby></td>
-								<td><ruby>ゔ<rt>v</rt></ruby></td>
+								<td><ruby><rt></rt></ruby></td>
 							</tr>
 						</tbody>
 					</table>
