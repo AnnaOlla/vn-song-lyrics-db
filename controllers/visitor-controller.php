@@ -19,48 +19,10 @@ class VisitorController extends Controller
 	//      Log-In Pages      //
 	//------------------------//
 	
-	/*
-	final protected function sendMail(string $email, string $token): void
-	{
-		switch ($this->language)
-		{
-			case 'en':
-				$subject  = 'Verifying account: vn-song-lyrics-db';
-				$message1 = 'Follow the link to activate account: ';
-				$message2 = '. After this, you may log in.';
-				break;
-			
-			case 'ru':
-				$subject  = 'Подтверждение аккаунта: vn-song-lyrics-db';
-				$message1 = 'Перейдите по ссылке, чтобы активировать аккаунт: ';
-				$message2 = '. После этого, вы сможете войти в аккаунт.';
-				break;
-			
-			case 'ja':
-				$subject  = 'アカウント確認: vn-song-lyrics-db';
-				$message1 = 'アカウントを有効するために、リンクに従ってください：';
-				$message2 = '。このあと、ログインできます。';
-				break;
-			
-			default:
-				throw new Exception(__METHOD__.': language not known: '.$this->language);
-		}
-		
-		$link = 'https://vn-song-lyrics-db.ru/'.$this->language.'/activation?id='.$token;
-		
-		$body = $message1.'<a href="'.$link.'" target="_blank">'.$link.'</a>'.$message2;
-		
-		// 'mail()' don't work on the server
-		// PHPMailer won't do because I need to be a company to use the server SMTP
-		// Other foreign free SMTP providers don't register me
-		// 
-		// If you find a solution, it would be great
-		// At the moment, we trick the user: they don't know that we don't verify email
-	}
-	*/
-	
 	final protected function createUserSession(array $userData): void
 	{
+		session_regenerate_id();
+		
 		$_SESSION['user'] = 
 		[
 			'id'         => $userData['user_id'],
@@ -78,161 +40,134 @@ class VisitorController extends Controller
 	
 	public function handleLogInPage(): void
 	{
-		if (isset($_SESSION['user']['id']))
-		{
-			$this->handleRedirect(buildInternalLink($this->language));
-			return;
-		}
-		
 		if (!isset($_SESSION['lastPageBeforeLogIn']))
 			$_SESSION['lastPageBeforeLogIn'] = $_SERVER['HTTP_REFERER'] ?? buildInternalLink($this->language);
 		
-		$error = AuthenticationError::None;
-		
-		if (isset($_POST['email']) && isset($_POST['password']))
+		if (empty($_POST))
+			$this->handleLogInPageGet();
+		else
+			$this->handleLogInPagePost();
+	}
+	
+	private function handleLogInPageGet(AuthenticationError $error = AuthenticationError::None): void
+	{
+		$this->view->renderLogInPage($error);
+	}
+	
+	private function handleLogInPagePost(AuthenticationError $error = AuthenticationError::None): void
+	{
+		if (!isset($_POST['email']) || !isset($_POST['password']))
 		{
-			if ($_POST['email'] === '')
-				$error = AuthenticationError::EmptyEmail;
-			
-			if ($_POST['password'] === '')
-				$error = AuthenticationError::EmptyPassword;
-			
-			if (!$this->model->isEmailRegistered($_POST['email']))
-				$error = AuthenticationError::EmailNotFound;
-			
-			if (!$this->model->isPasswordCorrect($_POST['email'], $_POST['password']))
-				$error = AuthenticationError::IncorrectPassword;
-			
-			if (!$this->model->isAccountVerified($_POST['email']))
-				$error = AuthenticationError::AccountNotVerified;
-			
-			if ($error === AuthenticationError::None)
-			{
-				$this->model->updateLastLogInTimestamp($_POST['email']);
-				$userData = $this->model->getUserData(email: $_POST['email']);
-				
-				session_regenerate_id();
-				$this->createUserSession($userData);
-				
-				$this->handleRedirect($_SESSION['lastPageBeforeLogIn']);
-				unset($_SESSION['lastPageBeforeLogIn']);
-				return;
-			}
+			$this->handleBadRequest();
+			return;
 		}
 		
-		$this->view->renderLogInPage($error);
+		if ($_POST['email'] === '')
+			$error = AuthenticationError::EmptyEmail;
+		
+		if ($_POST['password'] === '')
+			$error = AuthenticationError::EmptyPassword;
+		
+		if (!$this->model->isEmailRegistered($_POST['email']))
+			$error = AuthenticationError::EmailNotFound;
+		
+		if (!$this->model->isPasswordCorrect($_POST['email'], $_POST['password']))
+			$error = AuthenticationError::IncorrectPassword;
+		
+		if (!$this->model->isAccountVerified($_POST['email']))
+			$error = AuthenticationError::AccountNotVerified;
+		
+		if ($error !== AuthenticationError::None)
+		{
+			$this->handleLogInPageGet($error);
+			return;
+		}
+		
+		$this->model->updateLastLogInTimestamp($_POST['email']);
+		$userData = $this->model->getUserData(email: $_POST['email']);
+		
+		$this->createUserSession($userData);
+		$this->handleRedirect($_SESSION['lastPageBeforeLogIn']);
+		
+		unset($_SESSION['lastPageBeforeLogIn']);
 	}
 	
 	public function handleSignUpPage(): void
 	{
-		if (isset($_SESSION['user']['id']))
-		{
-			$this->handleRedirect(buildInternalLink($this->language));
-			return;
-		}
+		if (empty($_POST))
+			$this->handleSignUpPageGet();
+		else
+			$this->handleSignUpPagePost();
+	}
+	
+	private function handleSignUpPageGet(AuthenticationError $error = AuthenticationError::None): void
+	{
+		$captchaData = $this->model->getRandomCaptcha(6, 3);
 		
-		$error = AuthenticationError::None;
+		$_SESSION['signUpCaptchaCode'] = $captchaData[0];
+		$captchaBase64Image            = $captchaData[1];
 		
-		if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email']) && isset($_POST['captcha-code']))
-		{
-			// I forgot that constants can not be declared here :(
-			$MIN_LENGTH = 4;
-			$MAX_LENGTH = 32;
-			
-			if (!isset($_SESSION['signUpCaptchaCode']))
-				$error = AuthenticationError::CaptchaInvalid;
-			
-			if (mb_strtolower($_POST['captcha-code']) !== mb_strtolower($_SESSION['signUpCaptchaCode']))
-				$error = AuthenticationError::CaptchaInvalid;
-			
-			if (trimNullableString($_POST['username']) !== $_POST['username'])
-				$error = AuthenticationError::UsernameTrimmable;
-			
-			if (!isLatinAlphabetAndNumbers($_POST['username']))
-				$error = AuthenticationError::UsernameForbiddenSymbols;
-			
-			if (mb_strlen($_POST['username']) < $MIN_LENGTH || mb_strlen($_POST['username']) > $MAX_LENGTH)
-				$error = AuthenticationError::UsernameLengthIncorrect;
-			
-			if ($this->model->isUserRegistered($_POST['username']))
-				$error = AuthenticationError::UsernameTaken;
-			
-			if (!isEmailValid($_POST['email']))
-				$error = AuthenticationError::EmailInvalid;
-			
-			if ($this->model->isEmailRegistered($_POST['email']))
-				$error = AuthenticationError::EmailTaken;
-			
-			if (!isLatinAlphabetAndNumbers($_POST['password']))
-				$error = AuthenticationError::PasswordForbiddenSymbols;
-			
-			if (mb_strlen($_POST['password']) < $MIN_LENGTH || mb_strlen($_POST['password']) > $MAX_LENGTH)
-				$error = AuthenticationError::PasswordLengthIncorrect;
-			
-			if ($error === AuthenticationError::None)
-			{
-				unset($_SESSION['signUpCaptchaCode']);
-				
-				// Generating a token to verify the account
-				//$verificationToken = createToken($_POST['username']);
-				//$this->sendMail($_POST['email'], $verificationToken);
-				
-				$this->model->createUser
-				(
-					$_POST['username'],
-					$_POST['password'],
-					$_POST['email'],
-					$_SERVER['REMOTE_ADDR']
-				);
-				
-				$this->model->updateLastLogInTimestamp($_POST['email']);
-				$userData = $this->model->getUserData(email: $_POST['email']);
-				
-				session_regenerate_id();
-				$this->createUserSession($userData);
-				
-				$this->handleRedirect(buildInternalLink($this->language));
-				return;
-			}
-		}
-		
-		[$_SESSION['signUpCaptchaCode'], $captchaBase64Image] = $this->model->getRandomCaptcha(6, 3);
 		$this->view->renderSignUpPage($error, $captchaBase64Image);
 	}
 	
-	/*
-	final public function handleVerificationRequiredPage(): void
+	private function handleSignUpPagePost(AuthenticationError $error = AuthenticationError::None): void
 	{
-		if (isset($_SESSION['user']['id']))
+		if (!isset($_POST['username']) || !isset($_POST['password']) || !isset($_POST['email']) || !isset($_POST['captcha-code']))
 		{
-			$this->handleRedirect(buildInternalLink($this->language));
+			$this->handleBadRequest();
 			return;
 		}
 		
-		$this->view->renderVerificationRequiredPage();
+		$MIN_LENGTH = 4;
+		$MAX_LENGTH = 32;
+		
+		if (mb_strtolower($_POST['captcha-code']) !== mb_strtolower($_SESSION['signUpCaptchaCode']))
+			$error = AuthenticationError::CaptchaInvalid;
+		
+		if (trimNullableString($_POST['username']) !== $_POST['username'])
+			$error = AuthenticationError::UsernameTrimmable;
+		
+		if (!isLatinAlphabetAndNumbers($_POST['username']))
+			$error = AuthenticationError::UsernameForbiddenSymbols;
+		
+		if (mb_strlen($_POST['username']) < $MIN_LENGTH || mb_strlen($_POST['username']) > $MAX_LENGTH)
+			$error = AuthenticationError::UsernameLengthIncorrect;
+		
+		if ($this->model->isUserRegistered($_POST['username']))
+			$error = AuthenticationError::UsernameTaken;
+		
+		if (!isEmailValid($_POST['email']))
+			$error = AuthenticationError::EmailInvalid;
+		
+		if ($this->model->isEmailRegistered($_POST['email']))
+			$error = AuthenticationError::EmailTaken;
+		
+		if (!isLatinAlphabetAndNumbers($_POST['password']))
+			$error = AuthenticationError::PasswordForbiddenSymbols;
+		
+		if (mb_strlen($_POST['password']) < $MIN_LENGTH || mb_strlen($_POST['password']) > $MAX_LENGTH)
+			$error = AuthenticationError::PasswordLengthIncorrect;
+		
+		if ($error !== AuthenticationError::None)
+		{
+			$this->handleSignUpPageGet($error);
+			return;
+		}
+		
+		unset($_SESSION['signUpCaptchaCode']);
+		
+		$this->model->createUser
+		(
+			$_POST['username'],
+			$_POST['password'],
+			$_POST['email'],
+			$_SERVER['REMOTE_ADDR']
+		);
+		
+		$userData = $this->model->getUserData(email: $_POST['email']);
+		$this->createUserSession($userData);
+		$this->handleRedirect(buildInternalLink($this->language));
 	}
-	
-	final public function handleAccountActivationPage(): void
-	{
-		$token = $_GET['id'] ?? null;
-		
-		if (!$token)
-		{
-			$this->handleNotFound();
-			return;
-		}
-		
-		$success = $this->model->verifyUser($token);
-		
-		if (!$success)
-		{
-			$this->handleNotFound();
-			return;
-		}
-		
-		$this->handleRedirect(buildInternalLink($this->language, 'log-in'));
-	}
-	*/
 	
 	public function handleLogOutPage(): void
 	{
@@ -245,7 +180,7 @@ class VisitorController extends Controller
 	
 	final public function handleRedirect(string $location): void
 	{
-		http_response_code(301);
+		http_response_code(303);
 		header('Location: '.$location);
 	}
 	
@@ -588,14 +523,25 @@ class VisitorController extends Controller
 	final public function handleFeedbackPage(): void
 	{
 		if (empty($_POST))
-		{
-			[$_SESSION['feedbackCaptchaCode'], $captchaBase64Image] = $this->model->getRandomCaptcha(4, 0);
-			$feedbacks = $this->model->getFeedbackList();
-			
-			$this->view->renderFeedbackPage($feedbacks, $captchaBase64Image);
-			return;
-		}
+			$this->handleFeedbackPageGet();
+		else
+			$this->handleFeedbackPagePost();
+	}
+	
+	private function handleFeedbackPageGet(): void
+	{
+		$captchaData = $this->model->getRandomCaptcha(4, 0);
 		
+		$_SESSION['feedbackCaptchaCode'] = $captchaData[0];
+		$captchaBase64Image              = $captchaData[1];
+		
+		$feedbacks = $this->model->getFeedbackList();
+		
+		$this->view->renderFeedbackPage($feedbacks, $captchaBase64Image);
+	}
+	
+	private function handleFeedbackPagePost(): void
+	{
 		$senderId = $_SESSION['user']['id']  ?? null;
 		$senderIp = $_SERVER['REMOTE_ADDR'];
 		$message  = $_POST['message']        ?? null;
@@ -609,13 +555,11 @@ class VisitorController extends Controller
 		
 		if (mb_strtolower($_SESSION['feedbackCaptchaCode']) !== mb_strtolower($captcha))
 		{
-			$this->handleBadRequest();
+			$this->handleFeedbackPageGet();
 			return;
 		}
 		
-		$id = $this->model->addFeedback($senderId, $senderIp, $message);
-		
-		// Must redirect in order to avoid duplicating the message
+		$this->model->addFeedback($senderId, $senderIp, $message);
 		$this->handleRedirect(buildInternalLink($this->language, 'feedback'));
 	}
 	
@@ -646,7 +590,6 @@ class VisitorController extends Controller
 			$userAgent
 		);
 		
-		// language has been included on the report page
 		$this->handleRedirect($entityUri);
 	}
 	
