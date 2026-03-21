@@ -44,7 +44,11 @@ class UserView extends ViolatorView
 			$cancelLink = buildInternalLink($this->language, 'game-list');
 		}
 		
-		$html = $this->startRender($heading, ['/css/editor-page.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/editor-page.css']
+		);
 		
 		$html .= 
 		'
@@ -365,7 +369,11 @@ class UserView extends ViolatorView
 			$cancelLink = buildInternalLink($this->language, 'album-list');
 		}
 		
-		$html = $this->startRender($heading, ['/css/editor-page.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/editor-page.css']
+		);
 		
 		$html .= 
 		'
@@ -608,7 +616,11 @@ class UserView extends ViolatorView
 			$cancelLink = buildInternalLink($this->language, 'artist-list');
 		}
 		
-		$html = $this->startRender($heading, ['/css/editor-page.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/editor-page.css']
+		);
 		
 		$html .= 
 		'
@@ -784,7 +796,11 @@ class UserView extends ViolatorView
 			$vndbLink           = '';
 		}
 		
-		$html = $this->startRender($heading, ['/css/editor-page.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/editor-page.css']
+		);
 		
 		$html .= 
 		'
@@ -1052,7 +1068,11 @@ class UserView extends ViolatorView
 		else
 			$submitButtonValue = \Localization\SongEditorPage\SubmitChanges;
 		
-		$html = $this->startRender($heading, ['/css/editor-page.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/editor-page.css']
+		);
 		
 		$html .= 
 		'
@@ -1152,7 +1172,11 @@ class UserView extends ViolatorView
 		string     $heading
 	): void
 	{
-		$html = $this->startRender($heading, ['/css/editor-page.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/editor-page.css']
+		);
 		
 		$html .= 
 		'
@@ -1466,7 +1490,11 @@ class UserView extends ViolatorView
 			$cancelLink = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		}
 		
-		$html = $this->startRender($heading, ['/css/editor-page.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/editor-page.css']
+		);
 		
 		$html .= 
 		'
@@ -1816,7 +1844,11 @@ class UserView extends ViolatorView
 	
 	final public function renderDeletePage(string $heading, string $cancelLink)
 	{
-		$html = $this->startRender($heading, ['/css/window-in-center.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/window-in-center.css']
+		);
 		
 		$html .= 
 		'
@@ -2022,7 +2054,11 @@ class UserView extends ViolatorView
 				break;
 		}
 		
-		$html = $this->startRender($heading, ['/css/window-in-center.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/window-in-center.css']
+		);
 		
 		$html .= 
 		'

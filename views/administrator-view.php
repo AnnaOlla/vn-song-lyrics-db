@@ -52,7 +52,11 @@ class AdministratorView extends UserView
 		
 		$cancelLink = buildInternalLink($this->language, 'control-panel');
 		
-		$html = $this->startRender($heading, ['/css/editor-page.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/editor-page.css']
+		);
 		
 		$html .= 
 		'
@@ -110,7 +114,10 @@ class AdministratorView extends UserView
 		$heading = 'Report List';
 		$cancelLink = buildInternalLink($this->language, 'control-panel');
 		
-		$html = $this->startRender($heading);
+		$html = $this->startRender
+		(
+			title:        $heading
+		);
 		
 		$html .= 
 		'
@@ -174,7 +181,10 @@ class AdministratorView extends UserView
 		$heading = 'User List';
 		$cancelLink = buildInternalLink($this->language, 'control-panel');
 		
-		$html = $this->startRender($heading);
+		$html = $this->startRender
+		(
+			title:        $heading
+		);
 		
 		$html .= 
 		'
@@ -249,7 +259,11 @@ class AdministratorView extends UserView
 			null
 		);
 		
-		$html = $this->startRender($heading, ['/css/editor-page.css', '/css/fill-album-page.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/editor-page.css', '/css/fill-album-page.css']
+		);
 		
 		// My site supports 3 names: original, transliteration, localization
 		$LOCALIZATION_MIN_COUNT = 3;

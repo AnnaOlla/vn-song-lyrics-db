@@ -17,97 +17,77 @@ abstract class View
 		$this->jsVersion  = '1.0';
 	}
 	
+	private function changeLinkLocale(string $url, string $oldCode, string $newCode): string
+	{
+		return preg_replace('/\/'.$oldCode.'/u', '/'.$newCode, $url, 1);
+	}
+	
 	//----------------------------//
 	//      Page Base Blocks      //
 	//----------------------------//
 	
 	private function createHead
 	(
-		string $title,
-		array  $cssSheets = [],
-		array  $jsScripts = []
+		string      $title,
+		string|null $description  = null,
+		string|null $canonicalUri = null,
+		string|null $ogImageUri   = null,
+		array       $cssSheetUris = [],
+		array       $jsScriptUris = []
 	): string
     {
-        $title = htmlspecialchars($title);
-		$description = 'The database of lyrics for songs introduced in visual novels.';
+		$title          = htmlspecialchars($title).' | vn-song-lyrics-db';
+		$description    = $description ?? 'The database of lyrics for songs introduced in visual novels.';
 		
-		$ogUrl      = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-		$ogImageUrl = 'https://'.$_SERVER['HTTP_HOST'].'/assets/static-images/wee-hagana-og.webp';
+		$currentUrl     = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		$canonicalUrl   = 'https://'.$_SERVER['HTTP_HOST'].($canonicalUri ?? $_SERVER['REQUEST_URI']);
 		
-		$canonicalRef = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		$ogUrl          = $currentUrl;
+		$ogImageUrl     = 'https://'.$_SERVER['HTTP_HOST'].($ogImageUri ?? '/assets/static-images/wee-hagana-og.webp');
 		
-		if ($this->language === 'ru')
-		{
-			$ogLocaleAlt1 = 'ru_RU';
-			$ogLocaleAlt2 = 'en_US';
-			$ogLocaleAlt3 = 'ja_JP';
-			
-			$altRouteOne  = 'https://'.$_SERVER['HTTP_HOST'].preg_replace('/\/ru/u', '/en', $_SERVER['REQUEST_URI'], 1);
-			$altRouteTwo  = 'https://'.$_SERVER['HTTP_HOST'].preg_replace('/\/ru/u', '/ja', $_SERVER['REQUEST_URI'], 1);
-			
-			$altLangOne   = 'en';
-			$altLangTwo   = 'ja';
-		}
-		else if ($this->language === 'ja')
-		{
-			$ogLocaleAlt1 = 'ja_JP';
-			$ogLocaleAlt2 = 'ru_RU';
-			$ogLocaleAlt3 = 'en_US';
-			
-			$altRouteOne  = 'https://'.$_SERVER['HTTP_HOST'].preg_replace('/\/ja/u', '/en', $_SERVER['REQUEST_URI'], 1);
-			$altRouteTwo  = 'https://'.$_SERVER['HTTP_HOST'].preg_replace('/\/ja/u', '/ru', $_SERVER['REQUEST_URI'], 1);
-			
-			$altLangOne   = 'en';
-			$altLangTwo   = 'ru';
-		}
-		else
-		{
-			$ogLocaleAlt1 = 'en_US';
-			$ogLocaleAlt2 = 'ru_RU';
-			$ogLocaleAlt3 = 'ja_JP';
-			
-			$altRouteOne  = 'https://'.$_SERVER['HTTP_HOST'].preg_replace('/\/en/u', '/ru', $_SERVER['REQUEST_URI'], 1);
-			$altRouteTwo  = 'https://'.$_SERVER['HTTP_HOST'].preg_replace('/\/en/u', '/ja', $_SERVER['REQUEST_URI'], 1);
-			
-			$altLangOne   = 'ru';
-			$altLangTwo   = 'ja';
-		}
+		$alternateRefEn = $this->changeLinkLocale($currentUrl, $this->language, 'en');
+		$alternateRefRu = $this->changeLinkLocale($currentUrl, $this->language, 'ru');
+		$alternateRefJa = $this->changeLinkLocale($currentUrl, $this->language, 'ja');
 		
 		$html = <<<HTML
 		<head>
 			<meta charset="UTF-8" />
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
-			<title>{$title} | vn-song-lyrics-db</title>
+			
+			<title>{$title}</title>
 			<meta name="description" content="{$description}" />
 			<meta name="keywords" content="Visual Novels, Music, Soundtrack, Song, OST, Lyrics, Translations" />
 			
-			<meta property="og:title" content="{$title}" />
-			<meta property="og:description" content="{$description}" />
-			<meta property="og:site_name" content="vn-song-lyrics-db" />
-			<meta property="og:type" content="website" />
-			<meta property="og:url" content="{$ogUrl}" />
-			<meta property="og:image" content="{$ogImageUrl}" />
-			<meta property="og:image:width" content="1200" />
-			<meta property="og:image:height" content="630" />
-			<meta property="og:image:alt" content="Hagana from World End Economica" />
-			<meta property="og:locale" content="{$ogLocaleAlt1}" />
-			<meta property="og:locale:alternate" content="{$ogLocaleAlt2}" />
-			<meta property="og:locale:alternate" content="{$ogLocaleAlt3}" />
+			<meta property="og:title"            content="{$title}" />
+			<meta property="og:description"      content="{$description}" />
+			<meta property="og:site_name"        content="vn-song-lyrics-db" />
+			<meta property="og:type"             content="website" />
+			<meta property="og:url"              content="{$ogUrl}" />
+			<meta property="og:image"            content="{$ogImageUrl}" />
+			<meta property="og:image:width"      content="1200" />
+			<meta property="og:image:height"     content="630" />
+			<meta property="og:image:alt"        content="Hagana from World End Economica" />
+			<meta property="og:locale"           content="en_US" />
+			<meta property="og:locale:alternate" content="ru_RU" />
+			<meta property="og:locale:alternate" content="ja_JP" />
 			
-			<meta name="robots" content="noai, noimageai" />
-			<meta name="CCBot"  content="nofollow" />
+			<meta name="robots"          content="noai, noimageai" />
+			<meta name="CCBot"           content="nofollow" />
 			<meta name="tdm-reservation" content="1" />
 			
-			<link rel="canonical" href="{$canonicalRef}" />
-			<link rel="alternate" hreflang="{$altLangOne}" href="{$altRouteOne}" />
-			<link rel="alternate" hreflang="{$altLangTwo}" href="{$altRouteTwo}" />
+			<link rel="canonical"                      href="{$canonicalUrl}" />
 			
-			<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-			<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-			<link rel="shortcut icon" href="/favicon.ico" />
-			<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-			<link rel="manifest" href="/site.webmanifest" />
+			<link rel="alternate" hreflang="en"        href="{$alternateRefEn}" />
+			<link rel="alternate" hreflang="ru"        href="{$alternateRefRu}" />
+			<link rel="alternate" hreflang="ja"        href="{$alternateRefJa}" />
+			<link rel="alternate" hreflang="x-default" href="{$alternateRefEn}" />
+			
+			<link rel="icon"             sizes="96x96"   type="image/png"     href="/favicon-96x96.png"  />
+			<link rel="icon"                             type="image/svg+xml" href="/favicon.svg" />
+			<link rel="shortcut icon"                                         href="/favicon.ico" />
+			<link rel="apple-touch-icon" sizes="180x180"                      href="/apple-touch-icon.png" />
+			<link rel="manifest"                                              href="/site.webmanifest" />
 			
 			<link type="text/css" rel="stylesheet" href="/css/core/font-hanazono-mincho-type-a.css?v={$this->cssVersion}" />
 			<link type="text/css" rel="stylesheet" href="/css/core/sizes.css?v={$this->cssVersion}" />
@@ -116,18 +96,18 @@ abstract class View
 
 		HTML;
 		
-		foreach ($cssSheets as $cssSheet)
+		foreach ($cssSheetUris as $cssSheetUri)
 		{
 			$html .= <<<HTML
-			<link type="text/css" rel="stylesheet" href="{$cssSheet}?v={$this->cssVersion}"/>
+			<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={$this->cssVersion}"/>
 
 		HTML;
 		}
 		
-        foreach ($jsScripts as $jsScript)
+        foreach ($jsScriptUris as $jsScriptUri)
 		{
 			$html .= <<<HTML
-			<script src="{$jsScript}?v={$this->jsVersion}"/></script>
+			<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
 
 		HTML;
 		}
@@ -141,12 +121,9 @@ abstract class View
 	
 	private function createHeader(): string
 	{
-		$currentRoute     = $_SERVER['REQUEST_URI'];
-		$currentLanguage  = '/'.$this->language;
-		
-		$enLink = preg_replace('/'.'\/'.$this->language.'/u', '/en', $currentRoute, 1);
-		$ruLink = preg_replace('/'.'\/'.$this->language.'/u', '/ru', $currentRoute, 1);
-		$jaLink = preg_replace('/'.'\/'.$this->language.'/u', '/ja', $currentRoute, 1);
+		$enLink = $this->changeLinkLocale($_SERVER['REQUEST_URI'], $this->language, 'en');
+		$ruLink = $this->changeLinkLocale($_SERVER['REQUEST_URI'], $this->language, 'ru');
+		$jaLink = $this->changeLinkLocale($_SERVER['REQUEST_URI'], $this->language, 'ja');
 		
 		if (isCurrentUserVisitor())
 		{
@@ -157,9 +134,9 @@ abstract class View
 		}
 		else
 		{
-			$logIn  = '';
-			$signUp = '';
-			$logOut = '<a href="/'.$this->language.'/log-out">'.\Localization\Header\LogOut.'</a>';
+			$logIn    = '';
+			$signUp   = '';
+			$logOut   = '<a href="/'.$this->language.'/log-out">'.\Localization\Header\LogOut.'</a>';
 			$username = '<a href="/'.$this->language.'/user/'.$_SESSION['user']['username'].'">'.$_SESSION['user']['username'].'</a>';
 		}
 		
@@ -196,12 +173,20 @@ abstract class View
 		';
 	}
 	
-	final protected function startRender(string $title, array $cssSheets = [], array $jsScripts = []): string
+	final protected function startRender
+	(
+		string      $title,
+		string|null $description  = null,
+		string|null $canonicalUri = null,
+		string|null $ogImageUri   = null,
+		array       $cssSheetUris = [],
+		array       $jsScriptUris = []
+	): string
 	{
 		return <<<HTML
 <!DOCTYPE html>
 <html lang="{$this->language}">
-{$this->createHead($title, $cssSheets, $jsScripts)}
+{$this->createHead($title, $description, $canonicalUri, $ogImageUri, $cssSheetUris, $jsScriptUris)}
 <body>
 	{$this->createHeader()}
 	<main>
@@ -251,6 +236,7 @@ HTML;
 		}
 		
 		$html .= <<<HTML
+
 		</body>
 		</html>
 		HTML;

@@ -456,7 +456,11 @@ class VisitorView extends View
 	
 	final public function renderHomePage(array $albums, array $lyrics, array $translations): void
 	{
-		$html = $this->startRender(\Localization\HomePage\Heading,  ['/css/home-page.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\HomePage\Heading,
+			cssSheetUris: ['/css/home-page.css']
+		);
 		
 		$html .=
 		'
@@ -609,7 +613,11 @@ class VisitorView extends View
 				break;
 		}
 		
-		$html = $this->startRender(\Localization\LogInPage\Heading, ['/css/window-in-center.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\LogInPage\Heading,
+			cssSheetUris: ['/css/window-in-center.css']
+		);
 		
 		$html .= 
 		'
@@ -695,7 +703,11 @@ class VisitorView extends View
 				break;
 		}
 		
-		$html = $this->startRender(\Localization\SignUpPage\Heading, ['/css/window-in-center.css', '/css/core/captcha.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\SignUpPage\Heading,
+			cssSheetUris: ['/css/window-in-center.css', '/css/core/captcha.css']
+		);
 		
 		$html .= 
 		'
@@ -743,7 +755,11 @@ class VisitorView extends View
 	
 	final public function renderVerificationRequiredPage(): void
 	{
-		$html = $this->startRender(\Localization\SignUpPage\Heading, ['/css/window-in-center.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\SignUpPage\Heading,
+			cssSheetUris: ['/css/window-in-center.css']
+		);
 		
 		$html .= 
 		'
@@ -771,7 +787,11 @@ class VisitorView extends View
 		$href = buildInternalLink($this->language, 'add-game');
 		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
 		
-		$html = $this->startRender(\Localization\GameListPage\Heading, ['/css/entity.css', '/css/searchbar-create-entity.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\GameListPage\Heading,
+			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+		);
 		
 		$html .= 
 		'
@@ -797,7 +817,11 @@ class VisitorView extends View
 		$href = buildInternalLink($this->language, 'add-album');
 		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
 		
-		$html = $this->startRender(\Localization\AlbumListPage\Heading, ['/css/entity.css', '/css/searchbar-create-entity.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\AlbumListPage\Heading,
+			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+		);
 		
 		$html .=
 		'
@@ -823,7 +847,11 @@ class VisitorView extends View
 		$href = buildInternalLink($this->language, 'add-artist');
 		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
 		
-		$html = $this->startRender(\Localization\ArtistListPage\Heading, ['/css/entity.css', '/css/searchbar-create-entity.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\ArtistListPage\Heading,
+			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+		);
 		
 		$html .= 
 		'
@@ -849,7 +877,11 @@ class VisitorView extends View
 		$href = buildInternalLink($this->language, 'add-character');
 		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
 		
-		$html = $this->startRender(\Localization\CharacterListPage\Heading, ['/css/entity.css', '/css/searchbar-create-entity.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\CharacterListPage\Heading,
+			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+		);
 		
 		$html .= 
 		'
@@ -872,7 +904,11 @@ class VisitorView extends View
 	
 	final public function renderSongListPage(array $songs): void
 	{
-		$html = $this->startRender(\Localization\SongListPage\Heading, ['/css/entity.css', '/css/searchbar-create-entity.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\SongListPage\Heading,
+			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+		);
 		
 		$html .= 
 		'
@@ -894,7 +930,11 @@ class VisitorView extends View
 	
 	final public function renderTranslationListPage($translations)
 	{
-		$html = $this->startRender(\Localization\TranslationListPage\Heading, ['/css/entity.css', '/css/searchbar-create-entity.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\TranslationListPage\Heading,
+			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+		);
 		
 		$html .= 
 		'
@@ -916,7 +956,11 @@ class VisitorView extends View
 	
 	final public function renderGamePage(array $game, array $albums, array $characters): void
 	{
-		$html = $this->startRender($game['transliterated_name'], ['/css/entity-page.css', '/css/entity.css']);
+		$html = $this->startRender
+		(
+			title:        $game['transliterated_name'],
+			cssSheetUris: ['/css/entity-page.css', '/css/entity.css']
+		);
 		
 		$html .= 
 		'
@@ -967,7 +1011,11 @@ class VisitorView extends View
 	
 	final public function renderAlbumPage(array $album, array $songs, array $games): void
 	{
-		$html = $this->startRender($album['transliterated_name'], ['/css/entity-page.css', '/css/entity.css', '/css/track-list.css']);
+		$html = $this->startRender
+		(
+			title:        $album['transliterated_name'],
+			cssSheetUris: ['/css/entity-page.css', '/css/entity.css', '/css/track-list.css']
+		);
 		
 		$html .= 
 		'
@@ -1008,7 +1056,11 @@ class VisitorView extends View
 	
 	final public function renderArtistPage(array $artist, array $aliases, array $songs): void
 	{
-		$html = $this->startRender($artist['transliterated_name'], ['/css/entity-page.css', '/css/entity.css']);
+		$html = $this->startRender
+		(
+			title:        $artist['transliterated_name'],
+			cssSheetUris: ['/css/entity-page.css', '/css/entity.css']
+		);
 		
 		$html .= 
 		'
@@ -1059,7 +1111,11 @@ class VisitorView extends View
 	
 	final public function renderCharacterPage(array $character, array $games, array $songs): void
 	{
-		$html = $this->startRender($character['transliterated_name'], ['/css/entity-page.css', '/css/entity.css']);
+		$html = $this->startRender
+		(
+			title:        $character['transliterated_name'],
+			cssSheetUris: ['/css/entity-page.css', '/css/entity.css']
+		);
 		
 		$html .= 
 		'
@@ -1110,13 +1166,12 @@ class VisitorView extends View
 	
 	final public function renderNoLyricsPage(array $album, array $song): void
 	{
-		$headingText = 
-			\Localization\LyricsPage\LyricsHeadingStart.
-			$song['transliterated_name'].
-			\Localization\LyricsPage\LyricsHeadingEnd;
+		$html = $this->startRender
+		(
+			title:        \Localization\LyricsPage\LyricsHeadingStart.$song['transliterated_name'].\Localization\LyricsPage\LyricsHeadingEnd,
+			cssSheetUris: ['/css/no-lyrics-page.css', '/css/entity.css']
+		);
 		
-		$html = $this->startRender($headingText, ['/css/no-lyrics-page.css', '/css/entity.css']);
-			
 		$html .= 
 		'
 		<article>
@@ -1156,10 +1211,7 @@ class VisitorView extends View
 		array      $translations
 	): void
 	{
-		$headingText = 
-			\Localization\LyricsPage\LyricsHeadingStart.
-			$song['transliterated_name'].
-			\Localization\LyricsPage\LyricsHeadingEnd;
+		$headingText = \Localization\LyricsPage\LyricsHeadingStart.$song['transliterated_name'].\Localization\LyricsPage\LyricsHeadingEnd;
 		
 		$heading = $this->createLyricsPageHeading
 		(
@@ -1172,9 +1224,28 @@ class VisitorView extends View
 			$originalSong
 		);
 		
-		$songToShow = $originalSong ?? $song;
+		if ($originalSong)
+		{
+			$songToShow = $originalSong;
+			
+			$parts    = explode('/', $_SERVER['REQUEST_URI']);
+			$parts[3] = $originalSong['album_uri'];
+			$parts[5] = $originalSong['uri'];
+			
+			$canonicalUri = implode('/', $parts);
+		}
+		else
+		{
+			$songToShow   = $song;
+			$canonicalUri = $_SERVER['REQUEST_URI'];
+		}
 		
-		$html = $this->startRender($headingText, ['/css/lyrics-page.css', '/css/entity.css']);
+		$html = $this->startRender
+		(
+			title:        $headingText,
+			canonicalUri: $canonicalUri,
+			cssSheetUris: ['/css/lyrics-page.css', '/css/entity.css']
+		);
 		
 		$html .= 
 		'
@@ -1229,9 +1300,28 @@ class VisitorView extends View
 			$originalSong
 		);
 		
-		$songToShow = $originalSong ?? $song;
+		if ($originalSong)
+		{
+			$songToShow = $originalSong;
+			
+			$parts    = explode('/', $_SERVER['REQUEST_URI']);
+			$parts[3] = $originalSong['album_uri'];
+			$parts[5] = $originalSong['uri'];
+			
+			$canonicalUri = implode('/', $parts);
+		}
+		else
+		{
+			$songToShow   = $song;
+			$canonicalUri = $_SERVER['REQUEST_URI'];
+		}
 		
-		$html = $this->startRender($headingText, ['/css/translation-page.css', '/css/entity.css']);
+		$html = $this->startRender
+		(
+			title:        $headingText,
+			canonicalUri: $canonicalUri,
+			cssSheetUris: ['/css/translation-page.css', '/css/entity.css']
+		);
 		
 		$html .= 
 		'
@@ -1266,7 +1356,11 @@ class VisitorView extends View
 	
 	final public function renderFeedbackPage(array $feedbacks, string $captchaBase64Image): void
 	{
-		$html = $this->startRender(\Localization\FeedbackPage\Heading, ['/css/feedback-page.css', '/css/core/captcha.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\FeedbackPage\Heading,
+			cssSheetUris: ['/css/feedback-page.css', '/css/core/captcha.css']
+		);
 		
 		$html .= 
 		'
@@ -1393,7 +1487,11 @@ class VisitorView extends View
 		$heading = \Localization\ReportPage\Heading.htmlspecialchars($entityName).htmlspecialchars($entityType);
 		$reportLink = buildInternalLink($this->language, 'report');
 		
-		$html = $this->startRender($heading, ['/css/window-in-center.css']);
+		$html = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/window-in-center.css']
+		);
 		
 		$html .= 
 		'
@@ -1444,7 +1542,11 @@ class VisitorView extends View
 		$songs        = $this->createSongList($relatedSongs, 3, 'related-entity');
 		$translations = $this->createTranslationList($relatedTranslations, 3, 'related-entity');
 		
-		$html = $this->startRender($headingText, ['/css/user-page.css', '/css/entity.css']);
+		$html = $this->startRender
+		(
+			title:        $headingText,
+			cssSheetUris: ['/css/user-page.css', '/css/entity.css']
+		);
 		
 		$html .= 
 		'
@@ -1516,7 +1618,10 @@ class VisitorView extends View
 	
 	final public function renderAboutPage(): void
 	{
-		$html = $this->startRender(\Localization\AboutPage\Heading);
+		$html = $this->startRender
+		(
+			title: \Localization\AboutPage\Heading
+		);
 		
 		$html .= 
 		'
@@ -1545,7 +1650,10 @@ class VisitorView extends View
 	
 	final public function renderPolicyPage(): void
 	{
-		$html = $this->startRender(\Localization\PolicyPage\Heading);
+		$html = $this->startRender
+		(
+			title: \Localization\PolicyPage\Heading
+		);
 		
 		$html .= 
 		'
@@ -1593,7 +1701,10 @@ class VisitorView extends View
 	
 	final public function renderRulesPage(): void
 	{
-		$html = $this->startRender(\Localization\RulesPage\Heading);
+		$html = $this->startRender
+		(
+			title: \Localization\RulesPage\Heading
+		);
 		
 		$html .= 
 		'
@@ -1635,7 +1746,11 @@ class VisitorView extends View
 	
 	final public function renderWritingGuidePage(): void
 	{
-		$html = $this->startRender(\Localization\WritingGuidePage\Heading, ['/css/writing-guide.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\WritingGuidePage\Heading,
+			cssSheetUris: ['/css/writing-guide.css']
+		);
 		
 		$html .= 
 		'
@@ -2134,7 +2249,11 @@ class VisitorView extends View
 	
 	final public function renderLyricsExamplePage(): void
 	{
-		$html = $this->startRender(\Localization\LyricsExamplePage\Heading, ['/css/translation-page.css']);
+		$html = $this->startRender
+		(
+			title:        \Localization\LyricsExamplePage\Heading,
+			cssSheetUris: ['/css/translation-page.css']
+		);
 		
 		$html .=
 		'
