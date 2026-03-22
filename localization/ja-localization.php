@@ -1087,6 +1087,12 @@ namespace Localization\ErrorPage
 	const textNotFound1 = 'ページが見つかりませんでした。';
 	const textNotFound2 = 'ページの名前は変わったかもしれません？';
 	
+	const textMethodNotAllowed1 = 'サーバーはリクエストが分かりましたが、方法は許されません。';
+	const textMethodNotAllowed2 = 'support@vn-song-lyrics-db.ruへメールを送ってください。';
+	
+	const textNotAcceptable1 = 'サーバーは求める言語をサポートしていません。';
+	const textNotAcceptable2 = 'パージの上にある言語を選んでください。';
+	
 	const textUnavailableForLegalReasons1 = '念書が来たですから、アクセスは限られている。';
 	const textUnavailableForLegalReasons2 = 'あなたにはアクセスできません。';
 	

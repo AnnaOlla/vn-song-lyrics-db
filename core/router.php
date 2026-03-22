@@ -39,31 +39,52 @@ class Router
 			exit;
 		}
 		
-		/* Parsing the request: it must have the language code */
-		$routes = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+		/* Parsing the request:
+		   - it has the root (/), so there's at least 2 parts
+		   - the first one is always empty
+		   - the second one must be language
+		*/
+		$routes     = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 		$routeCount = count($routes);
 		
 		for ($i = 0; $i < $routeCount; $i++)
 			$routes[$i] = rawurldecode($routes[$i]);
 		
-		if ($routeCount < 2 || !in_array($routes[1], ['en', 'ru', 'ja']))
+		$suitableLanguage = $routes[1];
+		
+		if ($routeCount === 2)
 		{
-			$languages = detectUserLanguages();
-			$suitableLanguage = getSuitableLanguage($languages);
+			if ($suitableLanguage === '')
+			{
+				$languages = detectUserLanguages();
+				$suitableLanguage = getSuitableLanguage($languages);
+				
+				http_response_code(302);
+				header('Location: /'.$suitableLanguage);
+				exit;
+			}
 			
-			http_response_code(301);
-			header('Location: /'.$suitableLanguage);
-			return;
+			if (!in_array($suitableLanguage, ['en', 'ru', 'ja']))
+			{
+				$languages = detectUserLanguages();
+				$suitableLanguage = getSuitableLanguage($languages);
+			}
 		}
 		
 		require_once 'controllers/'.$_SESSION['user']['role'].'-controller.php';
-		$controller = new ($_SESSION['user']['role'].'controller')($routes[1]);
+		$controller = new ($_SESSION['user']['role'].'controller')($suitableLanguage);
 		
 		//-------------------//
 		//      Routing      //
 		//-------------------//
 		
-		if ($routeCount === 2)
+		if (!in_array($routes[1], ['en', 'ru', 'ja']))
+		{
+			$method = 'handleNotAcceptable';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 2)
 		{
 			$method = 'handleHomePage';
 			$parameters = [];
@@ -82,18 +103,6 @@ class Router
 		else if ($routeCount === 3 && $routes[2] === 'sign-up')
 		{
 			$method = 'handleSignUpPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'verificaition-required')
-		{
-			$method = 'handleVerificationRequiredPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'activation')
-		{
-			$method = 'handleAccountActivationPage';
 			$parameters = [];
 		}
 		
@@ -560,16 +569,6 @@ class Router
 			$method = 'handlePaymentRequired';
 			$parameters = [];
 		}
-		
-		// FAST METHOD TO TEST FUNCTIONS DURING DEVELOPMENT
-		// ROUTE MUST BE REMOVED FROM PRODUCTION VERSION
-		/*
-		else if ($routeCount === 2 && $routes[1] === 'test-some-function')
-		{
-			$method = 'handleTestSomeFunction';
-			$parameters = [];
-		}
-		*/
 		
 		//----------------------//
 		//      Error Page      //

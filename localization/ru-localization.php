@@ -1087,6 +1087,12 @@ namespace Localization\ErrorPage
 	const textNotFound1 = 'Запрошенная страница не найдена.';
 	const textNotFound2 = 'Может быть, её переименовали?';
 	
+	const textMethodNotAllowed1 = 'Сервер понял запрос, но выбранный метод не поддерживается.';
+	const textMethodNotAllowed2 = 'Пожалуйста, напишите подробности нам на почту support@vn-song-lyrics-db.ru.';
+	
+	const textNotAcceptable1 = 'Выбранный язык не поддерживается сайтом.';
+	const textNotAcceptable2 = 'Выберите один из языков вверху страницы.';
+	
 	const textUnavailableForLegalReasons1 = 'Доступ к этой странице ограничен по официальному требованию.';
 	const textUnavailableForLegalReasons2 = 'Вы ничего с этим поделать не можете.';
 	
