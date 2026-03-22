@@ -1161,7 +1161,11 @@ HTML;
 	
 	private function renderError(string $codename, string $reason, string $hint): void
 	{
-		echo $this->startRender($codename, ['/css/window-in-center.css']);
+		echo $this->startRender
+		(
+			title:        $codename,
+			cssSheetUris: ['/css/window-in-center.css']
+		);
 		
 		echo
 		'
@@ -1224,6 +1228,26 @@ HTML;
 			'404 Not Found',
 			\Localization\ErrorPage\textNotFound1,
 			\Localization\ErrorPage\textNotFound2
+		);
+	}
+	
+	final public function renderMethodNotAllowed(): void
+	{
+		$this->renderError
+		(
+			'405 Method Not Allowed',
+			\Localization\ErrorPage\textMethodNotAllowed1,
+			\Localization\ErrorPage\textMethodNotAllowed2
+		);
+	}
+	
+	final public function renderNotAcceptable(): void
+	{
+		$this->renderError
+		(
+			'406 Not Acceptable',
+			\Localization\ErrorPage\textNotAcceptable1,
+			\Localization\ErrorPage\textNotAcceptable2
 		);
 	}
 	
