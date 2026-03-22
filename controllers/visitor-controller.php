@@ -43,10 +43,20 @@ class VisitorController extends Controller
 		if (!isset($_SESSION['lastPageBeforeLogIn']))
 			$_SESSION['lastPageBeforeLogIn'] = $_SERVER['HTTP_REFERER'] ?? buildInternalLink($this->language);
 		
-		if (empty($_POST))
-			$this->handleLogInPageGet();
-		else
-			$this->handleLogInPagePost();
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleLogInPageGet();
+				break;
+			
+			case 'POST':
+				$this->handleLogInPagePost();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
 	}
 	
 	private function handleLogInPageGet(AuthenticationError $error = AuthenticationError::None): void
@@ -94,10 +104,20 @@ class VisitorController extends Controller
 	
 	public function handleSignUpPage(): void
 	{
-		if (empty($_POST))
-			$this->handleSignUpPageGet();
-		else
-			$this->handleSignUpPagePost();
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleSignUpPageGet();
+				break;
+			
+			case 'POST':
+				$this->handleSignUpPagePost();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
 	}
 	
 	private function handleSignUpPageGet(AuthenticationError $error = AuthenticationError::None): void
@@ -214,6 +234,18 @@ class VisitorController extends Controller
 		$this->view->renderNotFound();
 	}
 	
+	final public function handleMethodNotAllowed(): void
+	{
+		http_response_code(405);
+		$this->view->renderMethodNotAllowed();
+	}
+	
+	final public function handleNotAcceptable(): void
+	{
+		http_response_code(406);
+		$this->view->renderNotAcceptable();
+	}
+	
 	final public function handleUnavailableForLegalReasons(): void
 	{
 		http_response_code(451);
@@ -232,6 +264,20 @@ class VisitorController extends Controller
 	
 	final public function handleHomePage(): void
 	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleHomePageGet();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleHomePageGet(): void
+	{
 		// 9 items fit in 1920x1080
 		$count = 9;
 		
@@ -244,11 +290,39 @@ class VisitorController extends Controller
 	
 	final public function handleGameListPage(): void
 	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleGameListPageGet();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleGameListPageGet(): void
+	{
 		$gameList = $this->model->getGameList();
 		$this->view->renderGameListPage($gameList);
 	}
 	
 	final public function handleAlbumListPage(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleAlbumListPageGet();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleAlbumListPageGet(): void
 	{
 		$albumList = $this->model->getAlbumList();
 		$this->view->renderAlbumListPage($albumList);
@@ -256,11 +330,39 @@ class VisitorController extends Controller
 	
 	final public function handleArtistListPage(): void
 	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleArtistListPageGet();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleArtistListPageGet(): void
+	{
 		$artistList = $this->model->getArtistList();
 		$this->view->renderArtistListPage($artistList);
 	}
 	
 	final public function handleCharacterListPage(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleCharacterListPageGet();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleCharacterListPageGet(): void
 	{
 		$characterList = $this->model->getCharacterList();
 		$this->view->renderCharacterListPage($characterList);
@@ -268,11 +370,39 @@ class VisitorController extends Controller
 	
 	final public function handleSongListPage(): void
 	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleSongListPageGet();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleSongListPageGet(): void
+	{
 		$songList = $this->model->getSongList(hasVocal: true);
 		$this->view->renderSongListPage($songList);
 	}
 	
 	final public function handleTranslationListPage(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleTranslationListPageGet();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleTranslationListPageGet(): void
 	{
 		$translationList = $this->model->getTranslationList();
 		$this->view->renderTranslationListPage($translationList);
@@ -294,8 +424,22 @@ class VisitorController extends Controller
 			return;
 		}
 		
-		$albumList     = $this->model->getAlbumList    (gameUri: $gameUri);
-		$characterList = $this->model->getCharacterList(gameUri: $gameUri);
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleGamePageGet($game);
+				break;
+			
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleGamePageGet(array $game): void
+	{
+		$albumList     = $this->model->getAlbumList    (gameUri: $game['uri']);
+		$characterList = $this->model->getCharacterList(gameUri: $game['uri']);
 		
 		$this->view->renderGamePage($game, $albumList, $characterList);
 	}
@@ -316,8 +460,22 @@ class VisitorController extends Controller
 			return;
 		}
 		
-		$songList = $this->model->getSongList(albumUri: $albumUri);
-		$gameList = $this->model->getGameList(albumUri: $albumUri);
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleAlbumPageGet($album);
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleAlbumPageGet(array $album): void
+	{
+		$songList = $this->model->getSongList(albumUri: $album['uri']);
+		$gameList = $this->model->getGameList(albumUri: $album['uri']);
 		
 		$this->view->renderAlbumPage($album, $songList, $gameList);
 	}
@@ -338,8 +496,22 @@ class VisitorController extends Controller
 			return;
 		}
 		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleArtistPageGet($artist);
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleArtistPageGet(array $artist): void
+	{
 		$artistAliases = $this->model->getArtistList(aliasesOfId: $artist['id']);
-		$songList      = $this->model->getSongList(artistUri: $artistUri);
+		$songList      = $this->model->getSongList(artistUri: $artist['uri']);
 		
 		$this->view->renderArtistPage($artist, $artistAliases, $songList);
 	}
@@ -360,17 +532,30 @@ class VisitorController extends Controller
 			return;
 		}
 		
-		$gameList = $this->model->getGameList(characterUri: $characterUri);
-		$songList = $this->model->getSongList(characterUri: $characterUri);
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleCharacterPageGet($character);
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleCharacterPageGet(array $character): void
+	{		
+		$gameList = $this->model->getGameList(characterUri: $character['uri']);
+		$songList = $this->model->getSongList(characterUri: $character['uri']);
 		
 		$this->view->renderCharacterPage($character, $gameList, $songList);
 	}
 	
 	final public function handleLyricsPage(string $albumUri, string $songUri): void
 	{
-		$album         = $this->model->getAlbum($albumUri);
-		$song          = $this->model->getSong($albumUri, $songUri);
-		$performerList = $this->model->getPerformerList(albumUri: $albumUri, songUri: $songUri);
+		$album = $this->model->getAlbum($albumUri);
+		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
 		{
@@ -396,6 +581,22 @@ class VisitorController extends Controller
 			return;
 		}
 		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleLyricsPageGet($album, $song);
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleLyricsPageGet(array $album, array $song): void
+	{
+		$performerList = $this->model->getPerformerList(albumUri: $album['uri'], songUri: $song['uri']);
+		
 		if ($song['original_song_id'])
 		{
 			$originalSong    = $this->model->getSong(songId: $song['original_song_id']);
@@ -404,7 +605,7 @@ class VisitorController extends Controller
 		else
 		{
 			$originalSong    = null;
-			$translationList = $this->model->getTranslationList(albumUri: $albumUri, songUri: $songUri);
+			$translationList = $this->model->getTranslationList(albumUri: $album['uri'], songUri: $song['uri']);
 		}
 		
 		if (!$song['lyrics'] && !$originalSong || !$song['lyrics'] && $originalSong && !$originalSong['lyrics'])
@@ -415,8 +616,9 @@ class VisitorController extends Controller
 	
 	final public function handleTranslationPage(string $albumUri, string $songUri, string $translationUri): void
 	{
-		$album = $this->model->getAlbum($albumUri);
-		$song  = $this->model->getSong($albumUri, $songUri);
+		$album         = $this->model->getAlbum($albumUri);
+		$song          = $this->model->getSong($albumUri, $songUri);
+		$performerList = $this->model->getPerformerList(albumUri: $albumUri, songUri: $songUri);
 		
 		if (!$album)
 		{
@@ -452,23 +654,6 @@ class VisitorController extends Controller
 				$translationUri
 			);
 			
-			if (!$translation)
-			{
-				$this->handleNotFound();
-				return;
-			}
-			
-			if ($translation['status'] === 'hidden' && !isCurrentUserModerator())
-			{
-				$this->handleUnavailableForLegalReasons();
-				return;
-			}
-			
-			$performerList   = $this->model->getPerformerList
-			(
-				albumUri: $albumUri,
-				songUri:  $songUri
-			);
 			$translationList = $this->model->getTranslationList
 			(
 				albumUri: $originalSong['album_uri'],
@@ -485,23 +670,6 @@ class VisitorController extends Controller
 				$translationUri
 			);
 			
-			if (!$translation)
-			{
-				$this->handleNotFound();
-				return;
-			}
-			
-			if ($translation['status'] === 'hidden' && !isCurrentUserModerator())
-			{
-				$this->handleUnavailableForLegalReasons();
-				return;
-			}
-			
-			$performerList   = $this->model->getPerformerList
-			(
-				albumUri: $albumUri,
-				songUri:  $songUri
-			);
 			$translationList = $this->model->getTranslationList
 			(
 				albumUri: $albumUri,
@@ -509,6 +677,40 @@ class VisitorController extends Controller
 			);
 		}
 		
+		if (!$translation)
+		{
+			$this->handleNotFound();
+			return;
+		}
+		
+		if ($translation['status'] === 'hidden' && !isCurrentUserModerator())
+		{
+			$this->handleUnavailableForLegalReasons();
+			return;
+		}
+		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleTranslationPageGet($album, $song, $originalSong, $translation, $performerList, $translationList);
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleTranslationPageGet
+	(
+		array      $album,
+		array      $song,
+		array|null $originalSong,
+		array      $translation,
+		array      $performerList,
+		array      $translationList
+	): void
+	{
 		$this->view->renderTranslationPage
 		(
 			$album,
@@ -522,10 +724,20 @@ class VisitorController extends Controller
 	
 	final public function handleFeedbackPage(): void
 	{
-		if (empty($_POST))
-			$this->handleFeedbackPageGet();
-		else
-			$this->handleFeedbackPagePost();
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleFeedbackPageGet();
+				break;
+			
+			case 'POST':
+				$this->handleFeedbackPagePost();
+				break;
+			
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
 	}
 	
 	private function handleFeedbackPageGet(): void
@@ -565,12 +777,20 @@ class VisitorController extends Controller
 	
 	final public function handleReport(): void
 	{
-		if (empty($_POST))
+		switch ($_SERVER['REQUEST_METHOD'])
 		{
-			$this->handleBadRequest();
-			return;
+			case 'POST':
+				$this->handleReportPost();
+				break;
+			
+			default:
+				$this->handleMethodNotAllowed();
+				break;
 		}
-		
+	}
+	
+	private function handleReportPost(): void
+	{
 		$senderId  = $_SESSION['user']['id']     ?? null;
 		$message   = $_POST['report-text']       ?? null;
 		$entityUri = $_POST['entity-uri']        ?? null;
@@ -609,6 +829,20 @@ class VisitorController extends Controller
 			return;
 		}
 		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleReportGamePageGet($game);
+				break;
+			
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	final public function handleReportGamePageGet(array $game): void
+	{
 		$linkBack = buildInternalLink($this->language, 'game', $game['uri']);
 		$this->view->renderReportPage('game', $game['transliterated_name'], $linkBack);
 	}
@@ -629,6 +863,20 @@ class VisitorController extends Controller
 			return;
 		}
 		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleReportAlbumPageGet($album);
+				break;
+			
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleReportAlbumPageGet(array $album): void
+	{
 		$linkBack = buildInternalLink($this->language, 'album', $album['uri']);
 		$this->view->renderReportPage('album', $album['transliterated_name'], $linkBack);
 	}
@@ -649,6 +897,20 @@ class VisitorController extends Controller
 			return;
 		}
 		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleReportArtistPageGet($artist);
+				break;
+			
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleReportArtistPageGet(array $artist): void
+	{
 		$linkBack = buildInternalLink($this->language, 'artist', $artist['uri']);
 		$this->view->renderReportPage('artist', $artist['transliterated_name'], $linkBack);
 	}
@@ -669,6 +931,20 @@ class VisitorController extends Controller
 			return;
 		}
 		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleReportCharacterPageGet($character);
+				break;
+			
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleReportCharacterPageGet(array $character): void
+	{
 		$linkBack = buildInternalLink($this->language, 'character', $character['uri']);
 		$this->view->renderReportPage('character', $character['transliterated_name'], $linkBack);
 	}
@@ -702,6 +978,20 @@ class VisitorController extends Controller
 			return;
 		}
 		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleReportLyricsPageGet($album, $song);
+				break;
+			
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleReportLyricsPageGet(array $album, array $song): void
+	{
 		$linkBack = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		$this->view->renderReportPage('lyrics', $song['transliterated_name'], $linkBack);
 	}
@@ -736,6 +1026,27 @@ class VisitorController extends Controller
 			return;
 		}
 		
+		if ($song['original_song_id'])
+		{
+			$originalSong = $this->model->getSong(songId: $song['original_song_id']);
+			$translation  = $this->model->getTranslation
+			(
+				$originalSong['album_uri'],
+				$originalSong['uri'],
+				$translationUri
+			);
+		}
+		else
+		{
+			$originalSong = null;
+			$translation  = $this->model->getTranslation
+			(
+				$albumUri,
+				$songUri,
+				$translationUri
+			);
+		}
+		
 		if (!$translation)
 		{
 			$this->handleNotFound();
@@ -748,6 +1059,20 @@ class VisitorController extends Controller
 			return;
 		}
 		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleReportTranslationPageGet($album, $song, $translation);
+				break;
+			
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleReportTranslationPageGet(array $album, array $song, array $translation): void
+	{
 		$linkBack = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		$this->view->renderReportPage('translation', $translation['name'], $linkBack);
 	}
@@ -871,12 +1196,26 @@ class VisitorController extends Controller
 			return;
 		}
 		
-		$games        = $this->model->getGameList(userUri: $userUri);
-		$albums       = $this->model->getAlbumList(userUri: $userUri);
-		$artists      = $this->model->getArtistList(userUri: $userUri);
-		$characters   = $this->model->getCharacterList(userUri: $userUri);
-		$songs        = $this->model->getSongList(userUri: $userUri);
-		$translations = $this->model->getTranslationList(userUri: $userUri);
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUserPageGet($user);
+				break;
+			
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
+	}
+	
+	private function handleUserPageGet(array $user): void
+	{
+		$games        = $this->model->getGameList(userUri: $user['uri']);
+		$albums       = $this->model->getAlbumList(userUri: $user['uri']);
+		$artists      = $this->model->getArtistList(userUri: $user['uri']);
+		$characters   = $this->model->getCharacterList(userUri: $user['uri']);
+		$songs        = $this->model->getSongList(userUri: $user['uri']);
+		$translations = $this->model->getTranslationList(userUri: $user['uri']);
 		
 		$this->view->renderUserPage
 		(
@@ -892,26 +1231,71 @@ class VisitorController extends Controller
 	
 	final public function handleAboutPage(): void
 	{
-		$this->view->renderAboutPage();
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->view->renderAboutPage();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
 	}
 	
 	final public function handlePolicyPage(): void
 	{
-		$this->view->renderPolicyPage();
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->view->renderPolicyPage();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
 	}
 	
 	final public function handleRulesPage(): void
 	{
-		$this->view->renderRulesPage();
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->view->renderRulesPage();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
 	}
 	
 	final public function handleWritingGuidePage(): void
 	{
-		$this->view->renderWritingGuidePage();
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->view->renderWritingGuidePage();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
 	}
 	
 	final public function handleLyricsExamplePage(): void
 	{
-		$this->view->renderLyricsExamplePage();
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->view->renderLyricsExamplePage();
+				break;
+				
+			default:
+				$this->handleMethodNotAllowed();
+				break;
+		}
 	}
 }
