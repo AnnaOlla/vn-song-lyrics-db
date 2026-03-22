@@ -52,23 +52,20 @@ class Router
 		
 		$suitableLanguage = $routes[1];
 		
-		if ($routeCount === 2)
+		if ($routeCount === 2 && $suitableLanguage === '')
 		{
-			if ($suitableLanguage === '')
-			{
-				$languages = detectUserLanguages();
-				$suitableLanguage = getSuitableLanguage($languages);
-				
-				http_response_code(302);
-				header('Location: /'.$suitableLanguage);
-				exit;
-			}
+			$languages = detectUserLanguages();
+			$suitableLanguage = getSuitableLanguage($languages);
 			
-			if (!in_array($suitableLanguage, ['en', 'ru', 'ja']))
-			{
-				$languages = detectUserLanguages();
-				$suitableLanguage = getSuitableLanguage($languages);
-			}
+			http_response_code(302);
+			header('Location: /'.$suitableLanguage);
+			exit;
+		}
+		
+		if (!in_array($suitableLanguage, ['en', 'ru', 'ja']))
+		{
+			$languages = detectUserLanguages();
+			$suitableLanguage = getSuitableLanguage($languages);
 		}
 		
 		require_once 'controllers/'.$_SESSION['user']['role'].'-controller.php';

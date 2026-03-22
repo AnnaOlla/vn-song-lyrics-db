@@ -17,9 +17,11 @@ abstract class View
 		$this->jsVersion  = '1.0';
 	}
 	
-	private function changeLinkLocale(string $url, string $oldCode, string $newCode): string
+	private function changeUriLocale(string $uri, string $newCode): string
 	{
-		return preg_replace('/\/'.$oldCode.'/u', '/'.$newCode, $url, 1);
+		$parts = explode('/', $uri, 3);
+		$parts[1] = $newCode;
+		return implode('/', $parts);
 	}
 	
 	//----------------------------//
@@ -41,13 +43,12 @@ abstract class View
 		
 		$currentUrl     = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 		$canonicalUrl   = 'https://'.$_SERVER['HTTP_HOST'].($canonicalUri ?? $_SERVER['REQUEST_URI']);
+		$alternateRefEn = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($_SERVER['REQUEST_URI'], 'en');
+		$alternateRefRu = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($_SERVER['REQUEST_URI'], 'ru');
+		$alternateRefJa = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($_SERVER['REQUEST_URI'], 'ja');
 		
 		$ogUrl          = $currentUrl;
 		$ogImageUrl     = 'https://'.$_SERVER['HTTP_HOST'].($ogImageUri ?? '/assets/static-images/wee-hagana-og.webp');
-		
-		$alternateRefEn = $this->changeLinkLocale($currentUrl, $this->language, 'en');
-		$alternateRefRu = $this->changeLinkLocale($currentUrl, $this->language, 'ru');
-		$alternateRefJa = $this->changeLinkLocale($currentUrl, $this->language, 'ja');
 		
 		$html = <<<HTML
 		<head>
@@ -121,9 +122,9 @@ abstract class View
 	
 	private function createHeader(): string
 	{
-		$enLink = $this->changeLinkLocale($_SERVER['REQUEST_URI'], $this->language, 'en');
-		$ruLink = $this->changeLinkLocale($_SERVER['REQUEST_URI'], $this->language, 'ru');
-		$jaLink = $this->changeLinkLocale($_SERVER['REQUEST_URI'], $this->language, 'ja');
+		$enLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'en');
+		$ruLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'ru');
+		$jaLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'ja');
 		
 		if (isCurrentUserVisitor())
 		{
