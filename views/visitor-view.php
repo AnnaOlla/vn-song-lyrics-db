@@ -1166,9 +1166,11 @@ class VisitorView extends View
 	
 	final public function renderNoLyricsPage(array $album, array $song): void
 	{
+		$headingText = \Localization\LyricsPage\LyricsHeadingStart.$song['transliterated_name'].\Localization\LyricsPage\LyricsHeadingEnd;
+		
 		$html = $this->startRender
 		(
-			title:        \Localization\LyricsPage\LyricsHeadingStart.$song['transliterated_name'].\Localization\LyricsPage\LyricsHeadingEnd,
+			title:        $headingText,     
 			cssSheetUris: ['/css/no-lyrics-page.css', '/css/entity.css']
 		);
 		
