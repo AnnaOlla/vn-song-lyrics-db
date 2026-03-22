@@ -44,30 +44,8 @@ class VisitorModel extends Model
 		$stmt->execute();
 		
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
-		if (!$value)
-			return false;
 		
-		return $value['is_verified'];
-	}
-	
-	final public function verifyUser(string $token): bool
-	{
-		$stmt = $this->pdo->prepare
-		(
-			'
-			UPDATE
-				users
-			SET
-				verification_token = NULL,
-				is_verified = TRUE
-			WHERE
-				verification_token = :token
-			'
-		);
-		$stmt->bindParam(':token', $token, PDO::PARAM_STR);
-		$stmt->execute();
-		
-		return ($stmt->rowCount() !== 0);
+		return $value['is_verified'] ?? false;
 	}
 	
 	final public function getRandomCaptcha(int $length, int $strength): array
@@ -189,10 +167,6 @@ class VisitorModel extends Model
 	
 	final public function addFeedback(int|null $senderId, string $senderIp, string $message): int
 	{
-		// Limit is set to 500 symbols. Or is it better to remove it and use exception on the invalid content?
-		if (mb_strlen($message) > 500)
-			$message = mb_substr($message, 0, 500);
-		
 		$stmt = $this->pdo->prepare
 		(
 			'
