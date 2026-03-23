@@ -35,17 +35,17 @@ class UserController extends ViolatorController
 	
 	private function handleAddGamePageGet(): void
 	{
-		$albums     = $this->model->getAlbumIdList();
-		$characters = $this->model->getCharacterIdList();
+		$albums     = $this->model->getAlbumList(fetchMinInfo: true);
+		$characters = $this->model->getCharacterList(fetchMinInfo: true);
 		
 		$this->view->renderAddGamePage($albums, $characters);
 	}
 	
 	private function handleAddGamePagePost(): void
 	{
-		$allAlbumIds     = $this->model->getAlbumIdList();
+		$allAlbumIds     = $this->model->getAlbumList(fetchMinInfo: true);
 		$allAlbumIds     = array_column($allAlbumIds, 'id');
-		$allCharacterIds = $this->model->getCharacterIdList();
+		$allCharacterIds = $this->model->getCharacterList(fetchMinInfo: true);
 		$allCharacterIds = array_column($allCharacterIds, 'id');
 		
 		$originalName       = $_POST['original-name']       ?? null;
@@ -131,14 +131,14 @@ class UserController extends ViolatorController
 	
 	private function handleAddAlbumPageGet(): void
 	{
-		$games = $this->model->getGameIdList();
+		$games = $this->model->getGameList(fetchMinInfo: true);
 
 		$this->view->renderAddAlbumPage($games);
 	}
 	
 	private function handleAddAlbumPagePost(): void
 	{
-		$allGameIds         = $this->model->getGameIdList();
+		$allGameIds         = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds         = array_column($allGameIds, 'id');
 		
 		$originalName       = $_POST['original-name']       ?? null;
@@ -215,14 +215,14 @@ class UserController extends ViolatorController
 	
 	private function handleAddArtistPageGet(): void
 	{
-		$originalArtists = $this->model->getArtistIdList(mayBeAlias: false);
+		$originalArtists = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
 		
 		$this->view->renderAddArtistPage($originalArtists);
 	}
 	
 	private function handleAddArtistPagePost(): void
 	{
-		$originalArtists    = $this->model->getArtistIdList(mayBeAlias: false);
+		$originalArtists    = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
 		$originalArtists    = array_column($originalArtists, 'id');
 		
 		$originalName       = $_POST['original-name']       ?? null;
@@ -293,14 +293,14 @@ class UserController extends ViolatorController
 	
 	private function handleAddCharacterPageGet(): void
 	{
-		$games = $this->model->getGameIdList();
+		$games = $this->model->getGameList(fetchMinInfo: true);
 		
 		$this->view->renderAddCharacterPage($games);
 	}
 	
 	private function handleAddCharacterPagePost(): void
 	{
-		$allGameIds         = $this->model->getGameIdList();
+		$allGameIds         = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds         = array_column($allGameIds, 'id');
 		
 		$originalName       = $_POST['original-name']       ?? null;
@@ -356,7 +356,7 @@ class UserController extends ViolatorController
 	
 	final public function handleAddSongPage(string $albumUri): void
 	{
-		$album     = $this->model->getAlbumId($albumUri);
+		$album     = $this->model->getAlbum($albumUri);
 		$songCount = $this->model->getSongCurrentCount($albumUri);
 		
 		if (!$album)
@@ -483,7 +483,7 @@ class UserController extends ViolatorController
 	
 	final public function handleAddLyricsPage(string $albumUri, string $songUri): void
 	{
-		$album = $this->model->getAlbumId($albumUri);
+		$album = $this->model->getAlbum($albumUri);
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
@@ -540,10 +540,17 @@ class UserController extends ViolatorController
 	
 	private function handleAddLyricsPageGet(array $album, array $song): void
 	{
-		$artists    = $this->model->getArtistIdList();
-		$characters = $this->model->getCharacterIdList();
-		$languages  = $this->model->getLanguageList();
-		$originals  = $this->model->getSongIdList(isOriginal: true, hasVocal: true, excludeId: $song['id']);
+		$artists    = $this->model->getArtistList(fetchMinInfo: true);
+		$characters = $this->model->getCharacterList(fetchMinInfo: true);
+		$languages  = $this->model->getLanguageList(orderBy: [$this->language.'_name ASC']);
+		$originals    = $this->model->getSongList
+		(
+			fetchMinInfo: true,
+			isOriginal:   true,
+			excludeId:    $song['id'],
+			hasVocal:     true,
+			orderBy:      ['sn.transliterated_name ASC']
+		);
 		
 		$this->view->renderAddLyricsPage
 		(
@@ -558,14 +565,20 @@ class UserController extends ViolatorController
 	
 	private function handleAddLyricsPagePost(array $album, array $song): void
 	{
-		$allArtistIds      = $this->model->getArtistIdList();
+		$allArtistIds      = $this->model->getArtistList(fetchMinInfo: true);
 		$allArtistIds      = array_column($allArtistIds, 'id');
-		$allCharacterIds   = $this->model->getCharacterIdList();
+		$allCharacterIds   = $this->model->getCharacterList(fetchMinInfo: true);
 		$allCharacterIds   = array_column($allCharacterIds, 'id');
 		$allCharacterIds[] = null;
 		$allLanguages      = $this->model->getLanguageList();
 		$allLanguages      = array_column($allLanguages, 'id');
-		$allOriginalIds    = $this->model->getSongIdList(isOriginal: true, hasVocal: true, excludeId: $song['id']);
+		$allOriginalIds    = $this->model->getSongList
+		(
+			fetchMinInfo: true,
+			isOriginal:   true,
+			hasVocal:     true,
+			excludeId:    $song['id']
+		);
 		$allOriginalIds    = array_column($allOriginalIds, 'id');
 		$allOriginalIds[]  = null;
 		
@@ -652,8 +665,8 @@ class UserController extends ViolatorController
 	
 	final public function handleAddTranslationPage(string $albumUri, string $songUri): void
 	{
-		$album = $this->model->getAlbumId($albumUri);
-		$song  = $this->model->getSongId($albumUri, $songUri);
+		$album = $this->model->getAlbum($albumUri);
+		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
 		{
@@ -703,12 +716,13 @@ class UserController extends ViolatorController
 	
 	private function handleAddTranslationPageGet(array $album, array $song): void
 	{
-		$languages          = $this->model->getLanguageList();
-		$translationsByUser = $this->model->getTranslationIdList
+		$languages          = $this->model->getLanguageList(orderBy: $this->language.'_name ASC');
+		$translationsByUser = $this->model->getTranslationList
 		(
-			albumUri:    $albumUri,
-			songUri:     $songUri,
-			userAddedId: $_SESSION['user']['id']
+			fetchMinInfo: true,
+			albumUri:     $albumUri,
+			songUri:      $songUri,
+			userAddedId:  $_SESSION['user']['id']
 		);
 		
 		$this->view->renderAddTranslationPage($album, $song, $languages, $translationsByUser);
@@ -716,12 +730,12 @@ class UserController extends ViolatorController
 	
 	private function handleAddTranslationPagePost(array $album, array $song): void
 	{
-		$languages          = $this->model->getLanguageList();
-		$translationsByUser = $this->model->getTranslationIdList
+		$translationsByUser = $this->model->getTranslationList
 		(
-			albumUri:    $album['uri'],
-			songUri:     $song['uri'],
-			userAddedId: $_SESSION['user']['id']
+			fetchMinInfo: true,
+			albumUri:     $album['uri'],
+			songUri:      $song['uri'],
+			userAddedId:  $_SESSION['user']['id']
 		);
 		
 		$allLanguages         = $this->model->getLanguageList();
@@ -813,10 +827,10 @@ class UserController extends ViolatorController
 	
 	private function handleEditGamePageGet(array $game): void
 	{
-		$relatedAlbumList     = $this->model->getAlbumIdList(gameUri: $game['uri']);
-		$relatedCharacterList = $this->model->getCharacterIdList(gameUri: $game['uri']);
-		$fullAlbumList        = $this->model->getAlbumIdList();
-		$fullCharacterList    = $this->model->getCharacterIdList();
+		$relatedAlbumList     = $this->model->getAlbumList(fetchMinInfo: true, gameUri: $game['uri']);
+		$relatedCharacterList = $this->model->getCharacterList(fetchMinInfo: true, gameUri: $game['uri']);
+		$fullAlbumList        = $this->model->getAlbumList(fetchMinInfo: true);
+		$fullCharacterList    = $this->model->getCharacterList(fetchMinInfo: true);
 		
 		$this->view->renderEditGamePage
 		(
@@ -830,9 +844,9 @@ class UserController extends ViolatorController
 	
 	private function handleEditGamePagePost(array $game): void
 	{
-		$allAlbumIds         = $this->model->getAlbumIdList();
+		$allAlbumIds         = $this->model->getAlbumList(fetchMinInfo: true);
 		$allAlbumIds         = array_column($allAlbumIds, 'id');
-		$allCharacterIds     = $this->model->getCharacterIdList();
+		$allCharacterIds     = $this->model->getCharacterList(fetchMinInfo: true);
 		$allCharacterIds     = array_column($allCharacterIds, 'id');
 		
 		$originalName        = $_POST['original-name']       ?? null;
@@ -943,10 +957,10 @@ class UserController extends ViolatorController
 	
 	private function handleEditAlbumPageGet(array $album): void
 	{
-		$relatedGameList  = $this->model->getGameIdList(albumUri: $album['uri']);
+		$relatedGameList  = $this->model->getGameList(fetchMinInfo: true, albumUri: $album['uri']);
 		$relatedSongList  = []; // now editing songs is done on a separate page
 		$currentSongCount = $this->model->getSongCurrentCount($album['uri']);
-		$fullGameList     = $this->model->getGameIdList();
+		$fullGameList     = $this->model->getGameList(fetchMinInfo: true);
 		
 		$this->view->renderEditAlbumPage
 		(
@@ -960,7 +974,7 @@ class UserController extends ViolatorController
 	
 	private function handleEditAlbumPagePost(array $album): void
 	{
-		$allGameIds          = $this->model->getGameIdList();
+		$allGameIds          = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds          = array_column($allGameIds, 'id');
 		$currentSongCount    = $this->model->getSongCurrentCount($album['uri']);
 		
@@ -1066,14 +1080,14 @@ class UserController extends ViolatorController
 	
 	private function handleEditArtistPageGet(array $artist): void
 	{
-		$originalArtists = $this->model->getArtistIdList(mayBeAlias: false);
+		$originalArtists = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
 		
 		$this->view->renderEditArtistPage($artist, $originalArtists);
 	}
 	
 	private function handleEditArtistPagePost(array $artist): void
 	{
-		$originalArtists     = $this->model->getArtistIdList(mayBeAlias: false);
+		$originalArtists     = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
 		$originalArtists     = array_column($originalArtists, 'id');
 		
 		$originalName        = $_POST['original-name']       ?? null;
@@ -1164,15 +1178,15 @@ class UserController extends ViolatorController
 	
 	private function handleEditCharacterPageGet(array $character): void
 	{
-		$relatedGamesList = $this->model->getGameIdList(characterUri: $character['uri']);
-		$fullGameList     = $this->model->getGameIdList();
+		$relatedGamesList = $this->model->getGameList(fetchMinInfo: true, characterUri: $character['uri']);
+		$fullGameList     = $this->model->getGameList(fetchMinInfo: true);
 		
 		$this->view->renderEditCharacterPage($character, $relatedGamesList, $fullGameList);
 	}
 	
 	private function handleEditCharacterPagePost(array $character): void
 	{
-		$allGameIds          = $this->model->getGameIdList();
+		$allGameIds          = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds          = array_column($allGameIds, 'id');
 		
 		$originalName        = $_POST['original-name']       ?? null;
@@ -1230,7 +1244,7 @@ class UserController extends ViolatorController
 	
 	final public function handleEditSongPage(string $albumUri, string $songUri): void
 	{
-		$album = $this->model->getAlbumId($albumUri);
+		$album = $this->model->getAlbum($albumUri);
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
@@ -1325,9 +1339,14 @@ class UserController extends ViolatorController
 	
 	final public function handleEditLyricsPage(string $albumUri, string $songUri): void
 	{
-		$album        = $this->model->getAlbumId($albumUri);
+		$album        = $this->model->getAlbum($albumUri);
 		$song         = $this->model->getSong($albumUri, $songUri);
-		$translations = $this->model->getTranslationIdList($albumUri, $songUri);
+		$translations = $this->model->getTranslationList
+		(
+			fetchMinInfo: true,
+			albumUri:     $albumUri,
+			songUri:      $songUri
+		);
 		
 		if (!$album)
 		{
@@ -1395,11 +1414,23 @@ class UserController extends ViolatorController
 	
 	private function handleEditLyricsPageGet(array $album, array $song): void
 	{
-		$performers   = $this->model->getPerformerIdList($album['uri'], $song['uri']);
-		$artists      = $this->model->getArtistIdList();
-		$characters   = $this->model->getCharacterIdList();
-		$languages    = $this->model->getLanguageList();
-		$originals    = $this->model->getSongIdList(isOriginal: true, excludeId: $song['id'], hasVocal: true);
+		$performers   = $this->model->getPerformerList
+		(
+			fetchMinInfo: true,
+			albumUri:     $album['uri'],
+			songUri:      $song['uri']
+		);
+		$artists      = $this->model->getArtistList(fetchMinInfo: true);
+		$characters   = $this->model->getCharacterList(fetchMinInfo: true);
+		$languages    = $this->model->getLanguageList(orderBy: [$this->language.'_name ASC']);
+		$originals    = $this->model->getSongList
+		(
+			fetchMinInfo: true,
+			isOriginal:   true,
+			excludeId:    $song['id'],
+			hasVocal:     true,
+			orderBy:      ['sn.transliterated_name ASC']
+		);
 		
 		$this->view->renderEditLyricsPage
 		(
@@ -1415,14 +1446,20 @@ class UserController extends ViolatorController
 	
 	private function handleEditLyricsPagePost(array $album, array $song): void
 	{
-		$allArtistIds        = $this->model->getArtistIdList();
+		$allArtistIds        = $this->model->getArtistList(fetchMinInfo: true);
 		$allArtistIds        = array_column($allArtistIds, 'id');
-		$allCharacterIds     = $this->model->getCharacterIdList();
+		$allCharacterIds     = $this->model->getCharacterList(fetchMinInfo: true);
 		$allCharacterIds     = array_column($allCharacterIds, 'id');
 		$allCharacterIds[]   = null;
 		$allLanguages        = $this->model->getLanguageList();
 		$allLanguages        = array_column($allLanguages, 'id');
-		$allOriginalIds      = $this->model->getSongIdList(isOriginal: true, hasVocal: true, excludeId: $song['id']);
+		$allOriginalIds      = $this->model->getSongList
+		(
+			fetchMinInfo: true,
+			isOriginal:   true,
+			excludeId:    $song['id'],
+			hasVocal:     true
+		);
 		$allOriginalIds      = array_column($allOriginalIds, 'id');
 		$allOriginalIds[]    = null;
 		
@@ -1510,7 +1547,7 @@ class UserController extends ViolatorController
 	
 	final public function handleEditTranslationPage(string $albumUri, string $songUri, string $translationUri): void
 	{
-		$album       = $this->model->getAlbumId($albumUri);
+		$album       = $this->model->getAlbum($albumUri);
 		$song        = $this->model->getSong($albumUri, $songUri);
 		$translation = $this->model->getTranslation($albumUri, $songUri, $translationUri);
 		
@@ -1623,11 +1660,17 @@ class UserController extends ViolatorController
 	
 	final public function handleDeleteGamePage(string $gameUri): void
 	{
-		$game = $this->model->getGameId($gameUri);
+		$game = $this->model->getGame($gameUri);
 		
 		if (!$game)
 		{
 			$this->handleNotFound();
+			return;
+		}
+		
+		if (!isCurrentUser($game['user_added_id']) && !isCurrentUserModerator())
+		{
+			$this->handleForbidden();
 			return;
 		}
 		
@@ -1681,11 +1724,17 @@ class UserController extends ViolatorController
 	
 	final public function handleDeleteAlbumPage(string $albumUri): void
 	{
-		$album = $this->model->getAlbumId($albumUri);
+		$album = $this->model->getAlbum($albumUri);
 		
 		if (!$album)
 		{
 			$this->handleNotFound();
+			return;
+		}
+		
+		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
+		{
+			$this->handleForbidden();
 			return;
 		}
 		
@@ -1739,11 +1788,17 @@ class UserController extends ViolatorController
 	
 	final public function handleDeleteArtistPage(string $artistUri): void
 	{
-		$artist = $this->model->getArtistId($artistUri);
+		$artist = $this->model->getArtist($artistUri);
 		
 		if (!$artist)
 		{
 			$this->handleNotFound();
+			return;
+		}
+		
+		if (!isCurrentUser($artist['user_added_id']) && !isCurrentUserModerator())
+		{
+			$this->handleForbidden();
 			return;
 		}
 		
@@ -1797,11 +1852,17 @@ class UserController extends ViolatorController
 	
 	final public function handleDeleteCharacterPage(string $characterUri): void
 	{
-		$character = $this->model->getCharacterId($characterUri);
+		$character = $this->model->getCharacter($characterUri);
 		
 		if (!$character)
 		{
 			$this->handleNotFound();
+			return;
+		}
+		
+		if (!isCurrentUser($character['user_added_id']) && !isCurrentUserModerator())
+		{
+			$this->handleForbidden();
 			return;
 		}
 		
@@ -1855,9 +1916,14 @@ class UserController extends ViolatorController
 	
 	final public function handleDeleteLyricsPage(string $albumUri, string $songUri): void
 	{
-		$album        = $this->model->getAlbumId($albumUri);
-		$song         = $this->model->getSongId($albumUri, $songUri);
-		$translations = $this->model->getTranslationIdList($albumUri, $songUri);
+		$album        = $this->model->getAlbum($albumUri);
+		$song         = $this->model->getSong($albumUri, $songUri);
+		$translations = $this->model->getTranslationList
+		(
+			fetchMinInfo: true,
+			albumUri:     $albumUri,
+			songUri:      $songUri
+		);
 		
 		if (!$album)
 		{
@@ -1877,6 +1943,12 @@ class UserController extends ViolatorController
 			return;
 		}
 		
+		if (!isCurrentUser($song['user_added_id']) && !isCurrentUserModerator())
+		{
+			$this->handleForbidden();
+			return;
+		}
+		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
 		{
 			$this->handleUnavailableForLegalReasons();
@@ -1889,7 +1961,7 @@ class UserController extends ViolatorController
 			return;
 		}
 		
-		if (!(isCurrentUser($song['user_added_id']) && $song['status'] === 'unchecked') && !isCurrentUserModerator())
+		if ($song['status'] === 'checked' && !isCurrentUserModerator())
 		{
 			$this->handleForbidden();
 			return;
@@ -1940,9 +2012,9 @@ class UserController extends ViolatorController
 	
 	final public function handleDeleteTranslationPage(string $albumUri, string $songUri, string $translationUri): void
 	{
-		$album       = $this->model->getAlbumId($albumUri);
-		$song        = $this->model->getSongId($albumUri, $songUri);
-		$translation = $this->model->getTranslationId($albumUri, $songUri, $translationUri);
+		$album       = $this->model->getAlbum($albumUri);
+		$song        = $this->model->getSong($albumUri, $songUri);
+		$translation = $this->model->getTranslation($albumUri, $songUri, $translationUri);
 		
 		if (!$album)
 		{

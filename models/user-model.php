@@ -13,30 +13,6 @@ class UserModel extends ViolatorModel
 	//      Methods Building Strings      //
 	//------------------------------------//
 	
-	/*
-	// These functions were required when images could have different extensions.
-	// Now, all uploaded images are converted to the WEBP format
-	// because it takes less space (at the cost of quality)
-	
-	final protected function buildExtension(array $file): string
-	{
-		$extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-		$extension = mb_strtolower($extension);
-		
-		return $extension;
-	}
-	
-	final protected function buildFilename(string $name, string $extension): string
-	{
-		return $name.'.'.$extension;
-	}
-	
-	private function moveUploadedFile(array $file, string $fullPath): bool
-	{
-		return move_uploaded_file($file['tmp_name'], $fullPath);
-	}
-	*/
-	
 	final protected function buildFilename(string $filename): string
 	{
 		return $filename.'.webp';
@@ -46,13 +22,6 @@ class UserModel extends ViolatorModel
 	{
 		return implode('/', $values);
 	}
-	
-	/* Now status is always set to "unchecked", even for the admin
-	final protected function buildStatus(bool $needsCheck): string
-	{
-		return $needsCheck ? 'unchecked' : 'checked';
-	}
-	*/
 	
 	final protected function buildUri(string $value): string
 	{
@@ -132,806 +101,6 @@ class UserModel extends ViolatorModel
 		
 		if (!rename($oldFullPath, $newFullPath))
 			throw new Exception('File rename failed: from '.$oldFullPath.' to '.$newFullPath);
-	}
-	
-	//----------------------------------------//
-	//      Methods Fetching Identifiers      //
-	//----------------------------------------//
-	
-	final public function getGameIdList
-	(
-		string|null $albumUri     = null,
-		string|null $characterUri = null
-	): array
-	{
-		$selectAlbums      = '';
-		$selectCharacters  = '';
-		
-		$joinAlbums        = '';
-		$joinCharacters    = '';
-		
-		$whereAlbumUri     = '';
-		$whereCharacterUri = '';
-		
-		if (!is_null($albumUri))
-		{
-			$selectAlbums =
-			'
-				gar.status AS game_album_relation_status,
-			';
-			
-			$joinAlbums =
-			'
-			JOIN
-				game_album_relations AS gar
-			ON
-				g.id = gar.game_id
-			JOIN
-				albums AS a
-			ON
-				gar.album_id = a.id
-			';
-			
-			$whereAlbumUri =
-			'
-			AND
-				a.uri = :album_uri
-			';
-		}
-		
-		if (!is_null($characterUri))
-		{
-			$selectCharacters =
-			'
-				cgr.status AS character_game_relation_status,
-			';
-			
-			$joinCharacters .=
-			'
-			JOIN
-				character_game_relations AS cgr
-			ON
-				cgr.game_id = g.id
-			JOIN
-				characters AS c
-			ON
-				c.id = cgr.character_id
-			';
-			
-			$whereCharacterUri =
-			'
-			AND
-				c.uri = :character_uri
-			';
-		}
-		
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT'.
-				$selectAlbums.
-				$selectCharacters.'
-				g.id,
-				g.transliterated_name
-			FROM
-				games AS g'.
-			$joinAlbums.
-			$joinCharacters.'
-			WHERE
-				TRUE = TRUE'.
-			$whereAlbumUri.
-			$whereCharacterUri.'
-			ORDER BY
-				g.transliterated_name ASC
-			'
-		);
-		
-		if (!is_null($albumUri))
-			$stmt->bindParam(':album_uri',     $albumUri,     PDO::PARAM_STR);
-		if (!is_null($characterUri))
-			$stmt->bindParam(':character_uri', $characterUri, PDO::PARAM_STR);
-		
-		$stmt->execute();
-		
-		$gameList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		return $gameList;
-	}
-	
-	final public function getAlbumIdList
-	(
-		string|null $gameUri = null
-	): array
-	{
-		$selectGames  = '';
-		$joinGames    = '';
-		$whereGameUri = '';
-		
-		if (!is_null($gameUri))
-		{
-			$selectGames =
-			'
-				gar.status AS game_album_relation_status,
-			';
-			
-			$joinGames =
-			'
-			JOIN
-				game_album_relations AS gar
-			ON
-				gar.album_id = a.id
-			JOIN
-				games AS g
-			ON
-				gar.game_id = g.id
-			';
-			
-			$whereGameUri =
-			'
-			AND
-				g.uri = :game_uri
-			';
-		};
-		
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT'.
-				$selectGames.'
-				a.id,
-				a.transliterated_name
-			FROM
-				albums AS a
-			'.
-			$joinGames.
-			'
-			WHERE
-				TRUE = TRUE
-			'.
-			$whereGameUri.
-			'
-			ORDER BY
-				a.transliterated_name ASC
-			'
-		);
-		
-		if (!is_null($gameUri))
-			$stmt->bindParam(':game_uri', $gameUri, PDO::PARAM_STR);
-		
-		$stmt->execute();
-		
-		$albumList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		return $albumList;
-	}
-	
-	final public function getArtistIdList
-	(
-		bool|null $mayBeAlias = null
-	): array
-	{
-		$whereMayBeAlias = '';
-		
-		if ($mayBeAlias === false)
-		{
-			$whereMayBeAlias = 
-			'
-			AND
-				alias_of_artist_id IS NULL
-			';
-		}
-		
-		$stmt = $this->pdo->query
-		(
-			'
-			SELECT
-				id,
-				transliterated_name
-			FROM
-				artists
-			WHERE
-				TRUE = TRUE
-			'.$whereMayBeAlias
-		);
-		
-		$artists = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		return $artists;
-	}
-	
-	final public function getCharacterIdList
-	(
-		string|null $gameUri = null
-	): array
-	{
-		$selectGames  = '';
-		$joinGames    = '';
-		$whereGameUri = '';
-		
-		if (!is_null($gameUri))
-		{
-			$selectGames =
-			'
-				cgr.status AS character_game_relation_status,
-			';
-			
-			$joinGames =
-			'
-			JOIN
-				character_game_relations as cgr
-			ON
-				c.id = cgr.character_id
-			JOIN
-				games AS g
-			ON
-				cgr.game_id = g.id
-			';
-			
-			$whereGameUri =
-			'
-			AND
-				g.uri = :game_uri
-			';
-		}
-		
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT'.
-				$selectGames.'
-				c.id,
-				c.transliterated_name
-			FROM
-				characters AS c'.
-			$joinGames.'
-			WHERE
-				TRUE = TRUE'.
-			$whereGameUri.'
-			ORDER BY
-				c.transliterated_name ASC
-			'
-		);
-		
-		if (!is_null($gameUri))
-			$stmt->bindParam(':game_uri', $gameUri, PDO::PARAM_STR);
-		
-		$stmt->execute();
-		
-		$characterList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		return $characterList;
-	}
-	
-	final public function getPerformerIdList
-	(
-		string|null $albumUri = null,
-		string|null $songUri  = null
-	): array
-	{
-		$whereAlbum = '';
-		$whereSong  = '';
-		
-		if (!is_null($whereAlbum))
-		{
-			$whereAlbum =
-			'
-			AND
-				al.uri = :album_uri
-			';
-		}
-		
-		if (!is_null($songUri))
-		{
-			$whereSong =
-			'
-			AND
-				sn.uri = :song_uri
-			';
-		}
-		
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT
-				ar.id                  AS artist_id,
-				ar.transliterated_name AS artist_transliterated_name,
-				ch.id                  AS character_id,
-				ch.transliterated_name AS character_transliterated_name,
-				sacr.status            AS song_artist_character_relation_status
-			FROM
-				artists AS ar
-			JOIN
-				song_artist_character_relations AS sacr
-			ON
-				ar.id = sacr.artist_id
-			LEFT JOIN
-				characters AS ch
-			ON
-				sacr.character_id = ch.id
-			JOIN
-				songs AS sn
-			ON
-				sacr.song_id = sn.id
-			JOIN
-				albums AS al
-			ON
-				al.id = sn.album_id
-			WHERE
-				TRUE = true'.
-			$whereAlbum.
-			$whereSong.'
-			'
-		);
-		
-		if (!is_null($albumUri))
-			$stmt->bindParam(':album_uri', $albumUri, PDO::PARAM_STR);
-		if (!is_null($songUri))
-			$stmt->bindParam(':song_uri',  $songUri,  PDO::PARAM_STR);
-		
-		$stmt->execute();
-		
-		$performerList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		return $performerList;
-	}
-	
-	final public function getSongIdList
-	(
-		string|null $albumUri   = null,
-		bool  |null $isOriginal = null,
-		bool  |null $hasVocal   = null,
-		int   |null $excludeId  = null
-	): array
-	{
-		$joinAlbums      = '';
-		
-		$whereAlbumUri   = '';
-		$whereIsOriginal = '';
-		$whereHasVocal   = '';
-		$whereExcludeId  = '';
-		
-		if (!is_null($albumUri))
-		{
-			$joinAlbums =
-			'
-			JOIN
-				albums AS al
-			ON
-				al.id = sn.album_id
-			';
-			
-			$whereAlbumUri =
-			'
-			AND
-				al.uri = :album_uri
-			';
-		}
-		
-		if (!is_null($isOriginal))
-		{
-			$value = $isOriginal ? 'IS NULL' : 'IS NOT NULL';
-			
-			$whereIsOriginal =
-			'
-			AND
-				sn.original_song_id '.$value.'
-			AND
-				sn.lyrics IS NOT NULL
-			';
-		}
-		
-		if (!is_null($hasVocal))
-		{
-			$whereHasVocal =
-			'
-			AND
-				sn.has_vocal = :has_vocal
-			';
-		}
-		
-		if (!is_null($excludeId))
-		{
-			$whereExcludeId =
-			'
-			AND
-				id <> :exclude_id
-			';
-		}
-		
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT
-				sn.id,
-				sn.transliterated_name
-			FROM
-				songs AS sn
-			'.
-			$joinAlbums.
-			'
-			WHERE
-				TRUE = TRUE
-			'.
-			$whereAlbumUri.
-			$whereIsOriginal.
-			$whereHasVocal.
-			$whereExcludeId.'
-			'
-		);
-		
-		if (!is_null($albumUri))
-			$stmt->bindParam(':album_uri',  $albumUri,  PDO::PARAM_STR);
-		if (!is_null($hasVocal))
-			$stmt->bindParam(':has_vocal',  $hasVocal,  PDO::PARAM_BOOL);
-		if (!is_null($excludeId))
-			$stmt->bindParam(':exclude_id', $excludeId, PDO::PARAM_INT);
-		
-		$stmt->execute();
-		
-		$songs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		return $songs;
-	}
-	
-	final public function getTranslationIdList
-	(
-		string|null $albumUri    = null,
-		string|null $songUri     = null,
-		int   |null $userAddedId = null
-	): array
-	{
-		$whereAlbumUri    = '';
-		$whereSongUri     = '';
-		$whereUserAddedId = '';
-		
-		if (!is_null($albumUri))
-		{
-			$whereAlbumUri =
-			'
-			AND
-				al.uri = :album_uri
-			';
-		}
-		
-		if (!is_null($songUri))
-		{
-			$whereSongUri =
-			'
-			AND
-				sn.uri = :song_uri
-			';
-		}
-		
-		if (!is_null($userAddedId))
-		{
-			$whereUserAddedId =
-			'
-			AND
-				sn.user_added_id = :user_added_id
-			';
-		}
-		
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT
-				tr.id,
-				tr.language_id
-			FROM
-				translations AS tr
-			JOIN
-				languages AS lg
-			ON
-				lg.id = tr.language_id
-			JOIN
-				songs AS sn
-			ON
-				sn.id = tr.song_id
-			JOIN
-				albums AS al
-			ON
-				al.id = sn.album_id
-			WHERE
-				TRUE = TRUE
-			'.
-			$whereAlbumUri.
-			$whereSongUri.
-			$whereUserAddedId
-		);
-		
-		if (!is_null($albumUri))
-			$stmt->bindParam(':album_uri',     $albumUri,    PDO::PARAM_STR);
-		if (!is_null($songUri))
-			$stmt->bindParam(':song_uri',      $songUri,     PDO::PARAM_STR);
-		if (!is_null($userAddedId))
-			$stmt->bindParam(':user_added_id', $userAddedId, PDO::PARAM_INT);
-		
-		$stmt->execute();
-		
-		$translationList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		return $translationList;
-	}
-	
-	final public function getLanguageList(): array
-	{
-		$stmt = $this->pdo->query
-		(
-			'
-			SELECT
-				id,
-				own_name AS language_own_name,
-				ru_name  AS language_ru_name,
-				en_name  AS language_en_name,
-				ja_name  AS language_ja_name
-			FROM
-				languages
-			'
-		);
-		
-		$languageList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		return $languageList;
-	}
-	
-	//-----------------------------------------------------//
-	//      Methods Fetching Basic Info Of One Entity      //
-	//-----------------------------------------------------//
-	
-	final public function getGameId(string $gameUri): array|bool
-	{
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT
-				g.id,
-				g.transliterated_name,
-				g.uri,
-				g.status,
-				g.user_added_id
-			FROM
-				games AS g
-			WHERE
-				g.uri = :game_uri
-			'
-		);
-		
-		$stmt->bindParam(':game_uri', $gameUri, PDO::PARAM_STR);
-		
-		$stmt->execute();
-		
-		$game = $stmt->fetch(PDO::FETCH_ASSOC);
-		return $game;
-	}
-	
-	final public function getAlbumId(string $albumUri): array|bool
-	{
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT
-				a.id,
-				a.transliterated_name,
-				a.uri,
-				a.status,
-				a.user_added_id,
-				a.song_count
-			FROM
-				albums AS a
-			WHERE
-				a.uri = :album_uri
-			'
-		);
-		
-		$stmt->bindParam(':album_uri', $albumUri, PDO::PARAM_STR);
-		
-		$stmt->execute();
-		
-		$album = $stmt->fetch(PDO::FETCH_ASSOC);
-		return $album;
-	}
-	
-	final public function getArtistId(string $artistUri): array|bool
-	{
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT
-				a.id,
-				a.transliterated_name,
-				a.uri,
-				a.status,
-				a.user_added_id
-			FROM
-				artists AS a
-			WHERE
-				a.uri = :artist_uri
-			'
-		);
-		
-		$stmt->bindParam(':artist_uri', $artistUri, PDO::PARAM_STR);
-		
-		$stmt->execute();
-		
-		$artist = $stmt->fetch(PDO::FETCH_ASSOC);
-		return $artist;
-	}
-	
-	final public function getCharacterId(string $characterUri): array|bool
-	{
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT
-				c.id,
-				c.transliterated_name,
-				c.uri,
-				c.status,
-				c.user_added_id
-			FROM
-				characters AS c
-			WHERE
-				c.uri = :character_uri
-			'
-		);
-		
-		$stmt->bindParam(':character_uri', $characterUri, PDO::PARAM_STR);
-		
-		$stmt->execute();
-		
-		$character = $stmt->fetch(PDO::FETCH_ASSOC);
-		return $character;
-	}
-	
-	final public function getSongId
-	(
-		string|null $albumUri = null,
-		string|null $songUri  = null,
-		int   |null $songId   = null
-	): array|bool
-	{
-		$whereAlbumUri = '';
-		$whereSongUri  = '';
-		$whereSongId   = '';
-		
-		if (!is_null($albumUri))
-		{
-			$whereAlbumUri =
-			'
-			AND
-				a.uri = :album_uri
-			';
-		}
-		
-		if (!is_null($songUri))
-		{
-			$whereSongUri =
-			'
-			AND
-				s.uri = :song_uri
-			';
-		}
-		
-		if (!is_null($songId))
-		{
-			$whereSongId =
-			'
-			AND
-				s.id = :song_id
-			';
-		}
-		
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT
-				s.id,
-				s.transliterated_name,
-				s.uri,
-				s.has_vocal,
-				(1 - ISNULL(s.lyrics))  AS has_lyrics,
-				s.original_song_id,
-				s.language_id,
-				s.status,
-				s.user_added_id,
-				a.uri                   AS album_uri
-			FROM
-				songs AS s
-			JOIN
-				albums AS a
-			ON
-				a.id = s.album_id
-			WHERE
-				TRUE = TRUE
-			'.
-			$whereAlbumUri.
-			$whereSongUri.
-			$whereSongId
-		);
-		
-		if (!is_null($albumUri))
-			$stmt->bindParam(':album_uri', $albumUri, PDO::PARAM_STR);
-		if (!is_null($songUri))
-			$stmt->bindParam(':song_uri',  $songUri,  PDO::PARAM_STR);
-		if (!is_null($songId))
-			$stmt->bindParam(':song_id',   $songId,   PDO::PARAM_INT);
-		
-		$stmt->execute();
-		
-		$song = $stmt->fetch(PDO::FETCH_ASSOC);
-		return $song;
-	}
-	
-	final public function getTranslationId
-	(
-		string $albumUri,
-		string $songUri,
-		string $translationUri
-	): array|bool
-	{
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT
-				t.id,
-				t.song_id,
-				t.language_id,
-				t.name,
-				t.uri,
-				t.status,
-				t.user_added_id,
-				l.en_name        AS language_en_name,
-				l.ru_name        AS language_ru_name,
-				l.ja_name        AS language_ja_name
-			FROM
-				translations AS t
-			JOIN
-				languages AS l
-			ON
-				t.language_id = l.id
-			JOIN
-				songs AS s
-			ON
-				s.id = t.song_id
-			JOIN
-				albums AS a
-			ON
-				a.id = s.album_id
-			WHERE
-				t.uri = :translation_uri
-			AND
-				s.uri = :song_uri
-			AND
-				a.uri = :album_uri
-			'
-		);
-		
-		$stmt->bindParam(':translation_uri', $translationUri, PDO::PARAM_STR);
-		$stmt->bindParam(':song_uri',        $songUri,        PDO::PARAM_STR);
-		$stmt->bindParam(':album_uri',       $albumUri,       PDO::PARAM_STR);
-		
-		$stmt->execute();
-		
-		$translation = $stmt->fetch(PDO::FETCH_ASSOC);
-		return $translation;
-	}
-	
-	final public function getLanguage(int $languageId): array
-	{
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT
-				id,
-				own_name AS language_own_name,
-				ru_name  AS language_ru_name,
-				en_name  AS language_en_name,
-				ja_name  AS language_ja_name
-			FROM
-				languages
-			WHERE
-				id = :language_id
-			'
-		);
-		
-		$stmt->bindParam(':language_id', $languageId, PDO::PARAM_INT);
-		
-		$stmt->execute();
-		
-		$language = $stmt->fetch(PDO::FETCH_ASSOC);
-		return $language;
 	}
 	
 	//------------------------------------------//
@@ -2294,25 +1463,19 @@ class UserModel extends ViolatorModel
 		if (is_null($gameId) && is_null($albumId))
 			throw new Exception(__METHOD__.' was called without conditions');
 		
-		$whereGameId    = '';
-		$whereAlbumId   = '';
+		$where = ['status = "unchecked"'];
+		$binds = [];
 		
 		if (!is_null($gameId))
 		{
-			$whereGameId =
-			'
-			AND
-				game_id = :game_id
-			';
+			$where[] = 'game_id = :game_id';
+			$binds[] = [':game_id',  $gameId,  PDO::PARAM_INT];
 		}
 		
 		if (!is_null($albumId))
 		{
-			$whereAlbumId =
-			'
-			AND
-				album_id = :album_id
-			';
+			$where[] = 'album_id = :album_id';
+			$binds[] = [':album_id', $albumId, PDO::PARAM_INT];
 		}
 		
 		$stmt = $this->pdo->prepare
@@ -2321,17 +1484,12 @@ class UserModel extends ViolatorModel
 			DELETE FROM
 				game_album_relations
 			WHERE
-				status = "unchecked"
-			'.
-			$whereGameId.
-			$whereAlbumId
+				'.implode(' AND ', $where).'
+			'
 		);
 		
-		if (!is_null($gameId))
-			$stmt->bindParam(':game_id',  $gameId,  PDO::PARAM_INT);
-		if (!is_null($albumId))
-			$stmt->bindParam(':album_id', $albumId, PDO::PARAM_INT);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 	}
 	
@@ -2345,35 +1503,25 @@ class UserModel extends ViolatorModel
 		if (is_null($songId) && is_null($artistId) && is_null($characterId))
 			throw new Exception(__METHOD__.' was called without conditions');
 		
-		$whereSongId      = '';
-		$whereArtistId    = '';
-		$whereCharacterId = '';
+		$where = ['status = "unchecked"'];
+		$binds = [];
 		
 		if (!is_null($songId))
 		{
-			$whereSongId =
-			'
-			AND
-				song_id = :song_id
-			';
+			$where[] = 'song_id = :song_id';
+			$binds[] = [':song_id', $songId, PDO::PARAM_INT];
 		}
 		
 		if (!is_null($artistId))
 		{
-			$whereArtistId =
-			'
-			AND
-				artist_id = :artist_id
-			';
+			$where[] = 'artist_id = :artist_id';
+			$binds[] = [':artist_id', $artistId, PDO::PARAM_INT];
 		}
 		
 		if (!is_null($characterId))
 		{
-			$whereCharacterId =
-			'
-			AND
-				character_id = :character_id
-			';
+			$where[] = 'character_id = :character_id';
+			$binds[] = [':character_id', $artistId, PDO::PARAM_INT];
 		}
 		
 		$stmt = $this->pdo->prepare
@@ -2382,20 +1530,12 @@ class UserModel extends ViolatorModel
 			DELETE FROM
 				song_artist_character_relations
 			WHERE
-				status = "unchecked"
-			'.
-			$whereSongId.
-			$whereArtistId.
-			$whereCharacterId
+				'.implode(' AND ', $where).'
+			'
 		);
 		
-		if (!is_null($songId))
-			$stmt->bindParam(':song_id',      $songId,      PDO::PARAM_INT);
-		if (!is_null($artistId))
-			$stmt->bindParam(':artist_id',    $artistId,    PDO::PARAM_INT);
-		if (!is_null($characterId))
-			$stmt->bindParam(':character_id', $characterId, PDO::PARAM_INT);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 	}
 	
@@ -2408,25 +1548,19 @@ class UserModel extends ViolatorModel
 		if (is_null($characterId) && is_null($gameId))
 			throw new Exception(__METHOD__.' was called without conditions');
 		
-		$whereCharacterId = '';
-		$whereGameId      = '';
+		$where = ['status = "unchecked"'];
+		$binds = [];
 		
 		if (!is_null($characterId))
 		{
-			$whereCharacterId =
-			'
-			AND
-				character_id = :character_id
-			';
+			$where[] = 'character_id = :character_id';
+			$binds[] = [':character_id', $artistId, PDO::PARAM_INT];
 		}
 		
 		if (!is_null($gameId))
 		{
-			$whereGameId =
-			'
-			AND
-				game_id = :game_id
-			';
+			$where[] = 'game_id = :game_id';
+			$binds[] = [':game_id',  $gameId,  PDO::PARAM_INT];
 		}
 		
 		$stmt = $this->pdo->prepare
@@ -2435,17 +1569,12 @@ class UserModel extends ViolatorModel
 			DELETE FROM
 				character_game_relations
 			WHERE
-				status = "unchecked"
-			'.
-			$whereCharacterId.
-			$whereGameId
+				'.implode(' AND ', $where).'
+			'
 		);
 		
-		if (!is_null($characterId))
-			$stmt->bindParam(':character_id', $characterId, PDO::PARAM_INT);
-		if (!is_null($gameId))
-			$stmt->bindParam(':game_id',      $gameId,      PDO::PARAM_INT);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 	}
 	

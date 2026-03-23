@@ -174,8 +174,6 @@ class VisitorController extends Controller
 			return;
 		}
 		
-		unset($_SESSION['signUpCaptchaCode']);
-		
 		$this->model->createUser
 		(
 			$_POST['username'],
@@ -187,6 +185,7 @@ class VisitorController extends Controller
 		$userData = $this->model->getUserData(email: $_POST['email']);
 		$this->createUserSession($userData);
 		$this->handleRedirect(buildInternalLink($this->language));
+		unset($_SESSION['signUpCaptchaCode']);
 	}
 	
 	public function handleLogOutPage(): void
@@ -474,7 +473,11 @@ class VisitorController extends Controller
 	
 	private function handleAlbumPageGet(array $album): void
 	{
-		$songList = $this->model->getSongList(albumUri: $album['uri']);
+		$songList = $this->model->getSongList
+		(
+			albumUri: $album['uri'],
+			orderBy: ['sn.disc_number ASC', 'sn.track_number ASC']
+		);
 		$gameList = $this->model->getGameList(albumUri: $album['uri']);
 		
 		$this->view->renderAlbumPage($album, $songList, $gameList);
@@ -600,7 +603,7 @@ class VisitorController extends Controller
 		if ($song['original_song_id'])
 		{
 			$originalSong    = $this->model->getSong(songId: $song['original_song_id']);
-			$translationList = $this->model->getTranslationList(songId: $song['original_song_id']);
+			$translationList = $this->model->getTranslationList(albumUri: $originalSong['album_uri'], songUri: $originalSong['uri']);
 		}
 		else
 		{
@@ -1210,12 +1213,12 @@ class VisitorController extends Controller
 	
 	private function handleUserPageGet(array $user): void
 	{
-		$games        = $this->model->getGameList(userUri: $user['uri']);
-		$albums       = $this->model->getAlbumList(userUri: $user['uri']);
-		$artists      = $this->model->getArtistList(userUri: $user['uri']);
-		$characters   = $this->model->getCharacterList(userUri: $user['uri']);
-		$songs        = $this->model->getSongList(userUri: $user['uri']);
-		$translations = $this->model->getTranslationList(userUri: $user['uri']);
+		$games        = $this->model->getGameList(userAddedUri: $user['user_username']);
+		$albums       = $this->model->getAlbumList(userAddedUri: $user['user_username']);
+		$artists      = $this->model->getArtistList(userAddedUri: $user['user_username']);
+		$characters   = $this->model->getCharacterList(userAddedUri: $user['user_username']);
+		$songs        = $this->model->getSongList(userAddedUri: $user['user_username'], hasVocal: true, isOriginal: true);
+		$translations = $this->model->getTranslationList(userAddedUri: $user['user_username']);
 		
 		$this->view->renderUserPage
 		(

@@ -44,7 +44,6 @@ class VisitorModel extends Model
 		$stmt->execute();
 		
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
-		
 		return $value['is_verified'] ?? false;
 	}
 	
@@ -126,8 +125,20 @@ class VisitorModel extends Model
 		if (!$email && !$username)
 			throw new Exception(__METHOD__.' was called without arguments');
 		
-		$whereEmail    = $email    ? ' AND u.email = :email'       : '';
-		$whereUsername = $username ? ' AND u.username = :username' : '';
+		$where = ['TRUE'];
+		$binds = [];
+		
+		if ($email)
+		{
+			$where[] = 'u.email = :email';
+			$binds[] = [':email', $email, PDO::PARAM_STR];
+		}
+		
+		if ($username)
+		{
+			$where[] = 'u.username = :username';
+			$binds[] = [':username', $username, PDO::PARAM_STR];
+		}
 		
 		$stmt = $this->pdo->prepare
 		(
@@ -148,17 +159,12 @@ class VisitorModel extends Model
 			ON
 				r.id = u.role_id
 			WHERE
-				TRUE = TRUE'.
-			$whereEmail.
-			$whereUsername.'
+				'.implode(' AND ', $where).'
 			'
 		);
 		
-		if ($email)
-			$stmt->bindParam(':email',    $email,    PDO::PARAM_STR);
-		if ($username)
-			$stmt->bindParam(':username', $username, PDO::PARAM_STR);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 		
 		$userData = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -229,7 +235,6 @@ class VisitorModel extends Model
 		$stmt->bindParam(':message',    $message,   PDO::PARAM_STR);
 		$stmt->bindParam(':entity_uri', $entityUri, PDO::PARAM_STR);
 		$stmt->bindParam(':user_agent', $userAgent, PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		return $this->pdo->lastInsertId();
@@ -237,30 +242,31 @@ class VisitorModel extends Model
 	
 	final public function getGameList
 	(
+		bool        $fetchMinInfo = false,
 		string|null $albumUri     = null,
 		string|null $characterUri = null,
-		string|null $userUri      = null
+		string|null $userAddedUri = null,
+		array       $orderBy      = ['g.transliterated_name ASC']
 	): array
 	{
-		$selectAlbums      = '';
-		$selectCharacters  = '';
+		$select = ['g.id', 'g.transliterated_name'];
+		$from   = ['games AS g'];
+		$join   = [];
+		$where  = ['TRUE'];
+		$binds  = [];
 		
-		$joinAlbums        = '';
-		$joinCharacters    = '';
-		$joinUsers         = '';
-		
-		$whereAlbumUri     = '';
-		$whereCharacterUri = '';
-		$whereUserUri      = '';
+		if (!$fetchMinInfo)
+		{
+			$select[] = 'g.original_name';
+			$select[] = 'g.localized_name';
+			$select[] = 'g.is_image_uploaded';
+			$select[] = 'g.uri';
+		}
 		
 		if (!is_null($albumUri))
 		{
-			$selectAlbums =
-			'
-				gar.status AS game_album_relation_status,
-			';
-			
-			$joinAlbums =
+			$select[] = 'gar.status AS game_album_relation_status';
+			$join[]   =
 			'
 			JOIN
 				game_album_relations AS gar
@@ -269,93 +275,62 @@ class VisitorModel extends Model
 			JOIN
 				albums AS a
 			ON
-				gar.album_id = a.id
+				a.id = gar.album_id
 			';
-			
-			$whereAlbumUri =
-			'
-			AND
-				a.uri = :album_uri
-			';
+			$where[]  = 'a.uri = :album_uri';
+			$binds[]  = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
 		
 		if (!is_null($characterUri))
 		{
-			$selectCharacters =
-			'
-				cgr.status AS character_game_relation_status,
-			';
-			
-			$joinCharacters .=
+			$select[] = 'cgr.status AS character_game_relation_status';
+			$join[]   =
 			'
 			JOIN
 				character_game_relations AS cgr
 			ON
-				cgr.game_id = g.id
+				g.id = cgr.game_id
 			JOIN
 				characters AS c
 			ON
 				c.id = cgr.character_id
 			';
-			
-			$whereCharacterUri =
-			'
-			AND
-				c.uri = :character_uri
-			';
+			$where[]  = 'c.uri = :character_uri';
+			$binds[]  = [':character_uri', $characterUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userUri))
+		if (!is_null($userAddedUri))
 		{
-			$joinUsers =
+			$join[]   =
 			'
 			JOIN
-				users as u
+				users AS u
 			ON
 				g.user_added_id = u.id
 			';
-			
-			$whereUserUri =
-			'
-			AND
-				u.username = :user_uri
-			';
+			$where[]  = 'u.username = :user_added_uri';
+			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
 		$stmt = $this->pdo->prepare
 		(
 			'
-			SELECT'.
-				$selectAlbums.
-				$selectCharacters.'
-				g.id,
-				g.original_name,
-				g.transliterated_name,
-				g.localized_name,
-				g.is_image_uploaded,
-				g.uri
+			SELECT
+				'.implode(', ', $select).'
 			FROM
-				games AS g'.
-			$joinAlbums.
-			$joinCharacters.
-			$joinUsers.'
+				'.implode(', ', $from).'
+			
+			'.implode("\n", $join).'
+			
 			WHERE
-				TRUE = TRUE'.
-			$whereAlbumUri.
-			$whereCharacterUri.
-			$whereUserUri.'
+				'.implode(' AND ', $where).'
 			ORDER BY
-				g.transliterated_name ASC
+				'.implode(', ', $orderBy).'
 			'
 		);
 		
-		if (!is_null($albumUri))
-			$stmt->bindParam(':album_uri',     $albumUri,     PDO::PARAM_STR);
-		if (!is_null($characterUri))
-			$stmt->bindParam(':character_uri', $characterUri, PDO::PARAM_STR);
-		if (!is_null($userUri))
-			$stmt->bindParam(':user_uri',      $userUri,      PDO::PARAM_STR);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 		
 		$gameList = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -364,93 +339,77 @@ class VisitorModel extends Model
 	
 	final public function getAlbumList
 	(
-		string|null $gameUri = null,
-		string|null $userUri = null
+		bool        $fetchMinInfo = false,
+		string|null $gameUri      = null,
+		string|null $userAddedUri = null,
+		array       $orderBy      = ['a.transliterated_name ASC']
 	): array
 	{
-		$selectGames  = '';
+		$select = ['a.id', 'a.transliterated_name'];
+		$from   = ['albums AS a'];
+		$join   = [];
+		$where  = ['TRUE'];
+		$binds  = [];
 		
-		$joinGames    = '';
-		$joinUsers    = '';
-		
-		$whereGameUri = '';
-		$whereUserUri = '';
+		if (!$fetchMinInfo)
+		{
+			$select[] = 'a.original_name';
+			$select[] = 'a.localized_name';
+			$select[] = 'a.is_image_uploaded';
+			$select[] = 'a.uri';
+			$select[] = 'a.song_count';
+		}
 		
 		if (!is_null($gameUri))
 		{
-			$selectGames =
-			'
-				gar.status AS game_album_relation_status,
-			';
-			
-			$joinGames =
+			$select[] = 'gar.status AS game_album_relation_status';
+			$join[]   =
 			'
 			JOIN
 				game_album_relations AS gar
 			ON
-				gar.album_id = a.id
+				a.id = gar.album_id
 			JOIN
 				games AS g
 			ON
-				gar.game_id = g.id
+				g.id = gar.game_id
 			';
-			
-			$whereGameUri =
-			'
-			AND
-				g.uri = :game_uri
-			';
-		};
+			$where[]  = 'g.uri = :game_uri';
+			$binds[]  = [':game_uri', $gameUri, PDO::PARAM_STR];
+		}
 		
-		if (!is_null($userUri))
+		if (!is_null($userAddedUri))
 		{
-			$joinUsers =
+			$join[]   =
 			'
-				JOIN
-					users as u
-				ON
-					a.user_added_id = u.id
+			JOIN
+				users AS u
+			ON
+				a.user_added_id = u.id
 			';
-			
-			$whereUserUri =
-			'
-				AND
-					u.username = :user_uri
-			';
+			$where[]  = 'u.username = :user_added_uri';
+			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
 		$stmt = $this->pdo->prepare
 		(
 			'
-			SELECT'.
-				$selectGames.'
-				a.id,
-				a.original_name,
-				a.transliterated_name,
-				a.localized_name,
-				a.is_image_uploaded,
-				a.uri,
-				a.song_count
+			SELECT
+				'.implode(', ', $select).'
 			FROM
-				albums AS a
-			'.
-			$joinGames.
-			$joinUsers.'
+				'.implode(', ', $from).'
+			
+			'.implode("\n", $join).'
+			
 			WHERE
-				TRUE = TRUE
-			'.
-			$whereGameUri.
-			$whereUserUri.'
+				'.implode(' AND ', $where).'
 			ORDER BY
-				a.transliterated_name ASC
+				'.implode(', ', $orderBy).'
 			'
 		);
 		
-		if (!is_null($gameUri))
-			$stmt->bindParam(':game_uri', $gameUri, PDO::PARAM_STR);
-		if (!is_null($userUri))
-			$stmt->bindParam(':user_uri', $userUri, PDO::PARAM_STR);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 		
 		$albumList = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -459,71 +418,70 @@ class VisitorModel extends Model
 	
 	final public function getArtistList
 	(
-		string|null $userUri     = null,
-		int   |null $aliasesOfId = null
+		bool        $fetchMinInfo = false,
+		string|null $userAddedUri = null,
+		int   |null $aliasesOfId  = null,
+		bool  |null $mayBeAlias   = null,
+		array       $orderBy      = ['a.transliterated_name ASC']
 	): array
 	{
-		$joinUsers    = '';
-		$whereUserUri = '';
+		$select = ['a.id', 'a.transliterated_name'];
+		$from   = ['artists AS a'];
+		$join   = [];
+		$where  = ['TRUE'];
+		$binds  = [];
 		
-		$joinArtists    = '';
-		$whereAliasesOfId = '';
-		
-		if (!is_null($userUri))
+		if (!$fetchMinInfo)
 		{
-			$joinUsers =
+			$select[] = 'a.original_name';
+			$select[] = 'a.localized_name';
+			$select[] = 'a.is_image_uploaded';
+			$select[] = 'a.uri';
+		}
+		
+		if (!is_null($userAddedUri))
+		{
+			$join[]   =
 			'
 			JOIN
-				users as u
+				users AS u
 			ON
 				a.user_added_id = u.id
 			';
-			
-			$whereUserUri =
-			'
-			AND
-				u.username = :user_uri
-			';
+			$where[]  = 'u.username = :user_added_uri';
+			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
 		if (!is_null($aliasesOfId))
 		{
-			$whereAliasesOfId =
-			'
-			AND
-				a.alias_of_artist_id = :aliases_of_id
-			';
+			$where[]  = 'a.alias_of_artist_id = :aliases_of_id';
+			$binds[]  = [':aliases_of_id', $aliasesOfId, PDO::PARAM_STR];
+		}
+		
+		if ($mayBeAlias === false)
+		{
+			$where[]  = 'a.alias_of_artist_id IS NOT NULL';
 		}
 		
 		$stmt = $this->pdo->prepare
 		(
 			'
 			SELECT
-				a.id,
-				a.original_name,
-				a.transliterated_name,
-				a.localized_name,
-				a.is_image_uploaded,
-				a.uri
+				'.implode(', ', $select).'
 			FROM
-				artists AS a'.
-			$joinUsers.
-			$joinArtists.'
+				'.implode(', ', $from).'
+			
+			'.implode("\n", $join).'
+			
 			WHERE
-				TRUE = TRUE
-			'.
-			$whereUserUri.
-			$whereAliasesOfId.'
+				'.implode(' AND ', $where).'
 			ORDER BY
-				a.transliterated_name ASC
+				'.implode(', ', $orderBy).'
 			'
 		);
 		
-		if (!is_null($userUri))
-			$stmt->bindParam(':user_uri', $userUri, PDO::PARAM_STR);
-		if (!is_null($aliasesOfId))
-			$stmt->bindParam(':aliases_of_id', $aliasesOfId, PDO::PARAM_INT);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 		
 		$artistList = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -532,113 +490,128 @@ class VisitorModel extends Model
 	
 	final public function getCharacterList
 	(
-		string|null $gameUri = null,
-		string|null $userUri = null
+		bool        $fetchMinInfo = false,
+		string|null $gameUri      = null,
+		string|null $userAddedUri = null,
+		array       $orderBy      = ['c.transliterated_name ASC']
 	): array
 	{
-		$selectGames  = '';
-		$joinGames    = '';
-		$whereGameUri = '';
+		$select = ['c.id', 'c.transliterated_name'];
+		$from   = ['characters AS c'];
+		$join   = [];
+		$where  = ['TRUE'];
+		$binds  = [];
 		
-		$joinUsers    = '';
-		$whereUserUri = '';
+		if (!$fetchMinInfo)
+		{
+			$select[] = 'c.original_name';
+			$select[] = 'c.localized_name';
+			$select[] = 'c.is_image_uploaded';
+			$select[] = 'c.uri';
+		}
 		
 		if (!is_null($gameUri))
 		{
-			$selectGames =
-			'
-				cgr.status AS character_game_relation_status,
-			';
-			
-			$joinGames =
+			$select[] = 'cgr.status AS character_game_relation_status';
+			$join[]   =
 			'
 			JOIN
-				character_game_relations as cgr
+				character_game_relations AS cgr
 			ON
 				c.id = cgr.character_id
 			JOIN
 				games AS g
 			ON
-				cgr.game_id = g.id
+				g.id = cgr.game_id
 			';
-			
-			$whereGameUri =
-			'
-			AND
-				g.uri = :game_uri
-			';
+			$where[]  = 'g.uri = :game_uri';
+			$binds[]  = [':game_uri', $gameUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userUri))
+		if (!is_null($userAddedUri))
 		{
-			$joinUsers =
+			$join[]   =
 			'
-				JOIN
-					users as u
-				ON
-					c.user_added_id = u.id
+			JOIN
+				users AS u
+			ON
+				c.user_added_id = u.id
 			';
-			
-			$whereUserUri =
-			'
-				AND
-					u.username = :user_uri
-			';
+			$where[]  = 'u.username = :user_added_uri';
+			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
 		$stmt = $this->pdo->prepare
 		(
 			'
-			SELECT'.
-				$selectGames.'
-				c.id,
-				c.original_name,
-				c.transliterated_name,
-				c.localized_name,
-				c.is_image_uploaded,
-				c.uri
+			SELECT
+				'.implode(', ', $select).'
 			FROM
-				characters AS c'.
-			$joinGames.
-			$joinUsers.'
+				'.implode(', ', $from).'
+			
+			'.implode("\n", $join).'
+			
 			WHERE
-				TRUE = TRUE'.
-			$whereGameUri.
-			$whereUserUri.'
+				'.implode(' AND ', $where).'
 			ORDER BY
-				c.transliterated_name ASC
+				'.implode(', ', $orderBy).'
 			'
 		);
 		
-		if (!is_null($gameUri))
-			$stmt->bindParam(':game_uri', $gameUri, PDO::PARAM_STR);
-		
-		if (!is_null($userUri))
-			$stmt->bindParam(':user_uri', $userUri, PDO::PARAM_STR);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 		
 		$characterList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		return $characterList;
 	}
 	
-	final public function getPerformerList(string $albumUri, string $songUri): array
+	final public function getPerformerList
+	(
+		bool        $fetchMinInfo = false,
+		string|null $albumUri     = null,
+		string|null $songUri      = null,
+		array       $orderBy      = ['ch.transliterated_name ASC', 'ar.transliterated_name ASC']
+	): array
 	{
+		$select =
+		[
+			'ar.id                  AS artist_id',
+			'ar.transliterated_name AS artist_transliterated_name',
+			'ch.id                  AS character_id',
+			'ch.transliterated_name AS character_transliterated_name',
+			'sacr.status            AS song_artist_character_relation_status'
+		];
+		$where  = ['TRUE'];
+		$binds  = [];
+		
+		if (!$fetchMinInfo)
+		{
+			$select[] = 'ar.original_name       AS artist_original_name';
+			$select[] = 'ar.localized_name      AS artist_localized_name';
+			$select[] = 'ar.uri                 AS artist_uri';
+			$select[] = 'ch.original_name       AS character_original_name';
+			$select[] = 'ch.localized_name      AS character_localized_name';
+			$select[] = 'ch.uri                 AS character_uri';
+		}
+		
+		if (!is_null($albumUri))
+		{
+			$where[] = 'al.uri = :album_uri';
+			$binds[] = [':album_uri', $albumUri, PDO::PARAM_STR];
+		}
+		
+		if (!is_null($songUri))
+		{
+			$where[] = 'sn.uri = :song_uri';
+			$binds[] = [':song_uri', $songUri, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
 			SELECT
-				ar.id                  AS artist_id,
-				ar.original_name       AS artist_original_name,
-				ar.transliterated_name AS artist_transliterated_name,
-				ar.localized_name      AS artist_localized_name,
-				ar.uri                 AS artist_uri,
-				ch.id                  AS character_id,
-				ch.original_name       AS character_original_name,
-				ch.transliterated_name AS character_transliterated_name,
-				ch.localized_name      AS character_localized_name,
-				ch.uri                 AS character_uri,
-				sacr.status            AS song_artist_character_relation_status
+				'.implode(', ', $select).'
 			FROM
 				artists AS ar
 			JOIN
@@ -658,210 +631,166 @@ class VisitorModel extends Model
 			ON
 				al.id = sn.album_id
 			WHERE
-				sn.uri = :song_uri
-			AND
-				al.uri = :album_uri
+				'.implode(' AND ', $where).'
+			ORDER BY
+				'.implode(', ', $orderBy).'
 			'
-			//ORDER BY
-			//	character_transliterated_name ASC,
-			//	artist_transliterated_name ASC
 		);
 		
-		$stmt->bindParam(':song_uri',  $songUri,  PDO::PARAM_STR);
-		$stmt->bindParam(':album_uri', $albumUri, PDO::PARAM_STR);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 		
-		$artistList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		return $artistList;
+		$performerList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		return $performerList;
 	}
 	
 	final public function getSongList
 	(
+		bool        $fetchMinInfo = false,
 		string|null $albumUri     = null,
 		string|null $artistUri    = null,
 		string|null $characterUri = null,
 		bool  |null $hasVocal     = null,
-		string|null $userUri      = null
+		bool  |null $isOriginal   = null,
+		int   |null $excludeId    = null,
+		string|null $userAddedUri = null,
+		array       $orderBy      = ['sn.transliterated_name ASC']
 	): array
 	{
-		$selectRelations   = '';
+		$select = ['sn.id', 'sn.transliterated_name'];
+		$from   = ['songs AS sn'];
+		$join   = [];
+		$where  = ['TRUE'];
+		$binds  = [];
 		
-		$joinRelations     = '';
-		$joinArtists       = '';
-		$joinCharacters    = '';
-		$joinUsers         = '';
-		
-		$whereAlbumUri     = '';
-		$whereArtistUri    = '';
-		$whereCharacterUri = '';
-		$whereHasVocal     = '';
-		$whereHasOriginal  = '';
-		$whereUserUri      = '';
-		
-		$orderBy =
-		'
-				sn.transliterated_name
-		';
+		if (!$fetchMinInfo)
+		{
+			$select[] = 'sn.original_name';
+			$select[] = 'sn.localized_name';
+			$select[] = 'sn.uri';
+			$select[] = 'sn.has_vocal';
+			$select[] = 'sn.disc_number';
+			$select[] = 'sn.track_number';
+			$select[] = 'sn.user_added_id';
+			$select[] = 'sn.status';
+			$select[] = 'al.original_name       AS album_original_name';
+			$select[] = 'al.transliterated_name AS album_transliterated_name';
+			$select[] = 'al.localized_name      AS album_localized_name';
+			$select[] = 'al.uri                 AS album_uri';
+			$select[] = 'al.is_image_uploaded';
+		}
 		
 		if (!is_null($albumUri))
 		{
-			$whereAlbumUri =
-			'
-			AND
-				al.uri = :album_uri
-			';
-			
-			$orderBy =
-			'
-				sn.disc_number ASC,
-				sn.track_number ASC
-			';
+			$where[]  = 'al.id = sn.album_id';
+			$where[]  = 'al.uri = :album_uri';
+			$binds[]  = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($artistUri))
+		if (!is_null($artistUri) || !is_null($characterUri))
 		{
-			$selectRelations =
-			'
-				sacr.status AS song_artist_character_relation_status,
-			';
-			
-			$joinRelations =
+			$select[] = 'sacr.status AS song_artist_character_relation_status';
+			$join[]   = 
 			'
 			JOIN
 				song_artist_character_relations AS sacr
 			ON
 				sacr.song_id = sn.id
 			';
-			
-			$joinArtists =
+		}
+		
+		if (!is_null($artistUri))
+		{
+			$join[]   = 
 			'
 			JOIN
 				artists AS ar
 			ON
 				ar.id = sacr.artist_id
 			';
-			
-			$whereArtistUri =
-			'
-			AND
-				ar.uri = :artist_uri
-			';
+			$where[]  = 'ar.uri = :artist_uri';
+			$binds[]  = [':artist_uri', $artistUri, PDO::PARAM_STR];
 		}
 		
 		if (!is_null($characterUri))
 		{
-			$selectRelations =
-			'
-				sacr.status AS song_artist_character_relation_status,
-			';
-			
-			$joinRelations =
-			'
-			JOIN
-				song_artist_character_relations AS sacr
-			ON
-				sacr.song_id = sn.id
-			';
-			
-			$joinCharacters =
+			$join[]   = 
 			'
 			JOIN
 				characters AS ch
 			ON
 				ch.id = sacr.character_id
 			';
-			
-			$whereCharacterUri =
-			'
-			AND
-				ch.uri = :character_uri
-			';
+			$where[]  = 'ch.uri = :character_uri';
+			$binds[]  = [':character_uri', $characterUri, PDO::PARAM_STR];
 		}
 		
 		if (!is_null($hasVocal))
 		{
-			$whereHasVocal =
-			'
-			AND
-				sn.has_vocal = :has_vocal
-			';
+			$where[]  = 'sn.has_vocal = :has_vocal';
+			$binds[]  = [':has_vocal', $hasVocal, PDO::PARAM_BOOL];
 		}
 		
-		if (!is_null($userUri))
+		if ($isOriginal === true)
 		{
-			$joinUsers =
+			$where[]  = 'sn.original_song_id IS NULL';
+			$where[]  = 'sn.lyrics IS NOT NULL';
+		}
+		
+		if ($isOriginal === false)
+		{
+			$where[]  = 'sn.original_song_id IS NOT NULL';
+		}
+		
+		if (!is_null($hasVocal))
+		{
+			$where[]  = 'sn.has_vocal = :has_vocal';
+			$binds[]  = [':has_vocal', $hasVocal, PDO::PARAM_BOOL];
+		}
+		
+		if (!is_null($excludeId))
+		{
+			$where[]  = 'sn.id <> :exclude_id';
+			$binds[]  = [':exclude_id', $excludeId, PDO::PARAM_INT];
+		}
+		
+		if (!is_null($userAddedUri))
+		{
+			$join[]   = 
 			'
-				JOIN
-					users as us
-				ON
-					sn.user_added_id = us.id
+			JOIN
+				users as us
+			ON
+				sn.user_added_id = us.id
 			';
-			
-			$whereUserUri =
-			'
-				AND
-					us.username = :user_uri
-				AND
-					sn.lyrics IS NOT NULL
-			';
+			$where[]  = 'us.username = :user_added_uri';
+			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
 		$stmt = $this->pdo->prepare
 		(
 			'
-			SELECT'.
-				$selectRelations.'
-				sn.id,
-				sn.original_name,
-				sn.transliterated_name,
-				sn.localized_name,
-				sn.uri,
-				sn.has_vocal,
-				sn.disc_number,
-				sn.track_number,
-				sn.user_added_id,
-				sn.status,
-				al.original_name         AS album_original_name,
-				al.transliterated_name   AS album_transliterated_name,
-				al.localized_name        AS album_localized_name,
-				al.uri                   AS album_uri,
-				al.is_image_uploaded
+			SELECT
+				'.implode(', ', $select).'
 			FROM
-				songs AS sn
+				'.implode(', ', $from).'
 			JOIN
 				albums AS al
 			ON
-				al.id = sn.album_id
-			'.
-			$joinRelations.
-			$joinArtists.
-			$joinCharacters.
-			$joinUsers.'
+				sn.album_id = al.id
+			
+			'.implode("\n", $join).'
+			
 			WHERE
-				TRUE = TRUE
-			'.
-			$whereAlbumUri.
-			$whereArtistUri.
-			$whereCharacterUri.
-			$whereHasVocal.
-			$whereUserUri.'
+				'.implode(' AND ', $where).'
 			ORDER BY
-			'.
-			$orderBy
+				'.implode(', ', $orderBy).'
+			'
 		);
 		
-		if (!is_null($albumUri))
-			$stmt->bindParam(':album_uri',     $albumUri,     PDO::PARAM_STR);
-		if (!is_null($artistUri))
-			$stmt->bindParam(':artist_uri',    $artistUri,    PDO::PARAM_STR);
-		if (!is_null($characterUri))
-			$stmt->bindParam(':character_uri', $characterUri, PDO::PARAM_STR);
-		if (!is_null($hasVocal))
-			$stmt->bindParam(':has_vocal',     $hasVocal,     PDO::PARAM_BOOL);
-		if (!is_null($userUri))
-			$stmt->bindParam(':user_uri',      $userUri,      PDO::PARAM_STR);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 		
 		$songList = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -870,129 +799,146 @@ class VisitorModel extends Model
 	
 	final public function getTranslationList
 	(
-		string|null $albumUri = null,
-		string|null $songUri  = null,
-		string|null $songId   = null,
-		string|null $userUri  = null
+		bool        $fetchMinInfo = false,
+		string|null $albumUri     = null,
+		string|null $songUri      = null,
+		string|null $userAddedUri = null,
+		array       $orderBy      = ['tr.id']
 	): array
 	{
-		$where = '';
-		$orderBy = '';
+		$select = ['tr.id', 'tr.name', 'tr.language_id'];
+		$from   = ['translations AS tr'];
+		$where  = ['sn.id = tr.song_id', 'al.id = sn.album_id', 'lg.id = tr.language_id'];
+		$binds  = [];
 		
-		$joinUsers    = '';
-		$whereUserUri = '';
-		
-		if (!is_null($albumUri) && !is_null($songUri))
+		if (!$fetchMinInfo)
 		{
-			$where =
-			'
-			AND
-				al.uri = :album_uri
-			AND
-				sn.uri = :song_uri
-			';
+			$select[] = 'al.transliterated_name AS album_transliterated_name';
+			$select[] = 'al.uri                 AS album_uri';
+			$select[] = 'al.is_image_uploaded   AS is_image_uploaded';
+			$select[] = 'sn.transliterated_name AS song_transliterated_name';
+			$select[] = 'sn.uri                 AS song_uri';
+			$select[] = 'tr.uri';
+			$select[] = 'lg.ru_name             AS language_ru_name';
+			$select[] = 'lg.en_name             AS language_en_name';
+			$select[] = 'lg.ja_name             AS language_ja_name';
 			
-			$orderBy =
+			$join[]   =
 			'
-			ORDER BY
-				lg.en_name ASC,
-				tr.user_added_id ASC
+			JOIN
+				songs AS sn
+			ON
+				sn.id = tr.song_id
 			';
-		}
-		else if (!is_null($songId))
-		{
-			$where =
+			$join[]   =
 			'
-			AND
-				sn.id = :song_id
+			JOIN
+				albums AS al
+			ON
+				al.id = sn.album_id
 			';
-			
-			$orderBy =
+			$join[]   =
 			'
-			ORDER BY
-				lg.en_name ASC,
-				tr.user_added_id ASC
-			';
-		}
-		else
-		{
-			$orderBy =
-			'
-			ORDER BY
-				tr.name ASC
+			JOIN
+				languages AS lg
+			ON
+				lg.id = tr.language_id
 			';
 		}
 		
-		if (!is_null($userUri))
+		if (!is_null($albumUri))
 		{
-			$joinUsers =
+			$join[]   =
 			'
-				JOIN
-					users as us
-				ON
-					tr.user_added_id = us.id
+			JOIN
+				songs AS sn
+			ON
+				sn.id = tr.song_id
 			';
-			
-			$whereUserUri =
+			$join[]  =
 			'
-				AND
-					us.username = :user_uri
+			JOIN
+				albums AS al
+			ON
+				al.id = sn.album_id
 			';
+			$where[] = 'al.uri = :album_uri';
+			$binds[] = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
+		
+		if (!is_null($songUri))
+		{
+			$join[]   =
+			'
+			JOIN
+				songs AS sn
+			ON
+				sn.id = tr.song_id
+			';
+			$where[] = 'sn.uri = :song_uri';
+			$binds[] = [':song_uri', $songUri, PDO::PARAM_STR];
+		}
+		
+		if (!is_null($userAddedUri))
+		{
+			$join[]   = 
+			'
+			JOIN
+				users as us
+			ON
+				tr.user_added_id = us.id
+			';
+			$where[] = 'us.username = :user_added_uri';
+			$binds[] = [':user_added_uri', $songUri, PDO::PARAM_STR];
+		}
+		
+		$join = array_unique($join);
 		
 		$stmt = $this->pdo->prepare
 		(
 			'
 			SELECT
-				al.transliterated_name AS album_transliterated_name,
-				al.uri                 AS album_uri,
-				al.is_image_uploaded   AS is_image_uploaded,
-				sn.transliterated_name AS song_transliterated_name,
-				sn.uri                 AS song_uri,
-				tr.id,
-				tr.name,
-				tr.uri,
-				lg.ru_name             AS language_ru_name,
-				lg.en_name             AS language_en_name,
-				lg.ja_name             AS language_ja_name
+				'.implode(', ', $select).'
 			FROM
-				translations AS tr
-			JOIN
-				languages AS lg
-			ON
-				lg.id = tr.language_id
-			JOIN
-				songs AS sn
-			ON
-				sn.id = tr.song_id
-			JOIN
-				albums AS al
-			ON
-				al.id = sn.album_id
-			'.
-			$joinUsers.'
+				'.implode(', ', $from).'
+			
+			'.implode("\n", $join).'
+			
 			WHERE
-				TRUE = TRUE
-			'.
-			$where.
-			$whereUserUri.
-			$orderBy
+				'.implode(' AND ', $where).'
+			ORDER BY
+				'.implode(', ', $orderBy).'
+			'
 		);
 		
-		if (!is_null($albumUri) && !is_null($songUri))
-		{
-			$stmt->bindParam(':album_uri', $albumUri, PDO::PARAM_STR);
-			$stmt->bindParam(':song_uri',  $songUri,  PDO::PARAM_STR);
-		}
-		if (!is_null($songId))
-			$stmt->bindParam(':song_id',   $songId,    PDO::PARAM_INT);
-		if (!is_null($userUri))
-			$stmt->bindParam(':user_uri',  $userUri,   PDO::PARAM_STR);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 		
 		$translationList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		return $translationList;
+	}
+	
+	final public function getLanguageList(array $orderBy = ['id ASC']): array
+	{
+		$stmt = $this->pdo->query
+		(
+			'
+			SELECT
+				id,
+				own_name AS language_own_name,
+				ru_name  AS language_ru_name,
+				en_name  AS language_en_name,
+				ja_name  AS language_ja_name
+			FROM
+				languages
+			ORDER BY
+				'.implode(', ', $orderBy).'
+			'
+		);
+		
+		$languageList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		return $languageList;
 	}
 	
 	final public function getFeedbackList(): array
@@ -1071,7 +1017,6 @@ class VisitorModel extends Model
 		);
 		
 		$stmt->bindParam(':game_uri', $gameUri, PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		$game = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1130,7 +1075,6 @@ class VisitorModel extends Model
 		);
 		
 		$stmt->bindParam(':album_uri', $albumUri, PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		$album = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1187,7 +1131,6 @@ class VisitorModel extends Model
 		);
 		
 		$stmt->bindParam(':artist_uri', $artistUri, PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		$artist = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1237,7 +1180,6 @@ class VisitorModel extends Model
 		);
 		
 		$stmt->bindParam(':character_uri', $characterUri, PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		$character = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1251,35 +1193,26 @@ class VisitorModel extends Model
 		int   |null $songId   = null
 	): array|bool
 	{
-		$whereAlbumUri = '';
-		$whereSongUri  = '';
-		$whereSongId   = '';
+		$where  = ['TRUE'];
+		$binds  = [];
 		
 		if (!is_null($albumUri))
 		{
-			$whereAlbumUri =
-			'
-			AND
-				al.uri = :album_uri
-			';
+			$where[] = 'al.id = sn.album_id';
+			$where[] = 'al.uri = :album_uri';
+			$binds[] = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
 		
 		if (!is_null($songUri))
 		{
-			$whereSongUri =
-			'
-			AND
-				sn.uri = :song_uri
-			';
+			$where[] = 'sn.uri = :uri';
+			$binds[] = [':uri', $songUri, PDO::PARAM_STR];
 		}
 		
 		if (!is_null($songId))
 		{
-			$whereSongId =
-			'
-			AND
-				sn.id = :song_id
-			';
+			$where[] = 'sn.id = :id';
+			$binds[] = [':id', $songId, PDO::PARAM_INT];
 		}
 		
 		$stmt = $this->pdo->prepare
@@ -1296,6 +1229,7 @@ class VisitorModel extends Model
 				sn.has_vocal,
 				sn.original_song_id,
 				sn.language_id,
+				(1 - ISNULL(sn.lyrics))  AS has_lyrics,
 				sn.lyrics,
 				sn.notes,
 				sn.status,
@@ -1336,20 +1270,12 @@ class VisitorModel extends Model
 			ON
 				al.id = sn.album_id
 			WHERE
-				TRUE = TRUE
-			'.
-			$whereAlbumUri.
-			$whereSongUri.
-			$whereSongId
+				'.implode(' AND ', $where).'
+			'
 		);
 		
-		if (!is_null($albumUri))
-			$stmt->bindParam(':album_uri', $albumUri, PDO::PARAM_STR);
-		if (!is_null($songUri))
-			$stmt->bindParam(':song_uri',  $songUri,  PDO::PARAM_STR);
-		if (!is_null($songId))
-			$stmt->bindParam(':song_id',   $songId,   PDO::PARAM_INT);
-		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 		
 		$song = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1429,11 +1355,35 @@ class VisitorModel extends Model
 		$stmt->bindParam(':translation_uri', $translationUri, PDO::PARAM_STR);
 		$stmt->bindParam(':song_uri',        $songUri,        PDO::PARAM_STR);
 		$stmt->bindParam(':album_uri',       $albumUri,       PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		$translation = $stmt->fetch(PDO::FETCH_ASSOC);
 		return $translation;
+	}
+	
+	final public function getLanguage(int $languageId): array
+	{
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT
+				id,
+				own_name AS language_own_name,
+				ru_name  AS language_ru_name,
+				en_name  AS language_en_name,
+				ja_name  AS language_ja_name
+			FROM
+				languages
+			WHERE
+				id = :language_id
+			'
+		);
+		
+		$stmt->bindParam(':language_id', $languageId, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		$language = $stmt->fetch(PDO::FETCH_ASSOC);
+		return $language;
 	}
 	
 	final public function getLastAddedAlbums(int $count): array
