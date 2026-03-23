@@ -460,7 +460,7 @@ class VisitorModel extends Model
 		
 		if ($mayBeAlias === false)
 		{
-			$where[]  = 'a.alias_of_artist_id IS NOT NULL';
+			$where[]  = 'a.alias_of_artist_id IS NULL';
 		}
 		
 		$stmt = $this->pdo->prepare
