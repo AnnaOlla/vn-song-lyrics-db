@@ -808,7 +808,8 @@ class VisitorModel extends Model
 	{
 		$select = ['tr.id', 'tr.name', 'tr.language_id'];
 		$from   = ['translations AS tr'];
-		$where  = [];
+		$join   = [];
+		$where  = ['TRUE'];
 		$binds  = [];
 		
 		if (!$fetchMinInfo)
@@ -868,7 +869,7 @@ class VisitorModel extends Model
 		
 		if (!is_null($songUri))
 		{
-			$join[]   =
+			$join[]  =
 			'
 			JOIN
 				songs AS sn
@@ -881,7 +882,7 @@ class VisitorModel extends Model
 		
 		if (!is_null($userAddedUri))
 		{
-			$join[]   = 
+			$join[]  =
 			'
 			JOIN
 				users as us
@@ -889,7 +890,7 @@ class VisitorModel extends Model
 				tr.user_added_id = us.id
 			';
 			$where[] = 'us.username = :user_added_uri';
-			$binds[] = [':user_added_uri', $songUri, PDO::PARAM_STR];
+			$binds[] = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
 		$join = array_unique($join);

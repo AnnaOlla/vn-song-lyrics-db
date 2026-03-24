@@ -720,8 +720,8 @@ class UserController extends ViolatorController
 		$translationsByUser = $this->model->getTranslationList
 		(
 			fetchMinInfo: true,
-			albumUri:     $albumUri,
-			songUri:      $songUri,
+			albumUri:     $album['uri'],
+			songUri:      $song['uri'],
 			userAddedUri: $_SESSION['user']['username']
 		);
 		
