@@ -808,7 +808,7 @@ class VisitorModel extends Model
 	{
 		$select = ['tr.id', 'tr.name', 'tr.language_id'];
 		$from   = ['translations AS tr'];
-		$where  = ['sn.id = tr.song_id', 'al.id = sn.album_id', 'lg.id = tr.language_id'];
+		$where  = [];
 		$binds  = [];
 		
 		if (!$fetchMinInfo)

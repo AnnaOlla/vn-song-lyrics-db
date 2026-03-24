@@ -716,13 +716,13 @@ class UserController extends ViolatorController
 	
 	private function handleAddTranslationPageGet(array $album, array $song): void
 	{
-		$languages          = $this->model->getLanguageList(orderBy: $this->language.'_name ASC');
+		$languages          = $this->model->getLanguageList(orderBy: [$this->language.'_name ASC']);
 		$translationsByUser = $this->model->getTranslationList
 		(
 			fetchMinInfo: true,
 			albumUri:     $albumUri,
 			songUri:      $songUri,
-			userAddedId:  $_SESSION['user']['id']
+			userAddedUri: $_SESSION['user']['username']
 		);
 		
 		$this->view->renderAddTranslationPage($album, $song, $languages, $translationsByUser);
@@ -735,7 +735,7 @@ class UserController extends ViolatorController
 			fetchMinInfo: true,
 			albumUri:     $album['uri'],
 			songUri:      $song['uri'],
-			userAddedId:  $_SESSION['user']['id']
+			userAddedUri: $_SESSION['user']['username']
 		);
 		
 		$allLanguages         = $this->model->getLanguageList();
