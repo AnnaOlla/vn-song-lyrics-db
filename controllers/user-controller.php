@@ -597,6 +597,10 @@ class UserController extends ViolatorController
 		$lyrics            = trimNullableText($lyrics);
 		$notes             = trimNullableText($notes);
 		
+		// Empty should be reduced to null
+		$lyrics            = trimNullableString($lyrics);
+		$notes             = trimNullableString($notes);
+		
 		if (count($artistIds) === 0)
 		{
 			$this->handleBadRequest();
@@ -753,6 +757,10 @@ class UserController extends ViolatorController
 		$name                 = trimNullableString($name);
 		$lyrics               = trimNullableText($lyrics);
 		$notes                = trimNullableText($notes);
+		
+		// Empty should be reduced to null
+		$lyrics               = trimNullableString($lyrics);
+		$notes                = trimNullableString($notes);
 		
 		if (haveNullOrEmpty($name, $lyrics, $languageId))
 		{
@@ -1478,6 +1486,10 @@ class UserController extends ViolatorController
 		$lyrics              = trimNullableText($lyrics);
 		$notes               = trimNullableText($notes);
 		
+		// Empty should be reduced to null
+		$lyrics              = trimNullableString($lyrics);
+		$notes               = trimNullableString($notes);
+		
 		if (count($artistIds) === 0)
 		{
 			$this->handleBadRequest();
@@ -1630,6 +1642,10 @@ class UserController extends ViolatorController
 		$name          = trimNullableString($name);
 		$lyrics        = trimNullableText($lyrics);
 		$notes         = trimNullableText($notes);
+		
+		// Empty should be reduced to null
+		$lyrics        = trimNullableString($lyrics);
+		$notes         = trimNullableString($notes);
 		
 		if (!isCurrentUser($translation['user_added_id']) && !isCurrentUserModerator())
 		{
