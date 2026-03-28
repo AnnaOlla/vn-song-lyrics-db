@@ -184,7 +184,7 @@ CREATE TABLE translations
 	uri                VARCHAR(48)   NOT NULL,
 	
 	language_id        INT UNSIGNED  NOT NULL,
-    name               VARCHAR(64)   NOT NULL,
+    name               VARCHAR(132)  NOT NULL,
     lyrics             TEXT          NOT NULL,
 	notes              TEXT,
 	
