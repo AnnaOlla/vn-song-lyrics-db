@@ -245,16 +245,6 @@ HTML;
 		return $html;
 	}
 	
-	/* 
-	 * Trick against PHP
-	 * Const values are not allowed in PHP's heredoc
-	 * But we can hack it by using a function
-	*/
-	final protected function getConst(string $constStringFromLocalizationFile): string
-	{
-		return $constStringFromLocalizationFile;
-	}
-	
 	//-----------------------------------------------------------//
 	//      Content Pages: Small Blocks To Build Pages With      //
 	//-----------------------------------------------------------//

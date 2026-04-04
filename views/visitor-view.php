@@ -13,12 +13,6 @@ class VisitorView extends View
 	//      Content Pages: Entity Lists      //
 	//---------------------------------------//
 	
-	// IMPORTANT:
-	// Generally, shown info has almost the same keys and values for 4 entities
-	// (album, artist, game, character)
-	// It is possible to use only one method
-	// But what if this behavior changes in the future?
-	
 	final protected function createGameList
 	(
 		array       $games,
