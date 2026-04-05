@@ -28,8 +28,7 @@ class UserController extends ViolatorController
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -68,28 +67,16 @@ class UserController extends ViolatorController
 		$characterIds       = removeNullValues($characterIds);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!isPrintableAscii($transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($albumIds, $allAlbumIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of albumIds was invalid', get_defined_vars());
 		
 		if (array_diff($characterIds, $characterIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of characterIds was invalid', get_defined_vars());
 		
 		[$gameId, $gameUri] = $this->model->addGame
 		(
@@ -124,8 +111,7 @@ class UserController extends ViolatorController
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -160,22 +146,13 @@ class UserController extends ViolatorController
 		$gameIds            = removeNullValues($gameIds);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName, $songCount))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!isPrintableAscii($transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of gameIds was invalid', get_defined_vars());
 		
 		[$albumId, $albumUri] = $this->model->addAlbum
 		(
@@ -208,8 +185,7 @@ class UserController extends ViolatorController
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -241,22 +217,13 @@ class UserController extends ViolatorController
 		$aliasOfId          = parseNullableInteger($aliasOfId, 1);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!isPrintableAscii($transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if ($aliasOfId && !in_array($aliasOfId, $originalArtists))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('aliasOfId was invalid', get_defined_vars());
 		
 		[$artistId, $artistUri] = $this->model->addArtist
 		(
@@ -286,8 +253,7 @@ class UserController extends ViolatorController
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -320,22 +286,13 @@ class UserController extends ViolatorController
 		$gameIds            = removeNullValues($gameIds);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!isPrintableAscii($transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of gameIds was invalid', get_defined_vars());
 		
 		[$characterId, $characterUri] = $this->model->addCharacter
 		(
@@ -360,34 +317,19 @@ class UserController extends ViolatorController
 		$songCount = $this->model->getSongCurrentCount($albumUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($album['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if ($songCount >= $album['song_count'])
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -400,8 +342,7 @@ class UserController extends ViolatorController
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -444,22 +385,13 @@ class UserController extends ViolatorController
 		$isFirstDiscFirstTrack = ($isFirstDisc && $isFirstTrack);
 		
 		if (haveNullOrEmpty($discNumber, $trackNumber, $originalName, $transliteratedName, $hasVocal))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!isPrintableAscii($transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (!$isSameDiscNextTrack && !$isNextDiscFirstTrack && !$isFirstDiscFirstTrack)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Track number or disk number was incorrect', get_defined_vars());
 		
 		$this->model->addSong
 		(
@@ -487,40 +419,22 @@ class UserController extends ViolatorController
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($song['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if (!$song['has_vocal'] || $song['lyrics'] || $song['original_song_id'])
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -533,8 +447,7 @@ class UserController extends ViolatorController
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -602,52 +515,28 @@ class UserController extends ViolatorController
 		$notes             = trimNullableString($notes);
 		
 		if (count($artistIds) === 0)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Artists were not provided', get_defined_vars());
 		
 		if (count($artistIds) !== count($characterIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Artist count was not equal to character count', get_defined_vars());
 		
 		if (array_diff($artistIds, $allArtistIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('One of artistIds was invalid', get_defined_vars());
 		
 		if (array_diff($characterIds, $allCharacterIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('One of characterIds was invalid', get_defined_vars());
 		
 		if ($originalSongId && ($languageId || $lyrics || $notes))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('originalSongId was set along with language, lyrics, notes', get_defined_vars());
 		
 		if (!$originalSongId && (!$languageId || !$lyrics))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('None of originalSongId, languageId, lyrics was set', get_defined_vars());
 		
 		if ($originalSongId && !in_array($originalSongId, $allOriginalIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('originalSongId was invalid', get_defined_vars());
 		
 		if ($languageId && !in_array($languageId, $allLanguages))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('languageId was invalid', get_defined_vars());
 		
 		$this->model->addLyrics
 		(
@@ -673,34 +562,19 @@ class UserController extends ViolatorController
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song['has_vocal'] || !$song['has_lyrics'] || $song['original_song_id'])
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -713,8 +587,7 @@ class UserController extends ViolatorController
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -763,22 +636,13 @@ class UserController extends ViolatorController
 		$notes                = trimNullableString($notes);
 		
 		if (haveNullOrEmpty($name, $lyrics, $languageId))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!in_array($languageId, $allLanguages))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('languageId was invalid', get_defined_vars());
 		
 		if (in_array($languageId, $forbiddenLanguages))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('languageId was forbidden', get_defined_vars());
 		
 		[$translationId, $translationUri] = $this->model->addTranslation
 		(
@@ -800,22 +664,13 @@ class UserController extends ViolatorController
 		$game = $this->model->getGame($gameUri);
 		
 		if (!$game)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($game['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($game['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -828,8 +683,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -877,28 +731,16 @@ class UserController extends ViolatorController
 		$characterIds        = removeNullValues($characterIds);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!isPrintableAscii($transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($albumIds, $allAlbumIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('languageId was forbidden', get_defined_vars());
 		
 		if (array_diff($characterIds, $allCharacterIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of characterIds was invalid', get_defined_vars());
 		
 		[$gameId, $gameUri] = $this->model->updateGame
 		(
@@ -930,22 +772,13 @@ class UserController extends ViolatorController
 		$album = $this->model->getAlbum($albumUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($album['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -958,8 +791,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1005,28 +837,16 @@ class UserController extends ViolatorController
 		$gameIds             = removeNullValues($gameIds);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName, $songCount))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!isPrintableAscii($transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of gameIds was invalid', get_defined_vars());
 		
 		if ($songCount < $currentSongCount)
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpBadRequest400('New song count was less than current', get_defined_vars());
 		
 		[$albumId, $albumUri] = $this->model->updateAlbum
 		(
@@ -1053,22 +873,13 @@ class UserController extends ViolatorController
 		$artist = $this->model->getArtist($artistUri);
 		
 		if (!$artist)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($artist['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($artist['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1081,8 +892,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1114,22 +924,13 @@ class UserController extends ViolatorController
 		$aliasOfId           = parseNullableInteger($aliasOfId, 1);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!isPrintableAscii($transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if ($aliasOfId && !in_array($aliasOfId, $originalArtists))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('aliasOfId was invalid', get_defined_vars());
 		
 		[$artistId, $artistUri] = $this->model->updateArtist
 		(
@@ -1151,22 +952,13 @@ class UserController extends ViolatorController
 		$character = $this->model->getCharacter($characterUri);
 		
 		if (!$character)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($character['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($character['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1179,8 +971,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1214,22 +1005,13 @@ class UserController extends ViolatorController
 		$gameIds             = removeNullValues($gameIds);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!isPrintableAscii($transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of gameIds was invalid', get_defined_vars());
 		
 		[$characterId, $characterUri] = $this->model->updateCharacter
 		(
@@ -1256,34 +1038,19 @@ class UserController extends ViolatorController
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
-		
-		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1296,8 +1063,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1320,16 +1086,10 @@ class UserController extends ViolatorController
 		$hasVocal           = parseNullableInteger($hasVocal, 0, 1);
 		
 		if (haveNullOrEmpty($originalName, $transliteratedName, $hasVocal))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!isPrintableAscii($transliteratedName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		$this->model->updateSong
 		(
@@ -1357,52 +1117,28 @@ class UserController extends ViolatorController
 		);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($song['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if (!$song['has_vocal'])
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if (!isCurrentUser($song['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if ($translations && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1415,8 +1151,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1491,52 +1226,28 @@ class UserController extends ViolatorController
 		$notes               = trimNullableString($notes);
 		
 		if (count($artistIds) === 0)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Artists were not provided', get_defined_vars());
 		
 		if (count($artistIds) !== count($characterIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Artist count was not equal to character count', get_defined_vars());
 		
 		if (array_diff($artistIds, $allArtistIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('One of artistIds was invalid', get_defined_vars());
 		
 		if (array_diff($characterIds, $allCharacterIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('One of characterIds was invalid', get_defined_vars());
 		
 		if ($originalSongId && ($languageId || $lyrics || $notes))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('originalSongId was set along with language, lyrics, notes', get_defined_vars());
 		
 		if (!$originalSongId && (!$languageId || !$lyrics))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('None of originalSongId, languageId, lyrics was set', get_defined_vars());
 		
 		if ($originalSongId && !in_array($originalSongId, $allOriginalIds))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('originalSongId was invalid', get_defined_vars());
 		
 		if ($languageId && !in_array($languageId, $allLanguages))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('languageId was invalid', get_defined_vars());
 		
 		$this->model->updateLyrics
 		(
@@ -1564,52 +1275,28 @@ class UserController extends ViolatorController
 		$translation = $this->model->getTranslation($albumUri, $songUri, $translationUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song['has_vocal'] || !$song['lyrics'] || $song['original_song_id'])
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if (!$translation)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($translation['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!isCurrentUser($translation['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1622,8 +1309,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1647,17 +1333,8 @@ class UserController extends ViolatorController
 		$lyrics        = trimNullableString($lyrics);
 		$notes         = trimNullableString($notes);
 		
-		if (!isCurrentUser($translation['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
-		
 		if (haveNullOrEmpty($name, $lyrics))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		$this->model->updateTranslation
 		(
@@ -1679,28 +1356,16 @@ class UserController extends ViolatorController
 		$game = $this->model->getGame($gameUri);
 		
 		if (!$game)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if (!isCurrentUser($game['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if ($game['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($game['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1713,8 +1378,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1728,10 +1392,7 @@ class UserController extends ViolatorController
 		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteGame($game);
 		
@@ -1743,28 +1404,16 @@ class UserController extends ViolatorController
 		$album = $this->model->getAlbum($albumUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($album['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1777,8 +1426,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1792,10 +1440,7 @@ class UserController extends ViolatorController
 		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteAlbum($album);
 		
@@ -1807,28 +1452,16 @@ class UserController extends ViolatorController
 		$artist = $this->model->getArtist($artistUri);
 		
 		if (!$artist)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if (!isCurrentUser($artist['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if ($artist['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($artist['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1841,8 +1474,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1856,10 +1488,7 @@ class UserController extends ViolatorController
 		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteArtist($artist);
 		
@@ -1871,28 +1500,16 @@ class UserController extends ViolatorController
 		$character = $this->model->getCharacter($characterUri);
 		
 		if (!$character)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if (!isCurrentUser($character['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if ($character['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($character['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1920,10 +1537,7 @@ class UserController extends ViolatorController
 		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteCharacter($character);
 		
@@ -1942,52 +1556,28 @@ class UserController extends ViolatorController
 		);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if (!isCurrentUser($song['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song['has_vocal'] || !$song['has_lyrics'])
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if ($song['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		if ($translations)
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -2000,8 +1590,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -2015,10 +1604,7 @@ class UserController extends ViolatorController
 		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteLyrics($song);
 		$this->model->deleteSongArtistCharacterRelation(songId: $song['id']);
@@ -2033,40 +1619,22 @@ class UserController extends ViolatorController
 		$translation = $this->model->getTranslation($albumUri, $songUri, $translationUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$translation)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if (!isCurrentUser($translation['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -2079,8 +1647,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -2091,13 +1658,10 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteTranslationPagePost(array $album, array $song, array $translation): void
 	{
-		$requestConfirmed = $_POST['confirmation']  ?? null;
+		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteTranslation($translation);
 		
@@ -2109,17 +1673,11 @@ class UserController extends ViolatorController
 		$user = $this->model->getUserData(username: $userUri);
 		
 		if (!isCurrentUser($user['user_id']) && !isCurrentUserModerator())
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if (isCurrentUserViolator())
-		{
-			$this->handleForbidden();
-			return;
-		}
-	
+			throw new HttpForbidden403();
+		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
@@ -2152,10 +1710,7 @@ class UserController extends ViolatorController
 		$MAX_LENGTH = 32;
 		
 		if (!$newUsername || !$oldPassword || !$newEmail)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Crucial data was not sent', get_defined_vars());
 		
 		if (!$this->model->isPasswordCorrect($user['user_email'], $oldPassword))
 		{
@@ -2224,22 +1779,13 @@ class UserController extends ViolatorController
 		$user = $this->model->getUserData(username: $userUri);
 		
 		if (!$user)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if (!isCurrentUser($user['user_id']) && !isCurrentUserModerator())
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if (isCurrentUserViolator())
-		{
-			$this->handleForbidden();
-			return;
-		}
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -2252,8 +1798,7 @@ class UserController extends ViolatorController
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -2267,10 +1812,7 @@ class UserController extends ViolatorController
 		$password = $_POST['password'] ?? null;
 		
 		if (!$password)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400();
 		
 		if (!$this->model->isPasswordCorrect($user['user_email'], $password))
 		{

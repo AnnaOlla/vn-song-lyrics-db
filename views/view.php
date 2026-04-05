@@ -1172,7 +1172,7 @@ HTML;
 		echo $this->endRender();
 	}
 	
-	final public function renderBadRequest(): void
+	final public function renderBadRequest400(): void
 	{
 		$this->renderError
 		(
@@ -1182,7 +1182,7 @@ HTML;
 		);
 	}
 	
-	final public function renderUnauthorized(): void
+	final public function renderUnauthorized401(): void
 	{
 		$this->renderError
 		(
@@ -1192,7 +1192,7 @@ HTML;
 		);
 	}
 	
-	final public function renderPaymentRequired(): void
+	final public function renderPaymentRequired402(): void
 	{
 		$this->renderError
 		(
@@ -1202,7 +1202,7 @@ HTML;
 		);
 	}
 	
-	final public function renderForbidden(): void
+	final public function renderForbidden403(): void
 	{
 		$this->renderError
 		(
@@ -1212,7 +1212,7 @@ HTML;
 		);
 	}
 	
-	final public function renderNotFound(): void
+	final public function renderNotFound404(): void
 	{
 		$this->renderError
 		(
@@ -1222,7 +1222,7 @@ HTML;
 		);
 	}
 	
-	final public function renderMethodNotAllowed(): void
+	final public function renderMethodNotAllowed405(): void
 	{
 		$this->renderError
 		(
@@ -1232,7 +1232,7 @@ HTML;
 		);
 	}
 	
-	final public function renderNotAcceptable(): void
+	final public function renderNotAcceptable406(): void
 	{
 		$this->renderError
 		(
@@ -1242,7 +1242,7 @@ HTML;
 		);
 	}
 	
-	final public function renderUnavailableForLegalReasons(): void
+	final public function renderUnavailableForLegalReasons451(): void
 	{
 		$this->renderError
 		(
@@ -1252,7 +1252,7 @@ HTML;
 		);
 	}
 	
-	final public function renderInternalServerError(): void
+	final public function renderInternalServerError500(): void
 	{
 		$this->renderError
 		(

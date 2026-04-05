@@ -1,7 +1,5 @@
 <?php
 
-require_once 'core/router.php';
-
 require_once 'include/enums.php';
 require_once 'include/juliamo-captcha.php';
 require_once 'include/parsing-functions.php';

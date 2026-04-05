@@ -73,16 +73,16 @@ class UserModel extends ViolatorModel
 	final protected function saveUploadedFile(array $file, string $fullPath): void
 	{
 		if (!$this->isFileUploaded($file))
-			throw new Exception('File upload failed: '.$filename.'.');
+			throw new UploadedFileException('File upload failed', get_defined_vars());
 		
 		if (!$this->isFileExtensionAllowed($file))
-			throw new Exception('File extension not allowed: '.$filename.'.');
+			throw new UploadedFileException('File extension not allowed', get_defined_vars());
 		
 		if (!$this->isFileFormatAllowed($file))
-			throw new Exception('File format not allowed: '.$filename.'.');
+			throw new UploadedFileException('File format not allowed', get_defined_vars());
 		
 		if (!$this->moveUploadedFile($file, $fullPath))
-			throw new Exception('File move failed: '.$fullPath.'.');
+			throw new UploadedFileException('File move failed', get_defined_vars());
 	}
 	
 	final protected function deleteUploadedFile(string $fullPath): void
@@ -91,16 +91,16 @@ class UserModel extends ViolatorModel
 			return;
 		
 		if (!unlink($fullPath))
-			throw new Exception('File delete failed: '.$fullPath.'.');
+			throw new UploadedFileException('File delete failed', get_defined_vars());
 	}
 	
-	final protected function renameUploadedFile(string $oldFullPath, string $newFullPath)
+	final protected function renameUploadedFile(string $oldFullPath, string $newFullPath): void
 	{
 		if (!file_exists($oldFullPath))
 			return;
 		
 		if (!rename($oldFullPath, $newFullPath))
-			throw new Exception('File rename failed: from '.$oldFullPath.' to '.$newFullPath);
+			throw new UploadedFileException('File rename failed', get_defined_vars());
 	}
 	
 	//------------------------------------------//
@@ -126,7 +126,6 @@ class UserModel extends ViolatorModel
 		);
 		
 		$stmt->bindParam(':album_uri', $albumUri, PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		$count = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -157,7 +156,6 @@ class UserModel extends ViolatorModel
 		);
 		
 		$stmt->bindParam(':album_uri', $albumUri, PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		$song = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -220,7 +218,6 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':is_image_uploaded',   $isImageUploaded,    PDO::PARAM_BOOL);
 		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_INT);
 		$stmt->bindParam(':user_added_id',       $userAddedId,        PDO::PARAM_INT);
-		
 		$stmt->execute();
 		
 		if ($isImageUploaded)
@@ -293,7 +290,6 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':vgmdb_id',            $vgmdbId,            PDO::PARAM_INT);
 		$stmt->bindParam(':song_count',          $songCount,          PDO::PARAM_INT);
 		$stmt->bindParam(':user_added_id',       $userAddedId,        PDO::PARAM_INT);
-		
 		$stmt->execute();
 		
 		if ($isImageUploaded)
@@ -366,7 +362,6 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':vgmdb_id',            $vgmdbId,            PDO::PARAM_INT);
 		$stmt->bindParam(':alias_of_artist_id',  $aliasOfId,          PDO::PARAM_INT);
 		$stmt->bindParam(':user_added_id',       $userAddedId,        PDO::PARAM_INT);
-		
 		$stmt->execute();
 		
 		if ($isImageUploaded)
@@ -435,7 +430,6 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':is_image_uploaded',   $isImageUploaded,    PDO::PARAM_BOOL);
 		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_INT);
 		$stmt->bindParam(':user_added_id',       $userAddedId,        PDO::PARAM_INT);
-		
 		$stmt->execute();
 		
 		if ($isImageUploaded)
@@ -509,7 +503,6 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':disc_number',         $discNumber,         PDO::PARAM_INT);
 		$stmt->bindParam(':track_number',        $trackNumber,        PDO::PARAM_INT);
 		$stmt->bindParam(':user_added_id',       $userAddedId,        PDO::PARAM_INT);
-		
 		$stmt->execute();
 		
 		$id = $this->pdo->lastInsertId();
@@ -563,11 +556,10 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':user_added_id',    $userAddedId,    PDO::PARAM_INT);
 		$stmt->bindParam(':album_uri',        $albumUri,       PDO::PARAM_STR);
 		$stmt->bindParam(':song_uri',         $songUri,        PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception('Lyrics add by user failed: /album/'.$albumUri.'/'.$songUri);
+			throw new DatabaseLogicException('Failed to add lyrics to a song', get_defined_vars());
 	}
 	
 	final public function addTranslation
@@ -636,7 +628,6 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':lyrics',        $lyrics,      PDO::PARAM_STR);
 		$stmt->bindParam(':notes',         $notes,       PDO::PARAM_STR);
 		$stmt->bindParam(':user_added_id', $userAddedId, PDO::PARAM_INT);
-		
 		$stmt->execute();
 		
 		$id = $this->pdo->lastInsertId();
@@ -666,7 +657,6 @@ class UserModel extends ViolatorModel
 		
 		$stmt->bindParam(':game_id',  $gameId,  PDO::PARAM_INT);
 		$stmt->bindParam(':album_id', $albumId, PDO::PARAM_INT);
-		
 		$stmt->execute();
 	}
 	
@@ -700,7 +690,6 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':song_id',      $songId,      PDO::PARAM_INT);
 		$stmt->bindParam(':artist_id',    $artistId,    PDO::PARAM_INT);
 		$stmt->bindParam(':character_id', $characterId, PDO::PARAM_INT);
-		
 		$stmt->execute();
 	}
 	
@@ -726,7 +715,6 @@ class UserModel extends ViolatorModel
 		
 		$stmt->bindParam(':character_id', $characterId, PDO::PARAM_INT);
 		$stmt->bindParam(':game_id',      $gameId,      PDO::PARAM_INT);
-		
 		$stmt->execute();
 	}
 	
@@ -793,11 +781,10 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_INT);
 		$stmt->bindParam(':user_updated_id',     $userUpdatedId,      PDO::PARAM_INT);
 		$stmt->bindParam(':old_uri',             $oldUri,             PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$oldUri);
+			throw new DatabaseLogicException('Failed to update game', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -889,11 +876,10 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':song_count',          $songCount,          PDO::PARAM_INT);
 		$stmt->bindParam(':user_updated_id',     $userUpdatedId,      PDO::PARAM_INT);
 		$stmt->bindParam(':old_uri',             $oldUri,             PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$oldUri);
+			throw new DatabaseLogicException('Failed to update album', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -985,11 +971,10 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':alias_of_artist_id',  $aliasOfId,          PDO::PARAM_INT);
 		$stmt->bindParam(':user_updated_id',     $userUpdatedId,      PDO::PARAM_INT);
 		$stmt->bindParam(':old_uri',             $oldUri,             PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$oldUri);
+			throw new DatabaseLogicException('Failed to update artist', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -1078,11 +1063,10 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':vndb_id',             $vndbId,             PDO::PARAM_INT);
 		$stmt->bindParam(':user_updated_id',     $userUpdatedId,      PDO::PARAM_INT);
 		$stmt->bindParam(':old_uri',             $oldUri,             PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$oldUri);
+			throw new DatabaseLogicException('Failed to update character', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -1156,11 +1140,10 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':user_updated_id',     $userUpdatedId,      PDO::PARAM_INT);
 		$stmt->bindParam(':album_uri',           $albumUri,           PDO::PARAM_STR);
 		$stmt->bindParam(':old_uri',             $oldUri,             PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$albumUri.', '.$oldUri);
+			throw new DatabaseLogicException('Failed to update song', get_defined_vars());
 		
 		$id = $this->pdo->lastInsertId();
 		
@@ -1215,11 +1198,10 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':user_updated_id',  $userUpdatedId,  PDO::PARAM_INT);
 		$stmt->bindParam(':album_uri',        $albumUri,       PDO::PARAM_STR);
 		$stmt->bindParam(':song_uri',         $songUri,        PDO::PARAM_STR);
-		
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$albumUri.', '.$songUri);
+			throw new DatabaseLogicException('Failed to update lyrics', get_defined_vars());
 	}
 	
 	final public function updateTranslation
@@ -1233,9 +1215,6 @@ class UserModel extends ViolatorModel
 		int         $userUpdatedId
 	): void
 	{
-		// It is not allowed to select when deleting
-		// But the trick here is to create a temporary copy of the table
-		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -1282,11 +1261,10 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':lyrics',          $lyrics,         PDO::PARAM_STR);
 		$stmt->bindParam(':notes',           $notes,          PDO::PARAM_STR);
 		$stmt->bindParam(':user_updated_id', $userUpdatedId,  PDO::PARAM_INT);
-		
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$albumUri.', '.$songUri.', '.$translationUri);
+			throw new DatabaseLogicException('Failed to update translation', get_defined_vars());
 	}
 	
 	//-----------------------------------------------//
@@ -1310,7 +1288,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$game['id']);
+			throw new DatabaseLogicException('Failed to delete game', get_defined_vars());
 		
 		if ($game['is_image_uploaded'])
 		{
@@ -1339,7 +1317,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$album['id']);
+			throw new DatabaseLogicException('Failed to delete album', get_defined_vars());
 		
 		if ($album['is_image_uploaded'])
 		{
@@ -1368,7 +1346,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$artist['id']);
+			throw new DatabaseLogicException('Failed to delete artist', get_defined_vars());
 		
 		if ($artist['is_image_uploaded'])
 		{
@@ -1397,7 +1375,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$character['id']);
+			throw new DatabaseLogicException('Failed to delete character', get_defined_vars());
 		
 		if ($character['is_image_uploaded'])
 		{
@@ -1433,7 +1411,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$id);
+			throw new DatabaseLogicException('Failed to delete lyrics', get_defined_vars());
 	}
 	
 	public function deleteTranslation(array $translation): void
@@ -1451,7 +1429,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.' failed: '.$id);
+			throw new DatabaseLogicException('Failed to delete translation', get_defined_vars());
 	}
 	
 	final public function deleteGameAlbumRelation
@@ -1461,7 +1439,7 @@ class UserModel extends ViolatorModel
 	): void
 	{
 		if (is_null($gameId) && is_null($albumId))
-			throw new Exception(__METHOD__.' was called without conditions');
+			throw new DatabaseLogicException('Method called without conditions', get_defined_vars());
 		
 		$where = ['status = "unchecked"'];
 		$binds = [];
@@ -1501,7 +1479,7 @@ class UserModel extends ViolatorModel
 	): void
 	{
 		if (is_null($songId) && is_null($artistId) && is_null($characterId))
-			throw new Exception(__METHOD__.' was called without conditions');
+			throw new DatabaseLogicException('Method called without conditions', get_defined_vars());
 		
 		$where = ['status = "unchecked"'];
 		$binds = [];
@@ -1546,7 +1524,7 @@ class UserModel extends ViolatorModel
 	): void
 	{
 		if (is_null($characterId) && is_null($gameId))
-			throw new Exception(__METHOD__.' was called without conditions');
+			throw new DatabaseLogicException('Method called without conditions', get_defined_vars());
 		
 		$where = ['status = "unchecked"'];
 		$binds = [];
@@ -1608,7 +1586,6 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':id',       $userId,      PDO::PARAM_INT);
 		$stmt->bindParam(':username', $newUsername, PDO::PARAM_STR);
 		$stmt->bindParam(':email',    $newEmail,    PDO::PARAM_STR);
-		
 		$stmt->execute();
 	}
 	

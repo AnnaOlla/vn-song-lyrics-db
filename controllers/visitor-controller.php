@@ -54,8 +54,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -67,10 +66,7 @@ class VisitorController extends Controller
 	private function handleLogInPagePost(AuthenticationError $error = AuthenticationError::None): void
 	{
 		if (!isset($_POST['email']) || !isset($_POST['password']))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Email and password were not sent', get_defined_vars());
 		
 		if ($_POST['email'] === '')
 			$error = AuthenticationError::EmptyEmail;
@@ -115,8 +111,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -133,10 +128,7 @@ class VisitorController extends Controller
 	private function handleSignUpPagePost(AuthenticationError $error = AuthenticationError::None): void
 	{
 		if (!isset($_POST['username']) || !isset($_POST['password']) || !isset($_POST['email']) || !isset($_POST['captcha-code']))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Sign-up data was not sent', get_defined_vars());
 		
 		$MIN_LENGTH = 4;
 		$MAX_LENGTH = 32;
@@ -203,58 +195,58 @@ class VisitorController extends Controller
 		header('Location: '.$location);
 	}
 	
-	final public function handleBadRequest(): void
+	final public function handleBadRequest400(): void
 	{
 		http_response_code(400);
-		$this->view->renderBadRequest();
+		$this->view->renderBadRequest400();
 	}
 	
-	final public function handleUnauthorized(): void
+	final public function handleUnauthorized401(): void
 	{
 		http_response_code(401);
-		$this->view->renderUnauthorized();
+		$this->view->renderUnauthorized401();
 	}
 	
-	final public function handlePaymentRequired(): void
+	final public function handlePaymentRequired402(): void
 	{
 		http_response_code(402);
-		$this->view->renderPaymentRequired();
+		$this->view->renderPaymentRequired402();
 	}
 	
-	final public function handleForbidden(): void
+	final public function handleForbidden403(): void
 	{
 		http_response_code(403);
-		$this->view->renderForbidden();
+		$this->view->renderForbidden403();
 	}
 	
-	final public function handleNotFound(): void
+	final public function handleNotFound404(): void
 	{
 		http_response_code(404);
-		$this->view->renderNotFound();
+		$this->view->renderNotFound404();
 	}
 	
-	final public function handleMethodNotAllowed(): void
+	final public function handleMethodNotAllowed405(): void
 	{
 		http_response_code(405);
-		$this->view->renderMethodNotAllowed();
+		$this->view->renderMethodNotAllowed405();
 	}
 	
-	final public function handleNotAcceptable(): void
+	final public function handleNotAcceptable406(): void
 	{
 		http_response_code(406);
-		$this->view->renderNotAcceptable();
+		$this->view->renderNotAcceptable406();
 	}
 	
-	final public function handleUnavailableForLegalReasons(): void
+	final public function handleUnavailableForLegalReasons451(): void
 	{
 		http_response_code(451);
-		$this->view->renderUnavailableForLegalReasons();
+		$this->view->renderUnavailableForLegalReasons451();
 	}
 	
-	final public function handleInternalServerError(): void
+	final public function handleInternalServerError500(): void
 	{
 		http_response_code(500);
-		$this->view->renderInternalServerError();
+		$this->view->renderInternalServerError500();
 	}
 	
 	//---------------------------------//
@@ -270,8 +262,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -296,8 +287,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -316,8 +306,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -336,8 +325,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -356,8 +344,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -376,8 +363,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -396,8 +382,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -412,16 +397,10 @@ class VisitorController extends Controller
 		$game = $this->model->getGame($gameUri);
 		
 		if (!$game)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($game['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -430,8 +409,7 @@ class VisitorController extends Controller
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -448,16 +426,10 @@ class VisitorController extends Controller
 		$album = $this->model->getAlbum($albumUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -466,8 +438,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -488,16 +459,10 @@ class VisitorController extends Controller
 		$artist = $this->model->getArtist($artistUri);
 		
 		if (!$artist)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($artist['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -506,8 +471,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -524,16 +488,10 @@ class VisitorController extends Controller
 		$character = $this->model->getCharacter($characterUri);
 		
 		if (!$character)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($character['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -542,8 +500,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -561,28 +518,16 @@ class VisitorController extends Controller
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -591,8 +536,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -624,28 +568,16 @@ class VisitorController extends Controller
 		$performerList = $this->model->getPerformerList(albumUri: $albumUri, songUri: $songUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($song['original_song_id'])
 		{
@@ -681,16 +613,10 @@ class VisitorController extends Controller
 		}
 		
 		if (!$translation)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($translation['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -699,8 +625,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -738,8 +663,7 @@ class VisitorController extends Controller
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -763,16 +687,10 @@ class VisitorController extends Controller
 		$captcha  = $_POST['captcha-code']   ?? null;
 		
 		if (isNullOrEmpty($message))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Message was empty or null');
 		
 		if (mb_strtolower($_SESSION['feedbackCaptchaCode']) !== mb_strtolower($captcha))
-		{
-			$this->handleFeedbackPageGet();
-			return;
-		}
+			throw new HttpBadRequest400('Captcha was wrong');
 		
 		$this->model->addFeedback($senderId, $senderIp, $message);
 		$this->handleRedirect(buildInternalLink($this->language, 'feedback'));
@@ -787,8 +705,7 @@ class VisitorController extends Controller
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -800,10 +717,7 @@ class VisitorController extends Controller
 		$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
 		
 		if (haveNullOrEmpty($message, $entityUri, $userAgent))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Null or empty submitted', [$message, $entityUri, $userAgent]);
 		
 		$this->model->addReport
 		(
@@ -821,16 +735,10 @@ class VisitorController extends Controller
 		$game = $this->model->getGame($gameUri);
 		
 		if (!$game)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($game['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -839,8 +747,7 @@ class VisitorController extends Controller
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -855,16 +762,10 @@ class VisitorController extends Controller
 		$album = $this->model->getAlbum($albumUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -873,8 +774,7 @@ class VisitorController extends Controller
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -889,16 +789,10 @@ class VisitorController extends Controller
 		$artist = $this->model->getArtist($artistUri);
 		
 		if (!$artist)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($artist['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -907,8 +801,7 @@ class VisitorController extends Controller
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -923,16 +816,10 @@ class VisitorController extends Controller
 		$character = $this->model->getCharacter($characterUri);
 		
 		if (!$character)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($character['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -941,8 +828,7 @@ class VisitorController extends Controller
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -958,28 +844,16 @@ class VisitorController extends Controller
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -988,8 +862,7 @@ class VisitorController extends Controller
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1006,28 +879,16 @@ class VisitorController extends Controller
 		$translation = $this->model->getTranslation($albumUri, $songUri, $translationUri);
 		
 		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($song['original_song_id'])
 		{
@@ -1051,16 +912,10 @@ class VisitorController extends Controller
 		}
 		
 		if (!$translation)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		if ($translation['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
+			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1069,8 +924,7 @@ class VisitorController extends Controller
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1086,107 +940,107 @@ class VisitorController extends Controller
 	
 	public function handleAddGamePage(): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleAddAlbumPage(): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleAddArtistPage(): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleAddCharacterPage(): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleAddSongPage(string $albumUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleAddLyricsPage(string $albumUri, string $songUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleAddTranslationPage(string $albumUri, string $songUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleEditGamePage(string $gameUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleEditAlbumPage(string $albumUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleEditArtistPage(string $artistUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleEditCharacterPage(string $characterUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleEditSongPage(string $albumUri, string $songUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleEditLyricsPage(string $albumUri, string $songUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleEditTranslationPage(string $albumUri, string $songUri, string $translationUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleDeleteGamePage(string $gameUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleDeleteAlbumPage(string $albumUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleDeleteArtistPage(string $artistUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleDeleteCharacterPage(string $characterUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleDeleteSongPage(string $albumUri, string $songUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleDeleteLyricsPage(string $albumUri, string $songUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	public function handleDeleteTranslationPage(string $albumUri, string $songUri, string $translationUri): void
 	{
-		$this->handleUnauthorized();
+		throw new HttpUnauthorized401();
 	}
 	
 	final public function handleUserPage(string $userUri): void
@@ -1194,10 +1048,7 @@ class VisitorController extends Controller
 		$user = $this->model->getUserData(username: $userUri);
 		
 		if (!$user)
-		{
-			$this->handleNotFound();
-			return;
-		}
+			throw new HttpNotFound404();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1206,8 +1057,7 @@ class VisitorController extends Controller
 				break;
 			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1241,8 +1091,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1255,8 +1104,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1269,8 +1117,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1283,8 +1130,7 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
 	}
 	
@@ -1297,8 +1143,12 @@ class VisitorController extends Controller
 				break;
 				
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpMethodNotAllowed405();
 		}
+	}
+	
+	final public function handleFakeAdminPage(): void
+	{
+		throw new HttpPaymentRequired402();
 	}
 }

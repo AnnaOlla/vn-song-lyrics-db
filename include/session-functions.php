@@ -18,55 +18,8 @@ function attachGetParameters(string $link, array $parameters): string
 	return $link.'?'.implode("&", $keyToValue);
 }
 
-function detectUserLanguages(): array|null
-{
-	// My example:
-	// en-GB,en;q=0.9,ru;q=0.8,fi;q=0.7,ja;q=0.6
-	$httpAcceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
-	
-	if (isNullOrEmpty($httpAcceptLanguage))
-		return null;
-	
-	// First, divide by commas: thus, we keep 'language;value' to divide further
-	$preferences = explode(',', $httpAcceptLanguage);
-	$languages = [];
-	
-	foreach ($preferences as $preference)
-	{
-		$parts = explode(';', $preference);
-		
-		// If there is no country code then, it stays as it is ('en' => 'en')
-		// Else it is trimmed 'en-GB' => 'en'
-		$language = mb_substr($parts[0], 0, 2);
-		
-		if (count($parts) >= 2)
-			$weight = (float)mb_substr($parts[1], 2);
-		else
-			$weight = 1.0;
-		
-		$languages[$language] = $weight;
-	}
-	
-	return $languages;
-}
-
-function getSuitableLanguage(array|null $languages): string
-{
-	if (is_null($languages))
-		return 'en';
-	
-	foreach ($languages as $language => $weight)
-	{
-		if (in_array($language, ['ru', 'en', 'ja'], true))
-			return $language;
-	}
-	
-	return 'en';
-}
-
 function isCurrentUserModerator(): bool
 {
-	//return in_array($_SESSION['user']['role'], ['moderator', 'supermoderator', 'administrator'], true);
 	return $_SESSION['user']['role'] === 'administrator';
 }
 

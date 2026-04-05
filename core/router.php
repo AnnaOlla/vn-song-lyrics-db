@@ -4,6 +4,8 @@ class Router
 {
 	const BANNED_IPS_FILENAME      = 'banned-ip-list.txt';
 	const BANNED_REQUESTS_FILENAME = 'banned-requests.txt';
+	const ACCEPTED_LANGUAGES       = ['en', 'ru', 'ja'];
+	const DEFAULT_LANGUAGE         = 'en';
 	
 	private static function isIpBanned(): bool
 	{
@@ -30,58 +32,97 @@ class Router
 		return false;
 	}
 	
+	private static function detectUserLanguages(): array
+	{
+		// My example: en-GB,en;q=0.9,ru;q=0.8,fi;q=0.7,ja;q=0.6
+		// en-GB must be deduced to q=1.0
+		// en;q=0.9 must be dropped
+		
+		$preferences = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '');
+		$languages = [];
+		
+		foreach ($preferences as $preference)
+		{
+			// Split code and value
+			$parts    = explode(';', $preference);
+			
+			// Strip country code if exists
+			$language = explode('-', $parts[0])[0];
+			
+			// Deduce q=1.0 if parts[1] does not exist
+			$weight   = explode('=', $parts[1] ?? 'q=1.0')[1];
+			
+			// Assign and avoid collision (same language, different countries)
+			$languages[$language] = $languages[$language] ?? (float)$weight;
+		}
+		
+		return $languages;
+	}
+	
+	private static function getSuitableLanguage(array $languages): string
+	{
+		foreach ($languages as $language => $weight)
+		{
+			if (in_array($language, self::ACCEPTED_LANGUAGES, true))
+				return $language;
+		}
+		
+		return self::DEFAULT_LANGUAGE;
+	}
+	
+	private static function isRootRequested(): bool
+	{
+		return ($_SERVER['REQUEST_URI'] === '/');
+	}
+	
+	private static function isNonExistentFileRequested(): bool
+	{
+		// If the server has not found some file, then it forwards the request to index.php
+		
+		// If a file is requested then the route ends with "/name.extension"
+		$dot   = mb_strrpos($_SERVER['REQUEST_URI'], '.');
+		$slash = mb_strrpos($_SERVER['REQUEST_URI'], '/');
+		
+		return ($dot > $slash);
+	}
+	
 	public static function run()
 	{
-		/* Before doing anything, check if IP is banned */
 		if (self::isIpBanned() || self::isIpToBan())
 		{
 			http_response_code(403);
 			exit;
 		}
 		
-		/* Parsing the request:
-		   - it has the root (/), so there's at least 2 parts
-		   - the first one is always empty
-		   - the second one must be language
-		*/
+		if (self::isRootRequested())
+		{
+			$languages = self::detectUserLanguages();
+			$language  = self::getSuitableLanguage($languages);
+			
+			http_response_code(302);
+			header('Location: /'.$language);
+			exit;
+		}
+		
+		if (self::isNonExistentFileRequested())
+		{
+			http_response_code(404);
+			exit;
+		}
+		
 		$routes     = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 		$routeCount = count($routes);
 		
 		for ($i = 0; $i < $routeCount; $i++)
 			$routes[$i] = rawurldecode($routes[$i]);
 		
-		$suitableLanguage = $routes[1];
-		
-		if ($routeCount === 2 && $suitableLanguage === '')
-		{
-			$languages = detectUserLanguages();
-			$suitableLanguage = getSuitableLanguage($languages);
-			
-			http_response_code(302);
-			header('Location: /'.$suitableLanguage);
-			exit;
-		}
-		
-		if (!in_array($suitableLanguage, ['en', 'ru', 'ja']))
-		{
-			$languages = detectUserLanguages();
-			$suitableLanguage = getSuitableLanguage($languages);
-		}
-		
-		require_once 'controllers/'.$_SESSION['user']['role'].'-controller.php';
-		$controller = new ($_SESSION['user']['role'].'controller')($suitableLanguage);
+		$language = $routes[1];
 		
 		//-------------------//
 		//      Routing      //
 		//-------------------//
 		
-		if (!in_array($routes[1], ['en', 'ru', 'ja']))
-		{
-			$method = 'handleNotAcceptable';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 2)
+		if ($routeCount === 2)
 		{
 			$method = 'handleHomePage';
 			$parameters = [];
@@ -562,18 +603,13 @@ class Router
 		
 		else if ($routeCount >= 3 && $routes[2] === 'admin')
 		{
-			// This route is just a joke made for curious people.
-			$method = 'handlePaymentRequired';
+			$method = 'handleFakeAdminPage';
 			$parameters = [];
 		}
 		
-		//----------------------//
-		//      Error Page      //
-		//----------------------//
-		
 		else
 		{
-			$method = 'handleNotFound';
+			$method = '';
 			$parameters = [];
 		}
 		
@@ -581,21 +617,94 @@ class Router
 		//      Calling the handler      //
 		//-------------------------------//
 		
+		// This 'try' wraps the case when the page displaying an error message failed
 		try
 		{
-			if (method_exists($controller, $method))
-				$controller->$method(...$parameters);
-			else
-				$controller->handleNotFound();
+			try
+			{
+				$controllerPath = 'controllers/'.$_SESSION['user']['role'].'-controller.php';
+				
+				if (!file_exists($controllerPath))
+				{
+					// Fallback to show the error
+					require_once 'controllers/visitor-controller.php';
+					$controller = new VisitorController(self::DEFAULT_LANGUAGE);
+					
+					throw new HttpInternalServerError500();
+				}
+				
+				if (!in_array($language, self::ACCEPTED_LANGUAGES))
+				{
+					// Fallback to show the error
+					require_once 'controllers/visitor-controller.php';
+					$controller = new VisitorController(self::DEFAULT_LANGUAGE);
+					
+					throw new HttpNotAcceptable406();
+				}
+				
+				require_once $controllerPath;
+				$controller = new ($_SESSION['user']['role'].'controller')($language);
+				
+				if (method_exists($controller, $method))
+					$controller->$method(...$parameters);
+				else
+					throw new HttpNotFound404();
+			}
+			catch (HttpBadRequest400 $e)
+			{
+				error_log($e);
+				$controller->handleBadRequest400();
+			}
+			catch (HttpUnauthorized401 $e)
+			{
+				error_log($e);
+				$controller->handleUnauthorized401();
+			}
+			catch (HttpPaymentRequired402 $e)
+			{
+				error_log($e);
+				$controller->handlePaymentRequired402();
+			}
+			catch (HttpForbidden403 $e)
+			{
+				error_log($e);
+				$controller->handleForbidden403();
+			}
+			catch (HttpNotFound404 $e)
+			{
+				error_log($e);
+				$controller->handleNotFound404();
+			}
+			catch (HttpMethodNotAllowed405 $e)
+			{
+				error_log($e);
+				$controller->handleMethodNotAllowed405();
+			}
+			catch (HttpNotAcceptable406 $e)
+			{
+				error_log($e);
+				$controller->handleNotAcceptable406();
+			}
+			catch (HttpUnavailableForLegalReasons451 $e)
+			{
+				error_log($e);
+				$controller->handleUnavailableForLegalReasons451();
+			}
+			catch (HttpInternalServerError500 $e)
+			{
+				error_log($e);
+				$controller->handleInternalServerError500();
+			}
+			catch (Throwable $e)
+			{
+				error_log($e);
+				$controller->handleInternalServerError500();
+			}
 		}
 		catch (Throwable $e)
 		{
-			// Throwable catches both errors and exceptions
-			// If you catch it, you must log it
-			// Either way, it will be considered as 'handled' and not be logged
-			
 			error_log($e);
-			$controller->handleInternalServerError();
+			http_response_code(500);
 		}
 	}
 }

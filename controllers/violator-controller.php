@@ -40,106 +40,106 @@ class ViolatorController extends VisitorController
 	
 	public function handleAddGamePage(): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleAddAlbumPage(): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleAddArtistPage(): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleAddCharacterPage(): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleAddSongPage(string $albumUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleAddLyricsPage(string $albumUri, string $songUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleAddTranslationPage(string $albumUri, string $songUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleEditGamePage(string $gameUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleEditAlbumPage(string $albumUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleEditArtistPage(string $artistUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleEditCharacterPage(string $characterUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleEditSongPage(string $albumUri, string $songUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleEditLyricsPage(string $albumUri, string $songUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleEditTranslationPage(string $albumUri, string $songUri, string $translationUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleDeleteGamePage(string $gameUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleDeleteAlbumPage(string $albumUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleDeleteArtistPage(string $artistUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleDeleteCharacterPage(string $characterUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleDeleteSongPage(string $albumUri, string $songUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleDeleteLyricsPage(string $albumUri, string $songUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 	
 	public function handleDeleteTranslationPage(string $albumUri, string $songUri, string $translationUri): void
 	{
-		$this->handleForbidden();
+		throw new HttpForbidden403();
 	}
 }

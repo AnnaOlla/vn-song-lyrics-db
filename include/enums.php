@@ -27,7 +27,7 @@ enum StaticAsset: string
 	*/
 }
 
-enum AuthorizationError
+enum AuthenticationError
 {
 	case None;
 	

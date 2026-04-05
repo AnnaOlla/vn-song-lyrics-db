@@ -480,58 +480,54 @@ class AdministratorController extends UserController
 	
 	final public function handleAddLanguagePage(): void
 	{
-		if (empty($_POST))
+		switch ($_SERVER['REQUEST_METHOD'])
 		{
-			$this->view->renderAddLanguagePage();
-			return;
+			case 'GET':
+				$this->handleAddLanguagePageGet();
+				break;
+				
+			case 'POST':
+				$this->handleAddLanguagePagePost();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
 		}
-		
+	}
+	
+	private function handleAddLanguagePageGet(): void
+	{
+		$this->view->renderAddLanguagePage();
+	}
+	
+	private function handleAddLanguagePagePost(): void
+	{
 		$ownName = $_POST['own-name'] ?? null;
 		$ruName  = $_POST['ru-name']  ?? null;
 		$enName  = $_POST['en-name']  ?? null;
 		$jaName  = $_POST['ja-name']  ?? null;
 		
 		if (haveNullOrEmpty($ownName, $ruName, $enName, $jaName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		$this->model->addLanguage($ownName, $ruName, $enName, $jaName);
 		$this->handleRedirect(buildInternalLink($this->language, 'control-panel'));
 	}
 	
-	/*
-	
-	// I don't know whether I need it
-	
-	final public function handleEditLanguagePage(???): void
-	{
-		if (empty($_POST))
-		{
-			$this->getLanguage(???);
-			
-			$this->view->renderEditLanguagePage();
-			return;
-		}
-		
-		$ownName = $_POST['own-name'] ?? null;
-		$ruName  = $_POST['ru-name']  ?? null;
-		$enName  = $_POST['en-name']  ?? null;
-		$jaName  = $_POST['ja-name']  ?? null;
-		
-		if (haveNullOrEmpty($ownName, $ruName, $enName, $jaName))
-		{
-			$this->handleBadRequest();
-			return;
-		}
-		
-		$this->model->editLanguage($ownName, $ruName, $enName, $jaName);
-		$this->handleRedirect(buildInternalLink($this->language, 'control-panel'));
-	}
-	*/
-	
 	final public function handleReportListPage(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleReportListPageGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleReportListPageGet(): void
 	{
 		$reports = $this->model->getReportList();
 		$this->view->renderReportListPage($reports);
@@ -539,61 +535,70 @@ class AdministratorController extends UserController
 	
 	final public function handleUserListPage(): void
 	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUserListPageGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUserListPageGet(): void
+	{
 		$users = $this->model->getUserList();
 		$this->view->renderUserListPage($users);
 	}
 	
 	final public function handleFillAlbumPage(string $albumUri): void
 	{
-		if (empty($_POST))
-		{
-			$album            = $this->model->getAlbumId($albumUri);
-			$currentSongCount = $this->model->getSongCurrentCount($albumUri);
-			$discography      = $this->model->fetchDataFromVgmdbPage($albumUri);
-			
-			if (!$album)
-			{
-				$this->handleNotFound();
-				return;
-			}
-			
-			if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-			{
-				$this->handleUnavailableForLegalReasons();
-				return;
-			}
-			
-			if ($album['status'] === 'checked' && !isCurrentUserModerator())
-			{
-				$this->handleForbidden();
-				return;
-			}
-			
-			if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
-			{
-				$this->handleForbidden();
-				return;
-			}
-			
-			if ($currentSongCount !== 0)
-			{
-				$this->handleForbidden();
-				return;
-			}
-			
-			if (!$discography)
-			{
-				$this->handleBadRequest();
-				return;
-			}
-			
-			$this->view->renderFillAlbumPage($album, $discography);
-			return;
-		}
-		
 		$album            = $this->model->getAlbumId($albumUri);
 		$currentSongCount = $this->model->getSongCurrentCount($albumUri);
 		
+		if (!$album)
+			throw new HttpNotFound404();
+		
+		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if ($album['status'] === 'checked' && !isCurrentUserModerator())
+			throw new HttpForbidden403();
+		
+		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
+			throw new HttpForbidden403();
+		
+		if ($currentSongCount !== 0)
+			throw new HttpForbidden403();
+		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUserListPageGet($album);
+				break;
+				
+			case 'POST':
+				$this->handleUserListPagePost($album);
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleFillAlbumPageGet(array $album, int $currentSongCount): void
+	{
+		$discography = $this->model->fetchDataFromVgmdbPage($albumUri);
+		
+		if (!$discography)
+			throw new HttpBadRequest400();
+		
+		$this->view->renderFillAlbumPage($album, $discography);
+	}
+	
+	private function handleFillAlbumPagePost(array $album, int $currentSongCount): void
+	{	
 		$discNumbers         = $_POST['disc-number']         ?? [];
 		$trackNumbers        = $_POST['track-number']        ?? [];
 		$originalNames       = $_POST['original-name']       ?? [];
@@ -609,36 +614,6 @@ class AdministratorController extends UserController
 		$trackNumbers        = parseNullableIntegerArray($trackNumbers, 1);
 		$haveVocal           = parseNullableIntegerArray($hasVocal, 0, 1);
 		
-		if (!$album)
-		{
-			$this->handleNotFound();
-			return;
-		}
-		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
-		{
-			$this->handleUnavailableForLegalReasons();
-			return;
-		}
-		
-		if ($album['status'] === 'checked' && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
-		
-		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
-		{
-			$this->handleForbidden();
-			return;
-		}
-		
-		if ($currentSongCount !== 0)
-		{
-			$this->handleForbidden();
-			return;
-		}
-		
 		$haveArraysSameLength = haveArraysSameLength
 		(
 			$discNumbers,
@@ -650,27 +625,18 @@ class AdministratorController extends UserController
 		);
 		
 		if (!$haveArraysSameLength)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Arrays did not have same length', get_defined_vars());
 		
 		if (count($discNumbers) === 0)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Discs were not found', get_defined_vars());
 		
 		foreach ($transliteratedNames as $transliteratedName)
 		{
 			if (!isPrintableAscii($transliteratedName))
-			{
-				$this->handleBadRequest();
-				return;
-			}
+				throw new HttpBadRequest400('One of transliteratedName was not ASCII', get_defined_vars());
 		}
 		
-		$isInputInvalid = haveNullOrEmpty
+		$isNullPresent = haveNullOrEmpty
 		(
 			...$discNumbers,
 			...$trackNumbers,
@@ -679,17 +645,11 @@ class AdministratorController extends UserController
 			...$haveVocal
 		);
 		
-		if ($isInputInvalid)
-		{
-			$this->handleBadRequest();
-			return;
-		}
+		if ($isNullPresent)
+			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!($discNumbers[0] === 1 && $trackNumbers[0] === 1))
-		{
-			$this->handleBadRequest();
-			return;
-		}
+			throw new HttpBadRequest400('Disc 1 and Track 1 were not first', get_defined_vars());
 		
 		for ($i = 1; $i < count($discNumbers); $i++)
 		{
@@ -708,10 +668,7 @@ class AdministratorController extends UserController
 			);
 			
 			if (!$isNextDiscFirstTrack && !$isSameDiscNextTrack)
-			{
-				$this->handleBadRequest();
-				return;
-			}
+				throw new HttpBadRequest400('Order of discs and tracks was incorrect', get_defined_vars());
 		}
 		
 		$this->model->fillAlbum

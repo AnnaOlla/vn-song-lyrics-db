@@ -1,6 +1,6 @@
 <?php
 
-// This file must not be included in git systems.
+// Implementations of this file must not be included in git systems.
 
 /**
  *  Creates an instance of PDO for a certain user role
@@ -31,33 +31,17 @@ function getPdo(string $userRole): PDO
 		case 'user':
 			$settings['dbPswd'] = '';
 			break;
-			/*
-		case 'contributor':
-			$settings['dbPswd'] = '';
-			break;
 			
-		case 'translator':
-			$settings['dbPswd'] = '';
-			break;
-			
-		case 'moderator':
-			$settings['dbPswd'] = '';
-			break;
-			
-		case 'supermoderator':
-			$settings['dbPswd'] = '';
-			break;
-			*/
 		case 'administrator':
 			$settings['dbPswd'] = '';
 			break;
 			
 		default:
-			echo 'A critical server error occured. Please, visit us later.';
-			throw Exception('Database connection problem: '.$userRole);
+			throw DatabaseLogicException('Database connection problem', get_defined_vars());
 	}
 	
 	$dsn = 'mysql:dbname='.$settings['dbName'].';host='.$settings['dbHost'].';charset='.$settings['dbChar'];
+	
 	$pdo = new PDO($dsn, $settings['dbUser'], $settings['dbPswd']);
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	
@@ -74,7 +58,7 @@ function getPdo(string $userRole): PDO
  */
 function encryptData(string $data): string
 {
-	return $data;
+	throw new DatabaseLogicException('encryptData was not implemented');
 }
 
 /**
@@ -86,5 +70,5 @@ function encryptData(string $data): string
  */
 function createToken(string $data): string
 {
-	return $data;
+	throw new DatabaseLogicException('createToken was not implemented');
 }
