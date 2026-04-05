@@ -1,0 +1,11 @@
+example.domain, placeholder, DIRECT, placeholder
+
+# Advertisement is a cancer that devours undecillions of processor instructions.
+#
+# It is one of the most horrible things in the world that:
+# - wastes people's time;
+# - creates junk information;
+# - ruins beautiful looks;
+# - eats tremendous amount of electricity.
+#
+# We do not accept any offers of any forms of advertisement.
