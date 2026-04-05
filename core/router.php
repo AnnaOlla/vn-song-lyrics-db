@@ -617,94 +617,85 @@ class Router
 		//      Calling the handler      //
 		//-------------------------------//
 		
-		// This 'try' wraps the case when the page displaying an error message failed
 		try
 		{
-			try
+			$controllerPath = 'controllers/'.$_SESSION['user']['role'].'-controller.php';
+			
+			if (!file_exists($controllerPath))
 			{
-				$controllerPath = 'controllers/'.$_SESSION['user']['role'].'-controller.php';
+				// Fallback to show the error
+				require_once 'controllers/visitor-controller.php';
+				$controller = new VisitorController(self::DEFAULT_LANGUAGE);
 				
-				if (!file_exists($controllerPath))
-				{
-					// Fallback to show the error
-					require_once 'controllers/visitor-controller.php';
-					$controller = new VisitorController(self::DEFAULT_LANGUAGE);
-					
-					throw new HttpInternalServerError500();
-				}
+				throw new HttpInternalServerError500();
+			}
+			
+			if (!in_array($language, self::ACCEPTED_LANGUAGES))
+			{
+				// Fallback to show the error
+				require_once 'controllers/visitor-controller.php';
+				$controller = new VisitorController(self::DEFAULT_LANGUAGE);
 				
-				if (!in_array($language, self::ACCEPTED_LANGUAGES))
-				{
-					// Fallback to show the error
-					require_once 'controllers/visitor-controller.php';
-					$controller = new VisitorController(self::DEFAULT_LANGUAGE);
-					
-					throw new HttpNotAcceptable406();
-				}
-				
-				require_once $controllerPath;
-				$controller = new ($_SESSION['user']['role'].'controller')($language);
-				
-				if (method_exists($controller, $method))
-					$controller->$method(...$parameters);
-				else
-					throw new HttpNotFound404();
+				throw new HttpNotAcceptable406();
 			}
-			catch (HttpBadRequest400 $e)
-			{
-				error_log($e);
-				$controller->handleBadRequest400();
-			}
-			catch (HttpUnauthorized401 $e)
-			{
-				error_log($e);
-				$controller->handleUnauthorized401();
-			}
-			catch (HttpPaymentRequired402 $e)
-			{
-				error_log($e);
-				$controller->handlePaymentRequired402();
-			}
-			catch (HttpForbidden403 $e)
-			{
-				error_log($e);
-				$controller->handleForbidden403();
-			}
-			catch (HttpNotFound404 $e)
-			{
-				error_log($e);
-				$controller->handleNotFound404();
-			}
-			catch (HttpMethodNotAllowed405 $e)
-			{
-				error_log($e);
-				$controller->handleMethodNotAllowed405();
-			}
-			catch (HttpNotAcceptable406 $e)
-			{
-				error_log($e);
-				$controller->handleNotAcceptable406();
-			}
-			catch (HttpUnavailableForLegalReasons451 $e)
-			{
-				error_log($e);
-				$controller->handleUnavailableForLegalReasons451();
-			}
-			catch (HttpInternalServerError500 $e)
-			{
-				error_log($e);
-				$controller->handleInternalServerError500();
-			}
-			catch (Throwable $e)
-			{
-				error_log($e);
-				$controller->handleInternalServerError500();
-			}
+			
+			require_once $controllerPath;
+			$controller = new ($_SESSION['user']['role'].'controller')($language);
+			
+			if (method_exists($controller, $method))
+				$controller->$method(...$parameters);
+			else
+				throw new HttpNotFound404();
+		}
+		catch (HttpBadRequest400 $e)
+		{
+			error_log($e);
+			$controller->handleBadRequest400();
+		}
+		catch (HttpUnauthorized401 $e)
+		{
+			error_log($e);
+			$controller->handleUnauthorized401();
+		}
+		catch (HttpPaymentRequired402 $e)
+		{
+			error_log($e);
+			$controller->handlePaymentRequired402();
+		}
+		catch (HttpForbidden403 $e)
+		{
+			error_log($e);
+			$controller->handleForbidden403();
+		}
+		catch (HttpNotFound404 $e)
+		{
+			error_log($e);
+			$controller->handleNotFound404();
+		}
+		catch (HttpMethodNotAllowed405 $e)
+		{
+			error_log($e);
+			$controller->handleMethodNotAllowed405();
+		}
+		catch (HttpNotAcceptable406 $e)
+		{
+			error_log($e);
+			$controller->handleNotAcceptable406();
+		}
+		catch (HttpUnavailableForLegalReasons451 $e)
+		{
+			error_log($e);
+			$controller->handleUnavailableForLegalReasons451();
+		}
+		catch (HttpInternalServerError500 $e)
+		{
+			error_log($e);
+			$controller->handleInternalServerError500();
 		}
 		catch (Throwable $e)
 		{
 			error_log($e);
-			http_response_code(500);
+			$controller->handleInternalServerError500();
 		}
 	}
 }
