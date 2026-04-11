@@ -143,6 +143,7 @@ main h3 {
 
 main a {
 	color: var(--color-clickable-item-primary);
+	text-decoration: none;
 }
 
 main a:hover {
@@ -244,6 +245,7 @@ textarea {
 	resize: none;
 	overflow-x: scroll;
 	overflow-y: hidden;
+	min-height: 1lh;
 }
 
 input[readonly],
