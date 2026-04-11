@@ -619,6 +619,7 @@ class Router
 		
 		try
 		{
+			$controller     = null;
 			$controllerPath = 'controllers/'.$_SESSION['user']['role'].'-controller.php';
 			
 			if (!file_exists($controllerPath))
