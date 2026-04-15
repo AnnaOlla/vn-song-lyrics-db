@@ -1,0 +1,107 @@
+/* The label containing the checkbox */
+
+label.custom-checkbox:has(input[type="checkbox"]) {
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+	margin-left: var(--text-margin);
+	margin-right: var(--text-margin);
+	
+	padding: 0px;
+	
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	
+	cursor: pointer;
+}
+
+label.custom-checkbox:has(input[type="checkbox"]) > span {
+	margin: 0px;
+	padding: var(--section-padding);
+	box-sizing: border-box;
+	
+	color: var(--color-text-placeholder);
+	
+	/* The text can be splitted into two lines, this prevents it */
+	white-space: nowrap;
+}
+
+label.custom-checkbox:has(input[type="checkbox"]:hover) > span {
+	color: var(--color-clickable-item-secondary);
+}
+
+label.custom-checkbox:has(input[type="checkbox"]:checked) > span {
+	color: var(--color-clickable-item-secondary);
+}
+
+label.custom-checkbox:has(input[type="checkbox"]:disabled) > span {
+	color: var(--color-text-placeholder);
+	text-decoration: line-through;
+	cursor: not-allowed;
+}
+
+/* The checkbox itself */
+
+input[type="checkbox"] {
+	appearance: none;
+	
+	aspect-ratio: 1/1;
+	width: auto;
+	height: 100%;
+	
+	background-color: var(--color-input-primary);
+	border-radius: var(--border-radius);
+	border: 0.25em solid var(--color-input-primary);
+	cursor: pointer;
+	
+	margin: 0px;
+	padding: var(--section-padding);
+	box-sizing: border-box;
+	
+	/* For the checkmark */
+	position: relative;
+}
+
+input[type="checkbox"]:checked {
+	background-color: var(--color-clickable-item-primary);
+	border-radius: var(--border-radius);
+	border: 0.25em solid var(--color-clickable-item-primary);
+}
+
+input[type="checkbox"]:hover {
+	border: 0.25em solid var(--color-clickable-item-secondary);
+}
+
+input[type="checkbox"]:disabled {
+	background-color: var(--color-clickable-item-disabled);
+	border-radius: var(--border-radius);
+	border: 0.25em solid var(--color-clickable-item-disabled);
+	cursor: not-allowed;
+}
+
+/* Tick symbol */
+
+input[type="checkbox"]::after {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%,-50%);
+	
+	font-size: var(--font-size-plain);
+	color: var(--color-text-placeholder);
+	content: "\2713";
+}
+
+input[type="checkbox"]:checked::after {
+	color: var(--color-clickable-item-secondary);
+}
+
+input[type="checkbox"]:hover::after {
+	color: var(--color-clickable-item-secondary);
+}
+
+input[type="checkbox"]:disabled::after {
+	font-size: var(--font-size-plain);
+	color: var(--color-text-placeholder);
+	content: "\2716";
+}

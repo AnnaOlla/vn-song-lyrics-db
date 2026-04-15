@@ -502,10 +502,17 @@ namespace Localization\Controls
 	const Edit         = '情報を編集';
 	const Delete       = '情報を削除';
 	
-	const Search       = '探す…';
-	const Textarea     = '入力をください…';
+	const SearchHeading     = 'データベースの中から探す…';
+	const SearchPlaceholder = '探すように入力して…';
+	const SearchButton      = '探す';
+	const PageHeading       = 'ページ';
+	const LimitHeading      = '１パージに記録の数';
+	const NoLimit           = 'すべて';
 	
-	const ChooseFile   = 'ファイルを選ぶ (max. size: 512 KiB) …';
+	const FilterPage   = 'このページから探す…';
+	const Textarea     = '入力して…';
+	
+	const ChooseFile   = 'ファイルを選ぶ（ｍａｘ：５１２ＫｉＢ）…';
 	const FileTooBig   = 'ファイルは大きすぎています…';
 	
 	const Cancel       = '戻る';

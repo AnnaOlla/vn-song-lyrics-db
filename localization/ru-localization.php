@@ -502,7 +502,14 @@ namespace Localization\Controls
 	const Edit         = 'Редактировать информацию';
 	const Delete       = 'Удалить информацию';
 	
-	const Search       = 'Поиск …';
+	const SearchHeading     = 'Поиск по всей базе данных';
+	const SearchPlaceholder = 'Введите текст …';
+	const SearchButton      = 'Поиск';
+	const PageHeading       = 'Страница';
+	const LimitHeading      = 'Число записей на странице';
+	const NoLimit           = 'Все';
+	
+	const FilterPage   = 'Фильтровать записи на этой странице …';
 	const Textarea     = 'Введите текст …';
 	
 	const ChooseFile   = 'Выбрать файл (максимальный размер: 512 KiB) …';

@@ -502,7 +502,14 @@ namespace Localization\Controls
 	const Edit         = 'Edit Information';
 	const Delete       = 'Delete Information';
 	
-	const Search       = 'Search …';
+	const SearchHeading     = 'Search over the database';
+	const SearchPlaceholder = 'Start typing …';
+	const SearchButton      = 'Search';
+	const PageHeading       = 'Page';
+	const LimitHeading      = 'Results per page';
+	const NoLimit           = 'All';
+	
+	const FilterPage   = 'Filter results on this page …';
 	const Textarea     = 'Start typing …';
 	
 	const ChooseFile   = 'Choose file (max. size: 512 KiB) …';

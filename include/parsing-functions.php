@@ -122,3 +122,16 @@ function removeNullValues(array $values): array
 {
 	return array_diff($values, [null]);
 }
+
+function cleanSearchString(string|null $string): string|null
+{
+	if (is_null($string))
+		return null;
+	
+	// The user may enter a name that was transliterated
+	// with a different system from what is used here
+	// The difference is usually only spaces
+	
+	$string = preg_replace('/\s+/u', '', $string);
+	return $string;
+}

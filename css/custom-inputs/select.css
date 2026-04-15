@@ -1,0 +1,80 @@
+/* Select */
+
+select {
+	background-color: var(--color-input-primary);
+	color: var(--color-text);
+	
+	scrollbar-color: var(--color-clickable-item-primary) var(--color-input-primary);
+	
+	border: 0;
+	border-radius: var(--border-radius);
+	outline: none;
+	
+	font: var(--font-family);
+	font-size: var(--font-size-plain);
+	
+	box-sizing: border-box;
+	padding: var(--section-padding);
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+
+	appearance: none;
+	
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	white-space: nowrap;
+	
+	cursor: pointer;
+	
+	/* Hack to decrease select's width and use ellipses when it's too long */
+	width: calc(100%);
+}
+
+select[disabled] {
+	cursor: not-allowed;
+}
+
+select:hover, select:focus {
+	background-color: var(--color-input-secondary);
+}
+
+/* A triangle on the select to show that it's a select */
+select:not([multiple]) {
+	background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+	                  linear-gradient(135deg, currentColor 50%, transparent 50%);
+	background-repeat: no-repeat;
+	background-position: right 15px top calc(50%), right 11px top calc(50%);
+	background-size: 5px 5px, 5px 5px;
+	
+	/* It just works and makes the height of select correct */
+	height: 42.4px;
+}
+
+section.select-fake-filler {
+	box-sizing: border-box;
+	padding: var(--section-padding);
+	display: none;
+	color: transparent;
+	z-index: -9999;
+	
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+}
+
+option {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	box-sizing: border-box;
+	padding: 0;
+}
+
+option:hover, option:checked, option[selected] {
+	background: var(--color-clickable-item-primary)
+	            linear-gradient(0deg, var(--color-clickable-item-primary) 0%,
+				var(--color-clickable-item-primary) 100%);
+}
+
+option:disabled {
+	color: var(--color-text-placeholder);
+}

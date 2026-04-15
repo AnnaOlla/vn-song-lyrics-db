@@ -246,7 +246,10 @@ class VisitorModel extends Model
 		string|null $albumUri     = null,
 		string|null $characterUri = null,
 		string|null $userAddedUri = null,
-		array       $orderBy      = ['g.transliterated_name ASC']
+		array       $orderBy      = ['g.transliterated_name ASC'],
+		int|null    $page         = null,
+		int|null    $limit        = null,
+		string|null $search       = null
 	): array
 	{
 		$select = ['g.id', 'g.transliterated_name'];
@@ -254,6 +257,7 @@ class VisitorModel extends Model
 		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
+		$limits = '';
 		
 		if (!$fetchMinInfo)
 		{
@@ -312,6 +316,26 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($page) && !is_null($limit))
+		{
+			$offset = ($page - 1) * $limit;
+			$limits = 'LIMIT :limit OFFSET :offset';
+			
+			$binds[]  = [':limit',  $limit,  PDO::PARAM_INT];
+			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
+		}
+		
+		if (!is_null($search))
+		{
+			$where[]  = '(REGEXP_REPLACE(g.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' OR'.
+			            ' REGEXP_REPLACE(g.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+						' OR'.
+						' REGEXP_REPLACE(g.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+			
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -326,6 +350,8 @@ class VisitorModel extends Model
 				'.implode(' AND ', $where).'
 			ORDER BY
 				'.implode(', ', $orderBy).'
+			
+			'.$limits.'
 			'
 		);
 		
@@ -342,7 +368,10 @@ class VisitorModel extends Model
 		bool        $fetchMinInfo = false,
 		string|null $gameUri      = null,
 		string|null $userAddedUri = null,
-		array       $orderBy      = ['a.transliterated_name ASC']
+		array       $orderBy      = ['a.transliterated_name ASC'],
+		int|null    $page         = null,
+		int|null    $limit        = null,
+		string|null $search       = null
 	): array
 	{
 		$select = ['a.id', 'a.transliterated_name'];
@@ -350,6 +379,7 @@ class VisitorModel extends Model
 		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
+		$limits = '';
 		
 		if (!$fetchMinInfo)
 		{
@@ -391,6 +421,26 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($page) && !is_null($limit))
+		{
+			$offset = ($page - 1) * $limit;
+			$limits = 'LIMIT :limit OFFSET :offset';
+			
+			$binds[]  = [':limit',  $limit,  PDO::PARAM_INT];
+			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
+		}
+		
+		if (!is_null($search))
+		{
+			$where[]  = '(REGEXP_REPLACE(a.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' OR'.
+			            ' REGEXP_REPLACE(a.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+						' OR'.
+						' REGEXP_REPLACE(a.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+			
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -405,6 +455,8 @@ class VisitorModel extends Model
 				'.implode(' AND ', $where).'
 			ORDER BY
 				'.implode(', ', $orderBy).'
+			
+			'.$limits.'
 			'
 		);
 		
@@ -422,7 +474,10 @@ class VisitorModel extends Model
 		string|null $userAddedUri = null,
 		int   |null $aliasesOfId  = null,
 		bool  |null $mayBeAlias   = null,
-		array       $orderBy      = ['a.transliterated_name ASC']
+		array       $orderBy      = ['a.transliterated_name ASC'],
+		int|null    $page         = null,
+		int|null    $limit        = null,
+		string|null $search       = null
 	): array
 	{
 		$select = ['a.id', 'a.transliterated_name'];
@@ -430,6 +485,7 @@ class VisitorModel extends Model
 		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
+		$limits = '';
 		
 		if (!$fetchMinInfo)
 		{
@@ -463,6 +519,26 @@ class VisitorModel extends Model
 			$where[]  = 'a.alias_of_artist_id IS NULL';
 		}
 		
+		if (!is_null($page) && !is_null($limit))
+		{
+			$offset = ($page - 1) * $limit;
+			$limits = 'LIMIT :limit OFFSET :offset';
+			
+			$binds[]  = [':limit',  $limit,  PDO::PARAM_INT];
+			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
+		}
+		
+		if (!is_null($search))
+		{
+			$where[]  = '(REGEXP_REPLACE(a.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' OR'.
+			            ' REGEXP_REPLACE(a.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+						' OR'.
+						' REGEXP_REPLACE(a.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+			
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -477,6 +553,8 @@ class VisitorModel extends Model
 				'.implode(' AND ', $where).'
 			ORDER BY
 				'.implode(', ', $orderBy).'
+			
+			'.$limits.'
 			'
 		);
 		
@@ -493,7 +571,10 @@ class VisitorModel extends Model
 		bool        $fetchMinInfo = false,
 		string|null $gameUri      = null,
 		string|null $userAddedUri = null,
-		array       $orderBy      = ['c.transliterated_name ASC']
+		array       $orderBy      = ['c.transliterated_name ASC'],
+		int|null    $page         = null,
+		int|null    $limit        = null,
+		string|null $search       = null
 	): array
 	{
 		$select = ['c.id', 'c.transliterated_name'];
@@ -501,6 +582,7 @@ class VisitorModel extends Model
 		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
+		$limits = '';
 		
 		if (!$fetchMinInfo)
 		{
@@ -541,6 +623,26 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($page) && !is_null($limit))
+		{
+			$offset = ($page - 1) * $limit;
+			$limits = 'LIMIT :limit OFFSET :offset';
+			
+			$binds[]  = [':limit',  $limit,  PDO::PARAM_INT];
+			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
+		}
+		
+		if (!is_null($search))
+		{
+			$where[]  = '(REGEXP_REPLACE(c.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' OR'.
+			            ' REGEXP_REPLACE(c.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+						' OR'.
+						' REGEXP_REPLACE(c.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+			
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -555,6 +657,8 @@ class VisitorModel extends Model
 				'.implode(' AND ', $where).'
 			ORDER BY
 				'.implode(', ', $orderBy).'
+			
+			'.$limits.'
 			'
 		);
 		
@@ -655,7 +759,10 @@ class VisitorModel extends Model
 		bool  |null $isOriginal   = null,
 		int   |null $excludeId    = null,
 		string|null $userAddedUri = null,
-		array       $orderBy      = ['sn.transliterated_name ASC']
+		array       $orderBy      = ['sn.transliterated_name ASC'],
+		int|null    $page         = null,
+		int|null    $limit        = null,
+		string|null $search       = null
 	): array
 	{
 		$select = ['sn.id', 'sn.transliterated_name'];
@@ -663,6 +770,7 @@ class VisitorModel extends Model
 		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
+		$limits = '';
 		
 		if (!$fetchMinInfo)
 		{
@@ -768,6 +876,26 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($page) && !is_null($limit))
+		{
+			$offset = ($page - 1) * $limit;
+			$limits = 'LIMIT :limit OFFSET :offset';
+			
+			$binds[]  = [':limit',  $limit,  PDO::PARAM_INT];
+			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
+		}
+		
+		if (!is_null($search))
+		{
+			$where[]  = '(REGEXP_REPLACE(sn.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' OR'.
+			            ' REGEXP_REPLACE(sn.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+						' OR'.
+						' REGEXP_REPLACE(sn.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+			
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -786,6 +914,8 @@ class VisitorModel extends Model
 				'.implode(' AND ', $where).'
 			ORDER BY
 				'.implode(', ', $orderBy).'
+			
+			'.$limits.'
 			'
 		);
 		
@@ -803,7 +933,10 @@ class VisitorModel extends Model
 		string|null $albumUri     = null,
 		string|null $songUri      = null,
 		string|null $userAddedUri = null,
-		array       $orderBy      = ['tr.id']
+		array       $orderBy      = ['tr.id'],
+		int|null    $page         = null,
+		int|null    $limit        = null,
+		string|null $search       = null
 	): array
 	{
 		$select = ['tr.id', 'tr.name', 'tr.language_id'];
@@ -811,6 +944,7 @@ class VisitorModel extends Model
 		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
+		$limits = '';
 		
 		if (!$fetchMinInfo)
 		{
@@ -893,6 +1027,24 @@ class VisitorModel extends Model
 			$binds[] = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($page) && !is_null($limit))
+		{
+			$offset = ($page - 1) * $limit;
+			$limits = 'LIMIT :limit OFFSET :offset';
+			
+			$binds[]  = [':limit',  $limit,  PDO::PARAM_INT];
+			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
+		}
+		
+		if (!is_null($search))
+		{
+			$where[]  = 'REGEXP_REPLACE(tr.name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")';
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
+		// These two: "if (!is_null($albumUri))" and "if (!is_null($songUri))"
+		// have the same join, so the second should be removed
+		// Yes, this is awful solution
 		$join = array_unique($join);
 		
 		$stmt = $this->pdo->prepare
@@ -909,6 +1061,8 @@ class VisitorModel extends Model
 				'.implode(' AND ', $where).'
 			ORDER BY
 				'.implode(', ', $orderBy).'
+			
+			'.$limits.'
 			'
 		);
 		
@@ -973,6 +1127,223 @@ class VisitorModel extends Model
 		
 		$feedbackList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		return $feedbackList;
+	}
+	
+	final public function getGameCount(string|null $search): int
+	{
+		$where  = ['TRUE'];
+		$binds  = [];
+		
+		if (!is_null($search))
+		{
+			$where[]  = '(REGEXP_REPLACE(g.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' OR'.
+			            ' REGEXP_REPLACE(g.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+						' OR'.
+						' REGEXP_REPLACE(g.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+			
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT
+				COUNT(*) AS result
+			FROM
+				games AS g
+			WHERE
+				'.implode(' AND ', $where).'
+			'
+		);
+		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
+		$stmt->execute();
+		
+		$gameCount = $stmt->fetch(PDO::FETCH_ASSOC)['result'];
+		return $gameCount;
+	}
+	
+	final public function getAlbumCount(string|null $search): int
+	{
+		$where  = ['TRUE'];
+		$binds  = [];
+		
+		if (!is_null($search))
+		{
+			$where[]  = '(REGEXP_REPLACE(a.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' OR'.
+			            ' REGEXP_REPLACE(a.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+						' OR'.
+						' REGEXP_REPLACE(a.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+			
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT
+				COUNT(*) AS result
+			FROM
+				albums AS a
+			WHERE
+				'.implode(' AND ', $where).'
+			'
+		);
+		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
+		$stmt->execute();
+		
+		$albumCount = $stmt->fetch(PDO::FETCH_ASSOC)['result'];
+		return $albumCount;
+	}
+	
+	final public function getArtistCount(string|null $search): int
+	{
+		$where  = ['TRUE'];
+		$binds  = [];
+		
+		if (!is_null($search))
+		{
+			$where[]  = '(REGEXP_REPLACE(a.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' OR'.
+			            ' REGEXP_REPLACE(a.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+						' OR'.
+						' REGEXP_REPLACE(a.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+			
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT
+				COUNT(*) AS result
+			FROM
+				artists AS a
+			WHERE
+				'.implode(' AND ', $where).'
+			'
+		);
+		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
+		$stmt->execute();
+		
+		$artistCount = $stmt->fetch(PDO::FETCH_ASSOC)['result'];
+		return $artistCount;
+	}
+	
+	final public function getCharacterCount(string|null $search): int
+	{
+		$where  = ['TRUE'];
+		$binds  = [];
+		
+		if (!is_null($search))
+		{
+			$where[]  = '(REGEXP_REPLACE(c.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' OR'.
+			            ' REGEXP_REPLACE(c.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+						' OR'.
+						' REGEXP_REPLACE(c.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+			
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT
+				COUNT(*) AS result
+			FROM
+				characters AS c
+			WHERE
+				'.implode(' AND ', $where).'
+			'
+		);
+		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
+		$stmt->execute();
+		
+		$characterCount = $stmt->fetch(PDO::FETCH_ASSOC)['result'];
+		return $characterCount;
+	}
+	
+	final public function getSongCount(string|null $search, bool|null $hasVocal): int
+	{
+		$where  = ['TRUE'];
+		$binds  = [];
+		
+		if (!is_null($search))
+		{
+			$where[]  = '(REGEXP_REPLACE(s.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' OR'.
+			            ' REGEXP_REPLACE(s.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+						' OR'.
+						' REGEXP_REPLACE(s.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+			
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
+		if (!is_null($hasVocal))
+		{
+			$where[]  = 's.has_vocal = :has_vocal';
+			$binds[]  = [':has_vocal', $hasVocal, PDO::PARAM_BOOL];
+		}
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT
+				COUNT(*) AS result
+			FROM
+				songs AS s
+			WHERE
+				'.implode(' AND ', $where).'
+			'
+		);
+		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
+		$stmt->execute();
+		
+		$songCount = $stmt->fetch(PDO::FETCH_ASSOC)['result'];
+		return $songCount;
+	}
+	
+	final public function getTranslationCount(string|null $search): int
+	{
+		$where  = ['TRUE'];
+		$binds  = [];
+		
+		if (!is_null($search))
+		{
+			$where[]  = '(REGEXP_REPLACE(t.name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")';
+			$binds[]  = [':search', $search, PDO::PARAM_STR];
+		}
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT
+				COUNT(*) AS result
+			FROM
+				translations AS t
+			WHERE
+				'.implode(' AND ', $where).'
+			'
+		);
+		
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
+		$stmt->execute();
+		
+		$songCount = $stmt->fetch(PDO::FETCH_ASSOC)['result'];
+		return $songCount;
 	}
 	
 	final public function getGame(string $gameUri): array|bool

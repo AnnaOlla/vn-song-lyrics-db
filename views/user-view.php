@@ -4,6 +4,8 @@ require_once 'views/violator-view.php';
 
 class UserView extends ViolatorView
 {
+	protected const ACCEPTED_IMAGE_TYPES = ['.jpg', '.jpeg', '.png', '.webp'];
+	
 	public function __construct(string $language)
 	{
 		parent::__construct($language);
@@ -58,17 +60,27 @@ class UserView extends ViolatorView
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section class="has-tooltip" tooltip-id="1">
 						<h2>'.\Localization\GameEditorPage\OriginalName.'<span class="required-input"> *</span></h2>
-						<input name="original-name" placeholder="蒼の彼方のフォーリズム" value="'.$originalName.'" required/>
+						<input type="text" name="original-name" placeholder="蒼の彼方のフォーリズム" value="'.$originalName.'" required/>
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						<h2>'.\Localization\GameEditorPage\TransliteratedName.'<span class="required-input"> *</span></h2>
-						<input name="transliterated-name" placeholder="Ao no Kanata no Foo Rizumu" pattern="[ -~]+" value="'.$transliteratedName.'" required/>
+						<input type="text" name="transliterated-name" placeholder="Ao no Kanata no Foo Rizumu" pattern="[ -~]+" value="'.$transliteratedName.'" required/>
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						<h2>'.\Localization\GameEditorPage\LocalizedName.'</h2>
-						<input name="localized-name" placeholder="Aokana -Four Rhythms Across the Blue-" value="'.$localizedName.'"/>
+						<input type="text" name="localized-name" placeholder="Aokana - Four Rhythms Across the Blue" value="'.$localizedName.'"/>
 					</section>
 		';
+		
+		$fileupload = $this->createFileupload
+		(
+			'logo',
+			'logo-input',
+			null,
+			true,
+			false,
+			self::ACCEPTED_IMAGE_TYPES
+		);
 		
 		if ($isImageUploaded)
 		{
@@ -80,10 +92,7 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
 						<h2>'.\Localization\GameEditorPage\NewLogo.'</h2>
-						<label class="custom-file-upload">
-							<input name="logo" type="file" accept=".jpg, .jpeg, .png, .webp" id="logo-input"/>
-							<section text-file-not-selected="'.\Localization\Controls\ChooseFile.'" text-file-too-big="'.\Localization\Controls\FileTooBig.'">'.\Localization\Controls\ChooseFile.'</section>
-						</label>
+						'.$fileupload.'
 					</section>
 			';
 		}
@@ -93,10 +102,7 @@ class UserView extends ViolatorView
 			'
 					<section class="has-tooltip" tooltip-id="6">
 						<h2>'.\Localization\GameEditorPage\Logo.'</h2>
-						<label class="custom-file-upload">
-							<input name="logo" type="file" accept=".jpg, .jpeg, .png, .webp" id="logo-input"/>
-							<section text-file-not-selected="'.\Localization\Controls\ChooseFile.'" text-file-too-big="'.\Localization\Controls\FileTooBig.'">'.\Localization\Controls\ChooseFile.'</section>
-						</label>
+						'.$fileupload.'
 					</section>
 			';
 		}
@@ -105,7 +111,7 @@ class UserView extends ViolatorView
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						<h2>'.\Localization\GameEditorPage\VndbLink.'</h2>
-						<input name="vndb-link" placeholder="https://vndb.org/v12849" value="'.$vndbLink.'"/>
+						<input type="url" name="vndb-link" placeholder="https://vndb.org/v12849" value="'.$vndbLink.'"/>
 					</section>
 					<section class="has-tooltip" tooltip-id="8">
 						<h2>'.\Localization\GameEditorPage\RelatedAlbums.'</h2>
@@ -118,13 +124,15 @@ class UserView extends ViolatorView
 				$albumInput = $this->createSelect
 				(
 					'album-ids[]',
-					'',
+					null,
+					null,
 					$relatedAlbum['game_album_relation_status'] === 'unchecked',
 					false,
+					true,
 					$albums,
+					$relatedAlbum,
 					'transliterated_name',
-					'id',
-					$relatedAlbum
+					'id'
 				);
 				
 				$addRowButton = $this->createAddRowButton
@@ -153,13 +161,15 @@ class UserView extends ViolatorView
 			$albumInput = $this->createSelect
 			(
 				'album-ids[]',
-				'',
+				null,
+				null,
 				true,
 				false,
+				true,
 				$albums,
+				null,
 				'transliterated_name',
-				'id',
-				null
+				'id'
 			);
 			
 			$addRowButton = $this->createAddRowButton
@@ -197,13 +207,15 @@ class UserView extends ViolatorView
 				$characterInput = $this->createSelect
 				(
 					'character-ids[]',
-					'',
+					null,
+					null,
 					$relatedCharacter['character_game_relation_status'] === 'unchecked',
 					false,
+					true,
 					$characters,
+					$relatedCharacter,
 					'transliterated_name',
-					'id',
-					$relatedCharacter
+					'id'
 				);
 				
 				$addRowButton = $this->createAddRowButton
@@ -232,13 +244,15 @@ class UserView extends ViolatorView
 			$characterInput = $this->createSelect
 			(
 				'character-ids[]',
-				'',
+				null,
+				null,
 				true,
 				false,
+				true,
 				$characters,
+				null,
 				'transliterated_name',
-				'id',
-				null
+				'id'
 			);
 			
 			$addRowButton = $this->createAddRowButton
@@ -318,13 +332,11 @@ class UserView extends ViolatorView
 		
 		$html .= $this->endRender
 		(
+			jsScriptUris:
 			[
-				'/js/shared/emulate-event.js',
-				'/js/shared/custom-file-input.js',
-				'/js/shared/custom-select.js',
 				'/js/shared/add-delete-row-buttons.js',
 				'/js/shared/tooltip-window.js',
-				'/js/game-editor.js'
+				'/js/entity-editor-page.js'
 			]
 		);
 		
@@ -383,17 +395,27 @@ class UserView extends ViolatorView
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section class="has-tooltip" tooltip-id="1">
 						<h2>'.\Localization\AlbumEditorPage\OriginalName.'<span class="required-input"> *</span></h2>
-						<input name="original-name" placeholder="蒼の彼方のフォーリズム サウンドトラックCD vol.1" value="'.$originalName.'" required/>
+						<input type="text" name="original-name" placeholder="蒼の彼方のフォーリズム サウンドトラックCD vol.1" value="'.$originalName.'" required/>
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						<h2>'.\Localization\AlbumEditorPage\TransliteratedName.'<span class="required-input"> *</span></h2>
-						<input name="transliterated-name" placeholder="Ao no Kanata no Foo Rizumu Saundotorakku CD VOL.1" pattern="[ -~]+" value="'.$transliteratedName.'" required/>
+						<input type="text" name="transliterated-name" placeholder="Ao no Kanata no Foo Rizumu Saundotorakku CD VOL.1" pattern="[ -~]+" value="'.$transliteratedName.'" required/>
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						<h2>'.\Localization\AlbumEditorPage\LocalizedName.'</h2>
-						<input name="localized-name" placeholder="FOUR RHYTHM ACROSS THE BLUE SOUND TRACK CD VOL.01" value="'.$localizedName.'"/>
+						<input type="text" name="localized-name" placeholder="FOUR RHYTHM ACROSS THE BLUE SOUND TRACK CD VOL.01" value="'.$localizedName.'"/>
 					</section>
 		';
+		
+		$fileupload = $this->createFileupload
+		(
+			'cover',
+			'cover-input',
+			null,
+			true,
+			false,
+			self::ACCEPTED_IMAGE_TYPES
+		);
 		
 		if ($isImageUploaded)
 		{
@@ -405,10 +427,7 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
 						<h2>'.\Localization\AlbumEditorPage\NewCover.'</h2>
-						<label class="custom-file-upload">
-							<input name="cover" type="file" accept=".jpg, .jpeg, .png, .webp" id="cover-input"/>
-							<section text-file-not-selected="'.\Localization\Controls\ChooseFile.'" text-file-too-big="'.\Localization\Controls\FileTooBig.'">'.\Localization\Controls\ChooseFile.'</section>
-						</label>
+						'.$fileupload.'
 					</section>
 			';
 		}
@@ -418,10 +437,7 @@ class UserView extends ViolatorView
 			'
 					<section class="has-tooltip" tooltip-id="6">
 						<h2>'.\Localization\AlbumEditorPage\Cover.'</h2>
-						<label class="custom-file-upload">
-							<input name="cover" type="file" accept=".jpg, .jpeg, .png, .webp" id="cover-input"/>
-							<section text-file-not-selected="'.\Localization\Controls\ChooseFile.'" text-file-too-big="'.\Localization\Controls\FileTooBig.'">'.\Localization\Controls\ChooseFile.'</section>
-						</label>
+						'.$fileupload.'
 					</section>
 			';
 		}
@@ -430,7 +446,7 @@ class UserView extends ViolatorView
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						<h2>'.\Localization\AlbumEditorPage\VgmdbLink.'</h2>
-						<input name="vgmdb-link" placeholder="https://vgmdb.net/album/56642" value="'.$vgmdbLink.'"/>
+						<input type="url" name="vgmdb-link" placeholder="https://vgmdb.net/album/56642" value="'.$vgmdbLink.'"/>
 					</section>
 					<section class="has-tooltip" tooltip-id="8">
 						<h2>'.\Localization\AlbumEditorPage\RelatedGames.'</h2>
@@ -443,13 +459,15 @@ class UserView extends ViolatorView
 				$gameInput = $this->createSelect
 				(
 					'game-ids[]',
-					'',
+					null,
+					null,
 					$relatedGame['game_album_relation_status'] === 'unchecked',
 					false,
+					true,
 					$games,
+					$relatedGame,
 					'transliterated_name',
-					'id',
-					$relatedGame
+					'id'
 				);
 				
 				$addRowButton = $this->createAddRowButton
@@ -478,13 +496,15 @@ class UserView extends ViolatorView
 			$gameInput = $this->createSelect
 			(
 				'game-ids[]',
-				'',
+				null,
+				null,
 				true,
 				false,
+				true,
 				$games,
+				null,
 				'transliterated_name',
-				'id',
-				null
+				'id'
 			);
 			
 			$addRowButton = $this->createAddRowButton
@@ -513,7 +533,7 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="9">
 						<h2>'.\Localization\AlbumEditorPage\SongCount.'<span class="required-input"> *</span></h2>
-						<input pattern="\d+" name="song-count" placeholder="28" value="'.$songCount.'" required/>
+						<input type="text" pattern="\d+" name="song-count" placeholder="28" value="'.$songCount.'" required/>
 					</section>
 					<section class="has-tooltip" tooltip-id="10">
 						<section class="page-controls">
@@ -568,13 +588,11 @@ class UserView extends ViolatorView
 		
 		$html .= $this->endRender
 		(
+			jsScriptUris:
 			[
-				'/js/shared/emulate-event.js',
-				'/js/shared/custom-file-input.js',
-				'/js/shared/custom-select.js',
 				'/js/shared/add-delete-row-buttons.js',
 				'/js/shared/tooltip-window.js',
-				'/js/album-editor.js'
+				'/js/entity-editor-page.js'
 			]
 		);
 		
@@ -630,17 +648,27 @@ class UserView extends ViolatorView
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section class="has-tooltip" tooltip-id="1">
 						<h2>'.\Localization\ArtistEditorPage\OriginalName.'<span class="required-input"> *</span></h2>
-						<input name="original-name" placeholder="いとうかなこ" value="'.$originalName.'" required />
+						<input type="text" name="original-name" placeholder="いとうかなこ" value="'.$originalName.'" required />
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						<h2>'.\Localization\ArtistEditorPage\TransliteratedName.'<span class="required-input"> *</span></h2>
-						<input name="transliterated-name" placeholder="Itou Kanako" pattern="[ -~]+" value="'.$transliteratedName.'" required />
+						<input type="text" name="transliterated-name" placeholder="Itou Kanako" pattern="[ -~]+" value="'.$transliteratedName.'" required />
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						<h2>'.\Localization\ArtistEditorPage\LocalizedName.'</h2>
-						<input name="localized-name" placeholder="Kanako Ito" value="'.$localizedName.'" />
+						<input type="text" name="localized-name" placeholder="Kanako Ito" value="'.$localizedName.'" />
 					</section>
 		';
+		
+		$fileupload = $this->createFileupload
+		(
+			'photo',
+			'photo-input',
+			null,
+			true,
+			false,
+			self::ACCEPTED_IMAGE_TYPES
+		);
 		
 		if ($isImageUploaded)
 		{
@@ -652,10 +680,7 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
 						<h2>'.\Localization\ArtistEditorPage\NewPhoto.'</h2>
-						<label class="custom-file-upload">
-							<input name="photo" type="file" accept=".jpg, .jpeg, .png, .webp" id="photo-input"/>
-							<section text-file-not-selected="'.\Localization\Controls\ChooseFile.'" text-file-too-big="'.\Localization\Controls\FileTooBig.'">'.\Localization\Controls\ChooseFile.'</section>
-						</label>
+						'.$fileupload.'
 					</section>
 			';
 		}
@@ -665,10 +690,7 @@ class UserView extends ViolatorView
 			'
 					<section class="has-tooltip" tooltip-id="6">
 						<h2>'.\Localization\ArtistEditorPage\Photo.'</h2>
-						<label class="custom-file-upload">
-							<input name="photo" type="file" accept=".jpg, .jpeg, .png, .webp" id="photo-input"/>
-							<section text-file-not-selected="'.\Localization\Controls\ChooseFile.'" text-file-too-big="'.\Localization\Controls\FileTooBig.'">'.\Localization\Controls\ChooseFile.'</section>
-						</label>
+						'.$fileupload.'
 					</section>
 			';
 		}
@@ -677,20 +699,22 @@ class UserView extends ViolatorView
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						<h2>'.\Localization\ArtistEditorPage\VgmdbLink.'</h2>
-						<input name="vgmdb-link" placeholder="https://vgmdb.net/artist/69" value="'.$vgmdbLink.'"/>
+						<input type="url" name="vgmdb-link" placeholder="https://vgmdb.net/artist/69" value="'.$vgmdbLink.'"/>
 					</section>
 		';
 		
 		$originalArtistSelect = $this->createSelect
 		(
 			'original-artist-id',
-			'original-artist-select',
+			null,
+			null,
 			true,
 			false,
+			true,
 			$originalArtists,
+			$originalArtist,
 			'transliterated_name',
-			'id',
-			$originalArtist
+			'id'
 		);
 		
 		$html .=
@@ -754,13 +778,11 @@ class UserView extends ViolatorView
 		
 		$html .= $this->endRender
 		(
+			jsScriptUris:
 			[
-				'/js/shared/emulate-event.js',
-				'/js/shared/custom-file-input.js',
-				'/js/shared/custom-select.js',
 				'/js/shared/add-delete-row-buttons.js',
 				'/js/shared/tooltip-window.js',
-				'/js/artist-editor.js'
+				'/js/entity-editor-page.js'
 			]
 		);
 		
@@ -810,17 +832,27 @@ class UserView extends ViolatorView
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section class="has-tooltip" tooltip-id="1">
 						<h2>'.\Localization\CharacterEditorPage\OriginalName.'<span class="required-input"> *</span></h2>
-						<input name="original-name" placeholder="桐生萌郁" value="'.$originalName.'" required/>
+						<input type="text" name="original-name" placeholder="桐生萌郁" value="'.$originalName.'" required/>
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						<h2>'.\Localization\CharacterEditorPage\TransliteratedName.'<span class="required-input"> *</span></h2>
-						<input name="transliterated-name" placeholder="Kiryuu Moeka" pattern="[ -~]+" value="'.$transliteratedName.'" required/>
+						<input type="text" name="transliterated-name" placeholder="Kiryuu Moeka" pattern="[ -~]+" value="'.$transliteratedName.'" required/>
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						<h2>'.\Localization\CharacterEditorPage\LocalizedName.'</h2>
-						<input name="localized-name" placeholder="Moeka Kiryu" value="'.$localizedName.'"/>
+						<input type="text" name="localized-name" placeholder="Moeka Kiryu" value="'.$localizedName.'"/>
 					</section>
 		';
+		
+		$fileupload = $this->createFileupload
+		(
+			'image',
+			'image-input',
+			null,
+			true,
+			false,
+			self::ACCEPTED_IMAGE_TYPES
+		);
 		
 		if ($isImageUploaded)
 		{
@@ -832,10 +864,7 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
 						<h2>'.\Localization\CharacterEditorPage\NewImage.'</h2>
-						<label class="custom-file-upload">
-							<input name="image" type="file" accept=".jpg, .jpeg, .png, .webp" id="image-input"/>
-							<section text-file-not-selected="'.\Localization\Controls\ChooseFile.'" text-file-too-big="'.\Localization\Controls\FileTooBig.'">'.\Localization\Controls\ChooseFile.'</section>
-						</label>
+						'.$fileupload.'
 					</section>
 			';
 		}
@@ -845,10 +874,7 @@ class UserView extends ViolatorView
 			'
 					<section class="has-tooltip" tooltip-id="6">
 						<h2>'.\Localization\CharacterEditorPage\Image.'</h2>
-						<label class="custom-file-upload">
-							<input name="image" type="file" accept=".jpg, .jpeg, .png, .webp" id="image-input"/>
-							<section text-file-not-selected="'.\Localization\Controls\ChooseFile.'" text-file-too-big="'.\Localization\Controls\FileTooBig.'">'.\Localization\Controls\ChooseFile.'</section>
-						</label>
+						'.$fileupload.'
 					</section>
 			';
 		}
@@ -857,7 +883,7 @@ class UserView extends ViolatorView
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						<h2>'.\Localization\CharacterEditorPage\VndbLink.'</h2>
-						<input name="vndb-link" placeholder="https://vndb.org/c6496" value="'.$vndbLink.'"/>
+						<input type="url" name="vndb-link" placeholder="https://vndb.org/c6496" value="'.$vndbLink.'"/>
 					</section>
 					<section class="has-tooltip" tooltip-id="8">
 						<h2>'.\Localization\CharacterEditorPage\RelatedGames.'</h2>
@@ -870,13 +896,15 @@ class UserView extends ViolatorView
 				$gameInput = $this->createSelect
 				(
 					'game-ids[]',
-					'',
+					null,
+					null,
 					$relatedGame['character_game_relation_status'] === 'unchecked',
 					false,
+					true,
 					$games,
+					$relatedGame,
 					'transliterated_name',
-					'id',
-					$relatedGame
+					'id'
 				);
 				
 				$addRowButton = $this->createAddRowButton
@@ -905,13 +933,15 @@ class UserView extends ViolatorView
 			$gameInput = $this->createSelect
 			(
 				'game-ids[]',
-				'',
+				null,
+				null,
 				true,
 				false,
+				true,
 				$games,
+				null,
 				'transliterated_name',
-				'id',
-				null
+				'id'
 			);
 			
 			$addRowButton = $this->createAddRowButton
@@ -994,13 +1024,11 @@ class UserView extends ViolatorView
 		
 		$html .= $this->endRender
 		(
+			jsScriptUris:
 			[
-				'/js/shared/emulate-event.js',
-				'/js/shared/custom-file-input.js',
-				'/js/shared/custom-select.js',
 				'/js/shared/add-delete-row-buttons.js',
 				'/js/shared/tooltip-window.js',
-				'/js/character-editor.js'
+				'/js/entity-editor-page.js'
 			]
 		);
 		
@@ -1044,7 +1072,6 @@ class UserView extends ViolatorView
 		
 		$vocalOptions =
 		[
-			// The null option is added automatically
 			['id' => 0, 'value' => \Localization\SongEditorPage\HasVocalFalse],
 			['id' => 1, 'value' => \Localization\SongEditorPage\HasVocalTrue],
 		];
@@ -1052,13 +1079,15 @@ class UserView extends ViolatorView
 		$select = $this->createSelect
 		(
 			'has-vocal',
-			'',
+			null,
+			null,
+			true,
 			true,
 			true,
 			$vocalOptions,
+			(is_null($hasVocal) ? null : $vocalOptions[$hasVocal]),
 			'value',
-			'id',
-			(is_null($hasVocal) ? null : ['id' => $hasVocal, ])
+			'id'
 		);
 		
 		if ($isLastSong === true)
@@ -1083,23 +1112,23 @@ class UserView extends ViolatorView
 					<section class="has-tooltip" tooltip-id="1">
 						<h2>'.\Localization\SongEditorPage\DiscAndTrack.'<span class="required-input"> *</span></h2>
 						<section class="disc-track-controls">
-							<input name="disc-number" value="'.$discNumber.'" id="disc-number" '.$fieldFlag.' required/>
-							<input name="track-number" value="'.$trackNumber.'" id="track-number" '.$fieldFlag.' required/>
+							<input type="text" name="disc-number" value="'.$discNumber.'" id="disc-number" '.$fieldFlag.' required/>
+							<input type="text" name="track-number" value="'.$trackNumber.'" id="track-number" '.$fieldFlag.' required/>
 							<button id="next-disc" type="button" '.$buttonFlag.'>'.\Localization\SongEditorPage\NextDisc.'</button>
 							<button id="previous-disc" type="button" '.$buttonFlag.'>'.\Localization\SongEditorPage\PreviousDisc.'</button>
 						</section>
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						<h2>'.\Localization\SongEditorPage\OriginalName.'<span class="required-input"> *</span></h2>
-						<input name="original-name" placeholder="星たちの歌" value="'.$originalName.'" required/>
+						<input type="text" name="original-name" placeholder="星たちの歌" value="'.$originalName.'" required/>
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						<h2>'.\Localization\SongEditorPage\TransliteratedName.'<span class="required-input"> *</span></h2>
-						<input name="transliterated-name" placeholder="Hoshitachi no Uta" pattern="[ -~]+" value="'.$transliteratedName.'" required />
+						<input type="text" name="transliterated-name" placeholder="Hoshitachi no Uta" pattern="[ -~]+" value="'.$transliteratedName.'" required />
 					</section>
 					<section class="has-tooltip" tooltip-id="4">
 						<h2>'.\Localization\SongEditorPage\LocalizedName.'</h2>
-						<input name="localized-name" placeholder="Song of the Stars" value="'.$localizedName.'"/>
+						<input type="text" name="localized-name" placeholder="Song of the Stars" value="'.$localizedName.'"/>
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
 						<h2>'.\Localization\SongEditorPage\HasVocal.'<span class="required-input"> *</span></h2>
@@ -1150,10 +1179,11 @@ class UserView extends ViolatorView
 		
 		$html .= $this->endRender
 		(
+			jsScriptUris:
 			[
-				'/js/shared/custom-select.js',
+				'/js/shared/add-delete-row-buttons.js',
 				'/js/shared/tooltip-window.js',
-				'/js/song-editor.js'
+				'/js/song-editor-page.js'
 			]
 		);
 		
@@ -1216,25 +1246,29 @@ class UserView extends ViolatorView
 				$artistInput = $this->createSelect
 				(
 					'artist-ids[]',
-					'',
+					null,
+					null,
 					$relatedPerformer['song_artist_character_relation_status'] === 'unchecked',
 					true,
+					true,
 					$artists,
+					$relatedPerformer,
 					'artist_transliterated_name',
-					'artist_id',
-					$relatedPerformer
+					'artist_id'
 				);
 				
 				$characterInput = $this->createSelect
 				(
 					'character-ids[]',
-					'',
+					null,
+					null,
 					$relatedPerformer['song_artist_character_relation_status'] === 'unchecked',
 					false,
+					true,
 					$characters,
+					$relatedPerformer,
 					'character_transliterated_name',
-					'character_id',
-					$relatedPerformer
+					'character_id'
 				);
 				
 				$addRowButton = $this->createAddRowButton
@@ -1265,25 +1299,29 @@ class UserView extends ViolatorView
 			$artistInput = $this->createSelect
 			(
 				'artist-ids[]',
-				'',
+				null,
+				null,
+				true,
 				true,
 				true,
 				$artists,
+				null,
 				'transliterated_name',
-				'id',
-				null
+				'id'
 			);
 			
 			$characterInput = $this->createSelect
 			(
 				'character-ids[]',
-				'',
+				null,
+				null,
 				true,
 				false,
+				true,
 				$characters,
+				null,
 				'transliterated_name',
-				'id',
-				null
+				'id'
 			);
 			
 			$addRowButton = $this->createAddRowButton
@@ -1314,18 +1352,20 @@ class UserView extends ViolatorView
 					</section>
 		';
 		
-		$originalSong = array_find($originalSongs, function (array $original) use ($song) { return $song['original_song_id'] === $original['id']; });
+		$originalSong = array_find($originalSongs, function(array $original) use ($song) { return $song['original_song_id'] === $original['id']; });
 		
 		$originalSongSelect = $this->createSelect
 		(
 			'original-song-id',
 			'original-song-select',
+			null,
 			true,
 			false,
+			true,
 			$originalSongs,
+			$originalSong,
 			'transliterated_name',
-			'id',
-			$originalSong
+			'id'
 		);
 		
 		$html .= 
@@ -1348,12 +1388,14 @@ class UserView extends ViolatorView
 			(
 				'language-id',
 				'language-select',
+				null,
+				true,
 				true,
 				true,
 				$languages,
+				$song,
 				\Localization\Functions\localizeLanguageKey(),
-				'language_id',
-				$song
+				'language_id'
 			);
 		}
 		else
@@ -1362,12 +1404,14 @@ class UserView extends ViolatorView
 			(
 				'language-id',
 				'language-select',
+				null,
+				true,
 				true,
 				true,
 				$languages,
+				null,
 				\Localization\Functions\localizeLanguageKey(),
-				'id',
-				null
+				'id'
 			);
 		}
 		
@@ -1381,11 +1425,11 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip lyrics-textarea" tooltip-id="4">
 						<h2>'.\Localization\LyricsEditorPage\Lyrics.'<span class="required-input"> *</span></h2>
-						<textarea name="lyrics" placeholder="'.\Localization\Controls\Textarea.'" class="lyrics-area" required>'.htmlspecialchars($song['lyrics'] ?? '').'</textarea>
+						<textarea name="lyrics" placeholder="'.\Localization\Controls\Textarea.'" id="lyrics-area" required>'.htmlspecialchars($song['lyrics'] ?? '').'</textarea>
 					</section>
 					<section class="has-tooltip notes-textarea" tooltip-id="5">
 						<h2>'.\Localization\LyricsEditorPage\Notes.'</h2>
-						<textarea name="notes" placeholder="'.\Localization\Controls\Textarea.'" class="notes-area">'.htmlspecialchars($song['notes'] ?? '').'</textarea>
+						<textarea name="notes" placeholder="'.\Localization\Controls\Textarea.'" id="notes-area">'.htmlspecialchars($song['notes'] ?? '').'</textarea>
 					</section>
 					<section class="has-tooltip" tooltip-id="6">
 						<section class="page-controls">
@@ -1432,13 +1476,11 @@ class UserView extends ViolatorView
 		
 		$html .= $this->endRender
 		(
+			jsScriptUris:
 			[
-				'/js/shared/tooltip-window.js',
 				'/js/shared/add-delete-row-buttons.js',
-				'/js/shared/custom-select.js',
-				'/js/shared/emulate-event.js',
-				'/js/shared/custom-textarea.js',
-				'/js/lyrics-editor.js'
+				'/js/shared/tooltip-window.js',
+				'/js/lyrics-editor-page.js'
 			]
 		);
 		
@@ -1457,7 +1499,7 @@ class UserView extends ViolatorView
 	{
 		if ($translation)
 		{
-			$languageInput = '<input value="'.\Localization\Functions\localizeLanguageName($translation).'"disabled/>';
+			$languageInput = '<input type="text" value="'.\Localization\Functions\localizeLanguageName($translation).'"disabled/>';
 			
 			$translationName   = htmlspecialchars($translation['name']);
 			$translationLyrics = htmlspecialchars($translation['lyrics']);
@@ -1508,7 +1550,7 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						<h2>'.\Localization\TranslationEditorPage\TranslationName.'<span class="required-input"> *</span></h2>
-						<input name="translation-name" value="'.$translationName.'" required/>
+						<input type="text" name="translation-name" value="'.$translationName.'" required/>
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						<h2>'.\Localization\TranslationEditorPage\TranslationLyrics.'<span class="required-input"> *</span></h2>
@@ -1532,11 +1574,11 @@ class UserView extends ViolatorView
 				<section class="form-replacement">
 					<section>
 						<h2>'.\Localization\TranslationEditorPage\SourceLanguage.'</h2>
-						<input value="'.\Localization\Functions\localizeLanguageName($song).'" disabled/>
+						<input type="text" value="'.\Localization\Functions\localizeLanguageName($song).'" disabled/>
 					</section>
 					<section>
 						<h2>'.\Localization\TranslationEditorPage\SongName.'</h2>
-						<input value="'.$song['original_name'].'" disabled/>
+						<input type="text" value="'.$song['original_name'].'" disabled/>
 					</section>
 					<section>
 						<h2>'.\Localization\TranslationEditorPage\SongLyrics.'</h2>
@@ -1580,12 +1622,11 @@ class UserView extends ViolatorView
 		
 		$html .= $this->endRender
 		(
+			jsScriptUris:
 			[
+				'/js/shared/add-delete-row-buttons.js',
 				'/js/shared/tooltip-window.js',
-				'/js/shared/custom-select.js',
-				'/js/shared/emulate-event.js',
-				'/js/shared/custom-textarea.js',
-				'/js/translation-editor.js'
+				'/js/translation-editor-page.js'
 			]
 		);
 		
@@ -1847,7 +1888,24 @@ class UserView extends ViolatorView
 		$html = $this->startRender
 		(
 			title:        $heading,
-			cssSheetUris: ['/css/window-in-center.css']
+			cssSheetUris: ['/css/window-in-center-page.css']
+		);
+		
+		$cancelButton = $this->createButton
+		(
+			\Localization\Controls\Cancel,
+			$cancelLink
+		);
+		
+		$checkbox = $this->createCheckbox
+		(
+			'confirmation',
+			'confirmation-button',
+			null,
+			true,
+			true,
+			1,
+			\Localization\Controls\Confirmation
 		);
 		
 		$html .= 
@@ -1863,12 +1921,9 @@ class UserView extends ViolatorView
 				'.$this->createParagraph(\Localization\DeleteEntityPage\Warning).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section>
-						'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
+						'.$cancelButton.'
 						<section class="filler"></section>
-						<label class="custom-checkbox">
-							<span>'.\Localization\Controls\Confirmation.'</span>
-							<input type="checkbox" name="confirmation" id="confirmation-button" value="1"/>
-						</label>
+						'.$checkbox.'
 						<input type="submit" id="submission-button" value="'.\Localization\Controls\Submit.'" disabled/>
 					</section>
 				</form>
@@ -1878,9 +1933,10 @@ class UserView extends ViolatorView
 		
 		$html .= $this->endRender
 		(
+			jsScriptUris:
 			[
 				'/js/shared/switch-element-availability.js',
-				'/js/delete-entity-page.js'
+				'/js/entity-deletion-page.js'
 			]
 		);
 		
@@ -1995,7 +2051,11 @@ class UserView extends ViolatorView
 				break;
 		}
 		
-		$html = $this->startRender($heading, ['/css/window-in-center.css']);
+		$html = $this->startRender
+		(
+			title: $heading,
+			cssSheetUris: ['/css/window-in-center-page.css']
+		);
 		
 		$html .= 
 		'
@@ -2009,19 +2069,19 @@ class UserView extends ViolatorView
 				<form method="POST">
 					<section>
 						<h3>'.\Localization\UserAccountDataPage\Username.'<span class="required-input"> *</span></h3>
-						<input name="username" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" value="'.$user['user_username'].'" placeholder="'.\Localization\SignUpPage\HintUsername.'" required/>
+						<input type="text" name="username" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" value="'.$user['user_username'].'" placeholder="'.\Localization\SignUpPage\HintUsername.'" required/>
 					</section>
 					<section>
 						<h3>'.\Localization\SignUpPage\Email.'<span class="required-input"> *</span></h3>
-						<input name="email" type="email" minlength="4" maxlength="32" value="'.$user['user_email'].'" placeholder="'.\Localization\SignUpPage\HintEmail.'" required/>
+						<input type="email" name="email" minlength="4" maxlength="32" value="'.$user['user_email'].'" placeholder="'.\Localization\SignUpPage\HintEmail.'" required/>
 					</section>
 					<section>
 						<h3>'.\Localization\UserAccountDataPage\NewPassword.'</h3>
-						<input name="new-password" type="password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\UserAccountDataPage\NewPasswordNote.'"/>
+						<input type="password" name="new-password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\UserAccountDataPage\NewPasswordNote.'"/>
 					</section>
 					<section>
 						<h3>'.\Localization\UserAccountDataPage\OldPassword.'<span class="required-input"> *</span></h3>
-						<input name="old-password" type="password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintPassword.'" required/>
+						<input type="password" name="old-password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintPassword.'" required/>
 					</section>
 					<section>
 						'.$this->createButton(\Localization\Controls\Cancel, $cancelLink, true, '').'
@@ -2057,7 +2117,7 @@ class UserView extends ViolatorView
 		$html = $this->startRender
 		(
 			title:        $heading,
-			cssSheetUris: ['/css/window-in-center.css']
+			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
 		$html .= 
@@ -2077,7 +2137,7 @@ class UserView extends ViolatorView
 				<form method="POST">
 					<section>
 						<h3>'.\Localization\UserAccountDeletePage\Password.'<span class="required-input"> *</span></h3>
-						<input name="password" type="password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" required/>
+						<input type="password" name="password"  pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" required/>
 					</section>
 					<section>
 						'.$this->createButton(\Localization\Controls\Cancel, $cancelLink, true, '').'

@@ -1,0 +1,68 @@
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="search"] {
+	display: inline-block;
+	
+	background-color: var(--color-input-primary);
+	color: var(--color-text);
+	
+	border-radius: var(--border-radius);
+	font: var(--font-family);
+	font-size: var(--font-size-plain);
+	border: 0;
+	
+	box-sizing: border-box;
+	padding: var(--section-padding);
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+	
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	white-space: nowrap;
+	
+	outline: 0;
+}
+
+input[type="text"]:readonly,
+input[type="password"]:readonly,
+input[type="email"]:readonly,
+input[type="tel"]:readonly,
+input[type="url"]:readonly,
+input[type="search"]:readonly,
+input[type="text"]:disabled,
+input[type="password"]:disabled,
+input[type="email"]:disabled,
+input[type="tel"]:disabled,
+input[type="url"]:disabled,
+input[type="search"]:disabled {
+	cursor: not-allowed;
+}
+
+input[type="text"]:hover:not([disabled]):not([readonly]),
+input[type="password"]:hover:not([disabled]):not([readonly]),
+input[type="email"]:hover:not([disabled]):not([readonly]),
+input[type="tel"]:hover:not([disabled]):not([readonly]),
+input[type="url"]:hover:not([disabled]):not([readonly]),
+input[type="search"]:hover:not([disabled]):not([readonly]),
+input[type="text"]:focus:not([disabled]):not([readonly]),
+input[type="password"]:focus:not([disabled]):not([readonly]),
+input[type="email"]:focus:not([disabled]):not([readonly]),
+input[type="tel"]:focus:not([disabled]):not([readonly]),
+input[type="url"]:focus:not([disabled]):not([readonly]),
+input[type="search"]:focus:not([disabled]):not([readonly]) {
+	background-color: var(--color-input-secondary);
+	outline: none;
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder,
+input[type="email"]::placeholder,
+input[type="tel"]::placeholder,
+input[type="url"]::placeholder,
+input[type="search"]::placeholder {
+	color: var(--color-text-placeholder);
+}

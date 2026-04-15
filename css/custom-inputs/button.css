@@ -1,0 +1,39 @@
+button,
+a.custom-button,
+input[type="submit"] {
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+	padding: var(--section-padding);
+	
+	background-color: var(--color-clickable-item-primary);
+	color: var(--color-clickable-item-secondary);
+	border-radius: var(--border-radius);
+	
+	font-family: var(--font-family);
+	font-size: var(--font-size-plain);
+	text-decoration: none;
+	
+	text-align: center;
+	align-content: center;
+	
+	cursor: pointer;
+	
+	outline: 0;
+	border: 0;
+}
+
+button:hover,
+a.custom-button:hover,
+input[type="submit"]:hover {
+	background-color: var(--color-clickable-item-secondary);
+	color: var(--color-clickable-item-primary);
+}
+
+button:disabled,
+a.custom-button.disabled,
+input[type="submit"]:disabled {
+	background-color: var(--color-clickable-item-disabled);
+	color: var(--color-text-placeholder);
+	text-decoration: line-through;
+	cursor: not-allowed;
+}

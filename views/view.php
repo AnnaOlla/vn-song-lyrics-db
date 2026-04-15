@@ -3,8 +3,6 @@
 abstract class View
 {
 	protected $language;
-	
-	/* These values help browsers auto-update css and js. Set them in __construct manually */
 	private $cssVersion;
 	private $jsVersion;
 	
@@ -13,8 +11,8 @@ abstract class View
 		$this->language = $language;
 		require_once 'localization/'.$language.'-localization.php';
 		
-		$this->cssVersion = '1.3';
-		$this->jsVersion  = '1.0';
+		$this->cssVersion = '2.0';
+		$this->jsVersion  = '2.0';
 	}
 	
 	private function changeUriLocale(string $uri, string $newCode): string
@@ -41,11 +39,12 @@ abstract class View
 		$title          = htmlspecialchars($title).' | vn-song-lyrics-db';
 		$description    = $description ?? 'The database of lyrics for songs introduced in visual novels.';
 		
-		$currentUrl     = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-		$canonicalUrl   = 'https://'.$_SERVER['HTTP_HOST'].($canonicalUri ?? $_SERVER['REQUEST_URI']);
-		$alternateRefEn = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($_SERVER['REQUEST_URI'], 'en');
-		$alternateRefRu = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($_SERVER['REQUEST_URI'], 'ru');
-		$alternateRefJa = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($_SERVER['REQUEST_URI'], 'ja');
+		$requestUri     = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		$currentUrl     = 'https://'.$_SERVER['HTTP_HOST'].$requestUri;
+		$canonicalUrl   = 'https://'.$_SERVER['HTTP_HOST'].($canonicalUri ?? $requestUri);
+		$alternateRefEn = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'en');
+		$alternateRefRu = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'ru');
+		$alternateRefJa = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'ja');
 		
 		$ogUrl          = $currentUrl;
 		$ogImageUrl     = 'https://'.$_SERVER['HTTP_HOST'].($ogImageUri ?? '/assets/static-images/wee-hagana-og.webp');
@@ -94,6 +93,13 @@ abstract class View
 			<link type="text/css" rel="stylesheet" href="/css/core/sizes.css?v={$this->cssVersion}" />
 			<link type="text/css" rel="stylesheet" href="/css/core/dark-theme.css?v={$this->cssVersion}" />
 			<link type="text/css" rel="stylesheet" href="/css/core/general.css?v={$this->cssVersion}" />
+			
+			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/button.css?v={$this->cssVersion}" />
+			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/checkbox.css?v={$this->cssVersion}" />
+			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/fileupload.css?v={$this->cssVersion}" />
+			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/select.css?v={$this->cssVersion}" />
+			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textarea.css?v={$this->cssVersion}" />
+			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textinput.css?v={$this->cssVersion}" />
 
 		HTML;
 		
@@ -149,11 +155,11 @@ abstract class View
 				<a href="/'.$this->language.'">'.\Localization\Header\HomePage.'</a>
 			</section>
 			<section class="main-pages">
-				<a href="/'.$this->language.'/game-list">'.\Localization\Header\GameList.'</a>
-				<a href="/'.$this->language.'/album-list">'.\Localization\Header\AlbumList.'</a>
-				<a href="/'.$this->language.'/artist-list">'.\Localization\Header\ArtistList.'</a>
-				<a href="/'.$this->language.'/character-list">'.\Localization\Header\CharacterList.'</a>
-				<a href="/'.$this->language.'/song-list">'.\Localization\Header\SongList.'</a>
+				<a href="/'.$this->language.'/game-list?limit=10&page=1">'.\Localization\Header\GameList.'</a>
+				<a href="/'.$this->language.'/album-list?limit=10&page=1">'.\Localization\Header\AlbumList.'</a>
+				<a href="/'.$this->language.'/artist-list?limit=10&page=1">'.\Localization\Header\ArtistList.'</a>
+				<a href="/'.$this->language.'/character-list?limit=10&page=1">'.\Localization\Header\CharacterList.'</a>
+				<a href="/'.$this->language.'/song-list?limit=10&page=1">'.\Localization\Header\SongList.'</a>
 				<a href="/'.$this->language.'/feedback">'.\Localization\Header\Feedback.'</a>
 			</section>
 			<section class="filler"><span></span></section>
@@ -220,18 +226,22 @@ HTML;
 		';
 	}
 	
-	final protected function endRender(array $jsScripts = []): string
+	final protected function endRender(array $jsScriptUris = []): string
 	{
 		$html = <<<HTML
 
 			</main>
 			{$this->createFooter()}
+			<script src="/js/core/emulate-event.js?v={$this->jsVersion}"/></script>
+			<script src="/js/custom-inputs/fileupload.js?v={$this->jsVersion}"/></script>
+			<script src="/js/custom-inputs/select.js?v={$this->jsVersion}"/></script>
+			<script src="/js/custom-inputs/textarea.js?v={$this->jsVersion}"/></script>
 		HTML;
 		
-        foreach ($jsScripts as $jsScript)
+        foreach ($jsScriptUris as $jsScriptUri)
 		{
 			$html .= <<<HTML
-			<script src="{$jsScript}?v={$this->jsVersion}"/></script>
+			<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
 
 		HTML;
 		}
@@ -400,7 +410,7 @@ HTML;
 			'hidden'    => \Localization\ModerationStatus\Hidden
 		];
 		
-		$html = '<p>'.$prefix.'<select class="status-select" '.$dataEntityUri.'>';
+		$html = '<section><p>'.$prefix.'</p><select class="status-select" '.$dataEntityUri.'>';
 		
 		foreach ($statuses as $status => $name)
 		{
@@ -410,7 +420,7 @@ HTML;
 				$html .= '<option value="'.$status.'">'.$name.'</option>';
 		}
 		
-		$html .= '</select><section class="select-fake-filler"></section></p>';
+		$html .= '</select><section class="select-fake-filler"></section></section>';
 		
 		return $html;
 	}
@@ -523,9 +533,9 @@ HTML;
 		);
 	}
 	
-	final protected function createSearchBar(): string
+	final protected function createFilterBar(): string
 	{
-		return '<input type="search" id="search-bar" placeholder="'.\Localization\Controls\Search.'" />';
+		return '<input type="search" id="filter-bar" placeholder="'.\Localization\Controls\FilterPage.'" />';
 	}
 	
 	final protected function createInfoBlockWithImage
@@ -1040,39 +1050,113 @@ HTML;
 		return $this->createSongTimestamps($translation);
 	}
 	
-	final protected function createSelect
+	final protected function createCheckbox
 	(
-		string     $name,
-		string     $class,
-		bool       $isEnabled,
-		bool       $isRequired,
-		array      $entities,
-		string     $keyToShow,
-		string     $keyToSend,
-		array|null $currentEntity
+		string|null $name,
+		string|null $id,
+		array|null  $classes,
+		bool        $isEnabled,
+		bool        $isRequired,
+		string|null $value,
+		string|null $label
 	): string
 	{
-		if (!$isEnabled)
-			$disabled = 'disabled';
+		if (!is_null($classes))
+			$classes[] = 'custom-checkbox';
 		else
-			$disabled = '';
+			$classes = ['custom-checkbox'];
 		
-		if ($isRequired)
-			$required = 'required';
+		$name     = ($name)       ? ' name="'.$name.'"'                   : '';
+		$id       = ($id)         ? ' id="'.$id.'"'                       : '';
+		$class    = ($classes)    ? ' class="'.implode(' ', $classes).'"' : '';
+		$disabled = (!$isEnabled) ? ' disabled'                           : '';
+		$required = ($isRequired) ? ' required'                           : '';
+		$value    = ($value)      ? htmlspecialchars($value)              : '';
+		$label    = ($label)      ? htmlspecialchars($label)              : '';
+		
+		return
+		'
+		<label'.$class.'>
+			<span>'.htmlspecialchars($label).'</span>
+			<input type="checkbox"'.$name.$id.$disabled.$required.$value.'/>
+		</label>
+		';
+	}
+	
+	final protected function createFileupload
+	(
+		string|null $name,
+		string|null $id,
+		array|null  $classes,
+		bool        $isEnabled,
+		bool        $isRequired,
+		array|null  $accept,
+		string      $value               = \Localization\Controls\ChooseFile,
+		string      $fileNotSelectedText = \Localization\Controls\ChooseFile,
+		string      $fileTooBigText      = \Localization\Controls\FileTooBig
+	): string
+	{
+		if (!is_null($classes))
+			$classes[] = 'custom-fileupload';
 		else
-			$required = '';
+			$classes = ['custom-fileupload'];
 		
-		$html = '<select name="'.$name.'" class="'.$class.'" '.$disabled.' '.$required.'>';
+		$name     = ($name)       ? ' name="'.$name.'"'                   : '';
+		$id       = ($id)         ? ' id="'.$id.'"'                       : '';
+		$class    = ($classes)    ? ' class="'.implode(' ', $classes).'"' : '';
+		$disabled = (!$isEnabled) ? ' disabled'                           : '';
+		$required = ($isRequired) ? ' required'                           : '';
+		$accept   = ($accept)     ? ' accept="'.implode(',', $accept).'"' : '';
 		
-		// empty option
-		$html .= '<option></option>';
+		$value    = htmlspecialchars($value ?? '');
+		$noSelect = htmlspecialchars($fileNotSelectedText ?? '');
+		$tooBig   = htmlspecialchars($fileTooBigText ?? '');
 		
-		foreach ($entities as $entity)
+		return
+		'
+		<label'.$class.'>
+			<input type="file"'.$name.$id.$isEnabled.$isRequired.$accept.' />
+			<section text-file-not-selected="'.$noSelect.'" text-file-too-big="'.$tooBig.'">'.$value.'</section>
+		</label>
+		';
+	}
+	
+	final protected function createSelect
+	(
+		string|null $name,
+		string|null $id,
+		array|null  $classes,
+		bool        $isEnabled,
+		bool        $isRequired,
+		bool        $addEmptyOption,
+		array       $options,
+		array|null  $selectedOption,
+		string      $keyToShow,
+		string      $keyToSend
+	): string
+	{
+		$name     = ($name)       ? ' name="'.$name.'"'                   : '';
+		$id       = ($id)         ? ' id="'.$id.'"'                       : '';
+		$class    = ($classes)    ? ' class="'.implode(' ', $classes).'"' : '';
+		$disabled = (!$isEnabled) ? ' disabled'                           : '';
+		$required = ($isRequired) ? ' required'                           : '';
+		
+		$html = '<select'.$name.$id.$class.$disabled.$required.'>';
+		
+		if ($addEmptyOption)
+			$html .= '<option></option>';
+		
+		foreach ($options as $option)
 		{
-			if ($currentEntity && $entity[$keyToSend] === $currentEntity[$keyToSend])
-				$html .= '<option value="'.htmlspecialchars($entity[$keyToSend]).'" selected>'.htmlspecialchars($entity[$keyToShow]).'</option>';
+			if ($selectedOption && $option[$keyToSend] === $selectedOption[$keyToSend])
+				$selected = ' selected';
 			else
-				$html .= '<option value="'.htmlspecialchars($entity[$keyToSend]).'">'.htmlspecialchars($entity[$keyToShow]).'</option>';
+				$selected = '';
+			
+			$valueToSend = htmlspecialchars($option[$keyToSend] ?? '');
+			$valueToShow = htmlspecialchars($option[$keyToShow] ?? '');
+			
+			$html .= '<option value="'.$valueToSend.'"'.$selected.'>'.$valueToShow.'</option>';
 		}
 		
 		$html .= '</select><section class="select-fake-filler"></section>';
@@ -1080,9 +1164,9 @@ HTML;
 		return $html;
 	}
 	
-	final protected function createDatalist(string $name, string $key, array $entities): string
+	final protected function createDatalist(string $id, string $key, array $entities): string
 	{
-		$html = '<datalist id="'.$name.'">';
+		$html = '<datalist id="'.$id.'">';
 		
 		foreach ($entities as $entity)
 			$html .= '<option value="'.$entity[$key].'"></option>';
@@ -1129,8 +1213,10 @@ HTML;
 	final protected function createTooltipHeadingDatalist(string ...$headings): string
 	{
 		$html = '<datalist id="tooltip-headings">';
+		
 		foreach ($headings as $heading)
 			$html .= '<option>'.$heading.'</option>';
+			
 		$html .= '</datalist>';
 		
 		return $html;
@@ -1139,11 +1225,35 @@ HTML;
 	final protected function createTooltipContentDatalist(string ...$contents): string
 	{
 		$html = '<datalist id="tooltip-contents">';
+		
 		foreach ($contents as $content)
 			$html .= '<option>'.$content.'</option>';
+			
 		$html .= '</datalist>';
 		
 		return $html;
+	}
+	
+	final protected function buildPaginationParameters
+	(
+		int|null    $limit,
+		int|null    $page,
+		string|null $search
+	): string
+	{
+		$params = [];
+		
+		if (!is_null($limit))
+			$params[] = 'limit='.$limit;
+		if (!is_null($page))
+			$params[] = 'page='.$page;
+		if (!is_null($search))
+			$params[] = 'search='.rawurlencode($search);
+		
+		if (count($params) === 0)
+			return '';
+		
+		return '?'.implode('&', $params);
 	}
 	
 	//-----------------------//
@@ -1155,7 +1265,7 @@ HTML;
 		echo $this->startRender
 		(
 			title:        $codename,
-			cssSheetUris: ['/css/window-in-center.css']
+			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
 		echo

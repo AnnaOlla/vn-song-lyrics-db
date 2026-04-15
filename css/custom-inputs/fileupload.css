@@ -1,0 +1,48 @@
+input[type="file"] {
+	opacity: 0;
+	width: 0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.custom-fileupload {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
+
+.custom-fileupload > section {
+	display: inline-block;
+	
+	background-color: var(--color-input-primary);
+	color: var(--color-text-placeholder);
+	
+	border-radius: var(--border-radius);
+	font: var(--font-family);
+	font-size: var(--font-size-plain);
+	border: 0;
+	
+	box-sizing: border-box;
+	padding: var(--section-padding);
+	margin-top: var(--text-margin);
+	margin-bottom: var(--text-margin);
+	
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	white-space: nowrap;
+	
+	outline: 0;
+	
+	flex: 1;
+}
+
+.custom-fileupload > section.has-file {
+	color: var(--color-text);
+}
+
+.custom-fileupload > section:hover,
+.custom-fileupload > section:focus {
+	background-color: var(--color-input-secondary);
+	outline: none;
+}

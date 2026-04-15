@@ -1,6 +1,6 @@
 // Dependencies:
 //   - /js/shared/emulate-event.js
-//   - /js/shared/custom-select.js
+//   - /js/inputs/custom-select.js
 
 function addInputRow(e, entityClass) {
 	const thisRow = e.target.parentNode;
@@ -10,16 +10,19 @@ function addInputRow(e, entityClass) {
 	
 	section.insertBefore(newRow, nextRow);
 	
-	const selectElements = newRow.getElementsByTagName('select');
-	for (selectElement of selectElements) {
-		selectElement.selectedIndex = 0;
-		selectElement.disabled = '';
-		addEventListenersToCustomSelect(selectElement);
+	const selects = newRow.getElementsByTagName('select');
+	for (select of selects) {
+		select.selectedIndex = 0;
+		select.disabled = '';
+		
+		select.addEventListener('focus',  customSelectOnFocus);
+		select.addEventListener('blur',   customSelectOnBlur);
+		select.addEventListener('change', customSelectOnChange);
 	}
 	
-	const buttonElements = newRow.getElementsByTagName('button');
-	for (buttonElement of buttonElements) {
-		buttonElement.disabled = '';
+	const buttons = newRow.getElementsByTagName('button');
+	for (button of buttons) {
+		button.disabled = '';
 	}
 	
 	addEventListenersToAddDeleteButtons(newRow, entityClass);
@@ -35,10 +38,8 @@ function deleteInputRow(e, entityClass) {
 	if (buttons.length / 2 > 1) {
 		thisRow.remove();
 	} else {
-		const selectElements = section.getElementsByTagName('select');
-		for (selectElement of selectElements) {
-			selectElement.selectedIndex = 0;
-		}
+		const select = section.querySelector('select');
+		select.selectedIndex = 0;
 	}
 }
 

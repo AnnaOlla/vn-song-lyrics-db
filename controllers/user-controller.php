@@ -850,7 +850,7 @@ class UserController extends ViolatorController
 		
 		[$albumId, $albumUri] = $this->model->updateAlbum
 		(
-			$albumUri,
+			$album['uri'],
 			$originalName,
 			$transliteratedName,
 			$localizedName,
@@ -1338,9 +1338,9 @@ class UserController extends ViolatorController
 		
 		$this->model->updateTranslation
 		(
-			$albumUri,
-			$songUri,
-			$translationUri,
+			$album['uri'],
+			$song['uri'],
+			$translationUri['uri'],
 			$name,
 			$lyrics,
 			$notes,

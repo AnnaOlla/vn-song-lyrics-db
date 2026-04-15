@@ -10,6 +10,152 @@ class VisitorView extends View
 	}
 	
 	//---------------------------------------//
+	//       Content Pages: Pagination       //
+	//---------------------------------------//
+	
+	final protected function createResultsLimitBlock(int|null $limit): string
+	{
+		$selectedValue = ['toShow' => $limit, 'toSend' => $limit];
+		
+		$values =
+		[
+			['toShow' => 10,  'toSend' => 10],
+			['toShow' => 25,  'toSend' => 25],
+			['toShow' => 50,  'toSend' => 50],
+			['toShow' => 100, 'toSend' => 100]
+		];
+		
+		if (!in_array($selectedValue, $values) && !is_null($limit))
+		{
+			$values[] = $selectedValue;
+			usort($values, function($a, $b) { return $a['toSend'] <=> $b['toSend']; });
+		}
+		
+		$values[] = ['toShow' => \Localization\Controls\NoLimit, 'toSend' => null];
+		
+		$select = $this->createSelect
+		(
+			'limit',
+			'limit-result-count-bar',
+			null,
+			true,
+			false,
+			false,
+			$values,
+			$selectedValue,
+			'toShow',
+			'toSend'
+		);
+		
+		$html =
+		'
+			<section>'.\Localization\Controls\LimitHeading.'</section>
+			<section class="results-limit">'.$select.'</section>
+		';
+		
+		return $html;
+	}
+	
+	final protected function createPaginationButton
+	(
+		string      $text,
+		string|null $href,
+		string      $state
+	): string
+	{
+		$text = htmlspecialchars($text ?? '');
+		$href = htmlspecialchars($href ?? '');
+		
+		if ($state === 'disabled')
+			return '<a class="pagination-button disabled">'.$text.'</a>';
+		else if ($state === 'current')
+			return '<a class="pagination-button current">'.$text.'</a>';
+		else
+			return '<a href="'.$href.'" class="pagination-button">'.$text.'</a>';
+	}
+	
+	final protected function createPaginationBlock
+	(
+		int         $currentPageIndex,
+		int|null    $limit,
+		string|null $search,
+		int         $entityCount,
+		string      $pageLink
+	): string
+	{
+		if (is_null($limit))
+			$pageCount = 1;
+		else if ($entityCount > 0 && $entityCount % $limit === 0)
+			$pageCount = intdiv($entityCount, $limit);
+		else
+			$pageCount = intdiv($entityCount, $limit) + 1;
+		
+		// If you change it,
+		// then change divisor of pagination.button in search-filter-section.css
+		$mostLeftPage       = 1;
+		$pageCountFromLeft  = 3;
+		$pageCountfromRight = 3;
+		$mostRightPage      = $pageCount;
+		
+		$fromLeft = $currentPageIndex - $pageCountFromLeft;
+		$fromLeft = $fromLeft > $mostLeftPage ? $fromLeft : $mostLeftPage;
+		
+		$fromRight = $currentPageIndex + $pageCountfromRight;
+		$fromRight = $fromRight < $mostRightPage ? $fromRight : $mostRightPage;
+		
+		$html =
+		'
+			<section>'.\Localization\Controls\PageHeading.'</section>
+			<section class="pagination">
+		';
+		
+		if ($fromLeft > $mostLeftPage)
+		{
+			$href = $pageLink.$this->buildPaginationParameters($limit, $mostLeftPage, $search);
+			$html .= $this->createPaginationButton($mostLeftPage, $href, 'enabled');
+		}
+		
+		if ($fromLeft > $mostLeftPage + 1)
+			$html .= $this->createPaginationButton('…', null, 'disabled');
+		
+		for ($i = $fromLeft; $i <= $fromRight; $i++)
+		{
+			$href  = $pageLink.$this->buildPaginationParameters($limit, $i, $search);
+			$state = ($i === $currentPageIndex) ? 'current' : 'enabled';
+			
+			$html .= $this->createPaginationButton($i, $href, $state);
+		}
+		
+		if ($fromRight < $mostRightPage - 1)
+			$html .= $this->createPaginationButton('…', null, 'disabled');
+		
+		if ($fromRight < $mostRightPage)
+		{
+			$href = $pageLink.$this->buildPaginationParameters($limit, $mostRightPage, $search);
+			$html .= $this->createPaginationButton($mostRightPage, $href, 'enabled');
+		}
+		
+		$html .= 
+		'
+			</section>
+		';
+		
+		return $html;
+	}
+	
+	final protected function createSearchBarBlock(string|null $search): string
+	{
+		return
+		'
+		<section>'.\Localization\Controls\SearchHeading.'</section>
+		<section class="search-elements">
+			<input type="search" id="search-bar" value="'.htmlspecialchars($search ?? '').'" placeholder="'.\Localization\Controls\SearchPlaceholder.'" />
+			<button id="search-bar-button">'.\Localization\Controls\SearchButton.'</button>
+		</section>
+		';
+	}
+	
+	//---------------------------------------//
 	//      Content Pages: Entity Lists      //
 	//---------------------------------------//
 	
@@ -467,8 +613,6 @@ class VisitorView extends View
 					<p class="home-page-text">'.\Localization\HomePage\DescriptionTwo.'</p>
 					<p class="home-page-text">'.\Localization\HomePage\DescriptionThree.'</p>
 				</section>
-				<!-- this section aligns the text -->
-				<section class="website-mascot"></section>
 			</section>
 			<section>
 				<h2>'.\Localization\HomePage\LastAlbums.'</h2>
@@ -610,7 +754,7 @@ class VisitorView extends View
 		$html = $this->startRender
 		(
 			title:        \Localization\LogInPage\Heading,
-			cssSheetUris: ['/css/window-in-center.css']
+			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
 		$html .= 
@@ -625,11 +769,11 @@ class VisitorView extends View
 				<form method="POST">
 					<section>
 						<h3>'.\Localization\LogInPage\Email.'<span class="required-input"> *</span></h3>
-						<input name="email" type="email" minlength="4" maxlength="32" required/>
+						<input type="email" name="email" minlength="4" maxlength="32" required/>
 					</section>
 					<section>
 						<h3>'.\Localization\LogInPage\Password.'<span class="required-input"> *</span></h3>
-						<input name="password" type="password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\LogInPage\HintPassword.'" required/>
+						<input type="password" name="password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\LogInPage\HintPassword.'" required/>
 					</section>
 					<section>
 						<input type="submit" value="'.\Localization\LogInPage\Submit.'"/>
@@ -700,7 +844,7 @@ class VisitorView extends View
 		$html = $this->startRender
 		(
 			title:        \Localization\SignUpPage\Heading,
-			cssSheetUris: ['/css/window-in-center.css', '/css/core/captcha.css']
+			cssSheetUris: ['/css/window-in-center-page.css', '/css/shared/captcha.css']
 		);
 		
 		$html .= 
@@ -715,15 +859,15 @@ class VisitorView extends View
 				<form method="POST">
 					<section>
 						<h3>'.\Localization\SignUpPage\Username.'<span class="required-input"> *</span></h3>
-						<input name="username" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintUsername.'" required/>
+						<input type="text" name="username" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintUsername.'" required/>
 					</section>
 					<section>
 						<h3>'.\Localization\SignUpPage\Email.'<span class="required-input"> *</span></h3>
-						<input name="email" type="email" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintEmail.'" required/>
+						<input type="email" name="email" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintEmail.'" required/>
 					</section>
 					<section>
 						<h3>'.\Localization\SignUpPage\Password.'<span class="required-input"> *</span></h3>
-						<input name="password" type="password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintPassword.'" required/>
+						<input type="password" name="password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintPassword.'" required/>
 					</section>
 					<section>
 						<p>'.\Localization\SignUpPage\Confirmation.'</p>
@@ -733,7 +877,7 @@ class VisitorView extends View
 						<p>'.\Localization\SignUpPage\Warning.'</p>
 					</section>
 					<section>
-						<input name="captcha-code" id="captcha-input" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" placeholder="code:" required/>
+						<input type="text" name="captcha-code" id="captcha-input" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" placeholder="code:" required/>
 						<img src="'.htmlspecialchars($captchaBase64Image).'" alt="captcha" id="captcha-image"/>
 						<input type="submit" value="'.\Localization\SignUpPage\Submit.'"/>
 					</section>
@@ -747,44 +891,35 @@ class VisitorView extends View
 		echo $html;
 	}
 	
-	final public function renderVerificationRequiredPage(): void
-	{
-		$html = $this->startRender
-		(
-			title:        \Localization\SignUpPage\Heading,
-			cssSheetUris: ['/css/window-in-center.css']
-		);
-		
-		$html .= 
-		'
-		<article>
-			<section>
-				<h1>'.\Localization\SignUpPage\Heading.'</h1>
-			</section>
-			<section>
-				<p>'.\Localization\SignUpPage\AwaitingVerification.'</p>
-			</section>
-		</article>
-		';
-		
-		$html .= $this->endRender();
-		
-		echo $html;
-	}
-	
 	//-------------------------//
 	//      Content Pages      //
 	//-------------------------//
 	
-	final public function renderGameListPage(array $games): void
+	final public function renderGameListPage
+	(
+		array       $games,
+		int         $gameCount,
+		int|null    $page,
+		int|null    $limit,
+		string|null $search
+	): void
 	{
-		$href = buildInternalLink($this->language, 'add-game');
+		$hrefButton = buildInternalLink($this->language, 'add-game');
 		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
+		
+		$hrefThisPage      = buildInternalLink($this->language, 'game-list');
+		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $gameCount, $hrefThisPage);
+		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
+		$searchBarBlock    = $this->createSearchBarBlock($search);
 		
 		$html = $this->startRender
 		(
-			title:        \Localization\GameListPage\Heading,
-			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+			title: \Localization\GameListPage\Heading,
+			cssSheetUris:
+			[
+				'/css/shared/entity.css',
+				'/css/shared/search-filter-section.css'
+			]
 		);
 		
 		$html .= 
@@ -792,59 +927,135 @@ class VisitorView extends View
 		<article>
 			<section>
 				'.$this->createHeading(\Localization\GameListPage\Heading, 1).'
-				<section class="active-elements">
-					'.$this->createSearchBar().'
-					'.$this->createButton(\Localization\GameListPage\AddGame, $href, $isButtonEnabled, $tooltipIfDisabled).'
+				<section class="filter-section">
+					'.$this->createFilterBar().'
+					'.$this->createButton(\Localization\GameListPage\AddGame, $hrefButton, $isButtonEnabled, $tooltipIfDisabled).'
+				</section>
+			</section>
+			<section>
+				<section class="search-section">
+					<section>'.$resultsLimitBlock.'</section>
+					<section>'.$paginationBlock.'</section>
+					<section>'.$searchBarBlock.'</section>
 				</section>
 			</section>
 			'.$this->createGameList($games, 2, 'list-entity').'
+			<section>
+				<section class="search-section">
+					<section></section>
+					<section>'.$paginationBlock.'</section>
+					<section></section>
+				</section>
+			</section>
 		</article>
 		';
 		
-		$html .= $this->endRender(['/js/shared/search-bar.js']);
+		$html .= $this->endRender
+		(
+			jsScriptUris:
+			[
+				'/js/shared/entity-list-filter.js',
+				'/js/shared/entity-list-search.js',
+				'/js/entity-list-page.js'
+			]
+		);
 		
 		echo $html;
 	}
 	
-	final public function renderAlbumListPage(array $albums): void
+	final public function renderAlbumListPage
+	(
+		array       $albums,
+		int         $albumCount,
+		int|null    $page,
+		int|null    $limit,
+		string|null $search
+	): void
 	{
-		$href = buildInternalLink($this->language, 'add-album');
+		$hrefButton = buildInternalLink($this->language, 'add-album');
 		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
+		
+		$hrefThisPage      = buildInternalLink($this->language, 'album-list');
+		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $albumCount, $hrefThisPage);
+		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
+		$searchBarBlock    = $this->createSearchBarBlock($search);
 		
 		$html = $this->startRender
 		(
-			title:        \Localization\AlbumListPage\Heading,
-			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+			title: \Localization\AlbumListPage\Heading,
+			cssSheetUris:
+			[
+				'/css/shared/entity.css',
+				'/css/shared/search-filter-section.css'
+			]
 		);
 		
-		$html .=
+		$html .= 
 		'
 		<article>
 			<section>
 				'.$this->createHeading(\Localization\AlbumListPage\Heading, 1).'
-				<section class="active-elements">
-					'.$this->createSearchBar().'
-					'.$this->createButton(\Localization\AlbumListPage\AddAlbum, $href, $isButtonEnabled, $tooltipIfDisabled).'
+				<section class="filter-section">
+					'.$this->createFilterBar().'
+					'.$this->createButton(\Localization\AlbumListPage\AddAlbum, $hrefButton, $isButtonEnabled, $tooltipIfDisabled).'
+				</section>
+			</section>
+			<section>
+				<section class="search-section">
+					<section>'.$resultsLimitBlock.'</section>
+					<section>'.$paginationBlock.'</section>
+					<section>'.$searchBarBlock.'</section>
 				</section>
 			</section>
 			'.$this->createAlbumList($albums, 2, 'list-entity').'
+			<section>
+				<section class="search-section">
+					<section></section>
+					<section>'.$paginationBlock.'</section>
+					<section></section>
+				</section>
+			</section>
 		</article>
 		';
 		
-		$html .= $this->endRender(['/js/shared/search-bar.js']);
+		$html .= $this->endRender
+		(
+			jsScriptUris:
+			[
+				'/js/shared/entity-list-filter.js',
+				'/js/shared/entity-list-search.js',
+				'/js/entity-list-page.js'
+			]
+		);
 		
 		echo $html;
 	}
 	
-	final public function renderArtistListPage(array $artists): void
+	final public function renderArtistListPage
+	(
+		array       $artists,
+		int         $artistCount,
+		int|null    $page,
+		int|null    $limit,
+		string|null $search
+	): void
 	{
-		$href = buildInternalLink($this->language, 'add-artist');
+		$hrefButton = buildInternalLink($this->language, 'add-artist');
 		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
+		
+		$hrefThisPage      = buildInternalLink($this->language, 'artist-list');
+		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $artistCount, $hrefThisPage);
+		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
+		$searchBarBlock    = $this->createSearchBarBlock($search);
 		
 		$html = $this->startRender
 		(
-			title:        \Localization\ArtistListPage\Heading,
-			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+			title: \Localization\ArtistListPage\Heading,
+			cssSheetUris:
+			[
+				'/css/shared/entity.css',
+				'/css/shared/search-filter-section.css'
+			]
 		);
 		
 		$html .= 
@@ -852,29 +1063,67 @@ class VisitorView extends View
 		<article>
 			<section>
 				'.$this->createHeading(\Localization\ArtistListPage\Heading, 1).'
-				<section class="active-elements">
-					'.$this->createSearchBar().'
-					'.$this->createButton(\Localization\ArtistListPage\AddArtist, $href, $isButtonEnabled, $tooltipIfDisabled).'
+				<section class="filter-section">
+					'.$this->createFilterBar().'
+					'.$this->createButton(\Localization\ArtistListPage\AddArtist, $hrefButton, $isButtonEnabled, $tooltipIfDisabled).'
+				</section>
+			</section>
+			<section>
+				<section class="search-section">
+					<section>'.$resultsLimitBlock.'</section>
+					<section>'.$paginationBlock.'</section>
+					<section>'.$searchBarBlock.'</section>
 				</section>
 			</section>
 			'.$this->createArtistList($artists, 2, 'list-entity').'
+			<section>
+				<section class="search-section">
+					<section></section>
+					<section>'.$paginationBlock.'</section>
+					<section></section>
+				</section>
+			</section>
 		</article>
 		';
 		
-		$html .= $this->endRender(['/js/shared/search-bar.js']);
+		$html .= $this->endRender
+		(
+			jsScriptUris:
+			[
+				'/js/shared/entity-list-filter.js',
+				'/js/shared/entity-list-search.js',
+				'/js/entity-list-page.js'
+			]
+		);
 		
 		echo $html;
 	}
 	
-	final public function renderCharacterListPage(array $characters): void
+	final public function renderCharacterListPage
+	(
+		array       $characters,
+		int         $characterCount,
+		int|null    $page,
+		int|null    $limit,
+		string|null $search
+	): void
 	{
-		$href = buildInternalLink($this->language, 'add-character');
+		$hrefButton = buildInternalLink($this->language, 'add-character');
 		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
+		
+		$hrefThisPage      = buildInternalLink($this->language, 'character-list');
+		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $characterCount, $hrefThisPage);
+		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
+		$searchBarBlock    = $this->createSearchBarBlock($search);
 		
 		$html = $this->startRender
 		(
-			title:        \Localization\CharacterListPage\Heading,
-			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+			title: \Localization\CharacterListPage\Heading,
+			cssSheetUris:
+			[
+				'/css/shared/entity.css',
+				'/css/shared/search-filter-section.css'
+			]
 		);
 		
 		$html .= 
@@ -882,26 +1131,64 @@ class VisitorView extends View
 		<article>
 			<section>
 				'.$this->createHeading(\Localization\CharacterListPage\Heading, 1).'
-				<section class="active-elements">
-					'.$this->createSearchBar().'
-					'.$this->createButton(\Localization\CharacterListPage\AddCharacter, $href, $isButtonEnabled, $tooltipIfDisabled).'
+				<section class="filter-section">
+					'.$this->createFilterBar().'
+					'.$this->createButton(\Localization\CharacterListPage\AddCharacter, $hrefButton, $isButtonEnabled, $tooltipIfDisabled).'
+				</section>
+			</section>
+			<section>
+				<section class="search-section">
+					<section>'.$resultsLimitBlock.'</section>
+					<section>'.$paginationBlock.'</section>
+					<section>'.$searchBarBlock.'</section>
 				</section>
 			</section>
 			'.$this->createCharacterList($characters, 2, 'list-entity').'
+			<section>
+				<section class="search-section">
+					<section></section>
+					<section>'.$paginationBlock.'</section>
+					<section></section>
+				</section>
+			</section>
 		</article>
 		';
 		
-		$html .= $this->endRender(['/js/shared/search-bar.js']);
+		$html .= $this->endRender
+		(
+			jsScriptUris:
+			[
+				'/js/shared/entity-list-filter.js',
+				'/js/shared/entity-list-search.js',
+				'/js/entity-list-page.js'
+			]
+		);
 		
 		echo $html;
 	}
 	
-	final public function renderSongListPage(array $songs): void
+	final public function renderSongListPage
+	(
+		array       $songs,
+		int         $songCount,
+		int|null    $page,
+		int|null    $limit,
+		string|null $search
+	): void
 	{
+		$hrefThisPage      = buildInternalLink($this->language, 'song-list');
+		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $songCount, $hrefThisPage);
+		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
+		$searchBarBlock    = $this->createSearchBarBlock($search);
+		
 		$html = $this->startRender
 		(
-			title:        \Localization\SongListPage\Heading,
-			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+			title: \Localization\SongListPage\Heading,
+			cssSheetUris:
+			[
+				'/css/shared/entity.css',
+				'/css/shared/search-filter-section.css'
+			]
 		);
 		
 		$html .= 
@@ -909,25 +1196,63 @@ class VisitorView extends View
 		<article>
 			<section>
 				'.$this->createHeading(\Localization\SongListPage\Heading, 1).'
-				<section class="active-elements">
-					'.$this->createSearchBar().'
+				<section class="filter-section">
+					'.$this->createFilterBar().'
+				</section>
+			</section>
+			<section>
+				<section class="search-section">
+					<section>'.$resultsLimitBlock.'</section>
+					<section>'.$paginationBlock.'</section>
+					<section>'.$searchBarBlock.'</section>
 				</section>
 			</section>
 			'.$this->createSongList($songs, 2, 'list-entity').'
+			<section>
+				<section class="search-section">
+					<section></section>
+					<section>'.$paginationBlock.'</section>
+					<section></section>
+				</section>
+			</section>
 		</article>
 		';
 		
-		$html .= $this->endRender(['/js/shared/search-bar.js']);
+		$html .= $this->endRender
+		(
+			jsScriptUris:
+			[
+				'/js/shared/entity-list-filter.js',
+				'/js/shared/entity-list-search.js',
+				'/js/entity-list-page.js'
+			]
+		);
 		
 		echo $html;
 	}
 	
-	final public function renderTranslationListPage($translations)
+	final public function renderTranslationListPage
+	(
+		array       $translations,
+		int         $translationCount,
+		int|null    $page,
+		int|null    $limit,
+		string|null $search
+	): void
 	{
+		$hrefThisPage      = buildInternalLink($this->language, 'translation-list');
+		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $translationCount, $hrefThisPage);
+		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
+		$searchBarBlock    = $this->createSearchBarBlock($search);
+		
 		$html = $this->startRender
 		(
-			title:        \Localization\TranslationListPage\Heading,
-			cssSheetUris: ['/css/entity.css', '/css/searchbar-create-entity.css']
+			title: \Localization\TranslationListPage\Heading,
+			cssSheetUris:
+			[
+				'/css/shared/entity.css',
+				'/css/shared/search-filter-section.css'
+			]
 		);
 		
 		$html .= 
@@ -935,15 +1260,37 @@ class VisitorView extends View
 		<article>
 			<section>
 				'.$this->createHeading(\Localization\TranslationListPage\Heading, 1).'
-				<section class="active-elements">
-					'.$this->createSearchBar().'
+				<section class="filter-section">
+					'.$this->createFilterBar().'
+				</section>
+			</section>
+			<section>
+				<section class="search-section">
+					<section>'.$resultsLimitBlock.'</section>
+					<section>'.$paginationBlock.'</section>
+					<section>'.$searchBarBlock.'</section>
 				</section>
 			</section>
 			'.$this->createTranslationList($translations, 2, 'list-entity').'
+			<section>
+				<section class="search-section">
+					<section></section>
+					<section>'.$paginationBlock.'</section>
+					<section></section>
+				</section>
+			</section>
 		</article>
 		';
 		
-		$html .= $this->endRender(['/js/shared/search-bar.js']);
+		$html .= $this->endRender
+		(
+			jsScriptUris:
+			[
+				'/js/shared/entity-list-filter.js',
+				'/js/shared/entity-list-search.js',
+				'/js/entity-list-page.js'
+			]
+		);
 		
 		echo $html;
 	}
@@ -952,8 +1299,12 @@ class VisitorView extends View
 	{
 		$html = $this->startRender
 		(
-			title:        $game['transliterated_name'],
-			cssSheetUris: ['/css/entity-page.css', '/css/entity.css']
+			title: $game['transliterated_name'],
+			cssSheetUris:
+			[
+				'/css/entity-page.css',
+				'/css/shared/entity.css'
+			]
 		);
 		
 		$html .= 
@@ -995,10 +1346,12 @@ class VisitorView extends View
 		if (isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
-			$js[] = '/js/shared/custom-select.js';
 		}
 		
-		$html .= $this->endRender($js);
+		$html .= $this->endRender
+		(
+			jsScriptUris: $js
+		);
 		
 		echo $html;
 	}
@@ -1007,8 +1360,13 @@ class VisitorView extends View
 	{
 		$html = $this->startRender
 		(
-			title:        $album['transliterated_name'],
-			cssSheetUris: ['/css/entity-page.css', '/css/entity.css', '/css/track-list.css']
+			title: $album['transliterated_name'],
+			cssSheetUris:
+			[
+				'/css/entity-page.css',
+				'/css/shared/entity.css',
+				'/css/track-list-page.css'
+			]
 		);
 		
 		$html .= 
@@ -1040,10 +1398,12 @@ class VisitorView extends View
 		if (isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
-			$js[] = '/js/shared/custom-select.js';
 		}
 		
-		$html .= $this->endRender($js);
+		$html .= $this->endRender
+		(
+			jsScriptUris: $js
+		);
 		
 		echo $html;
 	}
@@ -1052,8 +1412,12 @@ class VisitorView extends View
 	{
 		$html = $this->startRender
 		(
-			title:        $artist['transliterated_name'],
-			cssSheetUris: ['/css/entity-page.css', '/css/entity.css']
+			title: $artist['transliterated_name'],
+			cssSheetUris:
+			[
+				'/css/entity-page.css',
+				'/css/shared/entity.css'
+			]
 		);
 		
 		$html .= 
@@ -1095,10 +1459,12 @@ class VisitorView extends View
 		if (isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
-			$js[] = '/js/shared/custom-select.js';
 		}
 		
-		$html .= $this->endRender($js);
+		$html .= $this->endRender
+		(
+			jsScriptUris: $js
+		);
 		
 		echo $html;
 	}
@@ -1107,8 +1473,12 @@ class VisitorView extends View
 	{
 		$html = $this->startRender
 		(
-			title:        $character['transliterated_name'],
-			cssSheetUris: ['/css/entity-page.css', '/css/entity.css']
+			title: $character['transliterated_name'],
+			cssSheetUris:
+			[
+				'/css/entity-page.css',
+				'/css/shared/entity.css'
+			]
 		);
 		
 		$html .= 
@@ -1150,22 +1520,30 @@ class VisitorView extends View
 		if (isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
-			$js[] = '/js/shared/custom-select.js';
 		}
 		
-		$html .= $this->endRender($js);
+		$html .= $this->endRender
+		(
+			jsScriptUris: $js
+		);
 		
 		echo $html;
 	}
 	
 	final public function renderNoLyricsPage(array $album, array $song): void
 	{
-		$headingText = \Localization\LyricsPage\LyricsHeadingStart.$song['transliterated_name'].\Localization\LyricsPage\LyricsHeadingEnd;
+		$headingText = \Localization\LyricsPage\LyricsHeadingStart.
+		               $song['transliterated_name'].
+					   \Localization\LyricsPage\LyricsHeadingEnd;
 		
 		$html = $this->startRender
 		(
-			title:        $headingText,     
-			cssSheetUris: ['/css/no-lyrics-page.css', '/css/entity.css']
+			title: $headingText,     
+			cssSheetUris:
+			[
+				'/css/no-lyrics-page.css',
+				'/css/shared/entity.css'
+			]
 		);
 		
 		$html .= 
@@ -1207,7 +1585,9 @@ class VisitorView extends View
 		array      $translations
 	): void
 	{
-		$headingText = \Localization\LyricsPage\LyricsHeadingStart.$song['transliterated_name'].\Localization\LyricsPage\LyricsHeadingEnd;
+		$headingText = \Localization\LyricsPage\LyricsHeadingStart.
+		               $song['transliterated_name'].
+					   \Localization\LyricsPage\LyricsHeadingEnd;
 		
 		$heading = $this->createLyricsPageHeading
 		(
@@ -1240,7 +1620,11 @@ class VisitorView extends View
 		(
 			title:        $headingText,
 			canonicalUri: $canonicalUri,
-			cssSheetUris: ['/css/lyrics-page.css', '/css/entity.css']
+			cssSheetUris:
+			[
+				'/css/lyrics-page.css',
+				'/css/shared/entity.css'
+			]
 		);
 		
 		$html .= 
@@ -1260,10 +1644,12 @@ class VisitorView extends View
 		if (isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
-			$js[] = '/js/shared/custom-select.js';
 		}
 		
-		$html .= $this->endRender($js);
+		$html .= $this->endRender
+		(
+			jsScriptUris: $js
+		);
 		
 		echo $html;
 	}
@@ -1316,7 +1702,11 @@ class VisitorView extends View
 		(
 			title:        $headingText,
 			canonicalUri: $canonicalUri,
-			cssSheetUris: ['/css/translation-page.css', '/css/entity.css']
+			cssSheetUris:
+			[
+				'/css/translation-page.css',
+				'/css/shared/entity.css'
+			]
 		);
 		
 		$html .= 
@@ -1336,16 +1726,16 @@ class VisitorView extends View
 		</article>
 		';
 		
-		$js = [];
-		$js[] = '/js/translation-page.js';
-		
+		$js = ['/js/translation-page.js'];
 		if (isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
-			$js[] = '/js/shared/custom-select.js';
 		}
 		
-		$html .= $this->endRender($js);
+		$html .= $this->endRender
+		(
+			jsScriptUris: $js
+		);
 		
 		echo $html;
 	}
@@ -1354,8 +1744,12 @@ class VisitorView extends View
 	{
 		$html = $this->startRender
 		(
-			title:        \Localization\FeedbackPage\Heading,
-			cssSheetUris: ['/css/feedback-page.css', '/css/core/captcha.css']
+			title: \Localization\FeedbackPage\Heading,
+			cssSheetUris:
+			[
+				'/css/feedback-page.css',
+				'/css/shared/captcha.css'
+			]
 		);
 		
 		$html .= 
@@ -1370,7 +1764,7 @@ class VisitorView extends View
 				<form method="POST">
 					<textarea name="message" rows="4" maxlength="500" placeholder="'.\Localization\Controls\Textarea.'" required></textarea>
 					<section>
-						<input name="captcha-code" id="captcha-input" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" placeholder="code:" required/>
+						<input type="text" name="captcha-code" id="captcha-input" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" placeholder="code:" required/>
 						<img src="'.htmlspecialchars($captchaBase64Image).'" alt="captcha" id="captcha-image"/>
 						<input type="submit" value="'.\Localization\FeedbackPage\Submit.'"/>
 					</section>
@@ -1436,9 +1830,14 @@ class VisitorView extends View
 		
 		$js = [];
 		if (isCurrentUserModerator())
+		{
 			$js[] = '/js/moderation/feedback.js';
+		}
 		
-		$html .= $this->endRender($js);
+		$html .= $this->endRender
+		(
+			jsScriptUris: $js
+		);
 		
 		echo $html;
 	}
@@ -1486,7 +1885,7 @@ class VisitorView extends View
 		$html = $this->startRender
 		(
 			title:        $heading,
-			cssSheetUris: ['/css/window-in-center.css']
+			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
 		$html .= 
@@ -1541,7 +1940,11 @@ class VisitorView extends View
 		$html = $this->startRender
 		(
 			title:        $headingText,
-			cssSheetUris: ['/css/user-page.css', '/css/entity.css']
+			cssSheetUris:
+			[
+				'/css/user-page.css',
+				'/css/shared/entity.css'
+			]
 		);
 		
 		$html .= 
@@ -1570,8 +1973,6 @@ class VisitorView extends View
 				</section>
 			';
 		}
-		
-		/* This code looks horrible */
 		
 		$html .= 
 		'
@@ -1745,7 +2146,7 @@ class VisitorView extends View
 		$html = $this->startRender
 		(
 			title:        \Localization\WritingGuidePage\Heading,
-			cssSheetUris: ['/css/writing-guide.css']
+			cssSheetUris: ['/css/writing-guide-page.css']
 		);
 		
 		$html .= 

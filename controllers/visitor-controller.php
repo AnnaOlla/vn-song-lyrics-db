@@ -36,6 +36,8 @@ class VisitorController extends Controller
 				'ja' => $userData['language_ja_name']
 			]
 		];
+		
+		error_log($_SESSION);
 	}
 	
 	public function handleLogInPage(): void
@@ -293,8 +295,30 @@ class VisitorController extends Controller
 	
 	private function handleGameListPageGet(): void
 	{
-		$gameList = $this->model->getGameList();
-		$this->view->renderGameListPage($gameList);
+		$limit  = $_GET['limit']  ?? null;
+		$page   = $_GET['page']   ?? null;
+		$search = $_GET['search'] ?? null;
+		
+		$limit  = parseNullableInteger($limit, 1);
+		$page   = parseNullableInteger($page, 1);
+		$search = trimNullableString($search);
+		
+		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		$list  = $this->model->getGameList(page: $page, limit: $limit, search: $search);
+		$count = $this->model->getGameCount(search: $search);
+		
+		$this->view->renderGameListPage($list, $count, $page, $limit, $search);
 	}
 	
 	final public function handleAlbumListPage(): void
@@ -312,8 +336,30 @@ class VisitorController extends Controller
 	
 	private function handleAlbumListPageGet(): void
 	{
-		$albumList = $this->model->getAlbumList();
-		$this->view->renderAlbumListPage($albumList);
+		$limit  = $_GET['limit']  ?? null;
+		$page   = $_GET['page']   ?? null;
+		$search = $_GET['search'] ?? null;
+		
+		$limit  = parseNullableInteger($limit, 1);
+		$page   = parseNullableInteger($page, 1);
+		$search = trimNullableString($search);
+		
+		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		$list  = $this->model->getAlbumList(page: $page, limit: $limit, search: $search);
+		$count = $this->model->getAlbumCount(search: $search);
+		
+		$this->view->renderAlbumListPage($list, $count, $page, $limit, $search);
 	}
 	
 	final public function handleArtistListPage(): void
@@ -331,8 +377,30 @@ class VisitorController extends Controller
 	
 	private function handleArtistListPageGet(): void
 	{
-		$artistList = $this->model->getArtistList();
-		$this->view->renderArtistListPage($artistList);
+		$limit  = $_GET['limit']  ?? null;
+		$page   = $_GET['page']   ?? null;
+		$search = $_GET['search'] ?? null;
+		
+		$limit  = parseNullableInteger($limit, 1);
+		$page   = parseNullableInteger($page, 1);
+		$search = trimNullableString($search);
+		
+		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		$list  = $this->model->getArtistList(page: $page, limit: $limit, search: $search);
+		$count = $this->model->getArtistCount(search: $search);
+		
+		$this->view->renderArtistListPage($list, $count, $page, $limit, $search);
 	}
 	
 	final public function handleCharacterListPage(): void
@@ -350,8 +418,30 @@ class VisitorController extends Controller
 	
 	private function handleCharacterListPageGet(): void
 	{
-		$characterList = $this->model->getCharacterList();
-		$this->view->renderCharacterListPage($characterList);
+		$limit  = $_GET['limit']  ?? null;
+		$page   = $_GET['page']   ?? null;
+		$search = $_GET['search'] ?? null;
+		
+		$limit  = parseNullableInteger($limit, 1);
+		$page   = parseNullableInteger($page, 1);
+		$search = trimNullableString($search);
+		
+		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		$list  = $this->model->getCharacterList(page: $page, limit: $limit, search: $search);
+		$count = $this->model->getCharacterCount(search: $search);
+		
+		$this->view->renderCharacterListPage($list, $count, $page, $limit, $search);
 	}
 	
 	final public function handleSongListPage(): void
@@ -369,8 +459,30 @@ class VisitorController extends Controller
 	
 	private function handleSongListPageGet(): void
 	{
-		$songList = $this->model->getSongList(hasVocal: true);
-		$this->view->renderSongListPage($songList);
+		$limit  = $_GET['limit']  ?? null;
+		$page   = $_GET['page']   ?? null;
+		$search = $_GET['search'] ?? null;
+		
+		$limit  = parseNullableInteger($limit, 1);
+		$page   = parseNullableInteger($page, 1);
+		$search = trimNullableString($search);
+		
+		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		$list  = $this->model->getSongList(page: $page, limit: $limit, search: $search, hasVocal: true);
+		$count = $this->model->getSongCount(search: $search, hasVocal: true);
+		
+		$this->view->renderSongListPage($list, $count, $page, $limit, $search);
 	}
 	
 	final public function handleTranslationListPage(): void
@@ -388,8 +500,30 @@ class VisitorController extends Controller
 	
 	private function handleTranslationListPageGet(): void
 	{
-		$translationList = $this->model->getTranslationList();
-		$this->view->renderTranslationListPage($translationList);
+		$limit  = $_GET['limit']  ?? null;
+		$page   = $_GET['page']   ?? null;
+		$search = $_GET['search'] ?? null;
+		
+		$limit  = parseNullableInteger($limit, 1);
+		$page   = parseNullableInteger($page, 1);
+		$search = trimNullableString($search);
+		
+		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+			throw new HttpBadRequest400();
+		
+		$list  = $this->model->getTranslationList(page: $page, limit: $limit, search: $search);
+		$count = $this->model->getTranslationCount(search: $search);
+		
+		$this->view->renderTranslationListPage($list, $count, $page, $limit, $search);
 	}
 	
 	final public function handleGamePage(string $gameUri): void
@@ -529,6 +663,9 @@ class VisitorController extends Controller
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
+		if (!$song['has_vocal'])
+			throw new HttpForbidden403();
+		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
@@ -578,6 +715,9 @@ class VisitorController extends Controller
 		
 		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
+		
+		if (!$song['has_vocal'])
+			throw new HttpForbidden403();
 		
 		if ($song['original_song_id'])
 		{

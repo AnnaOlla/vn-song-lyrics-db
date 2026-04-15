@@ -53,14 +53,16 @@ async function sendReply(e) {
 	}
 }
 
-const deleteButtons = document.getElementsByClassName('delete-feedback-button');
-
-for (deleteButton of deleteButtons) {
-	deleteButton.addEventListener('click', deleteFeedback);
-}
-
-const replyButtons = document.getElementsByClassName('send-reply-button');
-
-for (replyButton of replyButtons) {
-	replyButton.addEventListener('click', sendReply);
+/* function main() */ {
+	const deleteButtons = document.getElementsByClassName('delete-feedback-button');
+	
+	for (deleteButton of deleteButtons) {
+		deleteButton.addEventListener('click', deleteFeedback);
+	}
+	
+	const replyButtons = document.getElementsByClassName('send-reply-button');
+	
+	for (replyButton of replyButtons) {
+		replyButton.addEventListener('click', sendReply);
+	}
 }

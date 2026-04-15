@@ -26,11 +26,3 @@ function setDefaultTooltip(e) {
 	tooltipHeading.innerHTML = headingDataset.children[0].innerHTML;
 	tooltipContent.innerHTML = contentDataset.children[0].innerHTML;
 }
-
-function addEventListenersForTooltipWindow(mainElement, sectionElements) {
-	mainElement.addEventListener('mouseleave', setDefaultTooltip);
-	
-	for (sectionElement of sectionElements) {
-		sectionElement.addEventListener('mouseenter', setTooltip);
-	}
-}

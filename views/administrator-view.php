@@ -11,15 +11,15 @@ class AdministratorView extends UserView
 	
 	final public function renderControlPanelPage(): void
 	{
-		$html = $this->startRender('Control Panel');
+		$html = $this->startRender(title: 'Control Panel');
 		
 		// Add new links as new pages appear
 		
 		$html .= 
 		'
 		<article>
-			<h1>Control Panel</h1>
 			<section>
+				<h1>Control Panel</h1>
 				<h2><a href="/en/control-panel/add-language">Add Language</a></h2>
 				<h2><a href="/en/control-panel/edit-language">Edit Language</a></h2>
 				<h2><a href="/en/control-panel/report-list">Report List</a></h2>
@@ -66,19 +66,19 @@ class AdministratorView extends UserView
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section>
 						<h2>Own Name<span class="required-input"> *</span></h2>
-						<input name="own-name" value="'.$ownName.'" required />
+						<input type="text" name="own-name" value="'.$ownName.'" required />
 					</section>
 					<section>
 						<h2>Name in Russian<span class="required-input"> *</span></h2>
-						<input name="ru-name" value="'.$ruName.'" required />
+						<input type="text" name="ru-name" value="'.$ruName.'" required />
 					</section>
 					<section>
 						<h2>Name in English<span class="required-input"> *</span></h2>
-						<input name="en-name" value="'.$enName.'" required />
+						<input type="text" name="en-name" value="'.$enName.'" required />
 					</section>
 					<section>
 						<h2>Name in Japanese<span class="required-input"> *</span></h2>
-						<input name="ja-name" value="'.$jaName.'" required />
+						<input type="text" name="ja-name" value="'.$jaName.'" required />
 					</section>
 					<section>
 						<section class="page-controls">
@@ -116,7 +116,7 @@ class AdministratorView extends UserView
 		
 		$html = $this->startRender
 		(
-			title:        $heading
+			title: $heading
 		);
 		
 		$html .= 
@@ -168,6 +168,7 @@ class AdministratorView extends UserView
 		
 		$html .= $this->endRender
 		(
+			jsScriptUris:
 			[
 				'/js/moderation/change-report-status.js'
 			]
@@ -183,7 +184,7 @@ class AdministratorView extends UserView
 		
 		$html = $this->startRender
 		(
-			title:        $heading
+			title: $heading
 		);
 		
 		$html .= 
@@ -250,13 +251,15 @@ class AdministratorView extends UserView
 		$selectVocal = $this->createSelect
 		(
 			'has-vocal[]',
-			'',
+			null,
+			null,
+			true,
 			true,
 			true,
 			$vocalOptions,
+			null,
 			'value',
-			'id',
-			null
+			'id'
 		);
 		
 		$html = $this->startRender
@@ -313,8 +316,8 @@ class AdministratorView extends UserView
 				$html .= 
 				'
 							<tr>
-								<td><input name="disc-number[]" value="'.($i + 1).'" readonly/></td>
-								<td><input name="track-number[]" value="'.($j + 1).'" readonly/></td>
+								<td><input type="text" name="disc-number[]" value="'.($i + 1).'" readonly/></td>
+								<td><input type="text" name="track-number[]" value="'.($j + 1).'" readonly/></td>
 				';
 				
 				for ($k = 0; $k < count($discography[$i][$j]) || $k < $LOCALIZATION_MIN_COUNT; $k++)
@@ -322,7 +325,7 @@ class AdministratorView extends UserView
 					$value = htmlspecialchars($discography[$i][$j][$k] ?? '');
 					$html .= 
 					'
-								<td><input data-column-id="'.$k.'" value="'.$value.'"/></td>
+								<td><input type="text" data-column-id="'.$k.'" value="'.$value.'"/></td>
 					';
 				}
 				
@@ -376,9 +379,8 @@ class AdministratorView extends UserView
 		$html .= $this->endRender
 		(
 			[
-				'/js/shared/custom-select.js',
 				'/js/shared/tooltip-window.js',
-				'/js/fill-album-editor.js'
+				'/js/fill-album-editor-page.js'
 			]
 		);
 		

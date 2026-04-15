@@ -1,11 +1,11 @@
 <?php
 
-class Router
+final class Router
 {
-	const BANNED_IPS_FILENAME      = 'banned-ip-list.txt';
-	const BANNED_REQUESTS_FILENAME = 'banned-requests.txt';
-	const ACCEPTED_LANGUAGES       = ['en', 'ru', 'ja'];
-	const DEFAULT_LANGUAGE         = 'en';
+	private const BANNED_IPS_FILENAME      = 'banned-ip-list.txt';
+	private const BANNED_REQUESTS_FILENAME = 'banned-requests.txt';
+	private const ACCEPTED_LANGUAGES       = ['en', 'ru', 'ja'];
+	private const DEFAULT_LANGUAGE         = 'en';
 	
 	private static function isIpBanned(): bool
 	{

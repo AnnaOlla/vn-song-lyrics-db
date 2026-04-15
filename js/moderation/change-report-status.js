@@ -23,8 +23,10 @@ async function sendReportStatus(e) {
 	}
 }
 
-const statusSelects = document.querySelectorAll('select.status-select');
-
-for (statusSelect of statusSelects) {
-	statusSelect.addEventListener('change', sendReportStatus);
+/* function main() */ {
+	const statusSelects = document.querySelectorAll('select.status-select');
+	
+	for (statusSelect of statusSelects) {
+		statusSelect.addEventListener('change', sendReportStatus);
+	}
 }

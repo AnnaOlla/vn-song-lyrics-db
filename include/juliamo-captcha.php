@@ -2,6 +2,8 @@
 
 final class JuliamoCaptcha
 {
+	private const FONT_PATH = 'fonts/juliamo.ttf';
+	
 	private static function generateCharacters(int $length, int $strength): array
 	{
 		$strongCharacters = mb_str_split('bfgrvwzBFGRVWZ');
@@ -101,13 +103,11 @@ final class JuliamoCaptcha
 		// widthPx of a Juliamo letter = 192/418 * heightPx
 		// To align with the center  = (192/418 * heightPx) / 2
 		
-		$xOffset = $widthPx / (count($string) + 1);
-		$xStart  = $xOffset - $heightPx * 192 / 418 / 2;
-		$yOffset = 0;
-		$yStart  = $heightPx * 5 / 6;
-		
-		$fontPath  = 'css/fonts/juliamo.ttf';
-		$fontSize  = round($heightPx * 2 / 3);
+		$xOffset  = $widthPx / (count($string) + 1);
+		$xStart   = $xOffset - $heightPx * 192 / 418 / 2;
+		$yOffset  = 0;
+		$yStart   = $heightPx * 5 / 6;
+		$fontSize = round($heightPx * 2 / 3);
 		
 		for ($i = 0; $i < count($string); $i++)
 		{
@@ -117,7 +117,7 @@ final class JuliamoCaptcha
 			$angle = random_int(-10, +10);
 			$color = self::generateColor($image);
 			
-			imagettftext($image, $fontSize, $angle, $x, $y, $color, $fontPath, $string[$i]);
+			imagettftext($image, $fontSize, $angle, $x, $y, $color, self::FONT_PATH, $string[$i]);
 		}
 		
 		// 3. Generate half-transparent noise
