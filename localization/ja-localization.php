@@ -1098,11 +1098,20 @@ namespace Localization\ErrorPage
 	const textMethodNotAllowed2 = 'support@vn-song-lyrics-db.ruへメールを送ってください。';
 	
 	const textNotAcceptable1 = 'サーバーは求める言語をサポートしていません。';
-	const textNotAcceptable2 = 'パージの上にある言語を選んでください。';
+	const textNotAcceptable2 = 'ページの上にある言語を選んでください。';
 	
-	const textUnavailableForLegalReasons1 = '念書が来たですから、アクセスは限られている。';
+	const textUnavailableForLegalReasons1 = '念書が来たですから、アクセスは限られています。';
 	const textUnavailableForLegalReasons2 = 'あなたにはアクセスできません。';
 	
 	const textInternalServerError1 = 'サーバーのエラー行いました。';
 	const textInternalServerError2 = 'support@vn-song-lyrics-db.ruへメールを送ってください。';
+	
+	const textNotImplemented1 = '選んだ方法は知られません。';
+	const textNotImplemented2 = '正しいほうでウェブサイトを使ってください。';
+	
+	const textBadGateway1 = 'サーバーは別のサーバーからエラーをもらいました。';
+	const textBadGateway2 = 'あとで訪れてください。';
+	
+	const textServiceUnavailable1 = '今はウェブサイトが使用できません。';
+	const textServiceUnavailable2 = 'あとで訪れてください。';
 }

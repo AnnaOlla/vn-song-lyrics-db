@@ -36,7 +36,7 @@ abstract class HttpException extends CustomException
 	// Nothing here
 }
 
-class HttpBadRequest400 extends HttpException
+final class HttpBadRequest400 extends HttpException
 {
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
 	{
@@ -44,7 +44,7 @@ class HttpBadRequest400 extends HttpException
 	}
 }
 
-class HttpUnauthorized401 extends HttpException
+final class HttpUnauthorized401 extends HttpException
 {
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
 	{
@@ -52,7 +52,7 @@ class HttpUnauthorized401 extends HttpException
 	}
 }
 
-class HttpPaymentRequired402 extends HttpException
+final class HttpPaymentRequired402 extends HttpException
 {
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
 	{
@@ -60,7 +60,7 @@ class HttpPaymentRequired402 extends HttpException
 	}
 }
 
-class HttpForbidden403 extends HttpException
+final class HttpForbidden403 extends HttpException
 {
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
 	{
@@ -68,7 +68,7 @@ class HttpForbidden403 extends HttpException
 	}
 }
 
-class HttpNotFound404 extends HttpException
+final class HttpNotFound404 extends HttpException
 {
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
 	{
@@ -76,7 +76,7 @@ class HttpNotFound404 extends HttpException
 	}
 }
 
-class HttpMethodNotAllowed405 extends HttpException
+final class HttpMethodNotAllowed405 extends HttpException
 {
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
 	{
@@ -84,7 +84,7 @@ class HttpMethodNotAllowed405 extends HttpException
 	}
 }
 
-class HttpNotAcceptable406 extends HttpException
+final class HttpNotAcceptable406 extends HttpException
 {
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
 	{
@@ -92,7 +92,7 @@ class HttpNotAcceptable406 extends HttpException
 	}
 }
 
-class HttpUnavailableForLegalReasons451 extends HttpException
+final class HttpUnavailableForLegalReasons451 extends HttpException
 {
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
 	{
@@ -100,10 +100,34 @@ class HttpUnavailableForLegalReasons451 extends HttpException
 	}
 }
 
-class HttpInternalServerError500 extends HttpException
+final class HttpInternalServerError500 extends HttpException
 {
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
 	{
 		parent::__construct($message, $parameters, 500, $previous);
+	}
+}
+
+final class HttpNotImplemented501 extends HttpException
+{
+	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
+	{
+		parent::__construct($message, $parameters, 501, $previous);
+	}
+}
+
+final class HttpBadGateway502 extends HttpException
+{
+	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
+	{
+		parent::__construct($message, $parameters, 502, $previous);
+	}
+}
+
+final class HttpServiceUnavailable503 extends HttpException
+{
+	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
+	{
+		parent::__construct($message, $parameters, 503, $previous);
 	}
 }

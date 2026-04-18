@@ -1105,4 +1105,13 @@ namespace Localization\ErrorPage
 	
 	const textInternalServerError1 = 'The server has encountered an error while processing your request.';
 	const textInternalServerError2 = 'Please, send a mail to support@vn-song-lyrics-db.ru with details.';
+	
+	const textNotImplemented1 = 'The method to complete your request is unknown.';
+	const textNotImplemented2 = 'Please, do not misuse the service.';
+	
+	const textBadGateway1 = 'The server received an error from another one.';
+	const textBadGateway2 = 'Please, visit us later.';
+	
+	const textServiceUnavailable1 = 'The website is not available right now.';
+	const textServiceUnavailable2 = 'Please, visit us later.';
 }

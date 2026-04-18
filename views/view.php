@@ -8,9 +8,14 @@ abstract class View
 	
 	public function __construct(string $language)
 	{
-		$this->language = $language;
-		require_once 'localization/'.$language.'-localization.php';
+		$localizationFilePath = 'localization/'.$language.'-localization.php';
 		
+		if (!file_exists($localizationFilePath))
+			throw new HttpNotAcceptable406();
+		
+		require_once $localizationFilePath;
+		
+		$this->language   = $language;
 		$this->cssVersion = '2.0';
 		$this->jsVersion  = '2.0';
 	}
@@ -1254,121 +1259,5 @@ HTML;
 			return '';
 		
 		return '?'.implode('&', $params);
-	}
-	
-	//-----------------------//
-	//      Error Pages      //
-	//-----------------------//
-	
-	private function renderError(string $codename, string $reason, string $hint): void
-	{
-		echo $this->startRender
-		(
-			title:        $codename,
-			cssSheetUris: ['/css/window-in-center-page.css']
-		);
-		
-		echo
-		'
-		<article>
-			<section>
-				<h1>'.htmlspecialchars($codename).'</h1>
-				<p>'.htmlspecialchars($reason).'</p>
-				<p>'.htmlspecialchars($hint).'</p>
-			</section>
-		</article>
-		';
-		
-		echo $this->endRender();
-	}
-	
-	final public function renderBadRequest400(): void
-	{
-		$this->renderError
-		(
-			'400 Bad Request',
-			\Localization\ErrorPage\textBadRequest1,
-			\Localization\ErrorPage\textBadRequest2
-		);
-	}
-	
-	final public function renderUnauthorized401(): void
-	{
-		$this->renderError
-		(
-			'401 Unauthorized',
-			\Localization\ErrorPage\textUnauthorized1,
-			\Localization\ErrorPage\textUnauthorized2
-		);
-	}
-	
-	final public function renderPaymentRequired402(): void
-	{
-		$this->renderError
-		(
-			'402 Payment Required',
-			\Localization\ErrorPage\textPaymentRequired1,
-			\Localization\ErrorPage\textPaymentRequired2
-		);
-	}
-	
-	final public function renderForbidden403(): void
-	{
-		$this->renderError
-		(
-			'403 Forbidden',
-			\Localization\ErrorPage\textForbidden1,
-			\Localization\ErrorPage\textForbidden2
-		);
-	}
-	
-	final public function renderNotFound404(): void
-	{
-		$this->renderError
-		(
-			'404 Not Found',
-			\Localization\ErrorPage\textNotFound1,
-			\Localization\ErrorPage\textNotFound2
-		);
-	}
-	
-	final public function renderMethodNotAllowed405(): void
-	{
-		$this->renderError
-		(
-			'405 Method Not Allowed',
-			\Localization\ErrorPage\textMethodNotAllowed1,
-			\Localization\ErrorPage\textMethodNotAllowed2
-		);
-	}
-	
-	final public function renderNotAcceptable406(): void
-	{
-		$this->renderError
-		(
-			'406 Not Acceptable',
-			\Localization\ErrorPage\textNotAcceptable1,
-			\Localization\ErrorPage\textNotAcceptable2
-		);
-	}
-	
-	final public function renderUnavailableForLegalReasons451(): void
-	{
-		$this->renderError
-		(
-			'451 Unavailable For Legal Reasons',
-			\Localization\ErrorPage\textUnavailableForLegalReasons1,
-			\Localization\ErrorPage\textUnavailableForLegalReasons2
-		);
-	}
-	
-	final public function renderInternalServerError500(): void
-	{
-		$this->renderError
-		(
-			'500 Internal Server Error',
-			\Localization\ErrorPage\textInternalServerError1,
-			\Localization\ErrorPage\textInternalServerError2
-		);
 	}
 }

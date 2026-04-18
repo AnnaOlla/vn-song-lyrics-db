@@ -1094,7 +1094,7 @@ namespace Localization\ErrorPage
 	const textNotFound1 = 'Запрошенная страница не найдена.';
 	const textNotFound2 = 'Может быть, её переименовали?';
 	
-	const textMethodNotAllowed1 = 'Сервер понял запрос, но выбранный метод не поддерживается.';
+	const textMethodNotAllowed1 = 'Сервер понял запрос, но выбранный метод не разрешён.';
 	const textMethodNotAllowed2 = 'Пожалуйста, напишите подробности нам на почту support@vn-song-lyrics-db.ru.';
 	
 	const textNotAcceptable1 = 'Выбранный язык не поддерживается сайтом.';
@@ -1105,4 +1105,13 @@ namespace Localization\ErrorPage
 	
 	const textInternalServerError1 = 'В ходе обработки запроса обнаружилась критическая ошибка.';
 	const textInternalServerError2 = 'Пожалуйста, напишите подробности нам на почту support@vn-song-lyrics-db.ru.';
+	
+	const textNotImplemented1 = 'Запрошенный метод не является известным.';
+	const textNotImplemented2 = 'Пожалуйста, используйте сайт задуманным способом.';
+	
+	const textBadGateway1 = 'Сервер получил ошибку от другого требуемого сервера.';
+	const textBadGateway2 = 'Пожалуйста, приходите позже.';
+	
+	const textServiceUnavailable1 = 'Cайт в данный момент недоступен.';
+	const textServiceUnavailable2 = 'Пожалуйста, приходите позже.';
 }

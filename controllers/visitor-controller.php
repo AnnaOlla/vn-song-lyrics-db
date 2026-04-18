@@ -1,8 +1,8 @@
 <?php
 
-require_once 'controllers/controller.php';
+require_once 'controllers/error-controller.php';
 
-class VisitorController extends Controller
+class VisitorController extends ErrorController
 {
 	public function __construct(string $language)
 	{
@@ -36,8 +36,6 @@ class VisitorController extends Controller
 				'ja' => $userData['language_ja_name']
 			]
 		];
-		
-		error_log($_SESSION);
 	}
 	
 	public function handleLogInPage(): void
@@ -185,70 +183,6 @@ class VisitorController extends Controller
 	public function handleLogOutPage(): void
 	{
 		$this->handleRedirect(buildInternalLink($this->language));
-	}
-	
-	//-----------------------//
-	//      Error Pages      //
-	//-----------------------//
-	
-	final public function handleRedirect(string $location): void
-	{
-		http_response_code(303);
-		header('Location: '.$location);
-	}
-	
-	final public function handleBadRequest400(): void
-	{
-		http_response_code(400);
-		$this->view->renderBadRequest400();
-	}
-	
-	final public function handleUnauthorized401(): void
-	{
-		http_response_code(401);
-		$this->view->renderUnauthorized401();
-	}
-	
-	final public function handlePaymentRequired402(): void
-	{
-		http_response_code(402);
-		$this->view->renderPaymentRequired402();
-	}
-	
-	final public function handleForbidden403(): void
-	{
-		http_response_code(403);
-		$this->view->renderForbidden403();
-	}
-	
-	final public function handleNotFound404(): void
-	{
-		http_response_code(404);
-		$this->view->renderNotFound404();
-	}
-	
-	final public function handleMethodNotAllowed405(): void
-	{
-		http_response_code(405);
-		$this->view->renderMethodNotAllowed405();
-	}
-	
-	final public function handleNotAcceptable406(): void
-	{
-		http_response_code(406);
-		$this->view->renderNotAcceptable406();
-	}
-	
-	final public function handleUnavailableForLegalReasons451(): void
-	{
-		http_response_code(451);
-		$this->view->renderUnavailableForLegalReasons451();
-	}
-	
-	final public function handleInternalServerError500(): void
-	{
-		http_response_code(500);
-		$this->view->renderInternalServerError500();
 	}
 	
 	//---------------------------------//

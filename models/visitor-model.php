@@ -1,9 +1,11 @@
 <?php
 
-require_once 'models/model.php';
+require_once 'models/error-model.php';
 
 class VisitorModel extends Model
 {
+	protected PDO $pdo;
+	
 	public function __construct()
 	{
 		$this->pdo = getPdo('visitor');

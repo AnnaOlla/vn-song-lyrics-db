@@ -2,5 +2,5 @@
 
 abstract class Model
 {
-	protected PDO $pdo;
+	// Nothing at the moment
 }

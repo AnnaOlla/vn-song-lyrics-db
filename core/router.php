@@ -2,34 +2,49 @@
 
 final class Router
 {
-	private const BANNED_IPS_FILENAME      = 'banned-ip-list.txt';
-	private const BANNED_REQUESTS_FILENAME = 'banned-requests.txt';
-	private const ACCEPTED_LANGUAGES       = ['en', 'ru', 'ja'];
-	private const DEFAULT_LANGUAGE         = 'en';
+	private const VIOLATOR_BOT_IPS_FILENAME      = '.violator-bot-ip-list.txt';
+	private const VIOLATOR_BOT_REQUESTS_FILENAME = '.violator-bot-requests.txt';
 	
-	private static function isIpBanned(): bool
+	private const VIOLATOR_HUMAN_IPS_FILENAME    = '.violator-human-ip-list.txt';
+	private const VIOLATOR_HUMAN_PAGE_FILENAME   = '.violator-human-page.html';
+	
+	private const FILE_FLAGS                     = FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES;
+	
+	private const MAINTENANCE_MODE_FILENAME      = '.maintenance-mode-on';
+	
+	private const ACCEPTED_LANGUAGES = ['en', 'ru', 'ja'];
+	private const DEFAULT_LANGUAGE   = 'en';
+	
+	private static function isUserKnownViolatorBot(): bool
 	{
-		$bannedIps = file(self::BANNED_IPS_FILENAME, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		$bannedIps = file(self::VIOLATOR_BOT_IPS_FILENAME, self::FILE_FLAGS);
 		return in_array($_SERVER['REMOTE_ADDR'], $bannedIps);
 	}
 	
-	private static function isIpToBan(): bool
+	private static function isUserUnknownViolatorBot(): bool
 	{
-		$bannedStrings = file(self::BANNED_REQUESTS_FILENAME, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		$bannedStrings = file(self::VIOLATOR_BOT_REQUESTS_FILENAME, self::FILE_FLAGS);
 		
-		foreach ($bannedStrings as $string)
+		foreach ($bannedStrings as $bannedString)
 		{
-			if (mb_strstr($_SERVER['REQUEST_URI'], $string))
-			{
-				$file = fopen(self::BANNED_IPS_FILENAME, 'a');
-				fwrite($file, $_SERVER['REMOTE_ADDR'].PHP_EOL);
-				fclose($file);
-				
+			if (mb_strstr($_SERVER['REQUEST_URI'], $bannedString))
 				return true;
-			}
 		}
 		
 		return false;
+	}
+	
+	private static function banUnknownViolatorBot(): void
+	{
+		$file = fopen(self::VIOLATOR_BOT_REQUESTS_FILENAME, 'a');
+		fwrite($file, $_SERVER['REMOTE_ADDR'].PHP_EOL);
+		fclose($file);
+	}
+	
+	private static function isUserKnownViolatorHuman(): bool
+	{
+		$bannedIps = file(self::VIOLATOR_HUMAN_IPS_FILENAME, self::FILE_FLAGS);
+		return in_array($_SERVER['REMOTE_ADDR'], $bannedIps);
 	}
 	
 	private static function detectUserLanguages(): array
@@ -70,31 +85,45 @@ final class Router
 		return self::DEFAULT_LANGUAGE;
 	}
 	
-	private static function isRootRequested(): bool
+	private static function isRootRequested(string $requestedPath): bool
 	{
-		return ($_SERVER['REQUEST_URI'] === '/');
+		return ($requestedPath === '/');
 	}
 	
-	private static function isNonExistentFileRequested(): bool
+	private static function isNonExistentFileRequested(string $requestedPath): bool
 	{
-		// If the server has not found some file, then it forwards the request to index.php
-		
 		// If a file is requested then the route ends with "/name.extension"
-		$dot   = mb_strrpos($_SERVER['REQUEST_URI'], '.');
-		$slash = mb_strrpos($_SERVER['REQUEST_URI'], '/');
+		$dot   = mb_strrpos($requestedPath, '.');
+		$slash = mb_strrpos($requestedPath, '/');
 		
 		return ($dot > $slash);
 	}
 	
 	public static function run()
 	{
-		if (self::isIpBanned() || self::isIpToBan())
+		if (self::isUserKnownViolatorBot())
 		{
 			http_response_code(403);
 			exit;
 		}
 		
-		if (self::isRootRequested())
+		if (self::isUserUnknownViolatorBot())
+		{
+			self::banUnknownMaliciousBot();
+			http_response_code(403);
+			exit;
+		}
+		
+		if (self::isUserKnownViolatorHuman())
+		{
+			echo file_get_contents(self::VIOLATOR_HUMAN_PAGE_FILENAME);
+			http_response_code(403);
+			exit;
+		}
+		
+		$requestedPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		
+		if (self::isRootRequested($requestedPath))
 		{
 			$languages = self::detectUserLanguages();
 			$language  = self::getSuitableLanguage($languages);
@@ -104,13 +133,13 @@ final class Router
 			exit;
 		}
 		
-		if (self::isNonExistentFileRequested())
+		if (self::isNonExistentFileRequested($requestedPath))
 		{
 			http_response_code(404);
 			exit;
 		}
 		
-		$routes     = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+		$routes     = explode('/', $requestedPath);
 		$routeCount = count($routes);
 		
 		for ($i = 0; $i < $routeCount; $i++)
@@ -553,6 +582,7 @@ final class Router
 			$method = 'handleAddLanguagePage';
 			$parameters = [];
 		}
+		
 		/*
 		else if ($routeCount === 5 && $routes[2] === 'control-panel' && $routes[3] === 'edit-language')
 		{
@@ -619,28 +649,25 @@ final class Router
 		
 		try
 		{
-			$controller     = null;
-			$controllerPath = 'controllers/'.$_SESSION['user']['role'].'-controller.php';
+			// Fallback
 			
-			if (!file_exists($controllerPath))
-			{
-				// Fallback to show the error
-				require_once 'controllers/visitor-controller.php';
-				$controller = new VisitorController(self::DEFAULT_LANGUAGE);
-				
-				throw new HttpInternalServerError500();
-			}
+			if (in_array($language, self::ACCEPTED_LANGUAGES))
+				$errorLanguage = $language;
+			else
+				$errorLanguage = self::DEFAULT_LANGUAGE;
+			
+			require_once 'controllers/error-controller.php';
+			$controller = new ErrorController($errorLanguage);
+			
+			// Complete the request
+			
+			if (file_exists(self::MAINTENANCE_MODE_FILENAME))
+				throw new HttpServiceUnavailable503();
 			
 			if (!in_array($language, self::ACCEPTED_LANGUAGES))
-			{
-				// Fallback to show the error
-				require_once 'controllers/visitor-controller.php';
-				$controller = new VisitorController(self::DEFAULT_LANGUAGE);
-				
 				throw new HttpNotAcceptable406();
-			}
 			
-			require_once $controllerPath;
+			require_once 'controllers/'.$_SESSION['user']['role'].'-controller.php';
 			$controller = new ($_SESSION['user']['role'].'controller')($language);
 			
 			if (method_exists($controller, $method))
@@ -692,6 +719,21 @@ final class Router
 		{
 			error_log($e);
 			$controller->handleInternalServerError500();
+		}
+		catch (HttpNotImplemented501 $e)
+		{
+			error_log($e);
+			$controller->handleNotImplemented501();
+		}
+		catch (HttpBadGateway502 $e)
+		{
+			error_log($e);
+			$controller->handleBadGateway502();
+		}
+		catch (HttpServiceUnavailable503 $e)
+		{
+			error_log($e);
+			$controller->handleServiceUnavailable503();
 		}
 		catch (Throwable $e)
 		{

@@ -1,8 +1,8 @@
 <?php
 
-require_once 'views/view.php';
+require_once 'views/error-view.php';
 
-class VisitorView extends View
+class VisitorView extends ErrorView
 {
 	public function __construct(string $language)
 	{
