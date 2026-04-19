@@ -53,4 +53,12 @@ final class Validation
 		
 		return true;
 	}
+	
+	public static function areCaptchasEqual(string $generated, string $sent): bool
+	{
+		if ($generated === null || $sent === null)
+			throw new Exception('At least one of captchas was null');
+		
+		return mb_strtoupper($generated) === mb_strtoupper($sent);
+	}
 }
