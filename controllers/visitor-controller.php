@@ -4,6 +4,9 @@ require_once 'controllers/error-controller.php';
 
 class VisitorController extends ErrorController
 {
+	protected const ACCOUNT_DATA_MIN_LENGTH = 4;
+	protected const ACCOUNT_DATA_MAX_LENGTH = 32;
+	
 	public function __construct(string $language)
 	{
 		parent::__construct($language);
@@ -40,8 +43,13 @@ class VisitorController extends ErrorController
 	
 	public function handleLogInPage(): void
 	{
-		if (!isset($_SESSION['lastPageBeforeLogIn']))
-			$_SESSION['lastPageBeforeLogIn'] = $_SERVER['HTTP_REFERER'] ?? buildInternalLink($this->language);
+		if (!isset($_SESSION['redirectToAfterLogIn']))
+		{
+			if (isset($_SERVER['HTTP_REFERER']))
+				$_SESSION['redirectToAfterLogIn'] = $_SERVER['HTTP_REFERER'];
+			else
+				$_SESSION['redirectToAfterLogIn'] = Session::buildInternalLink($this->language);
+		}
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -65,41 +73,47 @@ class VisitorController extends ErrorController
 	
 	private function handleLogInPagePost(AuthenticationError $error = AuthenticationError::None): void
 	{
-		if (!isset($_POST['email']) || !isset($_POST['password']))
+		$email     = $_POST['email']         ?? null;
+		$password  = $_POST['password']      ?? null;
+		$ipAddress = $_SERVER['REMOTE_ADDR'] ?? null;
+		
+		$userId = $this->model->getUserIdWithEmail($email);
+		
+		if (Validation::haveNullOrEmpty($email, $password, $ipAddress))
 			throw new HttpBadRequest400('Email and password were not sent', get_defined_vars());
 		
-		if ($_POST['email'] === '')
-			$error = AuthenticationError::EmptyEmail;
-		
-		if ($_POST['password'] === '')
-			$error = AuthenticationError::EmptyPassword;
-		
-		if (!$this->model->isEmailRegistered($_POST['email']))
-			$error = AuthenticationError::EmailNotFound;
-		
-		if (!$this->model->isPasswordCorrect($_POST['email'], $_POST['password']))
-			$error = AuthenticationError::IncorrectPassword;
-		
-		if (!$this->model->isAccountVerified($_POST['email']))
-			$error = AuthenticationError::AccountNotVerified;
-		
-		if ($error !== AuthenticationError::None)
+		if (!$this->model->isEmailRegistered($email))
 		{
-			$this->handleLogInPageGet($error);
+			$this->handleLogInPageGet(AuthenticationError::EmailNotFound);
 			return;
 		}
 		
-		$this->model->updateLastLogInTimestamp($_POST['email']);
-		$userData = $this->model->getUserData(email: $_POST['email']);
+		if (!$this->model->isPasswordCorrect($userId, $password))
+		{
+			$this->handleLogInPageGet(AuthenticationError::IncorrectPassword);
+			return;
+		}
 		
+		$userData = $this->model->getUserData($userId);
 		$this->createUserSession($userData);
-		$this->handleRedirect($_SESSION['lastPageBeforeLogIn']);
 		
-		unset($_SESSION['lastPageBeforeLogIn']);
+		$this->model->updateLastLogInTimestamp($userId);
+		$this->model->addUserFingerprint($userId, $ipAddress);
+		
+		$this->handleRedirect($_SESSION['redirectToAfterLogIn']);
+		unset($_SESSION['redirectToAfterLogIn']);
 	}
 	
 	public function handleSignUpPage(): void
 	{
+		if (!isset($_SESSION['redirectToAfterSignUp']))
+		{
+			if (isset($_SERVER['HTTP_REFERER']))
+				$_SESSION['redirectToAfterSignUp'] = $_SERVER['HTTP_REFERER'];
+			else
+				$_SESSION['redirectToAfterSignUp'] = Session::buildInternalLink($this->language);
+		}
+		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
@@ -125,64 +139,98 @@ class VisitorController extends ErrorController
 		$this->view->renderSignUpPage($error, $captchaBase64Image);
 	}
 	
-	private function handleSignUpPagePost(AuthenticationError $error = AuthenticationError::None): void
+	private function handleSignUpPagePost(): void
 	{
-		if (!isset($_POST['username']) || !isset($_POST['password']) || !isset($_POST['email']) || !isset($_POST['captcha-code']))
+		$username    = $_POST['username']             ?? null;
+		$password    = $_POST['password']             ?? null;
+		$email       = $_POST['email']                ?? null;
+		$ipAddress   = $_SERVER['REMOTE_ADDR']        ?? null;
+		$sentCaptcha = $_POST['captcha-code']         ?? null;
+		$madeCaptcha = $_SESSION['signUpCaptchaCode'] ?? null;
+		
+		if (Validation::haveNullOrEmpty($username, $password, $email, $ipAddress, $sentCaptcha, $madeCaptcha))
 			throw new HttpBadRequest400('Sign-up data was not sent', get_defined_vars());
 		
-		$MIN_LENGTH = 4;
-		$MAX_LENGTH = 32;
-		
-		if (mb_strtolower($_POST['captcha-code']) !== mb_strtolower($_SESSION['signUpCaptchaCode']))
-			$error = AuthenticationError::CaptchaInvalid;
-		
-		if (trimNullableString($_POST['username']) !== $_POST['username'])
-			$error = AuthenticationError::UsernameTrimmable;
-		
-		if (!isLatinAlphabetAndNumbers($_POST['username']))
-			$error = AuthenticationError::UsernameForbiddenSymbols;
-		
-		if (mb_strlen($_POST['username']) < $MIN_LENGTH || mb_strlen($_POST['username']) > $MAX_LENGTH)
-			$error = AuthenticationError::UsernameLengthIncorrect;
-		
-		if ($this->model->isUserRegistered($_POST['username']))
-			$error = AuthenticationError::UsernameTaken;
-		
-		if (!isEmailValid($_POST['email']))
-			$error = AuthenticationError::EmailInvalid;
-		
-		if ($this->model->isEmailRegistered($_POST['email']))
-			$error = AuthenticationError::EmailTaken;
-		
-		if (!isLatinAlphabetAndNumbers($_POST['password']))
-			$error = AuthenticationError::PasswordForbiddenSymbols;
-		
-		if (mb_strlen($_POST['password']) < $MIN_LENGTH || mb_strlen($_POST['password']) > $MAX_LENGTH)
-			$error = AuthenticationError::PasswordLengthIncorrect;
-		
-		if ($error !== AuthenticationError::None)
+		if (mb_strtolower($sentCaptcha) !== mb_strtolower($madeCaptcha))
 		{
-			$this->handleSignUpPageGet($error);
+			$this->handleSignUpPageGet(AuthenticationError::CaptchaInvalid);
 			return;
 		}
 		
-		$this->model->createUser
-		(
-			$_POST['username'],
-			$_POST['password'],
-			$_POST['email'],
-			$_SERVER['REMOTE_ADDR']
-		);
+		if (Parsing::trimNullableString($username) !== $username)
+		{
+			$this->handleSignUpPageGet(AuthenticationError::UsernameTrimmable);
+			return;
+		}
 		
-		$userData = $this->model->getUserData(email: $_POST['email']);
+		if (!Validation::isLatinAlphabetAndNumbers($username))
+		{
+			$this->handleSignUpPageGet(AuthenticationError::UsernameForbiddenSymbols);
+			return;
+		}
+		
+		if (mb_strlen($username) < self::ACCOUNT_DATA_MIN_LENGTH)
+		{
+			$this->handleSignUpPageGet(AuthenticationError::UsernameLengthIncorrect);
+			return;
+		}
+		
+		if (mb_strlen($username) > self::ACCOUNT_DATA_MAX_LENGTH)
+		{
+			$this->handleSignUpPageGet(AuthenticationError::UsernameLengthIncorrect);
+			return;
+		}
+		
+		if ($this->model->isUsernameRegistered($username))
+		{
+			$this->handleSignUpPageGet(AuthenticationError::UsernameTaken);
+			return;
+		}
+		
+		if (!Validation::isEmailValid($email))
+		{
+			$this->handleSignUpPageGet(AuthenticationError::EmailInvalid);
+			return;
+		}
+		
+		if ($this->model->isEmailRegistered($email))
+		{
+			$this->handleSignUpPageGet(AuthenticationError::EmailTaken);
+			return;
+		}
+		
+		if (!Validation::isLatinAlphabetAndNumbers($password))
+		{
+			$this->handleSignUpPageGet(AuthenticationError::PasswordForbiddenSymbols);
+			return;
+		}
+		
+		if (mb_strlen($password) < self::ACCOUNT_DATA_MIN_LENGTH)
+		{
+			$this->handleSignUpPageGet(AuthenticationError::PasswordLengthIncorrect);
+			return;
+		}
+		
+		if (mb_strlen($password) > self::ACCOUNT_DATA_MAX_LENGTH)
+		{
+			$this->handleSignUpPageGet(AuthenticationError::PasswordLengthIncorrect);
+			return;
+		}
+		
+		$userId   = $this->model->createUser($username, $password, $email);
+		$userData = $this->model->getUserData($userId);
+		
 		$this->createUserSession($userData);
-		$this->handleRedirect(buildInternalLink($this->language));
+		$this->model->addUserFingerprint($userId, $ipAddress);
+		
+		$this->handleRedirect($_SESSION['redirectToAfterSignUp']);
+		unset($_SESSION['redirectToAfterSignUp']);
 		unset($_SESSION['signUpCaptchaCode']);
 	}
 	
 	public function handleLogOutPage(): void
 	{
-		$this->handleRedirect(buildInternalLink($this->language));
+		$this->handleRedirect(Session::buildInternalLink($this->language));
 	}
 	
 	//---------------------------------//
@@ -233,20 +281,20 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = parseNullableInteger($limit, 1);
-		$page   = parseNullableInteger($page, 1);
-		$search = trimNullableString($search);
+		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$page   = Parsing::parseNullableInteger($page, 1);
+		$search = Parsing::trimNullableString($search);
 		
-		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
 		$list  = $this->model->getGameList(page: $page, limit: $limit, search: $search);
@@ -274,20 +322,20 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = parseNullableInteger($limit, 1);
-		$page   = parseNullableInteger($page, 1);
-		$search = trimNullableString($search);
+		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$page   = Parsing::parseNullableInteger($page, 1);
+		$search = Parsing::trimNullableString($search);
 		
-		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
 		$list  = $this->model->getAlbumList(page: $page, limit: $limit, search: $search);
@@ -315,20 +363,20 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = parseNullableInteger($limit, 1);
-		$page   = parseNullableInteger($page, 1);
-		$search = trimNullableString($search);
+		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$page   = Parsing::parseNullableInteger($page, 1);
+		$search = Parsing::trimNullableString($search);
 		
-		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
 		$list  = $this->model->getArtistList(page: $page, limit: $limit, search: $search);
@@ -356,20 +404,20 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = parseNullableInteger($limit, 1);
-		$page   = parseNullableInteger($page, 1);
-		$search = trimNullableString($search);
+		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$page   = Parsing::parseNullableInteger($page, 1);
+		$search = Parsing::trimNullableString($search);
 		
-		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
 		$list  = $this->model->getCharacterList(page: $page, limit: $limit, search: $search);
@@ -397,20 +445,20 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = parseNullableInteger($limit, 1);
-		$page   = parseNullableInteger($page, 1);
-		$search = trimNullableString($search);
+		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$page   = Parsing::parseNullableInteger($page, 1);
+		$search = Parsing::trimNullableString($search);
 		
-		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
 		$list  = $this->model->getSongList(page: $page, limit: $limit, search: $search, hasVocal: true);
@@ -438,20 +486,20 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = parseNullableInteger($limit, 1);
-		$page   = parseNullableInteger($page, 1);
-		$search = trimNullableString($search);
+		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$page   = Parsing::parseNullableInteger($page, 1);
+		$search = Parsing::trimNullableString($search);
 		
-		if (!isNullOrEmpty($_GET['page'] ?? null) && isNullOrEmpty($page))
+		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($_GET['limit'] ?? null) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (!isNullOrEmpty($page) && isNullOrEmpty($limit))
+		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
-		if (isNullOrEmpty($page) && !isNullOrEmpty($limit))
+		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
 			throw new HttpBadRequest400();
 		
 		$list  = $this->model->getTranslationList(page: $page, limit: $limit, search: $search);
@@ -467,7 +515,7 @@ class VisitorController extends ErrorController
 		if (!$game)
 			throw new HttpNotFound404();
 		
-		if ($game['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($game['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -496,7 +544,7 @@ class VisitorController extends ErrorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -529,7 +577,7 @@ class VisitorController extends ErrorController
 		if (!$artist)
 			throw new HttpNotFound404();
 		
-		if ($artist['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($artist['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -558,7 +606,7 @@ class VisitorController extends ErrorController
 		if (!$character)
 			throw new HttpNotFound404();
 		
-		if ($character['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($character['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -588,13 +636,13 @@ class VisitorController extends ErrorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song['has_vocal'])
@@ -641,13 +689,13 @@ class VisitorController extends ErrorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song['has_vocal'])
@@ -689,7 +737,7 @@ class VisitorController extends ErrorController
 		if (!$translation)
 			throw new HttpNotFound404();
 		
-		if ($translation['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($translation['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -760,14 +808,14 @@ class VisitorController extends ErrorController
 		$message  = $_POST['message']        ?? null;
 		$captcha  = $_POST['captcha-code']   ?? null;
 		
-		if (isNullOrEmpty($message))
+		if (Validation::isNullOrEmpty($message))
 			throw new HttpBadRequest400('Message was empty or null');
 		
 		if (mb_strtolower($_SESSION['feedbackCaptchaCode']) !== mb_strtolower($captcha))
 			throw new HttpBadRequest400('Captcha was wrong');
 		
 		$this->model->addFeedback($senderId, $senderIp, $message);
-		$this->handleRedirect(buildInternalLink($this->language, 'feedback'));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'feedback'));
 	}
 	
 	final public function handleReport(): void
@@ -786,16 +834,18 @@ class VisitorController extends ErrorController
 	private function handleReportPost(): void
 	{
 		$senderId  = $_SESSION['user']['id']     ?? null;
+		$ipAddress = $_SERVER['REMOTE_ADDR']     ?? null;
 		$message   = $_POST['report-text']       ?? null;
 		$entityUri = $_POST['entity-uri']        ?? null;
 		$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
 		
-		if (haveNullOrEmpty($message, $entityUri, $userAgent))
+		if (Validation::haveNullOrEmpty($ipAddress, $message, $entityUri, $userAgent))
 			throw new HttpBadRequest400('Null or empty submitted', [$message, $entityUri, $userAgent]);
 		
 		$this->model->addReport
 		(
 			$senderId,
+			$ipAddress,
 			$message,
 			$entityUri,
 			$userAgent
@@ -811,7 +861,7 @@ class VisitorController extends ErrorController
 		if (!$game)
 			throw new HttpNotFound404();
 		
-		if ($game['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($game['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -827,7 +877,7 @@ class VisitorController extends ErrorController
 	
 	final public function handleReportGamePageGet(array $game): void
 	{
-		$linkBack = buildInternalLink($this->language, 'game', $game['uri']);
+		$linkBack = Session::buildInternalLink($this->language, 'game', $game['uri']);
 		$this->view->renderReportPage('game', $game['transliterated_name'], $linkBack);
 	}
 	
@@ -838,7 +888,7 @@ class VisitorController extends ErrorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -854,7 +904,7 @@ class VisitorController extends ErrorController
 	
 	private function handleReportAlbumPageGet(array $album): void
 	{
-		$linkBack = buildInternalLink($this->language, 'album', $album['uri']);
+		$linkBack = Session::buildInternalLink($this->language, 'album', $album['uri']);
 		$this->view->renderReportPage('album', $album['transliterated_name'], $linkBack);
 	}
 	
@@ -865,7 +915,7 @@ class VisitorController extends ErrorController
 		if (!$artist)
 			throw new HttpNotFound404();
 		
-		if ($artist['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($artist['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -881,7 +931,7 @@ class VisitorController extends ErrorController
 	
 	private function handleReportArtistPageGet(array $artist): void
 	{
-		$linkBack = buildInternalLink($this->language, 'artist', $artist['uri']);
+		$linkBack = Session::buildInternalLink($this->language, 'artist', $artist['uri']);
 		$this->view->renderReportPage('artist', $artist['transliterated_name'], $linkBack);
 	}
 	
@@ -892,7 +942,7 @@ class VisitorController extends ErrorController
 		if (!$character)
 			throw new HttpNotFound404();
 		
-		if ($character['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($character['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -908,7 +958,7 @@ class VisitorController extends ErrorController
 	
 	private function handleReportCharacterPageGet(array $character): void
 	{
-		$linkBack = buildInternalLink($this->language, 'character', $character['uri']);
+		$linkBack = Session::buildInternalLink($this->language, 'character', $character['uri']);
 		$this->view->renderReportPage('character', $character['transliterated_name'], $linkBack);
 	}
 	
@@ -920,13 +970,13 @@ class VisitorController extends ErrorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -942,7 +992,7 @@ class VisitorController extends ErrorController
 	
 	private function handleReportLyricsPageGet(array $album, array $song): void
 	{
-		$linkBack = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
+		$linkBack = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		$this->view->renderReportPage('lyrics', $song['transliterated_name'], $linkBack);
 	}
 	
@@ -955,13 +1005,13 @@ class VisitorController extends ErrorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if ($song['original_song_id'])
@@ -988,7 +1038,7 @@ class VisitorController extends ErrorController
 		if (!$translation)
 			throw new HttpNotFound404();
 		
-		if ($translation['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($translation['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1004,7 +1054,7 @@ class VisitorController extends ErrorController
 	
 	private function handleReportTranslationPageGet(array $album, array $song, array $translation): void
 	{
-		$linkBack = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+		$linkBack = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		$this->view->renderReportPage('translation', $translation['name'], $linkBack);
 	}
 	

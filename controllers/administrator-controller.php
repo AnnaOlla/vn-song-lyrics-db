@@ -365,7 +365,7 @@ class AdministratorController extends UserController
 			return;
 		}
 		
-		$feedbackId = $this->parseNullableInteger($feedbackId, 1);
+		$feedbackId = $this->Parsing::parseNullableInteger($feedbackId, 1);
 		
 		if (!$feedbackId)
 		{
@@ -402,7 +402,7 @@ class AdministratorController extends UserController
 			return;
 		}
 		
-		$feedbackId = $this->parseNullableInteger($feedbackId, 1);
+		$feedbackId = $this->Parsing::parseNullableInteger($feedbackId, 1);
 		
 		if (!$feedbackId)
 		{
@@ -452,7 +452,7 @@ class AdministratorController extends UserController
 			return;
 		}
 		
-		$id = $this->parseNullableInteger($id, 1);
+		$id = Parsing::parseNullableInteger($id, 1);
 		
 		if (!$id)
 		{
@@ -507,11 +507,11 @@ class AdministratorController extends UserController
 		$enName  = $_POST['en-name']  ?? null;
 		$jaName  = $_POST['ja-name']  ?? null;
 		
-		if (haveNullOrEmpty($ownName, $ruName, $enName, $jaName))
+		if (Validation::haveNullOrEmpty($ownName, $ruName, $enName, $jaName))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		$this->model->addLanguage($ownName, $ruName, $enName, $jaName);
-		$this->handleRedirect(buildInternalLink($this->language, 'control-panel'));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'control-panel'));
 	}
 	
 	final public function handleReportListPage(): void
@@ -560,13 +560,13 @@ class AdministratorController extends UserController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($album['status'] === 'checked' && !isCurrentUserModerator())
+		if ($album['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
-		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($album['user_added_id']) && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		if ($currentSongCount !== 0)
@@ -607,14 +607,14 @@ class AdministratorController extends UserController
 		$hasVocal            = $_POST['has-vocal']           ?? [];
 		$userAddedId         = $_SESSION['user']['id'];
 		
-		$originalNames       = trimNullableStringArray($originalNames);
-		$transliteratedNames = trimNullableStringArray($transliteratedNames);
-		$localizedNames      = trimNullableStringArray($localizedNames);
-		$discNumbers         = parseNullableIntegerArray($discNumbers, 1);
-		$trackNumbers        = parseNullableIntegerArray($trackNumbers, 1);
-		$haveVocal           = parseNullableIntegerArray($hasVocal, 0, 1);
+		$originalNames       = Parsing::trimNullableStringArray($originalNames);
+		$transliteratedNames = Parsing::trimNullableStringArray($transliteratedNames);
+		$localizedNames      = Parsing::trimNullableStringArray($localizedNames);
+		$discNumbers         = Parsing::parseNullableIntegerArray($discNumbers, 1);
+		$trackNumbers        = Parsing::parseNullableIntegerArray($trackNumbers, 1);
+		$haveVocal           = Parsing::parseNullableIntegerArray($hasVocal, 0, 1);
 		
-		$haveArraysSameLength = haveArraysSameLength
+		$haveArraysSameLength = Validation::haveArraysSameLength
 		(
 			$discNumbers,
 			$trackNumbers,
@@ -632,11 +632,11 @@ class AdministratorController extends UserController
 		
 		foreach ($transliteratedNames as $transliteratedName)
 		{
-			if (!isPrintableAscii($transliteratedName))
+			if (!Validation::isPrintableAscii($transliteratedName))
 				throw new HttpBadRequest400('One of transliteratedName was not ASCII', get_defined_vars());
 		}
 		
-		$isNullPresent = haveNullOrEmpty
+		$isNullPresent = Validation::haveNullOrEmpty
 		(
 			...$discNumbers,
 			...$trackNumbers,
@@ -683,6 +683,6 @@ class AdministratorController extends UserController
 			$userAddedId
 		);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'album', $albumUri));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $albumUri));
 	}
 }

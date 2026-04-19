@@ -303,3 +303,21 @@ VALUES
 	('Русский', 'Русский', 'Russian', 'ロシア語'),
 	('日本語', 'Японский', 'Japanese', '日本語'),
 	('Romanization', 'Транслитерация', 'Romanization', 'ローマ字');
+
+-- Changes
+
+CREATE TABLE fingerprints
+(
+	user_id    INT UNSIGNED   NOT NULL,
+	ip_address VARBINARY(190) NOT NULL,
+	
+	UNIQUE (user_id, ip_address),
+	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION
+);
+
+ALTER TABLE `users` DROP `verification_token`;
+ALTER TABLE `users` DROP `is_verified`;
+ALTER TABLE `users` DROP `ip_address`;
+ALTER TABLE `users` CHANGE `email` `email` VARBINARY(128) NOT NULL;
+ALTER TABLE `users` CHANGE `password_hash` `password` VARBINARY(255) NOT NULL;
+ALTER TABLE `reports` ADD `ip_address` VARBINARY(190) NOT NULL ;

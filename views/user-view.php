@@ -33,7 +33,7 @@ class UserView extends ViolatorView
 			else
 				$vndbLink       = '';
 			
-			$cancelLink = buildInternalLink($this->language, 'game', $game['uri']);
+			$cancelLink = Session::buildInternalLink($this->language, 'game', $game['uri']);
 		}
 		else
 		{
@@ -43,7 +43,7 @@ class UserView extends ViolatorView
 			$isImageUploaded    = false;
 			$vndbLink           = '';
 			
-			$cancelLink = buildInternalLink($this->language, 'game-list');
+			$cancelLink = Session::buildInternalLink($this->language, 'game-list');
 		}
 		
 		$html = $this->startRender
@@ -367,7 +367,7 @@ class UserView extends ViolatorView
 			
 			$songCount          = htmlspecialchars($album['song_count']);
 			
-			$cancelLink = buildInternalLink($this->language, 'album', $album['uri']);
+			$cancelLink = Session::buildInternalLink($this->language, 'album', $album['uri']);
 		}
 		else
 		{
@@ -378,7 +378,7 @@ class UserView extends ViolatorView
 			$vgmdbLink          = '';
 			$songCount          = '';
 			
-			$cancelLink = buildInternalLink($this->language, 'album-list');
+			$cancelLink = Session::buildInternalLink($this->language, 'album-list');
 		}
 		
 		$html = $this->startRender
@@ -620,7 +620,7 @@ class UserView extends ViolatorView
 			
 			$originalArtist     = array_find($originalArtists, function (array $original) use ($artist) { return $artist['alias_of_artist_id'] === $original['id']; });
 			
-			$cancelLink = buildInternalLink($this->language, 'artist', $artist['uri']);
+			$cancelLink = Session::buildInternalLink($this->language, 'artist', $artist['uri']);
 		}
 		else
 		{
@@ -631,7 +631,7 @@ class UserView extends ViolatorView
 			$vgmdbLink          = '';
 			$originalArtist     = null;
 			
-			$cancelLink = buildInternalLink($this->language, 'artist-list');
+			$cancelLink = Session::buildInternalLink($this->language, 'artist-list');
 		}
 		
 		$html = $this->startRender
@@ -966,9 +966,9 @@ class UserView extends ViolatorView
 		}
 		
 		if ($character)
-			$cancelLink = buildInternalLink($this->language, 'character', $character['uri']);
+			$cancelLink = Session::buildInternalLink($this->language, 'character', $character['uri']);
 		else
-			$cancelLink = buildInternalLink($this->language, 'character-list');
+			$cancelLink = Session::buildInternalLink($this->language, 'character-list');
 		
 		$html .= 
 		'
@@ -1068,7 +1068,7 @@ class UserView extends ViolatorView
 			$buttonFlag         = '';
 		}
 		
-		$cancelLink = buildInternalLink($this->language, 'album', $album['uri']);
+		$cancelLink = Session::buildInternalLink($this->language, 'album', $album['uri']);
 		
 		$vocalOptions =
 		[
@@ -1415,7 +1415,7 @@ class UserView extends ViolatorView
 			);
 		}
 		
-		$cancelLink = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
+		$cancelLink = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		
 		$html .= 
 		'
@@ -1505,7 +1505,7 @@ class UserView extends ViolatorView
 			$translationLyrics = htmlspecialchars($translation['lyrics']);
 			$translationNotes  = htmlspecialchars($translation['notes'] ?? '');
 			
-			$cancelLink = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+			$cancelLink = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		}
 		else
 		{
@@ -1529,7 +1529,7 @@ class UserView extends ViolatorView
 			$translationLyrics = '';
 			$translationNotes  = '';
 			
-			$cancelLink = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
+			$cancelLink = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		}
 		
 		$html = $this->startRender
@@ -1950,7 +1950,7 @@ class UserView extends ViolatorView
 		[
 			\Localization\DeleteEntityPage\Game  => $game['transliterated_name']
 		];
-		$cancelLink = buildInternalLink($this->language, 'game', $game['uri']);
+		$cancelLink = Session::buildInternalLink($this->language, 'game', $game['uri']);
 		
 		$this->renderDeletePage($heading, $cancelLink);
 }
@@ -1958,7 +1958,7 @@ class UserView extends ViolatorView
 	final public function renderDeleteAlbumPage(array $album): void
 	{
 		$heading = \Localization\DeleteEntityPage\DeleteAlbum.$album['transliterated_name'];
-		$cancelLink = buildInternalLink($this->language, 'album', $album['uri']);
+		$cancelLink = Session::buildInternalLink($this->language, 'album', $album['uri']);
 		
 		$this->renderDeletePage($heading, $cancelLink);
 	}
@@ -1966,7 +1966,7 @@ class UserView extends ViolatorView
 	final public function renderDeleteArtistPage(array $artist): void
 	{
 		$heading = \Localization\DeleteEntityPage\DeleteArtist.$artist['transliterated_name'];
-		$cancelLink = buildInternalLink($this->language, 'artist', $artist['uri']);
+		$cancelLink = Session::buildInternalLink($this->language, 'artist', $artist['uri']);
 		
 		$this->renderDeletePage($heading, $cancelLink);
 	}
@@ -1974,7 +1974,7 @@ class UserView extends ViolatorView
 	final public function renderDeleteCharacterPage(array $character): void
 	{
 		$heading = \Localization\DeleteEntityPage\DeleteCharacter.$character['transliterated_name'];
-		$cancelLink = buildInternalLink($this->language, 'character', $character['uri']);
+		$cancelLink = Session::buildInternalLink($this->language, 'character', $character['uri']);
 		
 		$this->renderDeletePage($heading, $cancelLink);
 	}
@@ -1982,7 +1982,7 @@ class UserView extends ViolatorView
 	final public function renderDeleteLyricsPage(array $album, array $song): void
 	{
 		$heading = \Localization\DeleteEntityPage\DeleteLyrics.$song['transliterated_name'];
-		$cancelLink = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
+		$cancelLink = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		
 		$this->renderDeletePage($heading, $cancelLink);
 	}
@@ -1990,7 +1990,7 @@ class UserView extends ViolatorView
 	final public function renderDeleteTranslationPage(array $album, array $song, array $translation): void
 	{
 		$heading = \Localization\DeleteEntityPage\DeleteTranslation.$song['transliterated_name'];
-		$cancelLink = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+		$cancelLink = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		
 		$this->renderDeletePage($heading, $cancelLink);
 	}
@@ -1998,7 +1998,7 @@ class UserView extends ViolatorView
 	final public function renderChangeAccountDataPage(array $user, AuthenticationError $error = AuthenticationError::None)
 	{
 		$heading = $user['user_username'].\Localization\UserAccountDataPage\Edit;
-		$cancelLink = buildInternalLink($this->language, 'user', $user['user_username']);
+		$cancelLink = Session::buildInternalLink($this->language, 'user', $user['user_username']);
 		
 		switch ($error)
 		{
@@ -2101,7 +2101,7 @@ class UserView extends ViolatorView
 	final public function renderDeleteAccountPage(array $user, AuthenticationError $error = AuthenticationError::None)
 	{
 		$heading = $user['user_username'].\Localization\UserAccountDeletePage\Delete;
-		$cancelLink = buildInternalLink($this->language, 'user', $user['user_username']);
+		$cancelLink = Session::buildInternalLink($this->language, 'user', $user['user_username']);
 		
 		switch ($error)
 		{

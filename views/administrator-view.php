@@ -50,7 +50,7 @@ class AdministratorView extends UserView
 			$jaName  = '';
 		}
 		
-		$cancelLink = buildInternalLink($this->language, 'control-panel');
+		$cancelLink = Session::buildInternalLink($this->language, 'control-panel');
 		
 		$html = $this->startRender
 		(
@@ -112,7 +112,7 @@ class AdministratorView extends UserView
 	final public function renderReportListPage(array $reports): void
 	{
 		$heading = 'Report List';
-		$cancelLink = buildInternalLink($this->language, 'control-panel');
+		$cancelLink = Session::buildInternalLink($this->language, 'control-panel');
 		
 		$html = $this->startRender
 		(
@@ -129,6 +129,7 @@ class AdministratorView extends UserView
 						<tr>
 							<th>Id</th>
 							<th>Sender Id</th>
+							<th>Sender Ip</th>
 							<th>Sender Username</th>
 							<th>Message</th>
 							<th>Request Uri</th>
@@ -140,11 +141,14 @@ class AdministratorView extends UserView
 		
 		foreach ($reports as $report)
 		{
+			$ipAddress = Cryptography::decryptData($report['ip_address']);
+			
 			$html .= 
 			'
 						<tr>
 							<td>'.htmlspecialchars($report['id']).'</td>
 							<td>'.htmlspecialchars($report['sender_id'] ?? 'null').'</td>
+							<td>'.htmlspecialchars($ipAddress).'</td>
 							<td>'.htmlspecialchars($report['username'] ?? 'null').'</td>
 							<td>'.htmlspecialchars($report['message']).'</td>
 							<td>'.htmlspecialchars($report['request_uri']).'</td>
@@ -180,7 +184,7 @@ class AdministratorView extends UserView
 	final public function renderUserListPage(array $users): void
 	{
 		$heading = 'User List';
-		$cancelLink = buildInternalLink($this->language, 'control-panel');
+		$cancelLink = Session::buildInternalLink($this->language, 'control-panel');
 		
 		$html = $this->startRender
 		(
@@ -199,24 +203,36 @@ class AdministratorView extends UserView
 							<th>Role</th>
 							<th>Username</th>
 							<th>Email</th>
-							<th>IP Address</th>
 							<th>Created</th>
 							<th>Last Log-In</th>
+							<th>Fingerprints</th>
 						</tr>
 		';
 		
 		foreach ($users as $user)
 		{
+			$email = Cryptography::decryptData($user['email']);
+			
+			$separator = [];
+			for ($i = 0; $i < 16; $i++)
+				$separator[] = 0xFF;
+			$separator = pack('C*', $separator);
+			
+			$fingerprints = explode($separator, $user['fingerprints']);
+			for ($i = 0; $i < count($fingerprints); $i++)
+				$fingerprints[$i] = Cryptography::decryptData($fingerprints[$i]);
+			$fingerprints = implode(', ', $fingerprints);
+			
 			$html .= 
 			'
 						<tr>
 							<td>'.htmlspecialchars($user['id']).'</td>
 							<td>'.htmlspecialchars($user['en_name']).'</td>
 							<td>'.htmlspecialchars($user['username']).'</td>
-							<td>'.htmlspecialchars($user['email']).'</td>
-							<td>'.htmlspecialchars($user['ip_address']).'</td>
+							<td>'.htmlspecialchars($email).'</td>
 							<td>'.htmlspecialchars($user['timestamp_created']).'</td>
 							<td>'.htmlspecialchars($user['timestamp_last_log_in']).'</td>
+							<td>'.htmlspecialchars($fingerprints).'</td>
 						</tr>
 			';
 		}
@@ -239,7 +255,7 @@ class AdministratorView extends UserView
 	
 	final public function renderFillAlbumEditorPage(array $album, array $discography, string $heading): void
 	{
-		$cancelLink = buildInternalLink($this->language, 'album', $album['uri']);
+		$cancelLink = Session::buildInternalLink($this->language, 'album', $album['uri']);
 		
 		$vocalOptions =
 		[

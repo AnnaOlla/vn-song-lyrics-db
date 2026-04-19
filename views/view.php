@@ -137,7 +137,7 @@ abstract class View
 		$ruLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'ru');
 		$jaLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'ja');
 		
-		if (isCurrentUserVisitor())
+		if (Session::isCurrentUserVisitor())
 		{
 			$logIn    = '<a href="/'.$this->language.'/log-in">'.\Localization\Header\LogIn.'</a>';
 			$signUp   = '<a href="/'.$this->language.'/sign-up">'.\Localization\Header\SignUp.'</a>';
@@ -325,7 +325,7 @@ HTML;
 		if (is_null($username))
 			$username = \Localization\TimestampString\DeletedUser;
 		else
-			$username = $this->createLink(buildInternalLink($this->language, 'user', $username), $username);
+			$username = $this->createLink(Session::buildInternalLink($this->language, 'user', $username), $username);
 		
 		return
 			'<p>'.
@@ -462,7 +462,7 @@ HTML;
 	{
 		if ($entity['is_image_uploaded'])
 		{
-			$source = buildInternalLink
+			$source = Session::buildInternalLink
 			(
 				AssetFolder::Base->value,
 				$dynamicAssetFolder->value,
@@ -472,7 +472,7 @@ HTML;
 		}
 		else
 		{
-			$source = buildInternalLink
+			$source = Session::buildInternalLink
 			(
 				AssetFolder::Base->value,
 				$staticReplacementFolder->value,
@@ -577,13 +577,13 @@ HTML;
 	/* The function is not suitable for lyrics and translations because they have different logic */
 	final protected function createControlButtonsBlock(array $entity, string $entityName): string
 	{
-		$editHref   = buildInternalLink($this->language, $entityName, $entity['uri'], 'edit');
-		$deleteHref = buildInternalLink($this->language, $entityName, $entity['uri'], 'delete');
-		$reportHref = buildInternalLink($this->language, $entityName, $entity['uri'], 'report');
+		$editHref   = Session::buildInternalLink($this->language, $entityName, $entity['uri'], 'edit');
+		$deleteHref = Session::buildInternalLink($this->language, $entityName, $entity['uri'], 'delete');
+		$reportHref = Session::buildInternalLink($this->language, $entityName, $entity['uri'], 'report');
 		
-		[$editEnabled,   $editTooltipIfDisabled]   = canCurrentUserEditEntity  ($entity['user_added_id'], $entity['status']);
-		[$deleteEnabled, $deleteTooltipIfDisabled] = canCurrentUserDeleteEntity($entity['user_added_id'], $entity['status']);
-		[$reportEnabled, $reportTooltipIfDisabled] = canCurrentUserReportEntity($entity['status']);
+		[$editEnabled,   $editTooltipIfDisabled]   = Session::canCurrentUserEditEntity  ($entity['user_added_id'], $entity['status']);
+		[$deleteEnabled, $deleteTooltipIfDisabled] = Session::canCurrentUserDeleteEntity($entity['user_added_id'], $entity['status']);
+		[$reportEnabled, $reportTooltipIfDisabled] = Session::canCurrentUserReportEntity($entity['status']);
 		
 		$editButton   = $this->createButton(\Localization\Controls\Edit,   $editHref,   $editEnabled,   $editTooltipIfDisabled);
 		$deleteButton = $this->createButton(\Localization\Controls\Delete, $deleteHref, $deleteEnabled, $deleteTooltipIfDisabled);
@@ -604,11 +604,11 @@ HTML;
 	/* It was easier to copy-paste than writing a new wrapper*/
 	final protected function createControlButtonsBlockForSong(array $album, array $song, array $translations): string
 	{
-		$editLink   = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'edit-lyrics');
-		$deleteLink = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'delete-lyrics');
-		$reportLink = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'report-lyrics');
+		$editLink   = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'edit-lyrics');
+		$deleteLink = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'delete-lyrics');
+		$reportLink = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'report-lyrics');
 		
-		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserEditLyrics
+		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserEditLyrics
 		(
 			$song['user_added_id'],
 			$song['status'],
@@ -631,7 +631,7 @@ HTML;
 			$tooltipIfDisabled
 		);
 		
-		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserReportEntity($song['status']);
+		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserReportEntity($song['status']);
 		
 		$reportButton = $this->createButton
 		(
@@ -656,11 +656,11 @@ HTML;
 	/* It was easier to copy-paste than writing a new wrapper*/
 	final protected function createControlButtonsBlockForTranslation(array $album, array $song, array $translation): string
 	{
-		$editLink   = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri'], 'edit');
-		$deleteLink = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri'], 'delete');
-		$reportLink = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri'], 'report');
+		$editLink   = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri'], 'edit');
+		$deleteLink = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri'], 'delete');
+		$reportLink = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri'], 'report');
 		
-		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserEditTranslation
+		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserEditTranslation
 		(
 			$translation['user_added_id'],
 			$translation['status'],
@@ -683,7 +683,7 @@ HTML;
 			$tooltipIfDisabled
 		);
 		
-		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserReportEntity($translation['status']);
+		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserReportEntity($translation['status']);
 	
 		$reportButton = $this->createButton
 		(
@@ -764,7 +764,7 @@ HTML;
 	
 	private function createLyricsReferenceToAlbum(array $album): string
 	{
-		$href      = buildInternalLink($this->language, 'album', $album['uri']);
+		$href      = Session::buildInternalLink($this->language, 'album', $album['uri']);
 		$link      = $this->createLink($href, $album['transliterated_name']);
 		$paragraph = '<p>'.\Localization\LyricsPage\Album.$link.'</p>';
 		
@@ -773,7 +773,7 @@ HTML;
 	
 	private function createLyricsReferenceToCurrentSong(array $song): string
 	{
-		$href      = buildInternalLink($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
+		$href      = Session::buildInternalLink($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
 		$link      = $this->createLink($href, $song['transliterated_name']);
 		$paragraph = '<p>'.\Localization\LyricsPage\ShowLyricsOnly.$link.'</p>';
 		
@@ -782,7 +782,7 @@ HTML;
 	
 	private function createLyricsReferenceToOriginalSong(array $originalSong): string
 	{
-		$href      = buildInternalLink($this->language, 'album', $originalSong['album_uri'], 'song', $originalSong['uri']);
+		$href      = Session::buildInternalLink($this->language, 'album', $originalSong['album_uri'], 'song', $originalSong['uri']);
 		$link      = $this->createLink($href, $originalSong['transliterated_name']);
 		$paragraph = '<p>'.\Localization\LyricsPage\OriginalSong.$link.'</p>';
 		
@@ -830,7 +830,7 @@ HTML;
 			}
 			else
 			{
-				$href = buildInternalLink
+				$href = Session::buildInternalLink
 				(
 					$this->language,
 					'album',
@@ -845,9 +845,9 @@ HTML;
 			}
 		}
 		
-		if (canCurrentUserPost() && is_null($song['original_song_id']))
+		if (Session::canCurrentUserPost() && is_null($song['original_song_id']))
 		{
-			$href = buildInternalLink
+			$href = Session::buildInternalLink
 			(
 				$this->language,
 				'album',
@@ -874,10 +874,10 @@ HTML;
 		{
 			if (!is_null($performers[$i]['character_uri']))
 			{
-				$hrefCharacter = buildInternalLink($this->language, 'character', $performers[$i]['character_uri']);
+				$hrefCharacter = Session::buildInternalLink($this->language, 'character', $performers[$i]['character_uri']);
 				$linkCharacter = $this->createLink($hrefCharacter, $performers[$i]['character_transliterated_name']);
 				
-				$hrefArtist = buildInternalLink($this->language, 'artist', $performers[$i]['artist_uri']);
+				$hrefArtist = Session::buildInternalLink($this->language, 'artist', $performers[$i]['artist_uri']);
 				$linkArtist = $this->createLink($hrefArtist, $performers[$i]['artist_transliterated_name']);
 				
 				$cvOpeningBracket = \Localization\LyricsPage\CvOpeningBracket;
@@ -887,7 +887,7 @@ HTML;
 			}
 			else
 			{
-				$hrefArtist = buildInternalLink($this->language, 'artist', $performers[$i]['artist_uri']);
+				$hrefArtist = Session::buildInternalLink($this->language, 'artist', $performers[$i]['artist_uri']);
 				$linkArtist = $this->createLink($hrefArtist, $performers[$i]['artist_transliterated_name']);
 				
 				$parts[] = $linkArtist;
@@ -1034,7 +1034,7 @@ HTML;
 	
 	final protected function createTimestampBlock(array $entity): string
 	{
-		if (isCurrentUserModerator())
+		if (Session::isCurrentUserModerator())
 			$statusRow = $this->createStatusSelect($entity);
 		else
 			$statusRow = $this->createStatus($entity['status']);

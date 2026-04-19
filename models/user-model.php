@@ -1564,10 +1564,12 @@ class UserModel extends ViolatorModel
 		string|null $newPassword
 	)
 	{
+		$email = Cryptography::encryptData(mb_strtolower($email));
+		
 		$setPassword = '';
 		
 		if ($newPassword)
-			$setPassword = ', password_hash = "'.password_hash($newPassword, PASSWORD_DEFAULT).'"';
+			$setPassword = ', password = "'.Cryptography::generatePasswordHash($password).'"';
 		
 		$stmt = $this->pdo->prepare
 		(

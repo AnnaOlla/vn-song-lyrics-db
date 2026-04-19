@@ -11,7 +11,36 @@ class VisitorModel extends Model
 		$this->pdo = getPdo('visitor');
 	}
 	
-	final public function isUserRegistered(string $username): bool
+	final public function getEmailWithUserId(int $id): string|null
+	{
+		$stmt = $this->pdo->prepare('SELECT email FROM users WHERE id = :id');
+		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		$encrypted = $stmt->fetch(PDO::FETCH_COLUMN);
+		$decrypted = Cryptography::decryptData($encrypted);
+		
+		return $decrypted;
+	}
+	
+	final public function getUserIdWithEmail(string $email): int|null
+	{
+		$email = Cryptography::encryptData(mb_strtolower($email));
+		
+		$stmt = $this->pdo->prepare('SELECT id FROM users WHERE email = :email');
+		$stmt->bindParam(':email', $email, PDO::PARAM_STR);
+		$stmt->execute();
+		
+		$value = $stmt->fetch(PDO::FETCH_COLUMN);
+		return ($value !== false ? $value : null);
+	}
+	
+	final public function isEmailRegistered(string $email): bool
+	{
+		return !is_null($this->getUserIdWithEmail($email));
+	}
+	
+	final public function isUsernameRegistered(string $username): bool
 	{
 		$stmt = $this->pdo->prepare('SELECT id FROM users WHERE username = :username');
 		$stmt->bindParam(':username', $username, PDO::PARAM_STR);
@@ -20,49 +49,25 @@ class VisitorModel extends Model
 		return ($stmt->rowCount() !== 0);
 	}
 	
-	final public function isPasswordCorrect(string $email, string $password): bool
+	final public function isPasswordCorrect(int $id, string $password): bool
 	{
-		$stmt = $this->pdo->prepare('SELECT password_hash FROM users WHERE email = :email');
-		$stmt->bindParam(':email', $email, PDO::PARAM_STR);
+		$stmt = $this->pdo->prepare('SELECT password FROM users WHERE id = :id');
+		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 		
-		$user = $stmt->fetch(PDO::FETCH_ASSOC);
-		return password_verify($password, $user['password_hash']);
-	}
-	
-	final public function isEmailRegistered(string $email): bool
-	{
-		$stmt = $this->pdo->prepare('SELECT id FROM users WHERE email = :email');
-		$stmt->bindParam(':email', $email, PDO::PARAM_STR);
-		$stmt->execute();
-		
-		return ($stmt->rowCount() !== 0);
-	}
-	
-	final public function isAccountVerified(string $email): bool
-	{
-		$stmt = $this->pdo->prepare('SELECT is_verified FROM users WHERE email = :email');
-		$stmt->bindParam(':email', $email, PDO::PARAM_STR);
-		$stmt->execute();
-		
-		$value = $stmt->fetch(PDO::FETCH_ASSOC);
-		return $value['is_verified'] ?? false;
-	}
-	
-	final public function getRandomCaptcha(int $length, int $strength): array
-	{
-		return JuliamoCaptcha::generateBase64Captcha($length, $strength);
+		$hash = $stmt->fetch(PDO::FETCH_COLUMN);
+		return Cryptography::isPasswordCorrect($password, $hash);
 	}
 	
 	final public function createUser
 	(
-		string      $username,
-		string      $password,
-		string      $email,
-		string      $ipAddress
+		string $username,
+		string $password,
+		string $email
 	): int
 	{
-		$passwordHash = password_hash($password, PASSWORD_DEFAULT);
+		$emailHash    = Cryptography::encryptData(mb_strtolower($email));
+		$passwordHash = Cryptography::generatePasswordHash($password);
 		
 		$stmt = $this->pdo->prepare
 		(
@@ -70,41 +75,33 @@ class VisitorModel extends Model
 			INSERT INTO users
 			(
 				username,
-				password_hash,
+				password,
 				email,
 				role_id,
 				timestamp_created,
-				timestamp_last_log_in,
-				ip_address,
-				verification_token,
-				is_verified
+				timestamp_last_log_in
 			)
 			VALUES
 			(
 				:username,
-				:password_hash,
+				:password,
 				:email,
 				(SELECT id FROM roles WHERE technical_name = "user"),
 				NOW(),
-				NOW(),
-				:ip_address,
-				NULL,
-				TRUE
+				NOW()
 			)
 			'
 		);
 		
-		$stmt->bindParam(':username',      $username,          PDO::PARAM_STR);
-		$stmt->bindParam(':password_hash', $passwordHash,      PDO::PARAM_STR);
-		$stmt->bindParam(':email',         $email,             PDO::PARAM_STR);
-		$stmt->bindParam(':ip_address',    $ipAddress,         PDO::PARAM_STR);
-		//$stmt->bindParam(':token',         $verificationToken, PDO::PARAM_STR);
+		$stmt->bindParam(':username', $username,     PDO::PARAM_STR);
+		$stmt->bindParam(':password', $passwordHash, PDO::PARAM_STR);
+		$stmt->bindParam(':email',    $emailHash,    PDO::PARAM_STR);
 		$stmt->execute();
 		
-		return $stmt->rowCount();
+		return $this->pdo->lastInsertId();
 	}
 	
-	final public function updateLastLogInTimestamp(string $email): void
+	final public function updateLastLogInTimestamp(int $id): void
 	{
 		$stmt = $this->pdo->prepare
 		(
@@ -114,29 +111,60 @@ class VisitorModel extends Model
 			SET
 				timestamp_last_log_in = NOW()
 			WHERE
-				email = :email
+				id = :id
 			'
 		);
 		
-		$stmt->bindParam(':email', $email, PDO::PARAM_STR);
+		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 	}
 	
-	final public function getUserData(string|null $email = null, string|null $username = null): array|false
+	final public function addUserFingerprint(int $userId, string $ipAddress): bool
 	{
-		if (!$email && !$username)
-			throw new Exception(__METHOD__.' was called without arguments');
+		$ipAddressHash = Cryptography::encryptData($ipAddress);
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			INSERT IGNORE INTO fingerprints
+			(
+				user_id,
+				ip_address
+			)
+			VALUES
+			(
+				:user_id,
+				:ip_address
+			)
+			'
+		);
+		
+		$stmt->bindParam(':user_id',    $userId,        PDO::PARAM_INT);
+		$stmt->bindParam(':ip_address', $ipAddressHash, PDO::PARAM_STR);
+		$stmt->execute();
+		
+		return ($stmt->rowCount() !== 0);
+	}
+	
+	final public function getUserData
+	(
+		int|null    $id       = null,
+		string|null $username = null
+	): array
+	{
+		if (is_null($id) && is_null($username))
+			throw DatabaseLogicException(__METHOD__.' was called without arguments');
 		
 		$where = ['TRUE'];
 		$binds = [];
 		
-		if ($email)
+		if (!is_null($id))
 		{
-			$where[] = 'u.email = :email';
-			$binds[] = [':email', $email, PDO::PARAM_STR];
+			$where[] = 'u.id = :id';
+			$binds[] = [':id', $id, PDO::PARAM_INT];
 		}
 		
-		if ($username)
+		if (!is_null($username))
 		{
 			$where[] = 'u.username = :username';
 			$binds[] = [':username', $username, PDO::PARAM_STR];
@@ -173,8 +201,15 @@ class VisitorModel extends Model
 		return $userData;
 	}
 	
+	final public function getRandomCaptcha(int $length, int $strength): array
+	{
+		return JuliamoCaptcha::generateBase64Captcha($length, $strength);
+	}
+	
 	final public function addFeedback(int|null $senderId, string $senderIp, string $message): int
 	{
+		$senderIp = Cryptography::encryptData($senderIp);
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -206,17 +241,21 @@ class VisitorModel extends Model
 	final public function addReport
 	(
 		int|null $senderId,
+		string   $ipAddress,
 		string   $message,
 		string   $entityUri,
 		string   $userAgent
 	): int
 	{
+		$ipAddress = Cryptography::encryptData($ipAddress);
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
 			INSERT INTO reports
 			(
 				sender_id,
+				ip_address,
 				message,
 				request_uri,
 				user_agent,
@@ -225,6 +264,7 @@ class VisitorModel extends Model
 			VALUES
 			(
 				:sender_id,
+				:ip_address,
 				:message,
 				:entity_uri,
 				:user_agent,
@@ -234,6 +274,7 @@ class VisitorModel extends Model
 		);
 		
 		$stmt->bindParam(':sender_id',  $senderId,  PDO::PARAM_INT);
+		$stmt->bindParam(':ip_address', $ipAddress, PDO::PARAM_STR);
 		$stmt->bindParam(':message',    $message,   PDO::PARAM_STR);
 		$stmt->bindParam(':entity_uri', $entityUri, PDO::PARAM_STR);
 		$stmt->bindParam(':user_agent', $userAgent, PDO::PARAM_STR);

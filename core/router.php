@@ -109,7 +109,7 @@ final class Router
 		
 		if (self::isUserUnknownViolatorBot())
 		{
-			self::banUnknownMaliciousBot();
+			self::banUnknownViolatorBot();
 			http_response_code(403);
 			exit;
 		}

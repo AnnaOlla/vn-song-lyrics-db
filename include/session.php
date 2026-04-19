@@ -1,223 +1,226 @@
 <?php
 
-function buildInternalLink(string ...$linkParts): string
+final class Session
 {
-	for ($i = 0; $i < count($linkParts); $i++)
-		$linkParts[$i] = rawurlencode($linkParts[$i]);
-	
-	return '/'.implode('/', $linkParts);
-}
+	public static function buildInternalLink(string ...$linkParts): string
+	{
+		for ($i = 0; $i < count($linkParts); $i++)
+			$linkParts[$i] = rawurlencode($linkParts[$i]);
+		
+		return '/'.implode('/', $linkParts);
+	}
 
-function attachGetParameters(string $link, array $parameters): string
-{
-	$keyToValue = [];
-	
-	foreach ($parameters as $key => $value)
-		$keyToValue[] = $key.'='.$value;
-	
-	return $link.'?'.implode("&", $keyToValue);
-}
+	public static function attachGetParameters(string $link, array $parameters): string
+	{
+		$keyToValue = [];
+		
+		foreach ($parameters as $key => $value)
+			$keyToValue[] = $key.'='.$value;
+		
+		return $link.'?'.implode("&", $keyToValue);
+	}
 
-function isCurrentUserModerator(): bool
-{
-	return $_SESSION['user']['role'] === 'administrator';
-}
+	public static function isCurrentUserModerator(): bool
+	{
+		return $_SESSION['user']['role'] === 'administrator';
+	}
 
-function isCurrentUser(int|null $id): bool
-{
-	if (isset($_SESSION['user']['id']))
-		return $_SESSION['user']['id'] === $id;
-	
-	return false;
-}
+	public static function isCurrentUser(int|null $id): bool
+	{
+		if (isset($_SESSION['user']['id']))
+			return $_SESSION['user']['id'] === $id;
+		
+		return false;
+	}
 
-function isCurrentUserVisitor(): bool
-{
-	return $_SESSION['user']['role'] === 'visitor';
-}
+	public static function isCurrentUserVisitor(): bool
+	{
+		return $_SESSION['user']['role'] === 'visitor';
+	}
 
-function isCurrentUserViolator(): bool
-{
-	return $_SESSION['user']['role'] === 'violator';
-}
+	public static function isCurrentUserViolator(): bool
+	{
+		return $_SESSION['user']['role'] === 'violator';
+	}
 
-function canCurrentUserPost(): bool
-{
-	return !in_array($_SESSION['user']['role'], ['visitor', 'violator'], true);
-}
+	public static function canCurrentUserPost(): bool
+	{
+		return !in_array($_SESSION['user']['role'], ['visitor', 'violator'], true);
+	}
 
-function canCurrentUserAddEntity(): array
-{
-	if (isCurrentUserVisitor())
+	public static function canCurrentUserAddEntity(): array
 	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\UserVisitor;
+		if (Session::isCurrentUserVisitor())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\UserVisitor;
+		}
+		else if (Session::isCurrentUserViolator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\UserViolator;
+		}
+		else
+		{
+			$canUserDoIt = true;
+			$reason = '';
+		}
+		
+		return [$canUserDoIt, $reason];
 	}
-	else if (isCurrentUserViolator())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\UserViolator;
-	}
-	else
-	{
-		$canUserDoIt = true;
-		$reason = '';
-	}
-	
-	return [$canUserDoIt, $reason];
-}
 
-function canCurrentUserEditEntity(int|null $entityContributorId, string $entityStatus): array
-{
-	if ($entityStatus === 'hidden' && !isCurrentUserModerator())
+	public static function canCurrentUserEditEntity(int|null $contributorId, string $entityStatus): array
 	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\InfoHidden;
+		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\InfoHidden;
+		}
+		else if (!Session::isCurrentUser($contributorId) && !Session::isCurrentUserModerator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\UserNotAuthor;
+		}
+		else if ($entityStatus === 'checked' && !Session::isCurrentUserModerator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\InfoChecked;
+		}
+		else if (Session::isCurrentUserViolator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\UserViolator;
+		}
+		else
+		{
+			$canUserDoIt = true;
+			$reason = '';
+		}
+		
+		return [$canUserDoIt, $reason];
 	}
-	else if (!isCurrentUser($entityContributorId) && !isCurrentUserModerator())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\UserNotAuthor;
-	}
-	else if ($entityStatus === 'checked' && !isCurrentUserModerator())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\InfoChecked;
-	}
-	else if (isCurrentUserViolator())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\UserViolator;
-	}
-	else
-	{
-		$canUserDoIt = true;
-		$reason = '';
-	}
-	
-	return [$canUserDoIt, $reason];
-}
 
-function canCurrentUserDeleteEntity(int|null $entityContributorId, string $entityStatus): array
-{
-	return canCurrentUserEditEntity($entityContributorId, $entityStatus);
-}
+	public static function canCurrentUserDeleteEntity(int|null $contributorId, string $entityStatus): array
+	{
+		return Session::canCurrentUserEditEntity($contributorId, $entityStatus);
+	}
 
-function canCurrentUserReportEntity(string $entityStatus)
-{
-	if ($entityStatus === 'hidden' && !isCurrentUserModerator())
+	public static function canCurrentUserReportEntity(string $entityStatus)
 	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\InfoHidden;
+		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\InfoHidden;
+		}
+		else
+		{
+			$canUserDoIt = true;
+			$reason = '';
+		}
+		
+		return [$canUserDoIt, $reason];
 	}
-	else
-	{
-		$canUserDoIt = true;
-		$reason = '';
-	}
-	
-	return [$canUserDoIt, $reason];
-}
 
-function canCurrentUserAddLyrics(string $entityStatus): array
-{
-	if ($entityStatus === 'hidden' && !isCurrentUserModerator())
+	public static function canCurrentUserAddLyrics(string $entityStatus): array
 	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\InfoHidden;
+		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\InfoHidden;
+		}
+		else if (Session::isCurrentUserVisitor())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\UserVisitor;
+		}
+		else if (Session::isCurrentUserViolator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\UserViolator;
+		}
+		else
+		{
+			$canUserDoIt = true;
+			$reason = '';
+		}
+		
+		return [$canUserDoIt, $reason];
 	}
-	else if (isCurrentUserVisitor())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\UserVisitor;
-	}
-	else if (isCurrentUserViolator())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\UserViolator;
-	}
-	else
-	{
-		$canUserDoIt = true;
-		$reason = '';
-	}
-	
-	return [$canUserDoIt, $reason];
-}
 
-function canCurrentUserEditLyrics(int|null $entityContributorId, string $entityStatus, bool $songHasTranslations): array
-{
-	if ($entityStatus === 'hidden' && !isCurrentUserModerator())
+	public static function canCurrentUserEditLyrics(int|null $contributorId, string $entityStatus, bool $songHasTranslations): array
 	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\InfoHidden;
+		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\InfoHidden;
+		}
+		else if (!Session::isCurrentUser($contributorId) && !Session::isCurrentUserModerator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\UserNotAuthor;
+		}
+		else if ($entityStatus === 'checked' && !Session::isCurrentUserModerator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\InfoChecked;
+		}
+		else if ($songHasTranslations && !Session::isCurrentUserModerator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\SongHasTranslations;
+		}
+		else if (Session::isCurrentUserVisitor())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\UserVisitor;
+		}
+		else if (Session::isCurrentUserViolator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\UserViolator;
+		}
+		else
+		{
+			$canUserDoIt = true;
+			$reason = '';
+		}
+		
+		return [$canUserDoIt, $reason];
 	}
-	else if (!isCurrentUser($entityContributorId) && !isCurrentUserModerator())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\UserNotAuthor;
-	}
-	else if ($entityStatus === 'checked' && !isCurrentUserModerator())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\InfoChecked;
-	}
-	else if ($songHasTranslations && !isCurrentUserModerator())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\SongHasTranslations;
-	}
-	else if (isCurrentUserVisitor())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\UserVisitor;
-	}
-	else if (isCurrentUserViolator())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\UserViolator;
-	}
-	else
-	{
-		$canUserDoIt = true;
-		$reason = '';
-	}
-	
-	return [$canUserDoIt, $reason];
-}
 
-function canCurrentUserEditTranslation(int|null $entityContributorId, string $entityStatus, bool $isSongOriginal): array
-{
-	if ($entityStatus === 'hidden' && !isCurrentUserModerator())
+	public static function canCurrentUserEditTranslation(int|null $contributorId, string $entityStatus, bool $isSongOriginal): array
 	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\InfoHidden;
+		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\InfoHidden;
+		}
+		else if (!Session::isCurrentUser($contributorId) && !Session::isCurrentUserModerator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\UserNotAuthor;
+		}
+		else if (!$isSongOriginal)
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\NotOriginalSong;
+		}
+		else if (Session::isCurrentUserViolator())
+		{
+			$canUserDoIt = false;
+			$reason = \Localization\Tooltip\UserViolator;
+		}
+		else
+		{
+			$canUserDoIt = true;
+			$reason = '';
+		}
+		
+		return [$canUserDoIt, $reason];
 	}
-	else if (!isCurrentUser($entityContributorId) && !isCurrentUserModerator())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\UserNotAuthor;
-	}
-	else if (!$isSongOriginal)
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\NotOriginalSong;
-	}
-	else if (isCurrentUserViolator())
-	{
-		$canUserDoIt = false;
-		$reason = \Localization\Tooltip\UserViolator;
-	}
-	else
-	{
-		$canUserDoIt = true;
-		$reason = '';
-	}
-	
-	return [$canUserDoIt, $reason];
-}
 
-function canCurrentUserDeleteTranslation(int|null $entityContributorId, string $entityStatus, bool $isSongOriginal): array
-{
-	return canCurrentUserEditTranslation($entityContributorId, $entityStatus, $isSongOriginal);
+	public static function canCurrentUserDeleteTranslation(int|null $contributorId, string $entityStatus, bool $isSongOriginal): array
+	{
+		return Session::canCurrentUserEditTranslation($contributorId, $entityStatus, $isSongOriginal);
+	}
 }

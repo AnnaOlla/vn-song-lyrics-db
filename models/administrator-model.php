@@ -363,14 +363,13 @@ class AdministratorModel extends UserModel
 	
 	final public function getReportList(): array
 	{
-		// Never use *
-		
 		$stmt = $this->pdo->query
 		(
 			'
 			SELECT 
 				r.id,
 				r.sender_id,
+				r.ip_address,
 				u.username,
 				r.message,
 				r.request_uri,
@@ -452,25 +451,36 @@ class AdministratorModel extends UserModel
 	
 	final public function getUserList(): array
 	{
-		// Never use *
-		
 		$stmt = $this->pdo->query
 		(
 			'
 			SELECT 
-				u1.id,
-				rl.en_name,
-				u1.username,
-				u1.email,
-				u1.ip_address,
-				u1.timestamp_created,
-				u1.timestamp_last_log_in
+				u.id,
+				r.en_name,
+				u.username,
+				u.email,
+				u.timestamp_created,
+				u.timestamp_last_log_in,
+				GROUP_CONCAT(f.ip_address SEPARATOR 0xFFFFFFFFFFFFFFFF) AS "fingerprints"
 			FROM
-				users AS u1
+				users AS u
 			JOIN
-				roles AS rl
+				roles AS r
 			ON
-				u1.role_id = rl.id
+				u.role_id = r.id
+			JOIN
+				fingerprints AS f
+			ON
+				u.id = f.user_id
+			GROUP BY
+				u.id,
+				r.en_name,
+				u.username,
+				u.email,
+				u.timestamp_created,
+				u.timestamp_last_log_in
+			ORDER BY
+				u.id
 			'
 		);
 		

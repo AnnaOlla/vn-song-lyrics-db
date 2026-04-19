@@ -171,7 +171,7 @@ class VisitorView extends ErrorView
 		
 		foreach ($games as $game)
 		{
-			$href = buildInternalLink($this->language, 'game', $game['uri']);
+			$href = Session::buildInternalLink($this->language, 'game', $game['uri']);
 			
 			$image        = $this->createGameImage($game);
 			$textEntities = [];
@@ -182,7 +182,7 @@ class VisitorView extends ErrorView
 			
 			if ($relationKey)
 			{
-				if (isCurrentUserModerator())
+				if (Session::isCurrentUserModerator())
 					$textEntities[] = $this->createStatusSelect($game, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($game[$relationKey], true);
@@ -206,7 +206,7 @@ class VisitorView extends ErrorView
 		
 		foreach ($albums as $album)
 		{
-			$href = buildInternalLink($this->language, 'album', $album['uri']);
+			$href = Session::buildInternalLink($this->language, 'album', $album['uri']);
 			
 			$image        = $this->createAlbumImage($album);
 			$textEntities = [];
@@ -217,7 +217,7 @@ class VisitorView extends ErrorView
 			
 			if ($relationKey)
 			{
-				if (isCurrentUserModerator())
+				if (Session::isCurrentUserModerator())
 					$textEntities[] = $this->createStatusSelect($album, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($album[$relationKey], true);
@@ -241,7 +241,7 @@ class VisitorView extends ErrorView
 		
 		foreach ($artists as $artist)
 		{
-			$href = buildInternalLink($this->language, 'artist', $artist['uri']);
+			$href = Session::buildInternalLink($this->language, 'artist', $artist['uri']);
 			
 			$image        = $this->createArtistImage($artist);
 			$textEntities = [];
@@ -252,7 +252,7 @@ class VisitorView extends ErrorView
 			
 			if ($relationKey)
 			{
-				if (isCurrentUserModerator())
+				if (Session::isCurrentUserModerator())
 					$textEntities[] = $this->createStatusSelect($artist, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($artist[$relationKey], true);
@@ -276,7 +276,7 @@ class VisitorView extends ErrorView
 		
 		foreach ($characters as $character)
 		{
-			$href = buildInternalLink($this->language, 'character', $character['uri']);
+			$href = Session::buildInternalLink($this->language, 'character', $character['uri']);
 			
 			$image        = $this->createCharacterImage($character);
 			$textEntities = [];
@@ -287,7 +287,7 @@ class VisitorView extends ErrorView
 			
 			if ($relationKey)
 			{
-				if (isCurrentUserModerator())
+				if (Session::isCurrentUserModerator())
 					$textEntities[] = $this->createStatusSelect($character, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($character[$relationKey], true);
@@ -309,13 +309,13 @@ class VisitorView extends ErrorView
 			
 			if ($songs[$i]['has_vocal'])
 			{
-				$href = buildInternalLink($this->language, 'album', $songs[$i]['album_uri'], 'song', $songs[$i]['uri']);
+				$href = Session::buildInternalLink($this->language, 'album', $songs[$i]['album_uri'], 'song', $songs[$i]['uri']);
 				$transliteratedName = $this->createParagraphAsLink($songs[$i]['transliterated_name'], $href);
 			}
 			else
 				$transliteratedName = $this->createParagraph($songs[$i]['transliterated_name']);
 			
-			$href = buildInternalLink
+			$href = Session::buildInternalLink
 			(
 				$this->language,
 				'album',
@@ -325,7 +325,7 @@ class VisitorView extends ErrorView
 				'edit'
 			);
 			
-			[$isEnabled, $tooltipIfDisabled] = canCurrentUserEditEntity
+			[$isEnabled, $tooltipIfDisabled] = Session::canCurrentUserEditEntity
 			(
 				$songs[$i]['user_added_id'],
 				$songs[$i]['status']
@@ -382,9 +382,9 @@ class VisitorView extends ErrorView
 		if (count($songs) < $album['song_count'])
 		{
 			$title = \Localization\AlbumPage\AddSong;
-			$href  = buildInternalLink($this->language, 'album', $album['uri'], 'add-song');
+			$href  = Session::buildInternalLink($this->language, 'album', $album['uri'], 'add-song');
 			
-			[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserEditEntity
+			[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserEditEntity
 			(
 				$album['user_added_id'],
 				$album['status']
@@ -401,12 +401,12 @@ class VisitorView extends ErrorView
 			';
 		}
 		
-		if (count($songs) === 0 && isCurrentUserModerator())
+		if (count($songs) === 0 && Session::isCurrentUserModerator())
 		{
 			$title = \Localization\AlbumPage\FillAlbum;
-			$href  = buildInternalLink($this->language, 'album', $album['uri'], 'fill-album');
+			$href  = Session::buildInternalLink($this->language, 'album', $album['uri'], 'fill-album');
 			
-			[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserEditEntity
+			[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserEditEntity
 			(
 				$album['user_added_id'],
 				$album['status']
@@ -458,7 +458,7 @@ class VisitorView extends ErrorView
 			
 			if ($song['has_vocal'])
 			{
-				$href = buildInternalLink($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
+				$href = Session::buildInternalLink($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
 				$textEntities[] = $this->createHeadingAsLink($song['transliterated_name'], $headingLevel, $href, 'entity-name');
 			}
 			else
@@ -500,7 +500,7 @@ class VisitorView extends ErrorView
 			$image        = $this->createAlbumImage($album);
 			$textEntities = [];
 			
-			$href = buildInternalLink
+			$href = Session::buildInternalLink
 			(
 				$this->language,
 				'album',
@@ -568,7 +568,7 @@ class VisitorView extends ErrorView
 		
 		if ($artist['alias_of_transliterated_name'] && $artist['alias_of_uri'])
 		{
-			$href = buildInternalLink($this->language, 'artist', $artist['alias_of_uri']);
+			$href = Session::buildInternalLink($this->language, 'artist', $artist['alias_of_uri']);
 			$text = $artist['alias_of_transliterated_name'];
 			
 			$textEntities[] = '<p>'.\Localization\ArtistPage\AliasOf.$this->createLink($href, $text).'</p>';
@@ -622,7 +622,7 @@ class VisitorView extends ErrorView
 		foreach ($albums as $album)
 		{
 			$headingLevel = 3;
-			$href = buildInternalLink($this->language, 'album', $album['uri']);
+			$href = Session::buildInternalLink($this->language, 'album', $album['uri']);
 			
 			$image   = $this->createAlbumImage($album);
 			$heading = $this->createHeading($album['transliterated_name'], $headingLevel);
@@ -648,7 +648,7 @@ class VisitorView extends ErrorView
 		foreach ($lyrics as $lyric)
 		{
 			$headingLevel = 3;
-			$href = buildInternalLink($this->language, 'album', $lyric['album_uri'], 'song', $lyric['uri']);
+			$href = Session::buildInternalLink($this->language, 'album', $lyric['album_uri'], 'song', $lyric['uri']);
 			
 			$album = [];
 			$album['transliterated_name'] = $lyric['album_transliterated_name'];
@@ -679,7 +679,7 @@ class VisitorView extends ErrorView
 		foreach ($translations as $translation)
 		{
 			$headingLevel = 3;
-			$href = buildInternalLink
+			$href = Session::buildInternalLink
 			(
 				$this->language,
 				'album',
@@ -871,9 +871,9 @@ class VisitorView extends ErrorView
 					</section>
 					<section>
 						<p>'.\Localization\SignUpPage\Confirmation.'</p>
-							<a href="'.buildInternalLink($this->language, 'policy').'" target="_blank">'.\Localization\SignUpPage\Policy.'</a>,
-							<a href="'.buildInternalLink($this->language, 'rules').'" target="_blank">'.\Localization\SignUpPage\Rules.'</a>,
-							<a href="'.buildInternalLink($this->language, 'writing-guide').'" target="_blank">'.\Localization\SignUpPage\WritingGuide.'</a>.
+							<a href="'.Session::buildInternalLink($this->language, 'policy').'" target="_blank">'.\Localization\SignUpPage\Policy.'</a>,
+							<a href="'.Session::buildInternalLink($this->language, 'rules').'" target="_blank">'.\Localization\SignUpPage\Rules.'</a>,
+							<a href="'.Session::buildInternalLink($this->language, 'writing-guide').'" target="_blank">'.\Localization\SignUpPage\WritingGuide.'</a>.
 						<p>'.\Localization\SignUpPage\Warning.'</p>
 					</section>
 					<section>
@@ -904,10 +904,10 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefButton = buildInternalLink($this->language, 'add-game');
-		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
+		$hrefButton = Session::buildInternalLink($this->language, 'add-game');
+		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserAddEntity();
 		
-		$hrefThisPage      = buildInternalLink($this->language, 'game-list');
+		$hrefThisPage      = Session::buildInternalLink($this->language, 'game-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $gameCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($search);
@@ -972,10 +972,10 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefButton = buildInternalLink($this->language, 'add-album');
-		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
+		$hrefButton = Session::buildInternalLink($this->language, 'add-album');
+		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserAddEntity();
 		
-		$hrefThisPage      = buildInternalLink($this->language, 'album-list');
+		$hrefThisPage      = Session::buildInternalLink($this->language, 'album-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $albumCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($search);
@@ -1040,10 +1040,10 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefButton = buildInternalLink($this->language, 'add-artist');
-		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
+		$hrefButton = Session::buildInternalLink($this->language, 'add-artist');
+		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserAddEntity();
 		
-		$hrefThisPage      = buildInternalLink($this->language, 'artist-list');
+		$hrefThisPage      = Session::buildInternalLink($this->language, 'artist-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $artistCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($search);
@@ -1108,10 +1108,10 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefButton = buildInternalLink($this->language, 'add-character');
-		[$isButtonEnabled, $tooltipIfDisabled] = canCurrentUserAddEntity();
+		$hrefButton = Session::buildInternalLink($this->language, 'add-character');
+		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserAddEntity();
 		
-		$hrefThisPage      = buildInternalLink($this->language, 'character-list');
+		$hrefThisPage      = Session::buildInternalLink($this->language, 'character-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $characterCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($search);
@@ -1176,7 +1176,7 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefThisPage      = buildInternalLink($this->language, 'song-list');
+		$hrefThisPage      = Session::buildInternalLink($this->language, 'song-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $songCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($search);
@@ -1240,7 +1240,7 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefThisPage      = buildInternalLink($this->language, 'translation-list');
+		$hrefThisPage      = Session::buildInternalLink($this->language, 'translation-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $translationCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($search);
@@ -1343,7 +1343,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (isCurrentUserModerator())
+		if (Session::isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1395,7 +1395,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (isCurrentUserModerator())
+		if (Session::isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1456,7 +1456,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (isCurrentUserModerator())
+		if (Session::isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1517,7 +1517,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (isCurrentUserModerator())
+		if (Session::isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1558,8 +1558,8 @@ class VisitorView extends ErrorView
 		$button = $this->createButton
 		(
 			\Localization\LyricsPage\AddLyrics,
-			buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'add-lyrics'),
-			!isCurrentUserVisitor(),
+			Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'add-lyrics'),
+			!Session::isCurrentUserVisitor(),
 			\Localization\Tooltip\UserVisitor
 		);
 		
@@ -1641,7 +1641,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (isCurrentUserModerator())
+		if (Session::isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1727,7 +1727,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = ['/js/translation-page.js'];
-		if (isCurrentUserModerator())
+		if (Session::isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1775,10 +1775,11 @@ class VisitorView extends ErrorView
 		foreach ($feedbacks as $feedback)
 		{
 			$author    = $feedback['sender_username'] ?? \Localization\FeedbackPage\AnonymousAuthor;
-			$ip        = encryptData($feedback['sender_ip']);
+			$ip        = Cryptography::decryptData($feedback['sender_ip']);
+			$ip        = Cryptography::generateSimpleHash($ip);
 			$timestamp = $feedback['message_timestamp'];
 			$message   = $feedback['message'];
-			$id        = isCurrentUserModerator() ? ' data-id="'.$feedback['id'].'"' : '';
+			$id        = Session::isCurrentUserModerator() ? ' data-id="'.$feedback['id'].'"' : '';
 			
 			$html .= 
 			'
@@ -1802,7 +1803,7 @@ class VisitorView extends ErrorView
 				';
 			}
 			
-			if (isCurrentUserModerator())
+			if (Session::isCurrentUserModerator())
 			{
 				$html .= 
 				'
@@ -1829,7 +1830,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (isCurrentUserModerator())
+		if (Session::isCurrentUserModerator())
 		{
 			$js[] = '/js/moderation/feedback.js';
 		}
@@ -1880,7 +1881,7 @@ class VisitorView extends ErrorView
 		}
 		
 		$heading = \Localization\ReportPage\Heading.htmlspecialchars($entityName).htmlspecialchars($entityType);
-		$reportLink = buildInternalLink($this->language, 'report');
+		$reportLink = Session::buildInternalLink($this->language, 'report');
 		
 		$html = $this->startRender
 		(
@@ -1955,12 +1956,12 @@ class VisitorView extends ErrorView
 				'.$this->createParagraph(\Localization\UserPage\Role.htmlspecialchars($role)).'
 		';
 		
-		if (isCurrentUser($userData['user_id']) || isCurrentUserModerator())
+		if (Session::isCurrentUser($userData['user_id']) || Session::isCurrentUserModerator())
 		{
-			$href1 = buildInternalLink($this->language, 'user', $userData['user_username'], 'change-account-data');
-			$href4 = buildInternalLink($this->language, 'user', $userData['user_username'], 'delete-account');
+			$href1 = Session::buildInternalLink($this->language, 'user', $userData['user_username'], 'change-account-data');
+			$href4 = Session::buildInternalLink($this->language, 'user', $userData['user_username'], 'delete-account');
 			
-			$condition = !isCurrentUserViolator();
+			$condition = !Session::isCurrentUserViolator();
 			$tooltip = \Localization\Tooltip\UserViolator;
 			
 			$html .= 

@@ -56,20 +56,20 @@ class UserController extends ViolatorController
 		$characterIds       = $_POST['character-ids']       ?? [];
 		$userAddedId        = $_SESSION['user']['id'];
 		
-		$originalName       = trimNullableString($originalName);
-		$transliteratedName = trimNullableString($transliteratedName);
-		$localizedName      = trimNullableString($localizedName);
-		$logo               = getNullableFile($logo);
-		$vndbId             = parseNullableVndbId($vndbLink, 'v');
-		$albumIds           = parseNullableIntegerArray($albumIds, 1);
-		$albumIds           = removeNullValues($albumIds);
-		$characterIds       = parseNullableIntegerArray($characterIds, 1);
-		$characterIds       = removeNullValues($characterIds);
+		$originalName       = Parsing::trimNullableString($originalName);
+		$transliteratedName = Parsing::trimNullableString($transliteratedName);
+		$localizedName      = Parsing::trimNullableString($localizedName);
+		$logo               = Parsing::getNullableFile($logo);
+		$vndbId             = Parsing::parseNullableVndbId($vndbLink, 'v');
+		$albumIds           = Parsing::parseNullableIntegerArray($albumIds, 1);
+		$albumIds           = Parsing::removeNullValues($albumIds);
+		$characterIds       = Parsing::parseNullableIntegerArray($characterIds, 1);
+		$characterIds       = Parsing::removeNullValues($characterIds);
 		
-		if (haveNullOrEmpty($originalName, $transliteratedName))
+		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
-		if (!isPrintableAscii($transliteratedName))
+		if (!Validation::isPrintableAscii($transliteratedName))
 			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($albumIds, $allAlbumIds))
@@ -94,7 +94,7 @@ class UserController extends ViolatorController
 		foreach ($characterIds as $characterId)
 			$this->model->addCharacterGameRelation($gameId, $characterId);
 		
-		$link = buildInternalLink($this->language, 'game', $gameUri);
+		$link = Session::buildInternalLink($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -136,19 +136,19 @@ class UserController extends ViolatorController
 		$gameIds            = $_POST['game-ids']            ?? [];
 		$userAddedId        = $_SESSION['user']['id'];
 		
-		$originalName       = trimNullableString($originalName);
-		$transliteratedName = trimNullableString($transliteratedName);
-		$localizedName      = trimNullableString($localizedName);
-		$cover              = getNullableFile($cover);
-		$vgmdbId            = parseNullableVgmdbId($vgmdbLink, 'album');
-		$songCount          = parseNullableInteger($songCount, 1);
-		$gameIds            = parseNullableIntegerArray($gameIds, 1);
-		$gameIds            = removeNullValues($gameIds);
+		$originalName       = Parsing::trimNullableString($originalName);
+		$transliteratedName = Parsing::trimNullableString($transliteratedName);
+		$localizedName      = Parsing::trimNullableString($localizedName);
+		$cover              = Parsing::getNullableFile($cover);
+		$vgmdbId            = Parsing::parseNullableVgmdbId($vgmdbLink, 'album');
+		$songCount          = Parsing::parseNullableInteger($songCount, 1);
+		$gameIds            = Parsing::parseNullableIntegerArray($gameIds, 1);
+		$gameIds            = Parsing::removeNullValues($gameIds);
 		
-		if (haveNullOrEmpty($originalName, $transliteratedName, $songCount))
+		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $songCount))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
-		if (!isPrintableAscii($transliteratedName))
+		if (!Validation::isPrintableAscii($transliteratedName))
 			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
@@ -168,7 +168,7 @@ class UserController extends ViolatorController
 		foreach ($gameIds as $gameId)
 			$this->model->addGameAlbumRelation($gameId, $albumId);
 		
-		$link = buildInternalLink($this->language, 'album', $albumUri);
+		$link = Session::buildInternalLink($this->language, 'album', $albumUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -209,17 +209,17 @@ class UserController extends ViolatorController
 		$aliasOfId          = $_POST['original-artist-id']  ?? null;
 		$userAddedId        = $_SESSION['user']['id'];
 		
-		$originalName       = trimNullableString($originalName);
-		$transliteratedName = trimNullableString($transliteratedName);
-		$localizedName      = trimNullableString($localizedName);
-		$photo              = getNullableFile($photo);
-		$vgmdbId            = parseNullableVgmdbId($vgmdbLink, 'artist');
-		$aliasOfId          = parseNullableInteger($aliasOfId, 1);
+		$originalName       = Parsing::trimNullableString($originalName);
+		$transliteratedName = Parsing::trimNullableString($transliteratedName);
+		$localizedName      = Parsing::trimNullableString($localizedName);
+		$photo              = Parsing::getNullableFile($photo);
+		$vgmdbId            = Parsing::parseNullableVgmdbId($vgmdbLink, 'artist');
+		$aliasOfId          = Parsing::parseNullableInteger($aliasOfId, 1);
 		
-		if (haveNullOrEmpty($originalName, $transliteratedName))
+		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
-		if (!isPrintableAscii($transliteratedName))
+		if (!Validation::isPrintableAscii($transliteratedName))
 			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if ($aliasOfId && !in_array($aliasOfId, $originalArtists))
@@ -236,7 +236,7 @@ class UserController extends ViolatorController
 			$userAddedId
 		);
 		
-		$link = buildInternalLink($this->language, 'artist', $artistUri);
+		$link = Session::buildInternalLink($this->language, 'artist', $artistUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -277,18 +277,18 @@ class UserController extends ViolatorController
 		$gameIds            = $_POST['game-ids']            ?? [];
 		$userAddedId        = $_SESSION['user']['id'];
 		
-		$originalName       = trimNullableString($originalName);
-		$transliteratedName = trimNullableString($transliteratedName);
-		$localizedName      = trimNullableString($localizedName);
-		$image              = getNullableFile($image);
-		$vndbId             = parseNullableVndbId($vndbLink, 'c');
-		$gameIds            = parseNullableIntegerArray($gameIds, 1);
-		$gameIds            = removeNullValues($gameIds);
+		$originalName       = Parsing::trimNullableString($originalName);
+		$transliteratedName = Parsing::trimNullableString($transliteratedName);
+		$localizedName      = Parsing::trimNullableString($localizedName);
+		$image              = Parsing::getNullableFile($image);
+		$vndbId             = Parsing::parseNullableVndbId($vndbLink, 'c');
+		$gameIds            = Parsing::parseNullableIntegerArray($gameIds, 1);
+		$gameIds            = Parsing::removeNullValues($gameIds);
 		
-		if (haveNullOrEmpty($originalName, $transliteratedName))
+		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
-		if (!isPrintableAscii($transliteratedName))
+		if (!Validation::isPrintableAscii($transliteratedName))
 			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
@@ -307,7 +307,7 @@ class UserController extends ViolatorController
 		foreach ($gameIds as $gameId)
 			$this->model->addCharacterGameRelation($characterId, $gameId);
 		
-		$link = buildInternalLink($this->language, 'character', $characterUri);
+		$link = Session::buildInternalLink($this->language, 'character', $characterUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -319,13 +319,13 @@ class UserController extends ViolatorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($album['status'] === 'checked' && !isCurrentUserModerator())
+		if ($album['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
-		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($album['user_added_id']) && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		if ($songCount >= $album['song_count'])
@@ -371,12 +371,12 @@ class UserController extends ViolatorController
 		$hasVocal           = $_POST['has-vocal']           ?? null;
 		$userAddedId        = $_SESSION['user']['id'];
 		
-		$discNumber         = parseNullableInteger($discNumber, 1);
-		$trackNumber        = parseNullableInteger($trackNumber, 1);
-		$originalName       = trimNullableString($originalName);
-		$transliteratedName = trimNullableString($transliteratedName);
-		$localizedName      = trimNullableString($localizedName);
-		$hasVocal           = parseNullableInteger($hasVocal, 0, 1);
+		$discNumber         = Parsing::parseNullableInteger($discNumber, 1);
+		$trackNumber        = Parsing::parseNullableInteger($trackNumber, 1);
+		$originalName       = Parsing::trimNullableString($originalName);
+		$transliteratedName = Parsing::trimNullableString($transliteratedName);
+		$localizedName      = Parsing::trimNullableString($localizedName);
+		$hasVocal           = Parsing::parseNullableInteger($hasVocal, 0, 1);
 		
 		$isSameDiscNextTrack   = ($discNumber === $currentDiscNumber && $trackNumber === $currentTrackNumber);
 		$isNextDiscFirstTrack  = ($discNumber === $currentDiscNumber + 1 && $trackNumber === 1);
@@ -384,10 +384,10 @@ class UserController extends ViolatorController
 		$isFirstTrack          = ($trackNumber === 1 && $currentTrackNumber === 1);
 		$isFirstDiscFirstTrack = ($isFirstDisc && $isFirstTrack);
 		
-		if (haveNullOrEmpty($discNumber, $trackNumber, $originalName, $transliteratedName, $hasVocal))
+		if (Validation::haveNullOrEmpty($discNumber, $trackNumber, $originalName, $transliteratedName, $hasVocal))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
-		if (!isPrintableAscii($transliteratedName))
+		if (!Validation::isPrintableAscii($transliteratedName))
 			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (!$isSameDiscNextTrack && !$isNextDiscFirstTrack && !$isFirstDiscFirstTrack)
@@ -408,9 +408,9 @@ class UserController extends ViolatorController
 		$songCount++;
 		
 		if ($songCount === $album['song_count'])
-			$this->handleRedirect(buildInternalLink($this->language, 'album', $album['uri']));
+			$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri']));
 		else
-			$this->handleRedirect(buildInternalLink($this->language, 'album', $album['uri'], 'add-song'));
+			$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri'], 'add-song'));
 	}
 	
 	final public function handleAddLyricsPage(string $albumUri, string $songUri): void
@@ -421,16 +421,16 @@ class UserController extends ViolatorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($song['status'] === 'checked' && !isCurrentUserModerator())
+		if ($song['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		if (!$song['has_vocal'] || $song['lyrics'] || $song['original_song_id'])
@@ -503,16 +503,16 @@ class UserController extends ViolatorController
 		$notes             = $_POST['notes']            ?? null;
 		$userAddedId       = $_SESSION['user']['id'];
 		
-		$artistIds         = parseNullableIntegerArray($artistIds, 1);
-		$characterIds      = parseNullableIntegerArray($characterIds, 1);
-		$originalSongId    = parseNullableInteger($originalSongId, 1);
-		$languageId        = parseNullableInteger($languageId, 1);
-		$lyrics            = trimNullableText($lyrics);
-		$notes             = trimNullableText($notes);
+		$artistIds         = Parsing::parseNullableIntegerArray($artistIds, 1);
+		$characterIds      = Parsing::parseNullableIntegerArray($characterIds, 1);
+		$originalSongId    = Parsing::parseNullableInteger($originalSongId, 1);
+		$languageId        = Parsing::parseNullableInteger($languageId, 1);
+		$lyrics            = Parsing::trimNullableText($lyrics);
+		$notes             = Parsing::trimNullableText($notes);
 		
 		// Empty should be reduced to null
-		$lyrics            = trimNullableString($lyrics);
-		$notes             = trimNullableString($notes);
+		$lyrics            = Parsing::trimNullableString($lyrics);
+		$notes             = Parsing::trimNullableString($notes);
 		
 		if (count($artistIds) === 0)
 			throw new HttpBadRequest400('Artists were not provided', get_defined_vars());
@@ -552,7 +552,7 @@ class UserController extends ViolatorController
 		foreach (array_combine($artistIds, $characterIds) as $artistId => $characterId)
 			$this->model->addSongArtistCharacterRelation($song['id'], $artistId, $characterId);
 		
-		$link = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
+		$link = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		$this->handleRedirect($link);
 	}
 	
@@ -564,13 +564,13 @@ class UserController extends ViolatorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song['has_vocal'] || !$song['has_lyrics'] || $song['original_song_id'])
@@ -626,16 +626,16 @@ class UserController extends ViolatorController
 		$notes                = $_POST['translation-notes']       ?? null;
 		$userAddedId          = $_SESSION['user']['id'];
 		
-		$languageId           = parseNullableInteger($languageId, 1);
-		$name                 = trimNullableString($name);
-		$lyrics               = trimNullableText($lyrics);
-		$notes                = trimNullableText($notes);
+		$languageId           = Parsing::parseNullableInteger($languageId, 1);
+		$name                 = Parsing::trimNullableString($name);
+		$lyrics               = Parsing::trimNullableText($lyrics);
+		$notes                = Parsing::trimNullableText($notes);
 		
 		// Empty should be reduced to null
-		$lyrics               = trimNullableString($lyrics);
-		$notes                = trimNullableString($notes);
+		$lyrics               = Parsing::trimNullableString($lyrics);
+		$notes                = Parsing::trimNullableString($notes);
 		
-		if (haveNullOrEmpty($name, $lyrics, $languageId))
+		if (Validation::haveNullOrEmpty($name, $lyrics, $languageId))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!in_array($languageId, $allLanguages))
@@ -655,7 +655,7 @@ class UserController extends ViolatorController
 			$userAddedId
 		);
 		
-		$link = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translationUri);
+		$link = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translationUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -666,10 +666,10 @@ class UserController extends ViolatorController
 		if (!$game)
 			throw new HttpNotFound404();
 		
-		if ($game['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($game['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($game['status'] === 'checked' && !isCurrentUserModerator())
+		if ($game['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -720,20 +720,20 @@ class UserController extends ViolatorController
 		$characterIds        = $_POST['character-ids']       ?? [];
 		$userUpdatedId       = $_SESSION['user']['id'];
 		
-		$originalName        = trimNullableString($originalName);
-		$transliteratedName  = trimNullableString($transliteratedName);
-		$localizedName       = trimNullableString($localizedName);
-		$logo                = getNullableFile($logo);
-		$vndbId              = parseNullableVndbId($vndbLink, 'v');
-		$albumIds            = parseNullableIntegerArray($albumIds, 1);
-		$albumIds            = removeNullValues($albumIds);
-		$characterIds        = parseNullableIntegerArray($characterIds, 1);
-		$characterIds        = removeNullValues($characterIds);
+		$originalName        = Parsing::trimNullableString($originalName);
+		$transliteratedName  = Parsing::trimNullableString($transliteratedName);
+		$localizedName       = Parsing::trimNullableString($localizedName);
+		$logo                = Parsing::getNullableFile($logo);
+		$vndbId              = Parsing::parseNullableVndbId($vndbLink, 'v');
+		$albumIds            = Parsing::parseNullableIntegerArray($albumIds, 1);
+		$albumIds            = Parsing::removeNullValues($albumIds);
+		$characterIds        = Parsing::parseNullableIntegerArray($characterIds, 1);
+		$characterIds        = Parsing::removeNullValues($characterIds);
 		
-		if (haveNullOrEmpty($originalName, $transliteratedName))
+		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
-		if (!isPrintableAscii($transliteratedName))
+		if (!Validation::isPrintableAscii($transliteratedName))
 			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($albumIds, $allAlbumIds))
@@ -763,7 +763,7 @@ class UserController extends ViolatorController
 		foreach ($characterIds as $characterId)
 			$this->model->addCharacterGameRelation($gameId, $characterId);
 		
-		$link = buildInternalLink($this->language, 'game', $gameUri);
+		$link = Session::buildInternalLink($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -774,10 +774,10 @@ class UserController extends ViolatorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($album['status'] === 'checked' && !isCurrentUserModerator())
+		if ($album['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -827,19 +827,19 @@ class UserController extends ViolatorController
 		$gameIds             = $_POST['game-ids']            ?? [];
 		$userUpdatedId       = $_SESSION['user']['id'];
 		
-		$originalName        = trimNullableString($originalName);
-		$transliteratedName  = trimNullableString($transliteratedName);
-		$localizedName       = trimNullableString($localizedName);
-		$cover               = getNullableFile($cover);
-		$vgmdbId             = parseNullableVgmdbId($vgmdbLink, 'album');
-		$songCount           = parseNullableInteger($songCount, 1);
-		$gameIds             = parseNullableIntegerArray($gameIds, 1);
-		$gameIds             = removeNullValues($gameIds);
+		$originalName        = Parsing::trimNullableString($originalName);
+		$transliteratedName  = Parsing::trimNullableString($transliteratedName);
+		$localizedName       = Parsing::trimNullableString($localizedName);
+		$cover               = Parsing::getNullableFile($cover);
+		$vgmdbId             = Parsing::parseNullableVgmdbId($vgmdbLink, 'album');
+		$songCount           = Parsing::parseNullableInteger($songCount, 1);
+		$gameIds             = Parsing::parseNullableIntegerArray($gameIds, 1);
+		$gameIds             = Parsing::removeNullValues($gameIds);
 		
-		if (haveNullOrEmpty($originalName, $transliteratedName, $songCount))
+		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $songCount))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
-		if (!isPrintableAscii($transliteratedName))
+		if (!Validation::isPrintableAscii($transliteratedName))
 			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
@@ -865,7 +865,7 @@ class UserController extends ViolatorController
 		foreach ($gameIds as $gameId)
 			$this->model->addGameAlbumRelation($gameId, $albumId);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'album', $albumUri));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $albumUri));
 	}
 	
 	final public function handleEditArtistPage(string $artistUri): void
@@ -875,10 +875,10 @@ class UserController extends ViolatorController
 		if (!$artist)
 			throw new HttpNotFound404();
 		
-		if ($artist['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($artist['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($artist['status'] === 'checked' && !isCurrentUserModerator())
+		if ($artist['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -916,17 +916,17 @@ class UserController extends ViolatorController
 		$aliasOfId           = $_POST['original-artist-id']  ?? null;
 		$userUpdatedId       = $_SESSION['user']['id'];
 		
-		$originalName        = trimNullableString($originalName);
-		$transliteratedName  = trimNullableString($transliteratedName);
-		$localizedName       = trimNullableString($localizedName);
-		$photo               = getNullableFile($photo);
-		$vgmdbId             = parseNullableVgmdbId($vgmdbLink, 'artist');
-		$aliasOfId           = parseNullableInteger($aliasOfId, 1);
+		$originalName        = Parsing::trimNullableString($originalName);
+		$transliteratedName  = Parsing::trimNullableString($transliteratedName);
+		$localizedName       = Parsing::trimNullableString($localizedName);
+		$photo               = Parsing::getNullableFile($photo);
+		$vgmdbId             = Parsing::parseNullableVgmdbId($vgmdbLink, 'artist');
+		$aliasOfId           = Parsing::parseNullableInteger($aliasOfId, 1);
 		
-		if (haveNullOrEmpty($originalName, $transliteratedName))
+		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
-		if (!isPrintableAscii($transliteratedName))
+		if (!Validation::isPrintableAscii($transliteratedName))
 			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if ($aliasOfId && !in_array($aliasOfId, $originalArtists))
@@ -944,7 +944,7 @@ class UserController extends ViolatorController
 			$userUpdatedId
 		);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'artist', $artistUri));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'artist', $artistUri));
 	}
 	
 	final public function handleEditCharacterPage(string $characterUri): void
@@ -954,10 +954,10 @@ class UserController extends ViolatorController
 		if (!$character)
 			throw new HttpNotFound404();
 		
-		if ($character['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($character['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($character['status'] === 'checked' && !isCurrentUserModerator())
+		if ($character['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -996,18 +996,18 @@ class UserController extends ViolatorController
 		$gameIds             = $_POST['game-ids']            ?? [];
 		$userUpdatedId       = $_SESSION['user']['id'];
 		
-		$originalName        = trimNullableString($originalName);
-		$transliteratedName  = trimNullableString($transliteratedName);
-		$localizedName       = trimNullableString($localizedName);
-		$image               = getNullableFile($image);
-		$vndbId              = parseNullableVndbId($vndbLink, 'c');
-		$gameIds             = parseNullableIntegerArray($gameIds, 1);
-		$gameIds             = removeNullValues($gameIds);
+		$originalName        = Parsing::trimNullableString($originalName);
+		$transliteratedName  = Parsing::trimNullableString($transliteratedName);
+		$localizedName       = Parsing::trimNullableString($localizedName);
+		$image               = Parsing::getNullableFile($image);
+		$vndbId              = Parsing::parseNullableVndbId($vndbLink, 'c');
+		$gameIds             = Parsing::parseNullableIntegerArray($gameIds, 1);
+		$gameIds             = Parsing::removeNullValues($gameIds);
 		
-		if (haveNullOrEmpty($originalName, $transliteratedName))
+		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
-		if (!isPrintableAscii($transliteratedName))
+		if (!Validation::isPrintableAscii($transliteratedName))
 			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
@@ -1029,7 +1029,7 @@ class UserController extends ViolatorController
 		foreach ($gameIds as $gameId)
 			$this->model->addCharacterGameRelation($characterId, $gameId);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'character', $characterUri));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'character', $characterUri));
 	}
 	
 	final public function handleEditSongPage(string $albumUri, string $songUri): void
@@ -1040,16 +1040,16 @@ class UserController extends ViolatorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($album['user_added_id']) && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1080,15 +1080,15 @@ class UserController extends ViolatorController
 		$hasVocal           = $_POST['has-vocal']           ?? null;
 		$userUpdatedId      = $_SESSION['user']['id'];
 		
-		$originalName       = trimNullableString($originalName);
-		$transliteratedName = trimNullableString($transliteratedName);
-		$localizedName      = trimNullableString($localizedName);
-		$hasVocal           = parseNullableInteger($hasVocal, 0, 1);
+		$originalName       = Parsing::trimNullableString($originalName);
+		$transliteratedName = Parsing::trimNullableString($transliteratedName);
+		$localizedName      = Parsing::trimNullableString($localizedName);
+		$hasVocal           = Parsing::parseNullableInteger($hasVocal, 0, 1);
 		
-		if (haveNullOrEmpty($originalName, $transliteratedName, $hasVocal))
+		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $hasVocal))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
-		if (!isPrintableAscii($transliteratedName))
+		if (!Validation::isPrintableAscii($transliteratedName))
 			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
 		
 		$this->model->updateSong
@@ -1102,7 +1102,7 @@ class UserController extends ViolatorController
 			$userUpdatedId
 		);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'album', $album['uri']));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri']));
 	}
 	
 	final public function handleEditLyricsPage(string $albumUri, string $songUri): void
@@ -1119,25 +1119,25 @@ class UserController extends ViolatorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($song['status'] === 'checked' && !isCurrentUserModerator())
+		if ($song['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		if (!$song['has_vocal'])
 			throw new HttpForbidden403();
 		
-		if (!isCurrentUser($song['user_added_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($song['user_added_id']) && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
-		if ($translations && !isCurrentUserModerator())
+		if ($translations && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1214,16 +1214,16 @@ class UserController extends ViolatorController
 		$notes               = $_POST['notes']            ?? null;
 		$userUpdatedId       = $_SESSION['user']['id'];
 		
-		$artistIds           = parseNullableIntegerArray($artistIds, 1);
-		$characterIds        = parseNullableIntegerArray($characterIds, 1);
-		$originalSongId      = parseNullableInteger($originalSongId, 1);
-		$languageId          = parseNullableInteger($languageId, 1);
-		$lyrics              = trimNullableText($lyrics);
-		$notes               = trimNullableText($notes);
+		$artistIds           = Parsing::parseNullableIntegerArray($artistIds, 1);
+		$characterIds        = Parsing::parseNullableIntegerArray($characterIds, 1);
+		$originalSongId      = Parsing::parseNullableInteger($originalSongId, 1);
+		$languageId          = Parsing::parseNullableInteger($languageId, 1);
+		$lyrics              = Parsing::trimNullableText($lyrics);
+		$notes               = Parsing::trimNullableText($notes);
 		
 		// Empty should be reduced to null
-		$lyrics              = trimNullableString($lyrics);
-		$notes               = trimNullableString($notes);
+		$lyrics              = Parsing::trimNullableString($lyrics);
+		$notes               = Parsing::trimNullableString($notes);
 		
 		if (count($artistIds) === 0)
 			throw new HttpBadRequest400('Artists were not provided', get_defined_vars());
@@ -1265,7 +1265,7 @@ class UserController extends ViolatorController
 		foreach (array_combine($artistIds, $characterIds) as $artistId => $characterId)
 			$this->model->addSongArtistCharacterRelation($song['id'], $artistId, $characterId);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']));
 	}
 	
 	final public function handleEditTranslationPage(string $albumUri, string $songUri, string $translationUri): void
@@ -1277,13 +1277,13 @@ class UserController extends ViolatorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song['has_vocal'] || !$song['lyrics'] || $song['original_song_id'])
@@ -1292,10 +1292,10 @@ class UserController extends ViolatorController
 		if (!$translation)
 			throw new HttpNotFound404();
 		
-		if ($translation['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($translation['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (!isCurrentUser($translation['user_added_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($translation['user_added_id']) && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1325,15 +1325,15 @@ class UserController extends ViolatorController
 		$notes         = $_POST['translation-notes']  ?? null;
 		$userUpdatedId = $_SESSION['user']['id'];
 		
-		$name          = trimNullableString($name);
-		$lyrics        = trimNullableText($lyrics);
-		$notes         = trimNullableText($notes);
+		$name          = Parsing::trimNullableString($name);
+		$lyrics        = Parsing::trimNullableText($lyrics);
+		$notes         = Parsing::trimNullableText($notes);
 		
 		// Empty should be reduced to null
-		$lyrics        = trimNullableString($lyrics);
-		$notes         = trimNullableString($notes);
+		$lyrics        = Parsing::trimNullableString($lyrics);
+		$notes         = Parsing::trimNullableString($notes);
 		
-		if (haveNullOrEmpty($name, $lyrics))
+		if (Validation::haveNullOrEmpty($name, $lyrics))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		$this->model->updateTranslation
@@ -1347,7 +1347,7 @@ class UserController extends ViolatorController
 			$userUpdatedId
 		);
 		
-		$link = buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+		$link = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		$this->handleRedirect($link);
 	}
 	
@@ -1358,13 +1358,13 @@ class UserController extends ViolatorController
 		if (!$game)
 			throw new HttpNotFound404();
 		
-		if (!isCurrentUser($game['user_added_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($game['user_added_id']) && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
-		if ($game['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($game['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($game['status'] === 'checked' && !isCurrentUserModerator())
+		if ($game['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1396,7 +1396,7 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteGame($game);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'game-list'));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'game-list'));
 	}
 	
 	final public function handleDeleteAlbumPage(string $albumUri): void
@@ -1406,13 +1406,13 @@ class UserController extends ViolatorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if (!isCurrentUser($album['user_added_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($album['user_added_id']) && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($album['status'] === 'checked' && !isCurrentUserModerator())
+		if ($album['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1444,7 +1444,7 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteAlbum($album);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'album-list'));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'album-list'));
 	}
 	
 	final public function handleDeleteArtistPage(string $artistUri): void
@@ -1454,13 +1454,13 @@ class UserController extends ViolatorController
 		if (!$artist)
 			throw new HttpNotFound404();
 		
-		if (!isCurrentUser($artist['user_added_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($artist['user_added_id']) && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
-		if ($artist['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($artist['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($artist['status'] === 'checked' && !isCurrentUserModerator())
+		if ($artist['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1492,7 +1492,7 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteArtist($artist);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'artist-list'));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'artist-list'));
 	}
 	
 	final public function handleDeleteCharacterPage(string $characterUri): void
@@ -1502,13 +1502,13 @@ class UserController extends ViolatorController
 		if (!$character)
 			throw new HttpNotFound404();
 		
-		if (!isCurrentUser($character['user_added_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($character['user_added_id']) && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
-		if ($character['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($character['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($character['status'] === 'checked' && !isCurrentUserModerator())
+		if ($character['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1541,7 +1541,7 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteCharacter($character);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'character-list'));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'character-list'));
 	}
 	
 	final public function handleDeleteLyricsPage(string $albumUri, string $songUri): void
@@ -1558,22 +1558,22 @@ class UserController extends ViolatorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if (!isCurrentUser($song['user_added_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($song['user_added_id']) && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
-		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song['has_vocal'] || !$song['has_lyrics'])
 			throw new HttpForbidden403();
 		
-		if ($song['status'] === 'checked' && !isCurrentUserModerator())
+		if ($song['status'] === 'checked' && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		if ($translations)
@@ -1609,7 +1609,7 @@ class UserController extends ViolatorController
 		$this->model->deleteLyrics($song);
 		$this->model->deleteSongArtistCharacterRelation(songId: $song['id']);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'album', $album['uri']));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri']));
 	}
 	
 	final public function handleDeleteTranslationPage(string $albumUri, string $songUri, string $translationUri): void
@@ -1621,19 +1621,19 @@ class UserController extends ViolatorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !isCurrentUserModerator())
+		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$translation)
 			throw new HttpNotFound404();
 		
-		if (!isCurrentUser($translation['user_added_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($translation['user_added_id']) && !Session::isCurrentUserModerator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1665,17 +1665,17 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteTranslation($translation);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']));
 	}
 	
 	final public function handleChangeAccountDataPage(string $userUri): void
 	{
-		$user = $this->model->getUserData(username: $userUri);
+		$user = $this->model->getUserData($_SESSION['user']['id']);
 		
-		if (!isCurrentUser($user['user_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($user['user_id']) && !Session::isCurrentUserModerator())
 			throw new HttpNotFound404();
 		
-		if (isCurrentUserViolator())
+		if (Session::isCurrentUserViolator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1694,7 +1694,7 @@ class UserController extends ViolatorController
 		}
 	}
 	
-	private function handleChangeAccountDataPageGet(array $user): void
+	private function handleChangeAccountDataPageGet(array $user, AuthenticationError $error = AuthenticationError::None): void
 	{
 		$this->view->renderChangeAccountDataPage($user);
 	}
@@ -1706,72 +1706,81 @@ class UserController extends ViolatorController
 		$newPassword = $_POST['new-password'] ?? null;
 		$newEmail    = $_POST['email']        ?? null;
 		
-		$MIN_LENGTH = 4;
-		$MAX_LENGTH = 32;
+		if (Validation::haveNullOrEmpty($newUsername, $oldPassword, $newEmail))
+			throw new HttpBadRequest400();
 		
-		if (!$newUsername || !$oldPassword || !$newEmail)
-			throw new HttpBadRequest400('Crucial data was not sent', get_defined_vars());
-		
-		if (!$this->model->isPasswordCorrect($user['user_email'], $oldPassword))
+		if (!$this->model->isPasswordCorrect($user['id'], $oldPassword))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthenticationError::IncorrectPassword);
+			$this->handleChangeAccountDataPageGet($user, AuthenticationError::IncorrectPassword);
 			return;
 		}
 		
-		if (trimNullableString($newUsername) !== $newUsername)
+		if (Parsing::trimNullableString($newUsername) !== $newUsername)
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthenticationError::UsernameTrimmable);
+			$this->handleChangeAccountDataPageGet($user, AuthenticationError::UsernameTrimmable);
 			return;
 		}
 		
-		if (!isLatinAlphabetAndNumbers($newUsername))
+		if (!Validation::isLatinAlphabetAndNumbers($newUsername))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthenticationError::UsernameForbiddenSymbols);
+			$this->handleChangeAccountDataPageGet($user, AuthenticationError::UsernameForbiddenSymbols);
 			return;
 		}
 		
-		if (mb_strlen($newUsername) < $MIN_LENGTH || mb_strlen($newUsername) > $MAX_LENGTH)
+		if (mb_strlen($newUsername) < self::ACCOUNT_DATA_MIN_LENGTH)
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthenticationError::UsernameShort);
+			$this->handleChangeAccountDataPageGet($user, AuthenticationError::UsernameLengthIncorrect);
 			return;
 		}
 		
-		if ($user['user_username'] !== $newUsername && $this->model->isUserRegistered($newUsername))
+		if (mb_strlen($newUsername) > self::ACCOUNT_DATA_MAX_LENGTH)
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthenticationError::UsernameTaken);
+			$this->handleChangeAccountDataPageGet($user, AuthenticationError::UsernameLengthIncorrect);
 			return;
 		}
 		
-		if (!isEmailValid($newEmail))
+		if ($user['user_username'] !== $newUsername && $this->model->isUsernameRegistered($newUsername))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthenticationError::EmailInvalid);
+			$this->handleChangeAccountDataPageGet($user, AuthenticationError::UsernameTaken);
+			return;
+		}
+		
+		if (!Validation::isEmailValid($newEmail))
+		{
+			$this->handleChangeAccountDataPageGet($user, AuthenticationError::EmailInvalid);
 			return;
 		}
 		
 		if ($user['user_email'] !== $newEmail && $this->model->isEmailRegistered($newEmail))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthenticationError::EmailTaken);
+			$this->handleChangeAccountDataPageGet($user, AuthenticationError::EmailTaken);
 			return;
 		}
 		
-		if ($newPassword && !isLatinAlphabetAndNumbers($newPassword))
+		if ($newPassword && !Validation::isLatinAlphabetAndNumbers($newPassword))
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthenticationError::PasswordForbiddenSymbols);
+			$this->handleChangeAccountDataPageGet($user, AuthenticationError::PasswordForbiddenSymbols);
 			return;
 		}
 		
-		if ($newPassword && (mb_strlen($newPassword) < $MIN_LENGTH || mb_strlen($newPassword) > $MAX_LENGTH))
+		if ($newPassword && mb_strlen($newPassword) < self::ACCOUNT_DATA_MIN_LENGTH)
 		{
-			$this->view->renderChangeAccountDataPage($user, AuthenticationError::PasswordShort);
+			$this->handleChangeAccountDataPageGet($user, AuthenticationError::PasswordLengthIncorrect);
+			return;
+		}
+		
+		if ($newPassword && mb_strlen($newPassword) > self::ACCOUNT_DATA_MAX_LENGTH)
+		{
+			$this->handleChangeAccountDataPageGet($user, AuthenticationError::PasswordLengthIncorrect);
 			return;
 		}
 		
 		$this->model->updateUserData($user['user_id'], $newUsername, $newEmail, $newPassword);
 		
-		$this->model->getUserData(username: $newUsername);
+		$this->model->getUserData($user['id']);
 		$this->createUserSession($user);
 		
-		$this->handleRedirect(buildInternalLink($this->language, 'user', $newUsername));
+		$this->handleRedirect(Session::buildInternalLink($this->language, 'user', $newUsername));
 	}
 	
 	final public function handleDeleteAccountPage(string $userUri): void
@@ -1781,10 +1790,10 @@ class UserController extends ViolatorController
 		if (!$user)
 			throw new HttpNotFound404();
 		
-		if (!isCurrentUser($user['user_id']) && !isCurrentUserModerator())
+		if (!Session::isCurrentUser($user['user_id']) && !Session::isCurrentUserModerator())
 			throw new HttpNotFound404();
 		
-		if (isCurrentUserViolator())
+		if (Session::isCurrentUserViolator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1802,9 +1811,9 @@ class UserController extends ViolatorController
 		}
 	}
 	
-	private function handleDeleteAccountPageGet(array $user): void
+	private function handleDeleteAccountPageGet(array $user, AuthenticationError $error = AuthenticationError::None): void
 	{
-		$this->view->renderDeleteAccountPage($user);
+		$this->view->renderDeleteAccountPage($user, $error);
 	}
 	
 	private function handleDeleteAccountPagePost(array $user): void
@@ -1814,9 +1823,9 @@ class UserController extends ViolatorController
 		if (!$password)
 			throw new HttpBadRequest400();
 		
-		if (!$this->model->isPasswordCorrect($user['user_email'], $password))
+		if (!$this->model->isPasswordCorrect($user['id'], $password))
 		{
-			$this->view->renderDeleteAccountPage($user, AuthenticationError::IncorrectPassword);
+			$this->handleDeleteAccountPageGet($user, AuthenticationError::IncorrectPassword);
 			return;
 		}
 		

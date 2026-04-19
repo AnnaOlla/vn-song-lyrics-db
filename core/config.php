@@ -1,12 +1,5 @@
 <?php
 
-// Implementations of this file must not be included in git systems.
-
-/**
- *  Creates an instance of PDO for a certain user role
- *  Must never be called outside constuctors of children of Model
- *  @userRole: role from the DB
- */
 function getPdo(string $userRole): PDO
 {
 	$settings =
@@ -46,29 +39,4 @@ function getPdo(string $userRole): PDO
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	
 	return $pdo;
-}
-
-/**
- *  Encrypts a string
- *  Intended use: encrypt sender's id and keep it unique
- *  
- *  @param string $data: string to encrypt
- *
- *  @return encrypted string
- */
-function encryptData(string $data): string
-{
-	throw new DatabaseLogicException('encryptData was not implemented');
-}
-
-/**
- *  Creates a token for account verification
- *  
- *  @param string $data: any string for randomization
- *
- *  @return 
- */
-function createToken(string $data): string
-{
-	throw new DatabaseLogicException('createToken was not implemented');
 }
