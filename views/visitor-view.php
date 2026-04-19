@@ -150,7 +150,8 @@ class VisitorView extends ErrorView
 		'
 		<section>'.\Localization\Controls\SearchHeading.'</section>
 		<section class="search-elements">
-			<input type="search" id="search-bar" value="'.htmlspecialchars($search ?? '').'" placeholder="'.\Localization\Controls\SearchPlaceholder.'" />
+			<input name="page" type="hidden" value="1" />
+			<input name="search" type="search" id="search-bar" value="'.htmlspecialchars($search ?? '').'" placeholder="'.\Localization\Controls\SearchPlaceholder.'" required />
 			<button id="search-bar-button">'.\Localization\Controls\SearchButton.'</button>
 		</section>
 		';
@@ -934,11 +935,11 @@ class VisitorView extends ErrorView
 				</section>
 			</section>
 			<section>
-				<section class="search-section">
+				<form class="search-section">
 					<section>'.$resultsLimitBlock.'</section>
 					<section>'.$paginationBlock.'</section>
 					<section>'.$searchBarBlock.'</section>
-				</section>
+				</form>
 			</section>
 			'.$this->createGameList($games, 2, 'list-entity').'
 			<section>
@@ -1002,11 +1003,11 @@ class VisitorView extends ErrorView
 				</section>
 			</section>
 			<section>
-				<section class="search-section">
+				<form class="search-section">
 					<section>'.$resultsLimitBlock.'</section>
 					<section>'.$paginationBlock.'</section>
 					<section>'.$searchBarBlock.'</section>
-				</section>
+				</form>
 			</section>
 			'.$this->createAlbumList($albums, 2, 'list-entity').'
 			<section>
@@ -1070,11 +1071,11 @@ class VisitorView extends ErrorView
 				</section>
 			</section>
 			<section>
-				<section class="search-section">
+				<form class="search-section">
 					<section>'.$resultsLimitBlock.'</section>
 					<section>'.$paginationBlock.'</section>
 					<section>'.$searchBarBlock.'</section>
-				</section>
+				</form>
 			</section>
 			'.$this->createArtistList($artists, 2, 'list-entity').'
 			<section>
@@ -1138,11 +1139,11 @@ class VisitorView extends ErrorView
 				</section>
 			</section>
 			<section>
-				<section class="search-section">
+				<form class="search-section">
 					<section>'.$resultsLimitBlock.'</section>
 					<section>'.$paginationBlock.'</section>
 					<section>'.$searchBarBlock.'</section>
-				</section>
+				</form>
 			</section>
 			'.$this->createCharacterList($characters, 2, 'list-entity').'
 			<section>
@@ -1202,11 +1203,11 @@ class VisitorView extends ErrorView
 				</section>
 			</section>
 			<section>
-				<section class="search-section">
+				<form class="search-section">
 					<section>'.$resultsLimitBlock.'</section>
 					<section>'.$paginationBlock.'</section>
 					<section>'.$searchBarBlock.'</section>
-				</section>
+				</form>
 			</section>
 			'.$this->createSongList($songs, 2, 'list-entity').'
 			<section>
@@ -1266,11 +1267,11 @@ class VisitorView extends ErrorView
 				</section>
 			</section>
 			<section>
-				<section class="search-section">
+				<form class="search-section">
 					<section>'.$resultsLimitBlock.'</section>
 					<section>'.$paginationBlock.'</section>
 					<section>'.$searchBarBlock.'</section>
-				</section>
+				</form>
 			</section>
 			'.$this->createTranslationList($translations, 2, 'list-entity').'
 			<section>

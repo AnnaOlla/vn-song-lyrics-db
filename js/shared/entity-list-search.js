@@ -2,23 +2,19 @@ function reloadEntityListPageWithNewParams(e) {
 	const limitsBar = document.getElementById('limit-result-count-bar');
 	const searchBar = document.getElementById('search-bar');
 	
-	let params = [];
+	const params = new URLSearchParams();
 	
 	if (limitsBar.value !== '')
-		params.push('limit=' + encodeURIComponent(limitsBar.value));
+		params.set('limit', limitsBar.value);
 	
 	if (limitsBar.value !== '')
-		params.push('page=' + encodeURIComponent('1'));
+		params.set('page', '1');
 	
 	if (searchBar.value !== '')
-		params.push('search=' + encodeURIComponent(searchBar.value));
+		params.set('search', searchBar.value);
 	
-	if (params.length !== 0)
-		params = '?' + params.join('&');
-	else
-		params = '';
-	
-	const url = window.location.origin + window.location.pathname + params;
+	const url  = new URL(window.location.href);
+	url.search = params.toString();
 	
 	// Redirect automatically
 	window.location.href = url;
