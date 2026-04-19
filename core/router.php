@@ -661,7 +661,7 @@ final class Router
 			
 			// Complete the request
 			
-			if (file_exists(self::MAINTENANCE_MODE_FILENAME))
+			if (file_exists(self::MAINTENANCE_MODE_FILENAME) && !Session::isCurrentUserModerator())
 				throw new HttpServiceUnavailable503();
 			
 			if (!in_array($language, self::ACCEPTED_LANGUAGES))
