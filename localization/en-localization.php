@@ -1,5 +1,73 @@
 <?php
 
+namespace Localization\Functions
+{
+	function localizeLanguageName(array $entity): string
+	{
+		return $entity['language_en_name'];
+	}
+
+	function localizeLanguageKey(): string
+	{
+		return 'language_en_name';
+	}
+
+	function localizeTranslationNumber(int $number): string
+	{
+		// Japanese only:
+		// $halfWidthDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+		// $fullWidthDigits = ['０', '１', '２', '３', '４', '５', '６', '７', '８', '９'];
+		//
+		// return '＃'.str_replace($halfWidthDigits, $fullWidthDigits, (string)$number);
+		
+		return '#'.$number;
+	}
+	
+	use InputError;
+	
+	function localizeInputError(InputError $error): string|null
+	{
+		switch ($error)
+		{
+			case InputError::None:
+				return null;
+			
+			case InputError::CaptchaInvalid:
+				return 'The code was incorrect.';
+			
+			case InputError::EmailNotFound:
+				return 'The email was not found.';
+			
+			case InputError::EmailInvalid:
+				return 'The email was not written in the correct form.';
+			
+			case InputError::EmailTaken:
+				return 'The email can not be used.';
+			
+			case InputError::UsernameForbiddenSymbols:
+				return 'The username had forbidden symbols.';
+			
+			case InputError::UsernameLengthIncorrect:
+				return 'The username had incorrect length.';
+			
+			case InputError::UsernameTaken:
+				return 'The username is taken.';
+			
+			case InputError::IncorrectPassword:
+				return 'The password was incorrect.';
+			
+			case InputError::PasswordForbiddenSymbols:
+				return 'The password had forbidden symbols.';
+			
+			case InputError::PasswordLengthIncorrect:
+				return 'The password had incorrect length.';
+			
+			default:
+				throw new Exception(__FUNCTION__.': value '.$error->name.' was not found');
+		}
+	}
+}
+
 namespace Localization\HomePage
 {
 	const Heading          = 'Visual Novel Song Lyrics Database';
@@ -67,31 +135,6 @@ namespace Localization\SignUpPage
 	const Warning      = 'Make sure you spent at least one minute for each link.';
 	
 	const AwaitingVerification = 'We have sent you a verification mail. Please, check your inbox and spam folder.';
-}
-
-namespace Localization\AuthenticationError
-{
-	const CaptchaInvalid           = 'Captcha was incorrect.';
-	
-	const EmptyEmail               = 'Email was empty.';
-	const EmailNotFound            = 'Email was not found.';
-	const EmptyPassword            = 'Password was empty.';
-	const IncorrectPassword        = 'Password was incorrect.';
-	
-	const UsernameTrimmable        = 'Username must not begin or end with invisible characters.';
-	const UsernameForbiddenSymbols = 'Username must not have symbols other than letters of the Latin alphabet and numbers.';
-	const UsernameLengthIncorrect  = 'Username must contain at least 4 symbols but not more than 32.';
-	const UsernameTaken            = 'Username is already taken.';
-	
-	const EmailTaken               = 'Email can not be used.';
-	const EmailInvalid             = 'Email is not valid.';
-	const EmailNotExists           = 'Failed to find email.';
-	
-	const PasswordForbiddenSymbols = 'Password must not have symbols other than letters of the Latin alphabet and numbers.';
-	const PasswordLengthIncorrect  = 'Password must contain at least 4 symbols but not more than 32.';
-	
-	const AccountNotVerified       = 'This account awaits verification. Please, check your inbox and spam folders.';
-	const MailSendFailed           = 'Failed to send a verification letter to the mail address.';
 }
 
 namespace Localization\GameListPage
@@ -823,29 +866,6 @@ namespace Localization\TranslationEditorPage\TooltipContent
 	                            '{nt}1{/nt}　→　If used both in notes and lyrics, creates a clickable link between them.<br/><br/>'.
 							    'More details on how to use these features are in the writing guide located in the footer of the page.<br/><br/>';
 	const Controls            = 'Click the cancel button to go back.<br/><br/>Click the submit button to send the entry.';
-}
-
-namespace Localization\Functions
-{
-	function localizeLanguageName(array $entity): string
-	{
-		return $entity['language_en_name'];
-	}
-
-	function localizeLanguageKey(): string
-	{
-		return 'language_en_name';
-	}
-
-	function localizeTranslationNumber(int $number): string
-	{
-		/* Japanese only:
-		$halfWidthDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-		$fullWidthDigits = ['０', '１', '２', '３', '４', '５', '６', '７', '８', '９'];
-		
-		return '＃'.str_replace($halfWidthDigits, $fullWidthDigits, (string)$number);*/
-		return '#'.$number;
-	}
 }
 
 namespace Localization\AboutPage

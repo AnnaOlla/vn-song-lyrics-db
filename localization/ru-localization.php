@@ -1,5 +1,73 @@
 <?php
 
+namespace Localization\Functions
+{
+	function localizeLanguageName(array $entity): string
+	{
+		return $entity['language_ru_name'];
+	}
+
+	function localizeLanguageKey(): string
+	{
+		return 'language_ru_name';
+	}
+
+	function localizeTranslationNumber(int $number): string
+	{
+		// Japanese only:
+		// $halfWidthDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+		// $fullWidthDigits = ['０', '１', '２', '３', '４', '５', '６', '７', '８', '９'];
+		//
+		// return '＃'.str_replace($halfWidthDigits, $fullWidthDigits, (string)$number);
+		
+		return '#'.$number;
+	}
+	
+	use InputError;
+	
+	function localizeInputError(InputError $error): string|null
+	{
+		switch ($error)
+		{
+			case InputError::None:
+				return null;
+			
+			case InputError::CaptchaInvalid:
+				return 'Код был введён неверно.';
+			
+			case InputError::EmailNotFound:
+				return 'Почта не была найдена.';
+			
+			case InputError::EmailInvalid:
+				return 'Формат адреса почты не был соблюдён.';
+			
+			case InputError::EmailTaken:
+				return 'Данная почта не может быть использована.';
+			
+			case InputError::UsernameForbiddenSymbols:
+				return 'Имя пользователя содержало запрещённые символы.';
+			
+			case InputError::UsernameLengthIncorrect:
+				return 'Имя пользователя имело неверную длину.';
+			
+			case InputError::UsernameTaken:
+				return 'Имя пользователя занято.';
+			
+			case InputError::IncorrectPassword:
+				return 'Пароль был введён неверно.';
+			
+			case InputError::PasswordForbiddenSymbols:
+				return 'Пароль содержал запрещённые символы.';
+			
+			case InputError::PasswordLengthIncorrect:
+				return 'Пароль имел неверную длину.';
+			
+			default:
+				throw new Exception(__FUNCTION__.': value '.$error->name.' was not found');
+		}
+	}
+}
+
 namespace Localization\HomePage
 {
 	const Heading          = 'Visual Novel Song Lyrics Database';
@@ -57,7 +125,7 @@ namespace Localization\SignUpPage
 	const Submit   = 'Зарегистрироваться';
 	
 	const HintUsername = 'Разрешённые символы: A-Z, a-z, 0-9. Длина: 4-32.';
-	const HintEmail    = 'Используется только для верификации и авторизации.';
+	const HintEmail    = 'Используется только для верификации и входа.';
 	const HintPassword = 'Разрешённые символы: A-Z, a-z, 0-9. Длина: 4-32.';
 	
 	const Confirmation = 'Нажимая кнопку «Зарегистрироваться», вы подтверждаете согласие с:';
@@ -67,31 +135,6 @@ namespace Localization\SignUpPage
 	const Warning      = 'Убедительно просим уделить пару минут на ознакомление.';
 	
 	const AwaitingVerification = 'На указанную почту отправлено письмо. Пожалуйста, проверьте входящие письма, а также папку со спамом.';
-}
-
-namespace Localization\AuthenticationError
-{
-	const CaptchaInvalid           = 'Код captcha был введён неверно.';
-	
-	const EmptyEmail               = 'Электронная почта не была введена.';
-	const EmailNotFound            = 'Электронная почта не была найдена.';
-	const EmptyPassword            = 'Пароль не был введён.';
-	const IncorrectPassword        = 'Пароль был неверен.';
-	
-	const UsernameTrimmable        = 'Имя пользователя не может начинаться или заканчиваться на непечатные символы.';
-	const UsernameForbiddenSymbols = 'Имя пользователя должно иметь только символы латинского алфавита и цифры.';
-	const UsernameLengthIncorrect  = 'Имя пользователя должно иметь длину от 4 до 32 символов.';
-	const UsernameTaken            = 'Введённое имя пользователя уже занято.';
-	
-	const EmailTaken               = 'Данная электронная почта не может быть использована.';
-	const EmailInvalid             = 'Адрес почты не соответствует формату почты.';
-	const EmailNotExists           = 'Не удалось найти электронную почту в системе.';
-	
-	const PasswordForbiddenSymbols = 'Пароль должен иметь только символы латинского алфавита и цифры.';
-	const PasswordLengthIncorrect  = 'Пароль должен иметь длину от 4 до 32 символов.';
-	
-	const AccountNotVerified       = 'Аккаунт ожидает подтверждение. Пожалуйста, проверьте почту и спам.';
-	const MailSendFailed           = 'Не удалось отправить письмо для верификации на указанный адрес.';
 }
 
 namespace Localization\GameListPage
@@ -823,29 +866,6 @@ namespace Localization\TranslationEditorPage\TooltipContent
 	                            '{nt}1{/nt}　→　Если указать строку такого вида и в словах, и в заметках, то между ними будут рабочие ссылки.<br/><br/>'.
 							    'Подробности использования можно найти в руководстве. Оно находится в самой нижней панели сайта.<br/><br/>';
 	const Controls            = 'Нажмите «Отменить», чтобы вернуться назад.<br/><br/>Нажмите «Отправить», чтобы сохранить изменения.';
-}
-
-namespace Localization\Functions
-{
-	function localizeLanguageName(array $entity): string
-	{
-		return $entity['language_ru_name'];
-	}
-
-	function localizeLanguageKey(): string
-	{
-		return 'language_ru_name';
-	}
-
-	function localizeTranslationNumber(int $number): string
-	{
-		/* Japanese only:
-		$halfWidthDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-		$fullWidthDigits = ['０', '１', '２', '３', '４', '５', '６', '７', '８', '９'];
-		
-		return '＃'.str_replace($halfWidthDigits, $fullWidthDigits, (string)$number);*/
-		return '#'.$number;
-	}
 }
 
 namespace Localization\AboutPage

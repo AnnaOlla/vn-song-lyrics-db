@@ -1694,7 +1694,7 @@ class UserController extends ViolatorController
 		}
 	}
 	
-	private function handleChangeAccountDataPageGet(array $user, AuthenticationError $error = AuthenticationError::None): void
+	private function handleChangeAccountDataPageGet(array $user, InputError $error = InputError::None): void
 	{
 		$this->view->renderChangeAccountDataPage($user);
 	}
@@ -1711,67 +1711,67 @@ class UserController extends ViolatorController
 		
 		if (!$this->model->isPasswordCorrect($user['id'], $oldPassword))
 		{
-			$this->handleChangeAccountDataPageGet($user, AuthenticationError::IncorrectPassword);
+			$this->handleChangeAccountDataPageGet($user, InputError::IncorrectPassword);
 			return;
 		}
 		
 		if (Parsing::trimNullableString($newUsername) !== $newUsername)
 		{
-			$this->handleChangeAccountDataPageGet($user, AuthenticationError::UsernameTrimmable);
+			$this->handleChangeAccountDataPageGet($user, InputError::UsernameTrimmable);
 			return;
 		}
 		
 		if (!Validation::isLatinAlphabetAndNumbers($newUsername))
 		{
-			$this->handleChangeAccountDataPageGet($user, AuthenticationError::UsernameForbiddenSymbols);
+			$this->handleChangeAccountDataPageGet($user, InputError::UsernameForbiddenSymbols);
 			return;
 		}
 		
 		if (mb_strlen($newUsername) < self::ACCOUNT_DATA_MIN_LENGTH)
 		{
-			$this->handleChangeAccountDataPageGet($user, AuthenticationError::UsernameLengthIncorrect);
+			$this->handleChangeAccountDataPageGet($user, InputError::UsernameLengthIncorrect);
 			return;
 		}
 		
 		if (mb_strlen($newUsername) > self::ACCOUNT_DATA_MAX_LENGTH)
 		{
-			$this->handleChangeAccountDataPageGet($user, AuthenticationError::UsernameLengthIncorrect);
+			$this->handleChangeAccountDataPageGet($user, InputError::UsernameLengthIncorrect);
 			return;
 		}
 		
 		if ($user['user_username'] !== $newUsername && $this->model->isUsernameRegistered($newUsername))
 		{
-			$this->handleChangeAccountDataPageGet($user, AuthenticationError::UsernameTaken);
+			$this->handleChangeAccountDataPageGet($user, InputError::UsernameTaken);
 			return;
 		}
 		
 		if (!Validation::isEmailValid($newEmail))
 		{
-			$this->handleChangeAccountDataPageGet($user, AuthenticationError::EmailInvalid);
+			$this->handleChangeAccountDataPageGet($user, InputError::EmailInvalid);
 			return;
 		}
 		
 		if ($user['user_email'] !== $newEmail && $this->model->isEmailRegistered($newEmail))
 		{
-			$this->handleChangeAccountDataPageGet($user, AuthenticationError::EmailTaken);
+			$this->handleChangeAccountDataPageGet($user, InputError::EmailTaken);
 			return;
 		}
 		
 		if ($newPassword && !Validation::isLatinAlphabetAndNumbers($newPassword))
 		{
-			$this->handleChangeAccountDataPageGet($user, AuthenticationError::PasswordForbiddenSymbols);
+			$this->handleChangeAccountDataPageGet($user, InputError::PasswordForbiddenSymbols);
 			return;
 		}
 		
 		if ($newPassword && mb_strlen($newPassword) < self::ACCOUNT_DATA_MIN_LENGTH)
 		{
-			$this->handleChangeAccountDataPageGet($user, AuthenticationError::PasswordLengthIncorrect);
+			$this->handleChangeAccountDataPageGet($user, InputError::PasswordLengthIncorrect);
 			return;
 		}
 		
 		if ($newPassword && mb_strlen($newPassword) > self::ACCOUNT_DATA_MAX_LENGTH)
 		{
-			$this->handleChangeAccountDataPageGet($user, AuthenticationError::PasswordLengthIncorrect);
+			$this->handleChangeAccountDataPageGet($user, InputError::PasswordLengthIncorrect);
 			return;
 		}
 		
@@ -1811,7 +1811,7 @@ class UserController extends ViolatorController
 		}
 	}
 	
-	private function handleDeleteAccountPageGet(array $user, AuthenticationError $error = AuthenticationError::None): void
+	private function handleDeleteAccountPageGet(array $user, InputError $error = InputError::None): void
 	{
 		$this->view->renderDeleteAccountPage($user, $error);
 	}
@@ -1825,7 +1825,7 @@ class UserController extends ViolatorController
 		
 		if (!$this->model->isPasswordCorrect($user['id'], $password))
 		{
-			$this->handleDeleteAccountPageGet($user, AuthenticationError::IncorrectPassword);
+			$this->handleDeleteAccountPageGet($user, InputError::IncorrectPassword);
 			return;
 		}
 		

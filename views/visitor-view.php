@@ -724,34 +724,14 @@ class VisitorView extends ErrorView
 	//      Log-In Pages      //
 	//------------------------//
 	
-	final public function renderLogInPage(AuthenticationError $error = AuthenticationError::None): void
+	final public function renderLogInPage
+	(
+		string|null $email = null,
+		InputError  $error = InputError::None
+	): void
 	{
-		switch ($error)
-		{
-			case AuthenticationError::EmptyEmail:
-				$errorMessage = \Localization\AuthenticationError\EmptyEmail;
-				break;
-			
-			case AuthenticationError::EmptyPassword:
-				$errorMessage = \Localization\AuthenticationError\EmptyPassword;
-				break;
-			
-			case AuthenticationError::EmailNotFound:
-				$errorMessage = \Localization\AuthenticationError\EmailNotFound;
-				break;
-			
-			case AuthenticationError::IncorrectPassword:
-				$errorMessage = \Localization\AuthenticationError\IncorrectPassword;
-				break;
-				
-			case AuthenticationError::AccountNotVerified:
-				$errorMessage = \Localization\AuthenticationError\AccountNotVerified;
-				break;
-				
-			default:
-				$errorMessage = '';
-				break;
-		}
+		$email        = htmlspecialchars($email ?? '');
+		$errorMessage = \Localization\Functions\localizeInputError($error);
 		
 		$html = $this->startRender
 		(
@@ -771,7 +751,7 @@ class VisitorView extends ErrorView
 				<form method="POST">
 					<section>
 						<h3>'.\Localization\LogInPage\Email.'<span class="required-input"> *</span></h3>
-						<input type="email" name="email" minlength="4" maxlength="32" required/>
+						<input type="email" name="email" value="'.$email.'" minlength="4" maxlength="32" required/>
 					</section>
 					<section>
 						<h3>'.\Localization\LogInPage\Password.'<span class="required-input"> *</span></h3>
@@ -790,58 +770,17 @@ class VisitorView extends ErrorView
 		echo $html;
 	}
 	
-	final public function renderSignUpPage(AuthenticationError $error = AuthenticationError::None, string $captchaBase64Image = ''): void
+	final public function renderSignUpPage
+	(
+		string|null $username           = null,
+		string|null $email              = null,
+		InputError  $error              = InputError::None,
+		string      $captchaBase64Image = ''
+	): void
 	{
-		switch ($error)
-		{
-			case AuthenticationError::CaptchaInvalid:
-				$errorMessage = \Localization\AuthenticationError\CaptchaInvalid;
-				break;
-			
-			case AuthenticationError::UsernameTrimmable:
-				$errorMessage = \Localization\AuthenticationError\UsernameTrimmable;
-				break;
-			
-			case AuthenticationError::UsernameForbiddenSymbols:
-				$errorMessage = \Localization\AuthenticationError\UsernameForbiddenSymbols;
-				break;
-			
-			case AuthenticationError::UsernameLengthIncorrect:
-				$errorMessage = \Localization\AuthenticationError\UsernameLengthIncorrect;
-				break;
-			
-			case AuthenticationError::UsernameTaken:
-				$errorMessage = \Localization\AuthenticationError\UsernameTaken;
-				break;
-			
-			case AuthenticationError::PasswordTrimmable:
-				$errorMessage = \Localization\AuthenticationError\PasswordTrimmable;
-				break;
-				
-			case AuthenticationError::PasswordForbiddenSymbols:
-				$errorMessage = \Localization\AuthenticationError\PasswordForbiddenSymbols;
-				break;
-			
-			case AuthenticationError::UsernameLengthIncorrect:
-				$errorMessage = \Localization\AuthenticationError\UsernameLengthIncorrect;
-				break;
-			
-			case AuthenticationError::EmailTaken:
-				$errorMessage = \Localization\AuthenticationError\EmailTaken;
-				break;
-			
-			case AuthenticationError::EmailInvalid:
-				$errorMessage = \Localization\AuthenticationError\EmailInvalid;
-				break;
-				
-			case AuthenticationError::MailSendFailed:
-				$errorMessage = \Localization\AuthenticationError\MailSendFailed;
-				break;
-			
-			default:
-				$errorMessage = '';
-				break;
-		}
+		$username     = htmlspecialchars($username ?? '');
+		$email        = htmlspecialchars($email ?? '');
+		$errorMessage = \Localization\Functions\localizeInputError($error);
 		
 		$html = $this->startRender
 		(
@@ -861,11 +800,11 @@ class VisitorView extends ErrorView
 				<form method="POST">
 					<section>
 						<h3>'.\Localization\SignUpPage\Username.'<span class="required-input"> *</span></h3>
-						<input type="text" name="username" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintUsername.'" required/>
+						<input type="text" name="username" value="'.$username.'" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintUsername.'" required/>
 					</section>
 					<section>
 						<h3>'.\Localization\SignUpPage\Email.'<span class="required-input"> *</span></h3>
-						<input type="email" name="email" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintEmail.'" required/>
+						<input type="email" name="email" value="'.$email.'" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintEmail.'" required/>
 					</section>
 					<section>
 						<h3>'.\Localization\SignUpPage\Password.'<span class="required-input"> *</span></h3>
@@ -1742,8 +1681,17 @@ class VisitorView extends ErrorView
 		echo $html;
 	}
 	
-	final public function renderFeedbackPage(array $feedbacks, string $captchaBase64Image): void
+	final public function renderFeedbackPage
+	(
+		array       $feedbacks,
+		string|null $feedback           = null,
+		InputError  $error              = InputError::None,
+		string      $captchaBase64Image = ''
+	): void
 	{
+		$feedback     = htmlspecialchars($feedback ?? '');
+		$errorMessage = \Localization\Functions\localizeInputError($error);
+		
 		$html = $this->startRender
 		(
 			title: \Localization\FeedbackPage\Heading,
@@ -1764,7 +1712,8 @@ class VisitorView extends ErrorView
 				'.$this->createParagraph(\Localization\FeedbackPage\AboutAnswer).'
 				'.$this->createParagraph(\Localization\FeedbackPage\SymbolLimit).'
 				<form method="POST">
-					<textarea name="message" rows="4" maxlength="500" placeholder="'.\Localization\Controls\Textarea.'" required></textarea>
+					<textarea name="message" rows="4" maxlength="500" placeholder="'.\Localization\Controls\Textarea.'" required>'.$feedback.'</textarea>
+					'.$this->createParagraph($errorMessage).'
 					<section>
 						<input type="text" name="captcha-code" id="captcha-input" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" placeholder="code:" required/>
 						<img src="'.htmlspecialchars($captchaBase64Image).'" alt="captcha" id="captcha-image"/>

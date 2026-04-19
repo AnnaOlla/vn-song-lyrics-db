@@ -1,5 +1,98 @@
 <?php
 
+namespace Localization\Functions
+{
+	function localizeLanguageName(array $entity): string
+	{
+		return $entity['language_ja_name'];
+	}
+
+	function localizeLanguageKey(): string
+	{
+		return 'language_ja_name';
+	}
+
+	function localizeTranslationNumber(int $number): string
+	{
+		// Japanese only:
+		$halfWidthDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+		$fullWidthDigits = ['０', '１', '２', '３', '４', '５', '６', '７', '８', '９'];
+		
+		return '＃'.str_replace($halfWidthDigits, $fullWidthDigits, (string)$number);
+		
+		// return '#'.$number;
+	}
+	
+	use InputError;
+	
+	function localizeInputError(InputError $error): string|null
+	{
+		switch ($error)
+		{
+			case InputError::None:
+				return null;
+			
+			case InputError::CaptchaInvalid:
+				return 'コードは正しくなかったです。';
+			
+			case InputError::EmailNotFound:
+				return 'メールは見つかっていません。';
+			
+			case InputError::EmailInvalid:
+				return 'メールの書き方は正しくなかったです。';
+			
+			case InputError::EmailTaken:
+				return 'メールは使ってはいけません。';
+			
+			case InputError::UsernameForbiddenSymbols:
+				return 'ユーザーネームは許さない文字を持っています。';
+			
+			case InputError::UsernameLengthIncorrect:
+				return 'ユーザーネームの長さは正しくなかったです。';
+			
+			case InputError::UsernameTaken:
+				return 'ユーザーネームはもう使われています。';
+			
+			case InputError::IncorrectPassword:
+				return 'パスワードは正しくなかったです。';
+			
+			case InputError::PasswordForbiddenSymbols:
+				return 'パスワードは許さない文字を持っています。';
+			
+			case InputError::PasswordLengthIncorrect:
+				return 'パスワードの長さは正しくなかったです。';
+			
+			default:
+				throw new Exception(__FUNCTION__.': value '.$error->name.' was not found');
+		}
+	}
+}
+
+namespace Localization\InputError
+{
+	const CaptchaInvalid           = 'コードは正しくなかったです。';
+	
+	const EmptyEmail               = 'メールは入力しませんでした。';
+	const EmailNotFound            = 'メールは見つかっていません。';
+	const EmptyPassword            = 'パスワードは入力しませんでした。';
+	const IncorrectPassword        = 'パスワードは正しくなかったです。';
+	
+	const UsernameTrimmable        = 'ユーザーネームは始めと終わりに見えない文字を持ってはいけません。';
+	const UsernameForbiddenSymbols = 'ユーザーネームはローマ字と数字しか持ってはいけません。';
+	const UsernameLengthIncorrect  = 'ユーザーネームの長さは４から３２までだけです。';
+	const UsernameTaken            = 'ユーザーネームはもう使われています。';
+	
+	const EmailTaken               = 'メールは使ってはいけません。';
+	const EmailInvalid             = 'メールは正しくない。';
+	const EmailNotExists           = 'メールを確かめられませんでした。';
+	
+	const PasswordForbiddenSymbols = 'パスワードはローマ字と数字しか持ってはいけません。';
+	const PasswordLengthIncorrect  = 'パスワードの長さは４から３２までだけです。';
+	
+	const AccountNotVerified       = 'アカウントはまだ確認していません。受信箱とスパムチェックしてください。';
+	const MailSendFailed           = '確認のメールを送れませんでした。';
+}
+
 namespace Localization\HomePage
 {
 	const Heading          = 'Visual Novel Song Lyrics Database';
@@ -67,31 +160,6 @@ namespace Localization\SignUpPage
 	const Warning      = 'ルールを読むためにお時間をいただけてください。';
 	
 	const AwaitingVerification = 'アカウントは確認するために、メールを送りました。受信箱とスパムチェックしてください。';
-}
-
-namespace Localization\AuthenticationError
-{
-	const CaptchaInvalid           = 'キャプチャーは正しくなかったです。';
-	
-	const EmptyEmail               = 'メールは入力しませんでした。';
-	const EmailNotFound            = 'メールは見つかっていません。';
-	const EmptyPassword            = 'パスワードは入力しませんでした。';
-	const IncorrectPassword        = 'パスワードは正しくなかったです。';
-	
-	const UsernameTrimmable        = 'ユーザーネームは始めと終わりに見えない文字を持ってはいけません。';
-	const UsernameForbiddenSymbols = 'ユーザーネームはローマ字と数字しか持ってはいけません。';
-	const UsernameLengthIncorrect  = 'ユーザーネームの長さは４から３２までだけです。';
-	const UsernameTaken            = 'ユーザーネームはもう使われています。';
-	
-	const EmailTaken               = 'メールは使ってはいけません。';
-	const EmailInvalid             = 'メールは正しくない。';
-	const EmailNotExists           = 'メールを確かめられませんでした。';
-	
-	const PasswordForbiddenSymbols = 'パスワードはローマ字と数字しか持ってはいけません。';
-	const PasswordLengthIncorrect  = 'パスワードの長さは４から３２までだけです。';
-	
-	const AccountNotVerified       = 'アカウントはまだ確認していません。受信箱とスパムチェックしてください。';
-	const MailSendFailed           = '確認のメールを送れませんでした。';
 }
 
 namespace Localization\GameListPage
@@ -823,29 +891,6 @@ namespace Localization\TranslationEditorPage\TooltipContent
 	                            '{nt}1{/nt}　→　歌詞とコメントに使ったら、リンクを作ります。<br/><br/>'.
 							    '文章作法にもう詳しく教えます。リンクはページの下にあります。<br/><br/>';
 	const Controls            = '「戻る」というボタンを押して、キャンセルして前のページに戻ります。<br/><br/>「出す」というボタンを押して、情報を出します。';
-}
-
-namespace Localization\Functions
-{
-	function localizeLanguageName(array $entity): string
-	{
-		return $entity['language_ja_name'];
-	}
-
-	function localizeLanguageKey(): string
-	{
-		return 'language_ja_name';
-	}
-
-	function localizeTranslationNumber(int $number): string
-	{
-		// Japanese only:
-		$halfWidthDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-		$fullWidthDigits = ['０', '１', '２', '３', '４', '５', '６', '７', '８', '９'];
-		
-		return '＃'.str_replace($halfWidthDigits, $fullWidthDigits, (string)$number);
-		//return '#'.$number;
-	}
 }
 
 namespace Localization\AboutPage

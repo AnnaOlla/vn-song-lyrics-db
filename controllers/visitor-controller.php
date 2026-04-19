@@ -43,13 +43,10 @@ class VisitorController extends ErrorController
 	
 	public function handleLogInPage(): void
 	{
-		if (!isset($_SESSION['redirectToAfterLogIn']))
-		{
-			if (isset($_SERVER['HTTP_REFERER']))
-				$_SESSION['redirectToAfterLogIn'] = $_SERVER['HTTP_REFERER'];
-			else
-				$_SESSION['redirectToAfterLogIn'] = Session::buildInternalLink($this->language);
-		}
+		if (isset($_SERVER['HTTP_REFERER']))
+			$_SESSION['redirect']['logIn'] = $_SERVER['HTTP_REFERER'];
+		else
+			$_SESSION['redirect']['logIn'] = Session::buildInternalLink($this->language);
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -66,31 +63,35 @@ class VisitorController extends ErrorController
 		}
 	}
 	
-	private function handleLogInPageGet(AuthenticationError $error = AuthenticationError::None): void
+	private function handleLogInPageGet
+	(
+		string|null $email = null,
+		InputError  $error = InputError::None
+	): void
 	{
-		$this->view->renderLogInPage($error);
+		$this->view->renderLogInPage($email, $error);
 	}
 	
-	private function handleLogInPagePost(AuthenticationError $error = AuthenticationError::None): void
+	private function handleLogInPagePost(): void
 	{
 		$email     = $_POST['email']         ?? null;
 		$password  = $_POST['password']      ?? null;
 		$ipAddress = $_SERVER['REMOTE_ADDR'] ?? null;
 		
-		$userId = $this->model->getUserIdWithEmail($email);
-		
 		if (Validation::haveNullOrEmpty($email, $password, $ipAddress))
-			throw new HttpBadRequest400('Email and password were not sent', get_defined_vars());
+			throw new HttpBadRequest400('Log-in data was not sent', get_defined_vars());
 		
 		if (!$this->model->isEmailRegistered($email))
 		{
-			$this->handleLogInPageGet(AuthenticationError::EmailNotFound);
+			$this->handleLogInPageGet($email, InputError::EmailNotFound);
 			return;
 		}
 		
+		$userId = $this->model->getUserIdWithEmail($email);
+		
 		if (!$this->model->isPasswordCorrect($userId, $password))
 		{
-			$this->handleLogInPageGet(AuthenticationError::IncorrectPassword);
+			$this->handleLogInPageGet($email, InputError::IncorrectPassword);
 			return;
 		}
 		
@@ -100,19 +101,16 @@ class VisitorController extends ErrorController
 		$this->model->updateLastLogInTimestamp($userId);
 		$this->model->addUserFingerprint($userId, $ipAddress);
 		
-		$this->handleRedirect($_SESSION['redirectToAfterLogIn']);
-		unset($_SESSION['redirectToAfterLogIn']);
+		$this->handleRedirect($_SESSION['redirect']['logIn']);
+		unset($_SESSION['redirect']['logIn']);
 	}
 	
 	public function handleSignUpPage(): void
 	{
-		if (!isset($_SESSION['redirectToAfterSignUp']))
-		{
-			if (isset($_SERVER['HTTP_REFERER']))
-				$_SESSION['redirectToAfterSignUp'] = $_SERVER['HTTP_REFERER'];
-			else
-				$_SESSION['redirectToAfterSignUp'] = Session::buildInternalLink($this->language);
-		}
+		if (isset($_SERVER['HTTP_REFERER']))
+			$_SESSION['redirect']['signUp'] = $_SERVER['HTTP_REFERER'];
+		else
+			$_SESSION['redirect']['signUp'] = Session::buildInternalLink($this->language);
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -129,91 +127,90 @@ class VisitorController extends ErrorController
 		}
 	}
 	
-	private function handleSignUpPageGet(AuthenticationError $error = AuthenticationError::None): void
+	private function handleSignUpPageGet
+	(
+		string|null $username = null,
+		string|null $email    = null,
+		InputError  $error    = InputError::None
+	): void
 	{
 		$captchaData = $this->model->getRandomCaptcha(6, 3);
 		
-		$_SESSION['signUpCaptchaCode'] = $captchaData[0];
+		$_SESSION['captcha']['signUp'] = $captchaData[0];
 		$captchaBase64Image            = $captchaData[1];
 		
-		$this->view->renderSignUpPage($error, $captchaBase64Image);
+		$this->view->renderSignUpPage($username, $email, $error, $captchaBase64Image);
 	}
 	
 	private function handleSignUpPagePost(): void
 	{
 		$username    = $_POST['username']             ?? null;
-		$password    = $_POST['password']             ?? null;
 		$email       = $_POST['email']                ?? null;
+		$password    = $_POST['password']             ?? null;
 		$ipAddress   = $_SERVER['REMOTE_ADDR']        ?? null;
 		$sentCaptcha = $_POST['captcha-code']         ?? null;
-		$madeCaptcha = $_SESSION['signUpCaptchaCode'] ?? null;
+		$madeCaptcha = $_SESSION['captcha']['signUp'] ?? null;
 		
-		if (Validation::haveNullOrEmpty($username, $password, $email, $ipAddress, $sentCaptcha, $madeCaptcha))
+		if (Validation::haveNullOrEmpty($username, $email, $password, $ipAddress, $sentCaptcha, $madeCaptcha))
 			throw new HttpBadRequest400('Sign-up data was not sent', get_defined_vars());
 		
-		if (mb_strtolower($sentCaptcha) !== mb_strtolower($madeCaptcha))
+		if (!Validation::areCaptchasEqual($madeCaptcha, $sentCaptcha))
 		{
-			$this->handleSignUpPageGet(AuthenticationError::CaptchaInvalid);
-			return;
-		}
-		
-		if (Parsing::trimNullableString($username) !== $username)
-		{
-			$this->handleSignUpPageGet(AuthenticationError::UsernameTrimmable);
+			$this->handleSignUpPageGet($username, $email, InputError::CaptchaInvalid);
 			return;
 		}
 		
 		if (!Validation::isLatinAlphabetAndNumbers($username))
 		{
-			$this->handleSignUpPageGet(AuthenticationError::UsernameForbiddenSymbols);
+			$this->handleSignUpPageGet($username, $email, InputError::UsernameForbiddenSymbols);
 			return;
 		}
 		
 		if (mb_strlen($username) < self::ACCOUNT_DATA_MIN_LENGTH)
 		{
-			$this->handleSignUpPageGet(AuthenticationError::UsernameLengthIncorrect);
+			$this->handleSignUpPageGet($username, $email, InputError::UsernameLengthIncorrect);
 			return;
 		}
 		
 		if (mb_strlen($username) > self::ACCOUNT_DATA_MAX_LENGTH)
 		{
-			$this->handleSignUpPageGet(AuthenticationError::UsernameLengthIncorrect);
+			$this->handleSignUpPageGet($username, $email, InputError::UsernameLengthIncorrect);
 			return;
 		}
 		
 		if ($this->model->isUsernameRegistered($username))
 		{
-			$this->handleSignUpPageGet(AuthenticationError::UsernameTaken);
+			$this->handleSignUpPageGet($username, $email, InputError::UsernameTaken);
 			return;
 		}
 		
 		if (!Validation::isEmailValid($email))
 		{
-			$this->handleSignUpPageGet(AuthenticationError::EmailInvalid);
+			$this->handleSignUpPageGet($username, $email, InputError::EmailInvalid);
 			return;
 		}
 		
 		if ($this->model->isEmailRegistered($email))
 		{
-			$this->handleSignUpPageGet(AuthenticationError::EmailTaken);
+			$this->handleSignUpPageGet($username, $email, InputError::EmailTaken);
 			return;
 		}
 		
 		if (!Validation::isLatinAlphabetAndNumbers($password))
 		{
-			$this->handleSignUpPageGet(AuthenticationError::PasswordForbiddenSymbols);
+			$this->handleSignUpPageGet($username, $email, InputError::PasswordForbiddenSymbols);
 			return;
 		}
 		
 		if (mb_strlen($password) < self::ACCOUNT_DATA_MIN_LENGTH)
 		{
-			$this->handleSignUpPageGet(AuthenticationError::PasswordLengthIncorrect);
+			$this->handleSignUpPageGet($username, $email, InputError::PasswordLengthIncorrect);
 			return;
 		}
 		
 		if (mb_strlen($password) > self::ACCOUNT_DATA_MAX_LENGTH)
 		{
-			$this->handleSignUpPageGet(AuthenticationError::PasswordLengthIncorrect);
+			$this->handleSignUpPageGet($username, $email, InputError::PasswordLengthIncorrect);
 			return;
 		}
 		
@@ -223,9 +220,9 @@ class VisitorController extends ErrorController
 		$this->createUserSession($userData);
 		$this->model->addUserFingerprint($userId, $ipAddress);
 		
-		$this->handleRedirect($_SESSION['redirectToAfterSignUp']);
-		unset($_SESSION['redirectToAfterSignUp']);
-		unset($_SESSION['signUpCaptchaCode']);
+		$this->handleRedirect($_SESSION['redirect']['signUp']);
+		unset($_SESSION['redirect']['signUp']);
+		unset($_SESSION['captcha']['signUp']);
 	}
 	
 	public function handleLogOutPage(): void
@@ -789,30 +786,39 @@ class VisitorController extends ErrorController
 		}
 	}
 	
-	private function handleFeedbackPageGet(): void
+	private function handleFeedbackPageGet
+	(
+		string|null $feedback = null,
+		InputError  $error   = InputError::None
+	): void
 	{
 		$captchaData = $this->model->getRandomCaptcha(4, 0);
 		
-		$_SESSION['feedbackCaptchaCode'] = $captchaData[0];
+		$_SESSION['captcha']['feedback'] = $captchaData[0];
 		$captchaBase64Image              = $captchaData[1];
 		
 		$feedbacks = $this->model->getFeedbackList();
-		
-		$this->view->renderFeedbackPage($feedbacks, $captchaBase64Image);
+		$this->view->renderFeedbackPage($feedbacks, $feedback, $error, $captchaBase64Image);
 	}
 	
 	private function handleFeedbackPagePost(): void
 	{
-		$senderId = $_SESSION['user']['id']  ?? null;
-		$senderIp = $_SERVER['REMOTE_ADDR'];
-		$message  = $_POST['message']        ?? null;
-		$captcha  = $_POST['captcha-code']   ?? null;
+		$senderId    = $_SESSION['user']['id']          ?? null;
+		$senderIp    = $_SERVER['REMOTE_ADDR']          ?? null;
+		$message     = $_POST['message']                ?? null;
+		$sentCaptcha = $_POST['captcha-code']           ?? null;
+		$madeCaptcha = $_SESSION['captcha']['feedback'] ?? null;
 		
-		if (Validation::isNullOrEmpty($message))
-			throw new HttpBadRequest400('Message was empty or null');
+		$message     = Parsing::trimNullableString($message);
 		
-		if (mb_strtolower($_SESSION['feedbackCaptchaCode']) !== mb_strtolower($captcha))
-			throw new HttpBadRequest400('Captcha was wrong');
+		if (Validation::isNullOrEmpty($senderIp, $message))
+			throw new HttpBadRequest400('Feedback data was not sent');
+		
+		if (!Validation::areCaptchasEqual($madeCaptcha, $sentCaptcha))
+		{
+			$this->handleFeedbackPageGet($message, InputError::CaptchaInvalid);
+			return;
+		}
 		
 		$this->model->addFeedback($senderId, $senderIp, $message);
 		$this->handleRedirect(Session::buildInternalLink($this->language, 'feedback'));
