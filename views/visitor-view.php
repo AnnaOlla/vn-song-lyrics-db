@@ -41,6 +41,7 @@ class VisitorView extends ErrorView
 			true,
 			false,
 			false,
+			false,
 			$values,
 			$selectedValue,
 			'toShow',

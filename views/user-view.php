@@ -43,6 +43,25 @@ class UserView extends ViolatorView
 			$isImageUploaded    = false;
 			$vndbLink           = '';
 			
+			// Create a fake to avoid duplicating code when creating <selects>
+			$relatedAlbums =
+			[
+				[
+					'id'                         => '',
+					'transliterated_name'        => '',
+					'game_album_relation_status' => 'unchecked'
+				]
+			];
+			
+			$relatedCharacters =
+			[
+				[
+					'id'                         => '',
+					'transliterated_name'        => '',
+					'character_game_relation_status' => 'unchecked'
+				]
+			];
+			
 			$cancelLink = Session::buildInternalLink($this->language, 'game-list');
 		}
 		
@@ -78,6 +97,7 @@ class UserView extends ViolatorView
 			'logo-input',
 			null,
 			true,
+			false,
 			false,
 			self::ACCEPTED_IMAGE_TYPES
 		);
@@ -117,57 +137,19 @@ class UserView extends ViolatorView
 						<h2>'.\Localization\GameEditorPage\RelatedAlbums.'</h2>
 		';
 		
-		if ($relatedAlbums)
-		{
-			foreach ($relatedAlbums as $relatedAlbum)
-			{
-				$albumInput = $this->createSelect
-				(
-					'album-ids[]',
-					null,
-					null,
-					$relatedAlbum['game_album_relation_status'] === 'unchecked',
-					false,
-					true,
-					$albums,
-					$relatedAlbum,
-					'transliterated_name',
-					'id'
-				);
-				
-				$addRowButton = $this->createAddRowButton
-				(
-					'album-select'
-				);
-				
-				$deleteRowButton = $this->createDeleteRowButton
-				(
-					'album-select',
-					$relatedAlbum['game_album_relation_status'] === 'unchecked'
-				);
-				
-				$html .= 
-				'
-						<section class="related-entity-controls">
-							'.$albumInput.'
-							'.$addRowButton.'
-							'.$deleteRowButton.'
-						</section>
-				';
-			}
-		}
-		else
+		foreach ($relatedAlbums as $relatedAlbum)
 		{
 			$albumInput = $this->createSelect
 			(
 				'album-ids[]',
 				null,
 				null,
-				true,
+				$relatedAlbum['game_album_relation_status'] === 'unchecked',
+				false,
 				false,
 				true,
 				$albums,
-				null,
+				$relatedAlbum,
 				'transliterated_name',
 				'id'
 			);
@@ -180,16 +162,16 @@ class UserView extends ViolatorView
 			$deleteRowButton = $this->createDeleteRowButton
 			(
 				'album-select',
-				true
+				$relatedAlbum['game_album_relation_status'] === 'unchecked'
 			);
 			
 			$html .= 
 			'
-						<section class="related-entity-controls">
-							'.$albumInput.'
-							'.$addRowButton.'
-							'.$deleteRowButton.'
-						</section>
+					<section class="related-entity-controls">
+						'.$albumInput.'
+						'.$addRowButton.'
+						'.$deleteRowButton.'
+					</section>
 			';
 		}
 		
@@ -200,57 +182,19 @@ class UserView extends ViolatorView
 						<h2>'.\Localization\GameEditorPage\RelatedCharacters.'</h2>
 		';
 		
-		if ($relatedCharacters)
-		{
-			foreach ($relatedCharacters as $relatedCharacter)
-			{
-				$characterInput = $this->createSelect
-				(
-					'character-ids[]',
-					null,
-					null,
-					$relatedCharacter['character_game_relation_status'] === 'unchecked',
-					false,
-					true,
-					$characters,
-					$relatedCharacter,
-					'transliterated_name',
-					'id'
-				);
-				
-				$addRowButton = $this->createAddRowButton
-				(
-					'character-select'
-				);
-				
-				$deleteRowButton = $this->createDeleteRowButton
-				(
-					'character-select',
-					$relatedCharacter['character_game_relation_status'] === 'unchecked',
-				);
-				
-				$html .= 
-				'
-						<section class="related-entity-controls">
-							'.$characterInput.'
-							'.$addRowButton.'
-							'.$deleteRowButton.'
-						</section>
-				';
-			}
-		}
-		else
+		foreach ($relatedCharacters as $relatedCharacter)
 		{
 			$characterInput = $this->createSelect
 			(
 				'character-ids[]',
 				null,
 				null,
-				true,
+				$relatedCharacter['character_game_relation_status'] === 'unchecked',
+				false,
 				false,
 				true,
 				$characters,
-				null,
+				$relatedCharacter,
 				'transliterated_name',
 				'id'
 			);
@@ -263,16 +207,16 @@ class UserView extends ViolatorView
 			$deleteRowButton = $this->createDeleteRowButton
 			(
 				'character-select',
-				true
+				$relatedCharacter['character_game_relation_status'] === 'unchecked',
 			);
 			
 			$html .= 
 			'
-						<section class="related-entity-controls">
-							'.$characterInput.'
-							'.$addRowButton.'
-							'.$deleteRowButton.'
-						</section>
+					<section class="related-entity-controls">
+						'.$characterInput.'
+						'.$addRowButton.'
+						'.$deleteRowButton.'
+					</section>
 			';
 		}
 		
@@ -379,6 +323,16 @@ class UserView extends ViolatorView
 			$songCount          = '';
 			
 			$cancelLink = Session::buildInternalLink($this->language, 'album-list');
+			
+			// Create a fake to avoid duplicating code when creating <selects>
+			$relatedGames =
+			[
+				[
+					'id'                         => '',
+					'transliterated_name'        => '',
+					'game_album_relation_status' => 'unchecked'
+				]
+			];
 		}
 		
 		$html = $this->startRender
@@ -413,6 +367,7 @@ class UserView extends ViolatorView
 			'cover-input',
 			null,
 			true,
+			false,
 			false,
 			self::ACCEPTED_IMAGE_TYPES
 		);
@@ -452,57 +407,19 @@ class UserView extends ViolatorView
 						<h2>'.\Localization\AlbumEditorPage\RelatedGames.'</h2>
 		';
 		
-		if ($relatedGames)
-		{
-			foreach ($relatedGames as $relatedGame)
-			{
-				$gameInput = $this->createSelect
-				(
-					'game-ids[]',
-					null,
-					null,
-					$relatedGame['game_album_relation_status'] === 'unchecked',
-					false,
-					true,
-					$games,
-					$relatedGame,
-					'transliterated_name',
-					'id'
-				);
-				
-				$addRowButton = $this->createAddRowButton
-				(
-					'game-select'
-				);
-				
-				$deleteRowButton = $this->createDeleteRowButton
-				(
-					'game-select',
-					$relatedGame['game_album_relation_status'] === 'unchecked'
-				);
-				
-				$html .= 
-				'
-						<section class="related-entity-controls">
-							'.$gameInput.'
-							'.$addRowButton.'
-							'.$deleteRowButton.'
-						</section>
-				';
-			}
-		}
-		else
+		foreach ($relatedGames as $relatedGame)
 		{
 			$gameInput = $this->createSelect
 			(
 				'game-ids[]',
 				null,
 				null,
-				true,
+				$relatedGame['game_album_relation_status'] === 'unchecked',
+				false,
 				false,
 				true,
 				$games,
-				null,
+				$relatedGame,
 				'transliterated_name',
 				'id'
 			);
@@ -515,16 +432,16 @@ class UserView extends ViolatorView
 			$deleteRowButton = $this->createDeleteRowButton
 			(
 				'game-select',
-				true
+				$relatedGame['game_album_relation_status'] === 'unchecked'
 			);
 			
 			$html .= 
 			'
-						<section class="related-entity-controls">
-							'.$gameInput.'
-							'.$addRowButton.'
-							'.$deleteRowButton.'
-						</section>
+					<section class="related-entity-controls">
+						'.$gameInput.'
+						'.$addRowButton.'
+						'.$deleteRowButton.'
+					</section>
 			';
 		}
 		
@@ -667,6 +584,7 @@ class UserView extends ViolatorView
 			null,
 			true,
 			false,
+			false,
 			self::ACCEPTED_IMAGE_TYPES
 		);
 		
@@ -709,6 +627,7 @@ class UserView extends ViolatorView
 			null,
 			null,
 			true,
+			false,
 			false,
 			true,
 			$originalArtists,
@@ -816,6 +735,16 @@ class UserView extends ViolatorView
 			$localizedName      = '';
 			$isImageUploaded    = false;
 			$vndbLink           = '';
+			
+			// Create a fake to avoid duplicating code when creating <selects>
+			$relatedGames =
+			[
+				[
+					'id'                         => '',
+					'transliterated_name'        => '',
+					'character_game_relation_status' => 'unchecked'
+				]
+			];
 		}
 		
 		$html = $this->startRender
@@ -850,6 +779,7 @@ class UserView extends ViolatorView
 			'image-input',
 			null,
 			true,
+			false,
 			false,
 			self::ACCEPTED_IMAGE_TYPES
 		);
@@ -889,57 +819,19 @@ class UserView extends ViolatorView
 						<h2>'.\Localization\CharacterEditorPage\RelatedGames.'</h2>
 		';
 		
-		if ($relatedGames)
-		{
-			foreach ($relatedGames as $relatedGame)
-			{
-				$gameInput = $this->createSelect
-				(
-					'game-ids[]',
-					null,
-					null,
-					$relatedGame['character_game_relation_status'] === 'unchecked',
-					false,
-					true,
-					$games,
-					$relatedGame,
-					'transliterated_name',
-					'id'
-				);
-				
-				$addRowButton = $this->createAddRowButton
-				(
-					'game-select'
-				);
-
-				$deleteRowButton = $this->createDeleteRowButton
-				(
-					'game-select',
-					$relatedGame['character_game_relation_status'] === 'unchecked'
-				);
-
-				$html .= 
-				'
-						<section class="related-entity-controls">
-							'.$gameInput.'
-							'.$addRowButton.'
-							'.$deleteRowButton.'
-						</section>
-				';
-			}
-		}
-		else
+		foreach ($relatedGames as $relatedGame)
 		{
 			$gameInput = $this->createSelect
 			(
 				'game-ids[]',
 				null,
 				null,
-				true,
+				$relatedGame['character_game_relation_status'] === 'unchecked',
+				false,
 				false,
 				true,
 				$games,
-				null,
+				$relatedGame,
 				'transliterated_name',
 				'id'
 			);
@@ -952,16 +844,16 @@ class UserView extends ViolatorView
 			$deleteRowButton = $this->createDeleteRowButton
 			(
 				'game-select',
-				true
+				$relatedGame['character_game_relation_status'] === 'unchecked'
 			);
 
 			$html .= 
 			'
-						<section class="related-entity-controls">
-							'.$gameInput.'
-							'.$addRowButton.'
-							'.$deleteRowButton.'
-						</section>
+					<section class="related-entity-controls">
+						'.$gameInput.'
+						'.$addRowButton.'
+						'.$deleteRowButton.'
+					</section>
 			';
 		}
 		
@@ -1082,6 +974,7 @@ class UserView extends ViolatorView
 			null,
 			null,
 			true,
+			false,
 			true,
 			true,
 			$vocalOptions,
@@ -1202,6 +1095,21 @@ class UserView extends ViolatorView
 		string     $heading
 	): void
 	{
+		if (!$relatedPerformers)
+		{
+			// Create a fake to avoid duplicating code when creating <selects>
+			$relatedPerformers =
+			[
+				[
+					'artist_id'                             => '',
+					'artist_transliterated_name'            => '',
+					'character_id'                          => '',
+					'character_transliterated_name'         => '',
+					'song_artist_character_relation_status' => 'unchecked'
+				]
+			];
+		}
+		
 		$html = $this->startRender
 		(
 			title:        $heading,
@@ -1218,96 +1126,36 @@ class UserView extends ViolatorView
 						<h2>'.\Localization\LyricsEditorPage\ArtistAndCharacter.'<span class="required-input"> *</span></h2>
 		';
 		
-		if ($relatedPerformers)
+		// Unfortunately, I can not find another way to push these arrays into $this->createSelect
+		// Performers and these two have different keys
+		
+		for ($i = 0; $i < count($artists); $i++)
 		{
-			// Unfortunately, I can not find another way to push these arrays into $this->createSelect
-			// Performers and these two have different keys
-			
-			for ($i = 0; $i < count($artists); $i++)
-			{
-				$artists[$i]['artist_id'] = $artists[$i]['id'];
-				$artists[$i]['artist_transliterated_name'] = $artists[$i]['transliterated_name'];
-				
-				unset($artists[$i]['id']);
-				unset($artists[$i]['transliterated_name']);
-			}
-			
-			for ($i = 0; $i < count($characters); $i++)
-			{
-				$characters[$i]['character_id'] = $characters[$i]['id'];
-				$characters[$i]['character_transliterated_name'] = $characters[$i]['transliterated_name'];
-				
-				unset($characters[$i]['id']);
-				unset($characters[$i]['transliterated_name']);
-			}
-			
-			foreach ($relatedPerformers as $relatedPerformer)
-			{
-				$artistInput = $this->createSelect
-				(
-					'artist-ids[]',
-					null,
-					null,
-					$relatedPerformer['song_artist_character_relation_status'] === 'unchecked',
-					true,
-					true,
-					$artists,
-					$relatedPerformer,
-					'artist_transliterated_name',
-					'artist_id'
-				);
-				
-				$characterInput = $this->createSelect
-				(
-					'character-ids[]',
-					null,
-					null,
-					$relatedPerformer['song_artist_character_relation_status'] === 'unchecked',
-					false,
-					true,
-					$characters,
-					$relatedPerformer,
-					'character_transliterated_name',
-					'character_id'
-				);
-				
-				$addRowButton = $this->createAddRowButton
-				(
-					'artist-select character-select'
-				);
-				
-				$deleteRowButton = $this->createDeleteRowButton
-				(
-					'artist-select character-select',
-					$relatedPerformer['song_artist_character_relation_status'] === 'unchecked'
-				);
-				
-				$html .= 
-				'
-						<section class="related-entity-controls">
-							'.$artistInput.'
-							<span>'.\Localization\LyricsEditorPage\PerformsAs.'</span>
-							'.$characterInput.'
-							'.$addRowButton.'
-							'.$deleteRowButton.'
-						</section>
-				';
-			}
+			$artists[$i]['artist_id'] = $artists[$i]['id'];
+			$artists[$i]['artist_transliterated_name'] = $artists[$i]['transliterated_name'];
 		}
-		else
+		
+		for ($i = 0; $i < count($characters); $i++)
+		{
+			$characters[$i]['character_id'] = $characters[$i]['id'];
+			$characters[$i]['character_transliterated_name'] = $characters[$i]['transliterated_name'];
+		}
+		
+		foreach ($relatedPerformers as $relatedPerformer)
 		{
 			$artistInput = $this->createSelect
 			(
 				'artist-ids[]',
 				null,
 				null,
-				true,
+				$relatedPerformer['song_artist_character_relation_status'] === 'unchecked',
+				false,
 				true,
 				true,
 				$artists,
-				null,
-				'transliterated_name',
-				'id'
+				$relatedPerformer,
+				'artist_transliterated_name',
+				'artist_id'
 			);
 			
 			$characterInput = $this->createSelect
@@ -1315,13 +1163,14 @@ class UserView extends ViolatorView
 				'character-ids[]',
 				null,
 				null,
-				true,
+				$relatedPerformer['song_artist_character_relation_status'] === 'unchecked',
+				false,
 				false,
 				true,
 				$characters,
-				null,
-				'transliterated_name',
-				'id'
+				$relatedPerformer,
+				'character_transliterated_name',
+				'character_id'
 			);
 			
 			$addRowButton = $this->createAddRowButton
@@ -1332,18 +1181,18 @@ class UserView extends ViolatorView
 			$deleteRowButton = $this->createDeleteRowButton
 			(
 				'artist-select character-select',
-				true
+				$relatedPerformer['song_artist_character_relation_status'] === 'unchecked'
 			);
 			
 			$html .= 
 			'
-						<section class="related-entity-controls">
-							'.$artistInput.'
-							'.\Localization\LyricsEditorPage\PerformsAs.'
-							'.$characterInput.'
-							'.$addRowButton.'
-							'.$deleteRowButton.'
-						</section>
+					<section class="related-entity-controls">
+						'.$artistInput.'
+						<span>'.\Localization\LyricsEditorPage\PerformsAs.'</span>
+						'.$characterInput.'
+						'.$addRowButton.'
+						'.$deleteRowButton.'
+					</section>
 			';
 		}
 		
@@ -1352,7 +1201,14 @@ class UserView extends ViolatorView
 					</section>
 		';
 		
-		$originalSong = array_find($originalSongs, function(array $original) use ($song) { return $song['original_song_id'] === $original['id']; });
+		$originalSong = array_find
+		(
+			$originalSongs,
+			function(array $original) use ($song)
+			{
+				return $song['original_song_id'] === $original['id'];
+			}
+		);
 		
 		$originalSongSelect = $this->createSelect
 		(
@@ -1360,6 +1216,7 @@ class UserView extends ViolatorView
 			'original-song-select',
 			null,
 			true,
+			false,
 			false,
 			true,
 			$originalSongs,
@@ -1376,44 +1233,23 @@ class UserView extends ViolatorView
 					</section>
 		';
 		
-		if ($song['language_id'])
-		{
-			for ($i = 0; $i < count($languages); $i++)
-			{
-				$languages[$i]['language_id'] = $languages[$i]['id'];
-				unset($languages[$i]['id']);
-			}
-			
-			$languageSelect = $this->createSelect
-			(
-				'language-id',
-				'language-select',
-				null,
-				true,
-				true,
-				true,
-				$languages,
-				$song,
-				\Localization\Functions\localizeLanguageKey(),
-				'language_id'
-			);
-		}
-		else
-		{
-			$languageSelect = $this->createSelect
-			(
-				'language-id',
-				'language-select',
-				null,
-				true,
-				true,
-				true,
-				$languages,
-				null,
-				\Localization\Functions\localizeLanguageKey(),
-				'id'
-			);
-		}
+		for ($i = 0; $i < count($languages); $i++)
+			$languages[$i]['language_id'] = $languages[$i]['id'];
+		
+		$languageSelect = $this->createSelect
+		(
+			'language-id',
+			'language-select',
+			null,
+			true,
+			false,
+			true,
+			true,
+			$languages,
+			$song,
+			\Localization\Functions\localizeLanguageKey(),
+			'language_id'
+		);
 		
 		$cancelLink = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		
@@ -1903,6 +1739,7 @@ class UserView extends ViolatorView
 			'confirmation-button',
 			null,
 			true,
+			false,
 			true,
 			1,
 			\Localization\Controls\Confirmation

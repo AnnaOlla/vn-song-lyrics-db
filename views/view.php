@@ -538,11 +538,6 @@ HTML;
 		);
 	}
 	
-	final protected function createFilterBar(): string
-	{
-		return '<input type="search" id="filter-bar" placeholder="'.\Localization\Controls\FilterPage.'" />';
-	}
-	
 	final protected function createInfoBlockWithImage
 	(
 		string $htmlImage,
@@ -1055,12 +1050,18 @@ HTML;
 		return $this->createSongTimestamps($translation);
 	}
 	
+	final protected function createFilterBar(): string
+	{
+		return '<input type="search" id="filter-bar" placeholder="'.\Localization\Controls\FilterPage.'" />';
+	}
+	
 	final protected function createCheckbox
 	(
 		string|null $name,
 		string|null $id,
 		array|null  $classes,
 		bool        $isEnabled,
+		bool        $isReadonly,
 		bool        $isRequired,
 		string|null $value,
 		string|null $label
@@ -1075,6 +1076,7 @@ HTML;
 		$id       = ($id)         ? ' id="'.$id.'"'                       : '';
 		$class    = ($classes)    ? ' class="'.implode(' ', $classes).'"' : '';
 		$disabled = (!$isEnabled) ? ' disabled'                           : '';
+		$readonly = ($isReadonly) ? ' readonly'                           : '';
 		$required = ($isRequired) ? ' required'                           : '';
 		$value    = ($value)      ? htmlspecialchars($value)              : '';
 		$label    = ($label)      ? htmlspecialchars($label)              : '';
@@ -1083,7 +1085,7 @@ HTML;
 		'
 		<label'.$class.'>
 			<span>'.htmlspecialchars($label).'</span>
-			<input type="checkbox"'.$name.$id.$disabled.$required.$value.'/>
+			<input type="checkbox"'.$name.$id.$disabled.$readonly.$required.$value.'/>
 		</label>
 		';
 	}
@@ -1094,6 +1096,7 @@ HTML;
 		string|null $id,
 		array|null  $classes,
 		bool        $isEnabled,
+		bool        $isReadonly,
 		bool        $isRequired,
 		array|null  $accept,
 		string      $value               = \Localization\Controls\ChooseFile,
@@ -1110,6 +1113,7 @@ HTML;
 		$id       = ($id)         ? ' id="'.$id.'"'                       : '';
 		$class    = ($classes)    ? ' class="'.implode(' ', $classes).'"' : '';
 		$disabled = (!$isEnabled) ? ' disabled'                           : '';
+		$readonly = ($isReadonly) ? ' readonly'                           : '';
 		$required = ($isRequired) ? ' required'                           : '';
 		$accept   = ($accept)     ? ' accept="'.implode(',', $accept).'"' : '';
 		
@@ -1120,7 +1124,7 @@ HTML;
 		return
 		'
 		<label'.$class.'>
-			<input type="file"'.$name.$id.$isEnabled.$isRequired.$accept.' />
+			<input type="file"'.$name.$id.$disabled.$readonly.$required.$accept.' />
 			<section text-file-not-selected="'.$noSelect.'" text-file-too-big="'.$tooBig.'">'.$value.'</section>
 		</label>
 		';
@@ -1132,6 +1136,7 @@ HTML;
 		string|null $id,
 		array|null  $classes,
 		bool        $isEnabled,
+		bool        $isReadonly,
 		bool        $isRequired,
 		bool        $addEmptyOption,
 		array       $options,
@@ -1144,9 +1149,10 @@ HTML;
 		$id       = ($id)         ? ' id="'.$id.'"'                       : '';
 		$class    = ($classes)    ? ' class="'.implode(' ', $classes).'"' : '';
 		$disabled = (!$isEnabled) ? ' disabled'                           : '';
+		$readonly = ($isReadonly) ? ' readonly'                           : '';
 		$required = ($isRequired) ? ' required'                           : '';
 		
-		$html = '<select'.$name.$id.$class.$disabled.$required.'>';
+		$html = '<select'.$name.$id.$class.$disabled.$readonly.$required.'>';
 		
 		if ($addEmptyOption)
 			$html .= '<option></option>';

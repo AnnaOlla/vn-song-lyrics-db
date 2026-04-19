@@ -270,6 +270,7 @@ class AdministratorView extends UserView
 			null,
 			null,
 			true,
+			false,
 			true,
 			true,
 			$vocalOptions,
