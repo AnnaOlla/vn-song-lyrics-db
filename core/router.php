@@ -6,7 +6,7 @@ final class Router
 	private const VIOLATOR_BOT_REQUESTS_FILENAME = '.violator-bot-requests.txt';
 	
 	private const VIOLATOR_HUMAN_IPS_FILENAME    = '.violator-human-ip-list.txt';
-	private const VIOLATOR_HUMAN_PAGE_FILENAME   = '.violator-human-page.html';
+	private const VIOLATOR_HUMAN_PAGE_FILENAME   = '.violator-human-page.php';
 	
 	private const FILE_FLAGS                     = FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES;
 	
@@ -116,7 +116,7 @@ final class Router
 		
 		if (self::isUserKnownViolatorHuman())
 		{
-			echo file_get_contents(self::VIOLATOR_HUMAN_PAGE_FILENAME);
+			require_once self::VIOLATOR_HUMAN_PAGE_FILENAME;
 			http_response_code(403);
 			exit;
 		}
