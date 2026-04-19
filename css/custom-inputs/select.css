@@ -46,8 +46,7 @@ select:not([multiple]) {
 	background-position: right 15px top calc(50%), right 11px top calc(50%);
 	background-size: 5px 5px, 5px 5px;
 	
-	/* It just works and makes the height of select correct */
-	height: 42.4px;
+	vertical-align: middle;
 }
 
 section.select-fake-filler {
