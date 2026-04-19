@@ -1,4 +1,10 @@
 /* function main() */ {
+	const discNumber  = document.getElementById('disc-number');
+	const trackNumber = document.getElementById('track-number');
+	
+	const nextDiscButton     = document.getElementById('next-disc');
+	const previousDiscButton = document.getElementById('previous-disc');
+	
 	const previousDiscTrackNumber = trackNumber.value;
 	
 	if (previousDiscTrackNumber == 1) {
@@ -7,12 +13,6 @@
 	previousDiscButton.style.display = 'none';
 	
 	function startNewDisc(e) {
-		const discNumber  = document.getElementById('disc-number');
-		const trackNumber = document.getElementById('track-number');
-		
-		const nextDiscButton     = document.getElementById('next-disc');
-		const previousDiscButton = document.getElementById('previous-disc');
-		
 		discNumber.value++;
 		trackNumber.value = 1;
 		
@@ -21,12 +21,6 @@
 	}
 	
 	function returnToPreviousDisc(e) {
-		const discNumber  = document.getElementById('disc-number');
-		const trackNumber = document.getElementById('track-number');
-		
-		const nextDiscButton     = document.getElementById('next-disc');
-		const previousDiscButton = document.getElementById('previous-disc');
-		
 		discNumber.value--;
 		trackNumber.value = previousDiscTrackNumber;
 		
