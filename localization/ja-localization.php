@@ -1070,8 +1070,8 @@ namespace Localization\WritingGuidePage
 	const KanaLanguageRule3 = '３．日本語しかの言語は大文字で書かれます。';
 	
 	const ParticlesRules      = '「離れる」とか「付ける」とか';
-	const Together            = '離れる';
-	const Apart               = '付ける';
+	const Together            = '付ける';
+	const Apart               = '離れる';
 	const DifferenceInMeaning = '意味は間違っているとき';
 	const SpecialReadings     = '特別な読み方';
 	const DivisionBySyllables = '離れた文字：';
