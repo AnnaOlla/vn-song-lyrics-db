@@ -28,6 +28,7 @@ select {
 	
 	/* Hack to decrease select's width and use ellipses when it's too long */
 	width: calc(100%);
+	min-height: 42.4px;
 }
 
 select[disabled] {
@@ -45,8 +46,6 @@ select:not([multiple]) {
 	background-repeat: no-repeat;
 	background-position: right 15px top calc(50%), right 11px top calc(50%);
 	background-size: 5px 5px, 5px 5px;
-	
-	vertical-align: middle;
 }
 
 section.select-fake-filler {
