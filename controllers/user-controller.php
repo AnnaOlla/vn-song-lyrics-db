@@ -1340,7 +1340,7 @@ class UserController extends ViolatorController
 		(
 			$album['uri'],
 			$song['uri'],
-			$translationUri['uri'],
+			$translation['uri'],
 			$name,
 			$lyrics,
 			$notes,
@@ -1670,7 +1670,7 @@ class UserController extends ViolatorController
 	
 	final public function handleChangeAccountDataPage(string $userUri): void
 	{
-		$user = $this->model->getUserData($_SESSION['user']['id']);
+		$user = $this->model->getUserData(username: $userUri);
 		
 		if (!Session::isCurrentUser($user['user_id']) && !Session::isCurrentUserModerator())
 			throw new HttpNotFound404();
@@ -1712,12 +1712,6 @@ class UserController extends ViolatorController
 		if (!$this->model->isPasswordCorrect($user['id'], $oldPassword))
 		{
 			$this->handleChangeAccountDataPageGet($user, InputError::IncorrectPassword);
-			return;
-		}
-		
-		if (Parsing::trimNullableString($newUsername) !== $newUsername)
-		{
-			$this->handleChangeAccountDataPageGet($user, InputError::UsernameTrimmable);
 			return;
 		}
 		
