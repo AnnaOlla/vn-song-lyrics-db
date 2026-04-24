@@ -1,19 +1,16 @@
-// Beautifier:
-// It is more convinient if all sections will start from the same height
-// Because they have non-static headings, it should be handled manually
-function setSameHeightForHeadings1(e) {
+function setSameHeightForH1(e) {
 	const headings = document.getElementsByTagName('h1');
 	
-	const leftHeading = headings[0];
+	const leftHeading  = headings[0];
 	const rightHeading = headings[1];
 	
-	leftHeading.style.boxSizing = 'border-box';
+	leftHeading.style.boxSizing  = 'border-box';
 	rightHeading.style.boxSizing = 'border-box';
 	
-	leftHeading.style.height = 'auto';
+	leftHeading.style.height  = 'auto';
 	rightHeading.style.height = 'auto';
 	
-	const leftHeight = leftHeading.getBoundingClientRect().height;
+	const leftHeight  = leftHeading.getBoundingClientRect().height;
 	const rightHeight = rightHeading.getBoundingClientRect().height;
 	
 	if (leftHeight < rightHeight) {
@@ -24,19 +21,15 @@ function setSameHeightForHeadings1(e) {
 	// if equal, do nothing
 }
 
-window.addEventListener('resize', setSameHeightForHeadings1);
-
-const textareas = document.getElementsByTagName('textarea');
-for (const textarea of textareas) {
-	addEventListenersToCustomTextarea(textarea);
-	emulateEvent(textarea, 'input');
+/* function main() */ {
+	window.addEventListener('onload', setSameHeightForH1);
+	window.addEventListener('resize', setSameHeightForH1);
+	
+	const mainArea = document.querySelector('main');
+	mainArea.addEventListener('mouseleave', setDefaultTooltip);
+	
+	const sections = document.getElementsByClassName('has-tooltip');
+	for (section of sections) {
+		section.addEventListener('mouseenter', setTooltip);
+	}
 }
-
-const selectElements = document.getElementsByTagName('select');
-for (const selectElement of selectElements) {
-	addEventListenersToCustomSelect(selectElement);
-}
-
-const main = document.querySelector('main');
-const sections = document.getElementsByClassName('has-tooltip');
-addEventListenersForTooltipWindow(main, sections);

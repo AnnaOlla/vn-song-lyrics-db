@@ -3,7 +3,7 @@ function customSelectOnFocus(e) {
 	const fake   = e.target.nextElementSibling;
 	
 	const optionCount    = select.children.length;
-	const maxOptionCount = 5;
+	const maxOptionCount = 8;
 	
 	// Browsers show a warning if multiple-select is empty
 	if (optionCount === 0)
@@ -20,9 +20,8 @@ function customSelectOnFocus(e) {
 	
 	// Select is inline-block by default
 	// But if it is a section it gives extra height: even 'null' is considered to have height
-	// This fixes it (also just 'inline' may fix)
-	fake.style.fontSize   = 0;
-	fake.style.lineHeight = 0;
+	fake.style.fontSize      = 0;
+	fake.style.lineHeight    = 0;
 	fake.style.verticalAlign = 'middle';
 	
 	select.multiple = true;
