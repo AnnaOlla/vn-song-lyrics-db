@@ -25,34 +25,36 @@ input[type="search"] {
 	white-space: nowrap;
 	
 	outline: 0;
+	
+	cursor: text;
 }
 
-input[type="text"]:readonly,
-input[type="password"]:readonly,
-input[type="email"]:readonly,
-input[type="tel"]:readonly,
-input[type="url"]:readonly,
-input[type="search"]:readonly,
+input[type="text"]:read-only,
 input[type="text"]:disabled,
+input[type="password"]:read-only,
 input[type="password"]:disabled,
+input[type="email"]:read-only,
 input[type="email"]:disabled,
+input[type="tel"]:read-only,
 input[type="tel"]:disabled,
+input[type="url"]:read-only,
 input[type="url"]:disabled,
+input[type="search"]:read-only,
 input[type="search"]:disabled {
 	cursor: not-allowed;
 }
 
 input[type="text"]:hover:not([disabled]):not([readonly]),
-input[type="password"]:hover:not([disabled]):not([readonly]),
-input[type="email"]:hover:not([disabled]):not([readonly]),
-input[type="tel"]:hover:not([disabled]):not([readonly]),
-input[type="url"]:hover:not([disabled]):not([readonly]),
-input[type="search"]:hover:not([disabled]):not([readonly]),
 input[type="text"]:focus:not([disabled]):not([readonly]),
+input[type="password"]:hover:not([disabled]):not([readonly]),
 input[type="password"]:focus:not([disabled]):not([readonly]),
+input[type="email"]:hover:not([disabled]):not([readonly]),
 input[type="email"]:focus:not([disabled]):not([readonly]),
+input[type="tel"]:hover:not([disabled]):not([readonly]),
 input[type="tel"]:focus:not([disabled]):not([readonly]),
+input[type="url"]:hover:not([disabled]):not([readonly]),
 input[type="url"]:focus:not([disabled]):not([readonly]),
+input[type="search"]:hover:not([disabled]):not([readonly]),
 input[type="search"]:focus:not([disabled]):not([readonly]) {
 	background-color: var(--color-input-secondary);
 	outline: none;

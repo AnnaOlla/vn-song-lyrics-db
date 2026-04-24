@@ -1,9 +1,10 @@
 /* Select */
 
 select {
+	appearance: none;
+	
 	background-color: var(--color-input-primary);
 	color: var(--color-text);
-	
 	scrollbar-color: var(--color-clickable-item-primary) var(--color-input-primary);
 	
 	border: 0;
@@ -18,29 +19,29 @@ select {
 	margin-top: var(--text-margin);
 	margin-bottom: var(--text-margin);
 
-	appearance: none;
+	cursor: pointer;
 	
+	/* Fix select's width and use ellipsis when it's too long */
+	width: 100%;
 	text-overflow: ellipsis;
 	overflow-x: hidden;
 	white-space: nowrap;
 	
-	cursor: pointer;
-	
-	/* Hack to decrease select's width and use ellipses when it's too long */
-	width: calc(100%);
+	/* Prevent decreasing height when empty */
 	min-height: 42.4px;
 }
 
-select[disabled] {
+select:disabled {
 	cursor: not-allowed;
 }
 
-select:hover, select:focus {
+select:hover:not([disabled]),
+select:focus:not([disabled]) {
 	background-color: var(--color-input-secondary);
 }
 
 /* A triangle on the select to show that it's a select */
-select:not([multiple]) {
+select:not([multiple]):not([disabled]) {
 	background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
 	                  linear-gradient(135deg, currentColor 50%, transparent 50%);
 	background-repeat: no-repeat;
@@ -65,9 +66,12 @@ option {
 	white-space: nowrap;
 	box-sizing: border-box;
 	padding: 0;
+	
+	border-radius: calc(var(--border-radius)/2);
 }
 
-option:hover, option:checked, option[selected] {
+option:hover:not([disabled]),
+option:checked {
 	background: var(--color-clickable-item-primary)
 	            linear-gradient(0deg, var(--color-clickable-item-primary) 0%,
 				var(--color-clickable-item-primary) 100%);
@@ -75,4 +79,9 @@ option:hover, option:checked, option[selected] {
 
 option:disabled {
 	color: var(--color-text-placeholder);
+	cursor: not-allowed;
+}
+
+option:hover:disabled {
+	background-color: var(--color-input-primary);
 }
