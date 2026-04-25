@@ -1,3 +1,8 @@
+function overflowsBodyVertically(element) {
+	const absoluteBottom = element.getBoundingClientRect().bottom + window.scrollY;
+	return absoluteBottom > document.body.scrollHeight;
+}
+
 function customSelectOnFocus(e) {
 	const select = e.target;
 	const fake   = e.target.nextElementSibling;
@@ -27,18 +32,20 @@ function customSelectOnFocus(e) {
 	select.multiple = true;
 	select.size     = (optionCount < maxOptionCount ? optionCount : maxOptionCount);
 	
-	// Put the select in the same position as it had
-	const rectangleAfter  = select.getBoundingClientRect();
 	select.style.position = 'absolute';
 	select.style.left     = rectangleBefore.left + window.scrollX + 'px';
 	select.style.top      = rectangleBefore.top + window.scrollY + 'px';
 	select.style.width    = rectangleBefore.width + 'px';
-	select.style.height   = rectangleAfter.height + 'px';
+	// Do not set height: it'll be calculated automatically depending on options count
 	
 	select.style.marginTop    = '0px';
 	select.style.marginBottom = '0px';
 	select.style.marginLeft   = '0px';
 	select.style.marginRight  = '0px';
+	
+	while (overflowsBodyVertically(select) && select.size > 2) {
+		select.size--;
+	}
 }
 
 function customSelectOnBlur(e) {
