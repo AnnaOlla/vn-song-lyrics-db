@@ -44,7 +44,7 @@ final class Parsing
 	public static function trimNullableStringArray(array $values): array
 	{
 		for ($i = 0; $i < count($values); $i++)
-			$values[$i] = trimNullableString($values[$i]);
+			$values[$i] = Parsing::trimNullableString($values[$i]);
 		
 		return $values;
 	}

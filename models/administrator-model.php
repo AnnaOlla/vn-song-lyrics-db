@@ -644,9 +644,7 @@ class AdministratorModel extends UserModel
 			UPDATE
 				albums
 			SET
-				song_count        = :song_count,
-				user_updated_id   = :user_updated_id,
-				timestamp_updated = NOW()
+				song_count = :song_count
 			WHERE
 				uri = :uri
 			AND
@@ -657,13 +655,12 @@ class AdministratorModel extends UserModel
 		// all arrays have the same size, so it doesn't matter which to count
 		$songCount = count($discNumbers);
 		
-		$stmt->bindParam(':song_count',      $songCount,   PDO::PARAM_INT);
-		$stmt->bindParam(':user_updated_id', $userAddedId, PDO::PARAM_INT);
-		$stmt->bindParam(':uri',             $albumUri,    PDO::PARAM_STR);
+		$stmt->bindParam(':song_count', $songCount, PDO::PARAM_INT);
+		$stmt->bindParam(':uri',        $albumUri,  PDO::PARAM_STR);
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.': album update failed for '.$albumUri);
+			throw new HttpInternalServerError500(__METHOD__.': album update failed for '.$albumUri);
 		
 		$albumId = $this->pdo->lastInsertId();
 		
@@ -732,7 +729,7 @@ class AdministratorModel extends UserModel
 		$stmt->execute($values);
 		
 		if ($stmt->rowCount() === 0)
-			throw new Exception(__METHOD__.': song insert failed for '.$albumUri);
+			throw new HttpInternalServerError500(__METHOD__.': song insert failed for '.$albumUri);
 		
 		$this->pdo->commit();
 	}

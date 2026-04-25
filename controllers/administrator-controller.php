@@ -554,7 +554,7 @@ class AdministratorController extends UserController
 	
 	final public function handleFillAlbumPage(string $albumUri): void
 	{
-		$album            = $this->model->getAlbumId($albumUri);
+		$album            = $this->model->getAlbum($albumUri);
 		$currentSongCount = $this->model->getSongCurrentCount($albumUri);
 		
 		if (!$album)
@@ -575,21 +575,30 @@ class AdministratorController extends UserController
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
-				$this->handleUserListPageGet($album);
+				$this->handleFillAlbumPageGet($album);
 				break;
 				
 			case 'POST':
-				$this->handleUserListPagePost($album);
+				$this->handleFillAlbumPagePost($album);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
-	private function handleFillAlbumPageGet(array $album, int $currentSongCount): void
+	private function handleFillAlbumPageGet(array $album): void
 	{
-		$discography = $this->model->fetchDataFromVgmdbPage($albumUri);
+		$discography = $this->model->fetchDataFromVgmdbPage($album['uri']);
 		
 		if (!$discography)
 			throw new HttpBadRequest400();
@@ -597,8 +606,11 @@ class AdministratorController extends UserController
 		$this->view->renderFillAlbumPage($album, $discography);
 	}
 	
-	private function handleFillAlbumPagePost(array $album, int $currentSongCount): void
-	{	
+	private function handleFillAlbumPagePost(array $album): void
+	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$discNumbers         = $_POST['disc-number']         ?? [];
 		$trackNumbers        = $_POST['track-number']        ?? [];
 		$originalNames       = $_POST['original-name']       ?? [];
@@ -673,7 +685,7 @@ class AdministratorController extends UserController
 		
 		$this->model->fillAlbum
 		(
-			$albumUri,
+			$album['uri'],
 			$discNumbers,
 			$trackNumbers,
 			$originalNames,
@@ -683,6 +695,6 @@ class AdministratorController extends UserController
 			$userAddedId
 		);
 		
-		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $albumUri));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri']));
 	}
 }
