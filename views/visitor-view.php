@@ -35,7 +35,7 @@ class VisitorView extends ErrorView
 		
 		$select = $this->createSelect
 		(
-			'limit',
+			null,
 			'limit-result-count-bar',
 			null,
 			true,
@@ -144,12 +144,18 @@ class VisitorView extends ErrorView
 		return $html;
 	}
 	
-	final protected function createSearchBarBlock(string|null $search): string
+	final protected function createSearchBarBlock
+	(
+		int|null    $limit,
+		int|null    $page,
+		string|null $search
+	): string
 	{
 		return
 		'
 		<section>'.\Localization\Controls\SearchHeading.'</section>
 		<section class="search-elements">
+			<input name="limit" type="hidden" value="'.htmlspecialchars($limit ?? '').'" />
 			<input name="page" type="hidden" value="1" />
 			<input name="search" type="search" id="search-bar" value="'.htmlspecialchars($search ?? '').'" placeholder="'.\Localization\Controls\SearchPlaceholder.'" required />
 			<button id="search-bar-button">'.\Localization\Controls\SearchButton.'</button>
@@ -851,7 +857,7 @@ class VisitorView extends ErrorView
 		$hrefThisPage      = Session::buildInternalLink($this->language, 'game-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $gameCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
-		$searchBarBlock    = $this->createSearchBarBlock($search);
+		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html = $this->startRender
 		(
@@ -919,7 +925,7 @@ class VisitorView extends ErrorView
 		$hrefThisPage      = Session::buildInternalLink($this->language, 'album-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $albumCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
-		$searchBarBlock    = $this->createSearchBarBlock($search);
+		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html = $this->startRender
 		(
@@ -987,7 +993,7 @@ class VisitorView extends ErrorView
 		$hrefThisPage      = Session::buildInternalLink($this->language, 'artist-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $artistCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
-		$searchBarBlock    = $this->createSearchBarBlock($search);
+		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html = $this->startRender
 		(
@@ -1055,7 +1061,7 @@ class VisitorView extends ErrorView
 		$hrefThisPage      = Session::buildInternalLink($this->language, 'character-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $characterCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
-		$searchBarBlock    = $this->createSearchBarBlock($search);
+		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html = $this->startRender
 		(
@@ -1120,7 +1126,7 @@ class VisitorView extends ErrorView
 		$hrefThisPage      = Session::buildInternalLink($this->language, 'song-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $songCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
-		$searchBarBlock    = $this->createSearchBarBlock($search);
+		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html = $this->startRender
 		(
@@ -1184,7 +1190,7 @@ class VisitorView extends ErrorView
 		$hrefThisPage      = Session::buildInternalLink($this->language, 'translation-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $translationCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
-		$searchBarBlock    = $this->createSearchBarBlock($search);
+		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html = $this->startRender
 		(

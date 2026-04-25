@@ -10,16 +10,32 @@ final class Session
 		return '/'.implode('/', $linkParts);
 	}
 
-	public static function attachGetParameters(string $link, array $parameters): string
+	public static function buildQueryParameters(array|null $keysToValues): string
 	{
-		$keyToValue = [];
+		if (!$keysToValues)
+			return '';
 		
-		foreach ($parameters as $key => $value)
-			$keyToValue[] = $key.'='.$value;
+		$parameters = [];
 		
-		return $link.'?'.implode("&", $keyToValue);
+		foreach ($keysToValues as $key => $value)
+			$parameters[] = $key.'='.$value;
+		
+		return '?'.implode("&", $parameters);
 	}
-
+	
+	public static function getQueryParametersFromLastVisitedPage(): string
+	{
+		$referer = parse_url($_SERVER['HTTP_REFERER'] ?? '');
+		
+		$host    = $referer['host']  ?? '';
+		$query   = $referer['query'] ?? '';
+		
+		if ($referer['host'] === $_SERVER['HTTP_HOST'] && $query)
+			return '?'.$query;
+		
+		return '';
+	}
+	
 	public static function isCurrentUserModerator(): bool
 	{
 		return $_SESSION['user']['role'] === 'administrator';

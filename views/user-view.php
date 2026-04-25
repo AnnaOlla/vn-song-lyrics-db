@@ -62,7 +62,8 @@ class UserView extends ViolatorView
 				]
 			];
 			
-			$cancelLink = Session::buildInternalLink($this->language, 'game-list');
+			$query = Session::getQueryParametersFromLastVisitedPage() ?? '?limit=10&page=1';
+			$cancelLink = Session::buildInternalLink($this->language, 'game-list').$query;
 		}
 		
 		$html = $this->startRender
@@ -322,7 +323,8 @@ class UserView extends ViolatorView
 			$vgmdbLink          = '';
 			$songCount          = '';
 			
-			$cancelLink = Session::buildInternalLink($this->language, 'album-list');
+			$query = Session::getQueryParametersFromLastVisitedPage() ?? '?limit=10&page=1';
+			$cancelLink = Session::buildInternalLink($this->language, 'album-list').$query;
 			
 			// Create a fake to avoid duplicating code when creating <selects>
 			$relatedGames =
@@ -548,7 +550,8 @@ class UserView extends ViolatorView
 			$vgmdbLink          = '';
 			$originalArtist     = null;
 			
-			$cancelLink = Session::buildInternalLink($this->language, 'artist-list');
+			$query = Session::getQueryParametersFromLastVisitedPage() ?? '?limit=10&page=1';
+			$cancelLink = Session::buildInternalLink($this->language, 'artist-list').$query;
 		}
 		
 		$html = $this->startRender
@@ -727,6 +730,8 @@ class UserView extends ViolatorView
 				$vndbLink       = 'https://vndb.org/c'.htmlspecialchars($character['vndb_id']);
 			else
 				$vndbLink       = '';
+			
+			$cancelLink = Session::buildInternalLink($this->language, 'character', $character['uri']);
 		}
 		else
 		{
@@ -745,6 +750,9 @@ class UserView extends ViolatorView
 					'character_game_relation_status' => 'unchecked'
 				]
 			];
+			
+			$query = Session::getQueryParametersFromLastVisitedPage() ?? '?limit=10&page=1';
+			$cancelLink = Session::buildInternalLink($this->language, 'character-list').$query;
 		}
 		
 		$html = $this->startRender
@@ -856,11 +864,6 @@ class UserView extends ViolatorView
 					</section>
 			';
 		}
-		
-		if ($character)
-			$cancelLink = Session::buildInternalLink($this->language, 'character', $character['uri']);
-		else
-			$cancelLink = Session::buildInternalLink($this->language, 'character-list');
 		
 		$html .= 
 		'
