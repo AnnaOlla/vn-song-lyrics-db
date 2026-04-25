@@ -151,13 +151,27 @@ class VisitorView extends ErrorView
 		string|null $search
 	): string
 	{
+		if (!is_null($limit))
+		{
+			$limitInput  = '<input name="limit" type="hidden" value="'.htmlspecialchars($limit).'" />';
+			$pageInput   = '<input name="page" type="hidden" value="1" />';
+			
+		}
+		else
+		{
+			$limitInput = '';
+			$pageInput  = '';
+		}
+		
+		$searchInput = '<input name="search" type="search" id="search-bar" value="'.htmlspecialchars($search ?? '').'" placeholder="'.\Localization\Controls\SearchPlaceholder.'" required />';
+		
 		return
 		'
 		<section>'.\Localization\Controls\SearchHeading.'</section>
 		<section class="search-elements">
-			<input name="limit" type="hidden" value="'.htmlspecialchars($limit ?? '').'" />
-			<input name="page" type="hidden" value="1" />
-			<input name="search" type="search" id="search-bar" value="'.htmlspecialchars($search ?? '').'" placeholder="'.\Localization\Controls\SearchPlaceholder.'" required />
+			'.$limitInput.'
+			'.$pageInput.'
+			'.$searchInput.'
 			<button id="search-bar-button">'.\Localization\Controls\SearchButton.'</button>
 		</section>
 		';
