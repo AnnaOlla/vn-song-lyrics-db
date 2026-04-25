@@ -153,7 +153,7 @@ class VisitorModel extends Model
 	): array
 	{
 		if (is_null($id) && is_null($username))
-			throw DatabaseLogicException(__METHOD__.' was called without arguments');
+			throw HttpInternalServerError500(__METHOD__.' was called without arguments');
 		
 		$where = ['TRUE'];
 		$binds = [];

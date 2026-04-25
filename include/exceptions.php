@@ -21,16 +21,6 @@ abstract class CustomException extends Exception
 	}
 }
 
-class UploadedFileException extends CustomException
-{
-	// Nothing here
-};
-
-class DatabaseLogicException extends CustomException
-{
-	// Nothing here
-}
-
 abstract class HttpException extends CustomException
 {
 	// Nothing here
@@ -89,6 +79,38 @@ final class HttpNotAcceptable406 extends HttpException
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
 	{
 		parent::__construct($message, $parameters, 406, $previous);
+	}
+}
+
+final class HttpConflict409 extends HttpException
+{
+	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
+	{
+		parent::__construct($message, $parameters, 409, $previous);
+	}
+}
+
+final class HttpContentTooLarge413 extends HttpException
+{
+	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
+	{
+		parent::__construct($message, $parameters, 413, $previous);
+	}
+}
+
+final class HttpUnsupportedMediaType415 extends HttpException
+{
+	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
+	{
+		parent::__construct($message, $parameters, 415, $previous);
+	}
+}
+
+final class HttpUnprocessableEntity422 extends HttpException
+{
+	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
+	{
+		parent::__construct($message, $parameters, 415, $previous);
 	}
 }
 

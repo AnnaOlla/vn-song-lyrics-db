@@ -27,8 +27,17 @@ class UserController extends ViolatorController
 				$this->handleAddGamePagePost();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -42,6 +51,9 @@ class UserController extends ViolatorController
 	
 	private function handleAddGamePagePost(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$allAlbumIds     = $this->model->getAlbumList(fetchMinInfo: true);
 		$allAlbumIds     = array_column($allAlbumIds, 'id');
 		$allCharacterIds = $this->model->getCharacterList(fetchMinInfo: true);
@@ -67,16 +79,19 @@ class UserController extends ViolatorController
 		$characterIds       = Parsing::removeNullValues($characterIds);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
+			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($albumIds, $allAlbumIds))
-			throw new HttpBadRequest400('At least one of albumIds was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of albumIds was invalid', get_defined_vars());
 		
-		if (array_diff($characterIds, $characterIds))
-			throw new HttpBadRequest400('At least one of characterIds was invalid', get_defined_vars());
+		if (array_diff($characterIds, $allCharacterIds))
+			throw new HttpUnprocessableEntity422('At least one of characterIds was invalid', get_defined_vars());
+		
+		if ($this->model->gameExists($originalName, $transliteratedName))
+			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
 		
 		[$gameId, $gameUri] = $this->model->addGame
 		(
@@ -110,8 +125,17 @@ class UserController extends ViolatorController
 				$this->handleAddAlbumPagePost();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -124,6 +148,9 @@ class UserController extends ViolatorController
 	
 	private function handleAddAlbumPagePost(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$allGameIds         = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds         = array_column($allGameIds, 'id');
 		
@@ -146,13 +173,16 @@ class UserController extends ViolatorController
 		$gameIds            = Parsing::removeNullValues($gameIds);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $songCount))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
+			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-			throw new HttpBadRequest400('At least one of gameIds was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of gameIds was invalid', get_defined_vars());
+		
+		if ($this->model->albumExists($originalName, $transliteratedName))
+			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
 		
 		[$albumId, $albumUri] = $this->model->addAlbum
 		(
@@ -184,8 +214,17 @@ class UserController extends ViolatorController
 				$this->handleAddArtistPagePost();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -198,6 +237,9 @@ class UserController extends ViolatorController
 	
 	private function handleAddArtistPagePost(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$originalArtists    = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
 		$originalArtists    = array_column($originalArtists, 'id');
 		
@@ -217,13 +259,16 @@ class UserController extends ViolatorController
 		$aliasOfId          = Parsing::parseNullableInteger($aliasOfId, 1);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
+			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
 		
 		if ($aliasOfId && !in_array($aliasOfId, $originalArtists))
-			throw new HttpBadRequest400('aliasOfId was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('aliasOfId was invalid', get_defined_vars());
+		
+		if ($this->model->artistExists($originalName, $transliteratedName))
+			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
 		
 		[$artistId, $artistUri] = $this->model->addArtist
 		(
@@ -252,8 +297,17 @@ class UserController extends ViolatorController
 				$this->handleAddCharacterPagePost();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -266,6 +320,9 @@ class UserController extends ViolatorController
 	
 	private function handleAddCharacterPagePost(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$allGameIds         = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds         = array_column($allGameIds, 'id');
 		
@@ -286,13 +343,16 @@ class UserController extends ViolatorController
 		$gameIds            = Parsing::removeNullValues($gameIds);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
+			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-			throw new HttpBadRequest400('At least one of gameIds was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of gameIds was invalid', get_defined_vars());
+		
+		if ($this->model->characterExists($originalName, $transliteratedName))
+			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
 		
 		[$characterId, $characterUri] = $this->model->addCharacter
 		(
@@ -341,8 +401,17 @@ class UserController extends ViolatorController
 				$this->handleAddSongPagePost($album, $songCount);
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -358,6 +427,9 @@ class UserController extends ViolatorController
 	
 	private function handleAddSongPagePost(array $album, int $songCount): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$lastSongInfo       = $this->model->getLastDiscAndTrack($album['uri']);
 		$currentDiscNumber  = $lastSongInfo ? $lastSongInfo['disc_number']      : 1;
 		$currentTrackNumber = $lastSongInfo ? $lastSongInfo['track_number'] + 1 : 1;
@@ -385,13 +457,16 @@ class UserController extends ViolatorController
 		$isFirstDiscFirstTrack = ($isFirstDisc && $isFirstTrack);
 		
 		if (Validation::haveNullOrEmpty($discNumber, $trackNumber, $originalName, $transliteratedName, $hasVocal))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
+			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (!$isSameDiscNextTrack && !$isNextDiscFirstTrack && !$isFirstDiscFirstTrack)
-			throw new HttpBadRequest400('Track number or disk number was incorrect', get_defined_vars());
+			throw new HttpUnprocessableEntity422('Track number or disk number was incorrect', get_defined_vars());
+		
+		if ($this->model->songExists($album['uri'], $originalName, $transliteratedName))
+			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
 		
 		$this->model->addSong
 		(
@@ -446,8 +521,17 @@ class UserController extends ViolatorController
 				$this->handleAddLyricsPagePost($album, $song);
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -478,6 +562,9 @@ class UserController extends ViolatorController
 	
 	private function handleAddLyricsPagePost(array $album, array $song): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$allArtistIds      = $this->model->getArtistList(fetchMinInfo: true);
 		$allArtistIds      = array_column($allArtistIds, 'id');
 		$allCharacterIds   = $this->model->getCharacterList(fetchMinInfo: true);
@@ -515,28 +602,28 @@ class UserController extends ViolatorController
 		$notes             = Parsing::trimNullableString($notes);
 		
 		if (count($artistIds) === 0)
-			throw new HttpBadRequest400('Artists were not provided', get_defined_vars());
+			throw new HttpUnprocessableEntity422('Artists were not provided', get_defined_vars());
 		
 		if (count($artistIds) !== count($characterIds))
-			throw new HttpBadRequest400('Artist count was not equal to character count', get_defined_vars());
+			throw new HttpUnprocessableEntity422('Artist count was not equal to character count', get_defined_vars());
 		
 		if (array_diff($artistIds, $allArtistIds))
-			throw new HttpBadRequest400('One of artistIds was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('One of artistIds was invalid', get_defined_vars());
 		
 		if (array_diff($characterIds, $allCharacterIds))
-			throw new HttpBadRequest400('One of characterIds was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('One of characterIds was invalid', get_defined_vars());
 		
 		if ($originalSongId && ($languageId || $lyrics || $notes))
-			throw new HttpBadRequest400('originalSongId was set along with language, lyrics, notes', get_defined_vars());
+			throw new HttpUnprocessableEntity422('originalSongId was set along with language, lyrics, notes', get_defined_vars());
 		
 		if (!$originalSongId && (!$languageId || !$lyrics))
-			throw new HttpBadRequest400('None of originalSongId, languageId, lyrics was set', get_defined_vars());
+			throw new HttpUnprocessableEntity422('None of originalSongId, languageId, lyrics was set', get_defined_vars());
 		
 		if ($originalSongId && !in_array($originalSongId, $allOriginalIds))
-			throw new HttpBadRequest400('originalSongId was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('originalSongId was invalid', get_defined_vars());
 		
 		if ($languageId && !in_array($languageId, $allLanguages))
-			throw new HttpBadRequest400('languageId was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('languageId was invalid', get_defined_vars());
 		
 		$this->model->addLyrics
 		(
@@ -586,8 +673,17 @@ class UserController extends ViolatorController
 				$this->handleAddTranslationPagePost($album, $song);
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -607,6 +703,9 @@ class UserController extends ViolatorController
 	
 	private function handleAddTranslationPagePost(array $album, array $song): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$translationsByUser = $this->model->getTranslationList
 		(
 			fetchMinInfo: true,
@@ -636,13 +735,16 @@ class UserController extends ViolatorController
 		$notes                = Parsing::trimNullableString($notes);
 		
 		if (Validation::haveNullOrEmpty($name, $lyrics, $languageId))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!in_array($languageId, $allLanguages))
-			throw new HttpBadRequest400('languageId was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('languageId was invalid', get_defined_vars());
 		
 		if (in_array($languageId, $forbiddenLanguages))
-			throw new HttpBadRequest400('languageId was forbidden', get_defined_vars());
+			throw new HttpUnprocessableEntity422('languageId was forbidden', get_defined_vars());
+		
+		if ($this->model->translationExists($album['uri'], $song['uri'], $languageId, $userAddedId))
+			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
 		
 		[$translationId, $translationUri] = $this->model->addTranslation
 		(
@@ -682,8 +784,17 @@ class UserController extends ViolatorController
 				$this->handleEditGamePagePost($game);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -706,6 +817,9 @@ class UserController extends ViolatorController
 	
 	private function handleEditGamePagePost(array $game): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$allAlbumIds         = $this->model->getAlbumList(fetchMinInfo: true);
 		$allAlbumIds         = array_column($allAlbumIds, 'id');
 		$allCharacterIds     = $this->model->getCharacterList(fetchMinInfo: true);
@@ -731,16 +845,16 @@ class UserController extends ViolatorController
 		$characterIds        = Parsing::removeNullValues($characterIds);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
+			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($albumIds, $allAlbumIds))
-			throw new HttpBadRequest400('languageId was forbidden', get_defined_vars());
+			throw new HttpUnprocessableEntity422('languageId was forbidden', get_defined_vars());
 		
 		if (array_diff($characterIds, $allCharacterIds))
-			throw new HttpBadRequest400('At least one of characterIds was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of characterIds was invalid', get_defined_vars());
 		
 		[$gameId, $gameUri] = $this->model->updateGame
 		(
@@ -790,8 +904,17 @@ class UserController extends ViolatorController
 				$this->handleEditAlbumPagePost($album);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -814,6 +937,9 @@ class UserController extends ViolatorController
 	
 	private function handleEditAlbumPagePost(array $album): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$allGameIds          = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds          = array_column($allGameIds, 'id');
 		$currentSongCount    = $this->model->getSongCurrentCount($album['uri']);
@@ -837,16 +963,16 @@ class UserController extends ViolatorController
 		$gameIds             = Parsing::removeNullValues($gameIds);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $songCount))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
+			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-			throw new HttpBadRequest400('At least one of gameIds was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of gameIds was invalid', get_defined_vars());
 		
 		if ($songCount < $currentSongCount)
-			throw new HttpBadRequest400('New song count was less than current', get_defined_vars());
+			throw new HttpUnprocessableEntity422('New song count was less than current', get_defined_vars());
 		
 		[$albumId, $albumUri] = $this->model->updateAlbum
 		(
@@ -891,8 +1017,17 @@ class UserController extends ViolatorController
 				$this->handleEditArtistPagePost($artist);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -905,6 +1040,9 @@ class UserController extends ViolatorController
 	
 	private function handleEditArtistPagePost(array $artist): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$originalArtists     = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
 		$originalArtists     = array_column($originalArtists, 'id');
 		
@@ -924,13 +1062,13 @@ class UserController extends ViolatorController
 		$aliasOfId           = Parsing::parseNullableInteger($aliasOfId, 1);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
+			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
 		
 		if ($aliasOfId && !in_array($aliasOfId, $originalArtists))
-			throw new HttpBadRequest400('aliasOfId was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('aliasOfId was invalid', get_defined_vars());
 		
 		[$artistId, $artistUri] = $this->model->updateArtist
 		(
@@ -970,8 +1108,17 @@ class UserController extends ViolatorController
 				$this->handleEditCharacterPagePost($character);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -985,6 +1132,9 @@ class UserController extends ViolatorController
 	
 	private function handleEditCharacterPagePost(array $character): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$allGameIds          = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds          = array_column($allGameIds, 'id');
 		
@@ -1005,13 +1155,13 @@ class UserController extends ViolatorController
 		$gameIds             = Parsing::removeNullValues($gameIds);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
+			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-			throw new HttpBadRequest400('At least one of gameIds was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of gameIds was invalid', get_defined_vars());
 		
 		[$characterId, $characterUri] = $this->model->updateCharacter
 		(
@@ -1062,8 +1212,17 @@ class UserController extends ViolatorController
 				$this->handleEditSongPagePost($album, $song);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1074,6 +1233,9 @@ class UserController extends ViolatorController
 	
 	private function handleEditSongPagePost(array $album, array $song): void
 	{	
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$originalName       = $_POST['original-name']       ?? null;
 		$transliteratedName = $_POST['transliterated-name'] ?? null;
 		$localizedName      = $_POST['localized-name']      ?? null;
@@ -1086,10 +1248,10 @@ class UserController extends ViolatorController
 		$hasVocal           = Parsing::parseNullableInteger($hasVocal, 0, 1);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $hasVocal))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpBadRequest400('transliteratedName was not ASCII', get_defined_vars());
+			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
 		
 		$this->model->updateSong
 		(
@@ -1150,8 +1312,17 @@ class UserController extends ViolatorController
 				$this->handleEditLyricsPagePost($album, $song);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1189,6 +1360,9 @@ class UserController extends ViolatorController
 	
 	private function handleEditLyricsPagePost(array $album, array $song): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$allArtistIds        = $this->model->getArtistList(fetchMinInfo: true);
 		$allArtistIds        = array_column($allArtistIds, 'id');
 		$allCharacterIds     = $this->model->getCharacterList(fetchMinInfo: true);
@@ -1226,28 +1400,28 @@ class UserController extends ViolatorController
 		$notes               = Parsing::trimNullableString($notes);
 		
 		if (count($artistIds) === 0)
-			throw new HttpBadRequest400('Artists were not provided', get_defined_vars());
+			throw new HttpUnprocessableEntity422('Artists were not provided', get_defined_vars());
 		
 		if (count($artistIds) !== count($characterIds))
-			throw new HttpBadRequest400('Artist count was not equal to character count', get_defined_vars());
+			throw new HttpUnprocessableEntity422('Artist count was not equal to character count', get_defined_vars());
 		
 		if (array_diff($artistIds, $allArtistIds))
-			throw new HttpBadRequest400('One of artistIds was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('One of artistIds was invalid', get_defined_vars());
 		
 		if (array_diff($characterIds, $allCharacterIds))
-			throw new HttpBadRequest400('One of characterIds was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('One of characterIds was invalid', get_defined_vars());
 		
 		if ($originalSongId && ($languageId || $lyrics || $notes))
-			throw new HttpBadRequest400('originalSongId was set along with language, lyrics, notes', get_defined_vars());
+			throw new HttpUnprocessableEntity422('originalSongId was set along with language, lyrics, notes', get_defined_vars());
 		
 		if (!$originalSongId && (!$languageId || !$lyrics))
-			throw new HttpBadRequest400('None of originalSongId, languageId, lyrics was set', get_defined_vars());
+			throw new HttpUnprocessableEntity422('None of originalSongId, languageId, lyrics was set', get_defined_vars());
 		
 		if ($originalSongId && !in_array($originalSongId, $allOriginalIds))
-			throw new HttpBadRequest400('originalSongId was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('originalSongId was invalid', get_defined_vars());
 		
 		if ($languageId && !in_array($languageId, $allLanguages))
-			throw new HttpBadRequest400('languageId was invalid', get_defined_vars());
+			throw new HttpUnprocessableEntity422('languageId was invalid', get_defined_vars());
 		
 		$this->model->updateLyrics
 		(
@@ -1308,8 +1482,17 @@ class UserController extends ViolatorController
 				$this->handleEditTranslationPagePost($album, $song, $translation);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1320,6 +1503,9 @@ class UserController extends ViolatorController
 	
 	private function handleEditTranslationPagePost(array $album, array $song, array $translation): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$name          = $_POST['translation-name']   ?? null;
 		$lyrics        = $_POST['translation-lyrics'] ?? null;
 		$notes         = $_POST['translation-notes']  ?? null;
@@ -1334,7 +1520,7 @@ class UserController extends ViolatorController
 		$notes         = Parsing::trimNullableString($notes);
 		
 		if (Validation::haveNullOrEmpty($name, $lyrics))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
 		
 		$this->model->updateTranslation
 		(
@@ -1377,8 +1563,17 @@ class UserController extends ViolatorController
 				$this->handleDeleteGamePagePost($game);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1389,10 +1584,13 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteGamePagePost(array $game): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
+			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteGame($game);
 		
@@ -1425,8 +1623,17 @@ class UserController extends ViolatorController
 				$this->handleDeleteAlbumPagePost($album);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1437,10 +1644,13 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteAlbumPagePost(array $album): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
+			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteAlbum($album);
 		
@@ -1473,8 +1683,17 @@ class UserController extends ViolatorController
 				$this->handleDeleteArtistPagePost($artist);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1485,10 +1704,13 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteArtistPagePost(array $artist): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
+			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteArtist($artist);
 		
@@ -1521,9 +1743,17 @@ class UserController extends ViolatorController
 				$this->handleDeleteCharacterPagePost($character);
 				break;
 			
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
+				throw new HttpMethodNotAllowed405();
+			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1534,10 +1764,13 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteCharacterPagePost(array $character): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
+			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteCharacter($character);
 		
@@ -1589,8 +1822,17 @@ class UserController extends ViolatorController
 				$this->handleDeleteLyricsPagePost($album, $song);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1601,10 +1843,13 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteLyricsPagePost(array $album, array $song): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
+			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteLyrics($song);
 		$this->model->deleteSongArtistCharacterRelation(songId: $song['id']);
@@ -1646,8 +1891,17 @@ class UserController extends ViolatorController
 				$this->handleDeleteTranslationPagePost($album, $song, $translation);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1658,10 +1912,13 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteTranslationPagePost(array $album, array $song, array $translation): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$requestConfirmed = $_POST['confirmation'] ?? null;
 		
 		if (!$requestConfirmed)
-			throw new HttpBadRequest400('Request was not confirmed', get_defined_vars());
+			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteTranslation($translation);
 		
@@ -1688,9 +1945,17 @@ class UserController extends ViolatorController
 				$this->handleChangeAccountDataPagePost($user);
 				break;
 			
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
+				throw new HttpMethodNotAllowed405();
+			
 			default:
-				$this->handleMethodNotAllowed();
-				break;
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1701,13 +1966,16 @@ class UserController extends ViolatorController
 	
 	private function handleChangeAccountDataPagePost(array $user): void
 	{	
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$newUsername = $_POST['username']     ?? null;
 		$oldPassword = $_POST['old-password'] ?? null;
 		$newPassword = $_POST['new-password'] ?? null;
 		$newEmail    = $_POST['email']        ?? null;
 		
 		if (Validation::haveNullOrEmpty($newUsername, $oldPassword, $newEmail))
-			throw new HttpBadRequest400();
+			throw new HttpUnprocessableEntity422();
 		
 		if (!$this->model->isPasswordCorrect($user['id'], $oldPassword))
 		{
@@ -1800,8 +2068,17 @@ class UserController extends ViolatorController
 				$this->handleDeleteAccountPagePost($user);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1812,10 +2089,13 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteAccountPagePost(array $user): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$password = $_POST['password'] ?? null;
 		
 		if (!$password)
-			throw new HttpBadRequest400();
+			throw new HttpUnprocessableEntity422();
 		
 		if (!$this->model->isPasswordCorrect($user['id'], $password))
 		{

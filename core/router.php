@@ -710,6 +710,26 @@ final class Router
 			error_log($e);
 			$controller->handleNotAcceptable406();
 		}
+		catch (HttpConflict409 $e)
+		{
+			error_log($e);
+			$controller->handleConflict409();
+		}
+		catch (HttpContentTooLarge413 $e)
+		{
+			error_log($e);
+			$controller->handleContentTooLarge413();
+		}
+		catch (HttpUnsupportedMediaType415 $e)
+		{
+			error_log($e);
+			$controller->handleUnsupportedMediaType415();
+		}
+		catch (HttpUnprocessableEntity422 $e)
+		{
+			error_log($e);
+			$controller->handleUnprocessableEntity422();
+		}
 		catch (HttpUnavailableForLegalReasons451 $e)
 		{
 			error_log($e);

@@ -38,8 +38,8 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'400 Bad Request',
-			\Localization\ErrorPage\textBadRequest1,
-			\Localization\ErrorPage\textBadRequest2
+			\Localization\ErrorPage\BadRequest400\Reason,
+			\Localization\ErrorPage\BadRequest400\Hint
 		);
 	}
 	
@@ -48,8 +48,8 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'401 Unauthorized',
-			\Localization\ErrorPage\textUnauthorized1,
-			\Localization\ErrorPage\textUnauthorized2
+			\Localization\ErrorPage\Unauthorized401\Reason,
+			\Localization\ErrorPage\Unauthorized401\Hint
 		);
 	}
 	
@@ -58,8 +58,8 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'402 Payment Required',
-			\Localization\ErrorPage\textPaymentRequired1,
-			\Localization\ErrorPage\textPaymentRequired2
+			\Localization\ErrorPage\PaymentRequired402\Reason,
+			\Localization\ErrorPage\PaymentRequired402\Hint
 		);
 	}
 	
@@ -68,8 +68,8 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'403 Forbidden',
-			\Localization\ErrorPage\textForbidden1,
-			\Localization\ErrorPage\textForbidden2
+			\Localization\ErrorPage\Forbidden403\Reason,
+			\Localization\ErrorPage\Forbidden403\Hint
 		);
 	}
 	
@@ -78,8 +78,8 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'404 Not Found',
-			\Localization\ErrorPage\textNotFound1,
-			\Localization\ErrorPage\textNotFound2
+			\Localization\ErrorPage\NotFound404\Reason,
+			\Localization\ErrorPage\NotFound404\Hint
 		);
 	}
 	
@@ -88,8 +88,8 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'405 Method Not Allowed',
-			\Localization\ErrorPage\textMethodNotAllowed1,
-			\Localization\ErrorPage\textMethodNotAllowed2
+			\Localization\ErrorPage\MethodNotAllowed405\Reason,
+			\Localization\ErrorPage\MethodNotAllowed405\Hint
 		);
 	}
 	
@@ -98,8 +98,48 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'406 Not Acceptable',
-			\Localization\ErrorPage\textNotAcceptable1,
-			\Localization\ErrorPage\textNotAcceptable2
+			\Localization\ErrorPage\NotAcceptable406\Reason,
+			\Localization\ErrorPage\NotAcceptable406\Hint
+		);
+	}
+	
+	final public function renderConflict409(): void
+	{
+		$this->renderError
+		(
+			'409 Conflict',
+			\Localization\ErrorPage\Conflict409\Reason,
+			\Localization\ErrorPage\Conflict409\Hint
+		);
+	}
+	
+	final public function renderContentTooLarge413(): void
+	{
+		$this->renderError
+		(
+			'413 Content Too Large',
+			\Localization\ErrorPage\ContentTooLarge413\Reason,
+			\Localization\ErrorPage\ContentTooLarge413\Hint
+		);
+	}
+	
+	final public function renderUnsupportedMediaType415(): void
+	{
+		$this->renderError
+		(
+			'415 Unsupported Media Type',
+			\Localization\ErrorPage\UnsupportedMediaType415\Reason,
+			\Localization\ErrorPage\UnsupportedMediaType415\Hint
+		);
+	}
+	
+	final public function renderUnprocessableEntity422(): void
+	{
+		$this->renderError
+		(
+			'422 Unprocessable Entity',
+			\Localization\ErrorPage\UnprocessableEntity422\Reason,
+			\Localization\ErrorPage\UnprocessableEntity422\Hint
 		);
 	}
 	
@@ -108,8 +148,8 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'451 Unavailable For Legal Reasons',
-			\Localization\ErrorPage\textUnavailableForLegalReasons1,
-			\Localization\ErrorPage\textUnavailableForLegalReasons2
+			\Localization\ErrorPage\UnavailableForLegalReasons451\Reason,
+			\Localization\ErrorPage\UnavailableForLegalReasons451\Hint
 		);
 	}
 	
@@ -118,8 +158,8 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'500 Internal Server Error',
-			\Localization\ErrorPage\textInternalServerError1,
-			\Localization\ErrorPage\textInternalServerError2
+			\Localization\ErrorPage\InternalServerError500\Reason,
+			\Localization\ErrorPage\InternalServerError500\Hint
 		);
 	}
 	
@@ -128,8 +168,8 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'501 Not Implemented',
-			\Localization\ErrorPage\textNotImplemented1,
-			\Localization\ErrorPage\textNotImplemented2
+			\Localization\ErrorPage\NotImplemented501\Reason,
+			\Localization\ErrorPage\NotImplemented501\Hint
 		);
 	}
 	
@@ -138,8 +178,8 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'502 Bad Gateway',
-			\Localization\ErrorPage\textBadGateway1,
-			\Localization\ErrorPage\textBadGateway2
+			\Localization\ErrorPage\BadGateway502\Reason,
+			\Localization\ErrorPage\BadGateway502\Hint
 		);
 	}
 	
@@ -148,8 +188,8 @@ class ErrorView extends View
 		$this->renderError
 		(
 			'503 Service Unavailable',
-			\Localization\ErrorPage\textServiceUnavailable1,
-			\Localization\ErrorPage\textServiceUnavailable2
+			\Localization\ErrorPage\ServiceUnavailable503\Reason,
+			\Localization\ErrorPage\ServiceUnavailable503\Hint
 		);
 	}
 }

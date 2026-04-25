@@ -20,8 +20,8 @@ final class Http
 	
 	public static function getLastVisitedPath(string|null $pathIfNull = null): string
 	{
-		if (!$_SERVER['HTTP_REFERER'])
-			return $pathIfNull;
+		if (!isset($_SERVER['HTTP_REFERER']))
+			return $queryIfNull;
 		
 		$host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
 		
@@ -38,7 +38,7 @@ final class Http
 	
 	public static function getLastVisitedQuery(string|null $queryIfNull = null): string
 	{
-		if (!$_SERVER['HTTP_REFERER'])
+		if (!isset($_SERVER['HTTP_REFERER']))
 			return $queryIfNull;
 		
 		$host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);

@@ -57,8 +57,13 @@ final class Validation
 	public static function areCaptchasEqual(string $generated, string $sent): bool
 	{
 		if ($generated === null || $sent === null)
-			throw new Exception('At least one of captchas was null');
+			throw new HttpUnprocessableEntity422('At least one of captchas was null');
 		
 		return mb_strtoupper($generated) === mb_strtoupper($sent);
+	}
+	
+	public static function isDataEncodedInUTF8(string|array $data): bool
+	{
+		return mb_check_encoding($data, 'UTF-8');
 	}
 }

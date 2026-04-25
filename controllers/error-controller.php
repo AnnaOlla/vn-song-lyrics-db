@@ -63,6 +63,30 @@ class ErrorController extends Controller
 		$this->view->renderNotAcceptable406();
 	}
 	
+	final public function handleConflict409(): void
+	{
+		http_response_code(409);
+		$this->view->renderConflict409();
+	}
+	
+	final public function handleContentTooLarge413(): void
+	{
+		http_response_code(413);
+		$this->view->renderContentTooLarge413();
+	}
+	
+	final public function handleUnsupportedMediaType415(): void
+	{
+		http_response_code(415);
+		$this->view->renderUnsupportedMediaType415();
+	}
+	
+	final public function handleUnprocessableEntity422(): void
+	{
+		http_response_code(422);
+		$this->view->renderUnprocessableEntity422();
+	}
+	
 	final public function handleUnavailableForLegalReasons451(): void
 	{
 		http_response_code(451);

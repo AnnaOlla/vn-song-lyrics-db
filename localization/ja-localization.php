@@ -68,31 +68,6 @@ namespace Localization\Functions
 	}
 }
 
-namespace Localization\InputError
-{
-	const CaptchaInvalid           = 'コードは正しくなかったです。';
-	
-	const EmptyEmail               = 'メールは入力しませんでした。';
-	const EmailNotFound            = 'メールは見つかっていません。';
-	const EmptyPassword            = 'パスワードは入力しませんでした。';
-	const IncorrectPassword        = 'パスワードは正しくなかったです。';
-	
-	const UsernameTrimmable        = 'ユーザーネームは始めと終わりに見えない文字を持ってはいけません。';
-	const UsernameForbiddenSymbols = 'ユーザーネームはローマ字と数字しか持ってはいけません。';
-	const UsernameLengthIncorrect  = 'ユーザーネームの長さは４から３２までだけです。';
-	const UsernameTaken            = 'ユーザーネームはもう使われています。';
-	
-	const EmailTaken               = 'メールは使ってはいけません。';
-	const EmailInvalid             = 'メールは正しくない。';
-	const EmailNotExists           = 'メールを確かめられませんでした。';
-	
-	const PasswordForbiddenSymbols = 'パスワードはローマ字と数字しか持ってはいけません。';
-	const PasswordLengthIncorrect  = 'パスワードの長さは４から３２までだけです。';
-	
-	const AccountNotVerified       = 'アカウントはまだ確認していません。受信箱とスパムチェックしてください。';
-	const MailSendFailed           = '確認のメールを送れませんでした。';
-}
-
 namespace Localization\HomePage
 {
 	const Heading          = 'Visual Novel Song Lyrics Database';
@@ -1122,41 +1097,98 @@ namespace Localization\LyricsExamplePage
 	const Notes      = 'コメント';
 }
 
-namespace Localization\ErrorPage
+namespace Localization\ErrorPage\BadRequest400
 {
-	const textBadRequest1 = '入力は無用です。';
-	const textBadRequest2 = '戻って、もう一度入力をチェックしてください。';
-	
-	const textUnauthorized1 = '関係者以外は立入禁止です。';
-	const textUnauthorized2 = 'あなたはログインしていません。';
-	
-	const textPaymentRequired1 = 'あなたはサーバーを払ったなのかなあ？';
-	const textPaymentRequired2 = '~♪~またねえ~♪~';
-	
-	const textForbidden1 = '立入禁止です。';
-	const textForbidden2 = 'あなたにはアクセスできません。';
-	
-	const textNotFound1 = 'ページが見つかりませんでした。';
-	const textNotFound2 = 'ページの名前は変わったかもしれません？';
-	
-	const textMethodNotAllowed1 = 'サーバーはリクエストが分かりましたが、方法は許されません。';
-	const textMethodNotAllowed2 = 'support@vn-song-lyrics-db.ruへメールを送ってください。';
-	
-	const textNotAcceptable1 = 'サーバーは求める言語をサポートしていません。';
-	const textNotAcceptable2 = 'ページの上にある言語を選んでください。';
-	
-	const textUnavailableForLegalReasons1 = '念書が来たですから、アクセスは限られています。';
-	const textUnavailableForLegalReasons2 = 'あなたにはアクセスできません。';
-	
-	const textInternalServerError1 = 'サーバーのエラー行いました。';
-	const textInternalServerError2 = 'support@vn-song-lyrics-db.ruへメールを送ってください。';
-	
-	const textNotImplemented1 = '選んだ方法は知られません。';
-	const textNotImplemented2 = '正しいほうでウェブサイトを使ってください。';
-	
-	const textBadGateway1 = 'サーバーは別のサーバーからエラーをもらいました。';
-	const textBadGateway2 = 'あとで訪れてください。';
-	
-	const textServiceUnavailable1 = '今はウェブサイトが使用できません。';
-	const textServiceUnavailable2 = 'あとで訪れてください。';
+	const Reason = '入力は無用です。';
+	const Hint   = '戻って、もう一度入力をチェックしてください。';
+}
+
+namespace Localization\ErrorPage\Unauthorized401
+{
+	const Reason = '関係者以外は立入禁止です。';
+	const Hint   = 'あなたはログインしていません。';
+}
+
+namespace Localization\ErrorPage\PaymentRequired402
+{
+	const Reason = 'あなたはサーバーを払ったなのかなあ？';
+	const Hint   = '~♪~またねえ~♪~';
+}
+
+namespace Localization\ErrorPage\Forbidden403
+{
+	const Reason = '立入禁止です。';
+	const Hint   = 'あなたにはアクセスできません。';
+}
+
+namespace Localization\ErrorPage\NotFound404
+{
+	const Reason = 'ページが見つかりませんでした。';
+	const Hint   = 'ページの名前は変わったかもしれません？';
+}
+
+namespace Localization\ErrorPage\MethodNotAllowed405
+{
+	const Reason = 'サーバーはリクエストが分かりましたが、方法は許されません。';
+	const Hint   = '正しいほうでウェブサイトを使ってください。';
+}
+
+namespace Localization\ErrorPage\NotAcceptable406
+{
+	const Reason = 'サーバーは求める言語をサポートしていません。';
+	const Hint   = 'ページの上にある言語を選んでください。';
+}
+
+namespace Localization\ErrorPage\Conflict409
+{
+	const Reason = '加えてみたコンテントはデータベースにもうあります。';
+	const Hint   = 'コンテントを加える前にデータベースにあるかどうかチェックしてください。';
+}
+
+namespace Localization\ErrorPage\ContentTooLarge413
+{
+	const Reason = 'ファイルはとても大きいです。';
+	const Hint   = '戻って、別のファイルを選んでください。';
+}
+
+namespace Localization\ErrorPage\UnsupportedMediaType415
+{
+	const Reason = 'ファイルのタイプは許されません。';
+	const Hint   = '戻って、別のファイルを選んでください。';
+}
+
+namespace Localization\ErrorPage\UnprocessableEntity422
+{
+	const Reason = '入力はサーバーのチェックに落ちました。';
+	const Hint   = 'support@vn-song-lyrics-db.ruへメールを送ってください。';
+}
+
+namespace Localization\ErrorPage\UnavailableForLegalReasons451
+{
+	const Reason = '念書が来たですから、アクセスは限られています。';
+	const Hint   = 'あなたにはアクセスできません。';
+}
+
+namespace Localization\ErrorPage\InternalServerError500
+{
+	const Reason = 'サーバーのエラー行いました。';
+	const Hint   = 'support@vn-song-lyrics-db.ruへメールを送ってください。';
+}
+
+namespace Localization\ErrorPage\NotImplemented501
+{
+	const Reason = '選んだ方法は知られません。';
+	const Hint   = '正しいほうでウェブサイトを使ってください。';
+}
+
+namespace Localization\ErrorPage\BadGateway502
+{
+	const Reason = 'サーバーは別のサーバーからエラーをもらいました。';
+	const Hint   = 'あとでもう一度みてください。';
+}
+
+namespace Localization\ErrorPage\ServiceUnavailable503
+{
+	const Reason = 'ウェブサイトはメンテナンス中で使えません。';
+	const Hint   = 'あとで訪れてください。';
 }

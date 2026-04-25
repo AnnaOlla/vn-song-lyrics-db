@@ -73,16 +73,16 @@ class UserModel extends ViolatorModel
 	final protected function saveUploadedFile(array $file, string $fullPath): void
 	{
 		if (!$this->isFileUploaded($file))
-			throw new UploadedFileException('File upload failed', get_defined_vars());
+			throw new HttpContentTooLarge413('File upload failed', get_defined_vars());
 		
 		if (!$this->isFileExtensionAllowed($file))
-			throw new UploadedFileException('File extension not allowed', get_defined_vars());
+			throw new HttpUnsupportedMediaType415('File extension not allowed', get_defined_vars());
 		
 		if (!$this->isFileFormatAllowed($file))
-			throw new UploadedFileException('File format not allowed', get_defined_vars());
+			throw new HttpUnsupportedMediaType415('File format not allowed', get_defined_vars());
 		
 		if (!$this->moveUploadedFile($file, $fullPath))
-			throw new UploadedFileException('File move failed', get_defined_vars());
+			throw new HttpInternalServerError500('File move failed', get_defined_vars());
 	}
 	
 	final protected function deleteUploadedFile(string $fullPath): void
@@ -91,7 +91,7 @@ class UserModel extends ViolatorModel
 			return;
 		
 		if (!unlink($fullPath))
-			throw new UploadedFileException('File delete failed', get_defined_vars());
+			throw new HttpInternalServerError500('File delete failed', get_defined_vars());
 	}
 	
 	final protected function renameUploadedFile(string $oldFullPath, string $newFullPath): void
@@ -100,7 +100,7 @@ class UserModel extends ViolatorModel
 			return;
 		
 		if (!rename($oldFullPath, $newFullPath))
-			throw new UploadedFileException('File rename failed', get_defined_vars());
+			throw new HttpInternalServerError500('File rename failed', get_defined_vars());
 	}
 	
 	//------------------------------------------//
@@ -160,6 +160,227 @@ class UserModel extends ViolatorModel
 		
 		$song = $stmt->fetch(PDO::FETCH_ASSOC);
 		return $song;
+	}
+	
+	//-------------------------------------------//
+	//      Methods For Checking Duplicates      //
+	//-------------------------------------------//
+	
+	final public function gameExists(string $originalName, string $transliteratedName): bool
+	{
+		$uri = $this->buildUri($transliteratedName);
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT EXISTS
+			(
+				SELECT
+					1
+				FROM
+					games
+				WHERE
+					original_name = :original_name
+				OR
+					transliterated_name = :transliterated_name
+				OR
+					uri = :uri
+			)
+			'
+		);
+		
+		$stmt->bindParam(':original_name',       $originalName,       PDO::PARAM_STR);
+		$stmt->bindParam(':transliterated_name', $transliteratedName, PDO::PARAM_STR);
+		$stmt->bindParam(':uri',                 $uri,                PDO::PARAM_STR);
+		$stmt->execute();
+		
+		return $stmt->fetch(PDO::FETCH_COLUMN);
+	}
+	
+	final public function albumExists(string $originalName, string $transliteratedName): bool
+	{
+		$uri = $this->buildUri($transliteratedName);
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT EXISTS
+			(
+				SELECT
+					1
+				FROM
+					albums
+				WHERE
+					original_name = :original_name
+				OR
+					transliterated_name = :transliterated_name
+				OR
+					uri = :uri
+			)
+			'
+		);
+		
+		$stmt->bindParam(':original_name',       $originalName,       PDO::PARAM_STR);
+		$stmt->bindParam(':transliterated_name', $transliteratedName, PDO::PARAM_STR);
+		$stmt->bindParam(':uri',                 $uri,                PDO::PARAM_STR);
+		$stmt->execute();
+		
+		return $stmt->fetch(PDO::FETCH_COLUMN);
+	}
+	
+	final public function artistExists(string $originalName, string $transliteratedName): bool
+	{
+		$uri = $this->buildUri($transliteratedName);
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT EXISTS
+			(
+				SELECT
+					1
+				FROM
+					artists
+				WHERE
+					original_name = :original_name
+				OR
+					transliterated_name = :transliterated_name
+				OR
+					uri = :uri
+			)
+			'
+		);
+		
+		$stmt->bindParam(':original_name',       $originalName,       PDO::PARAM_STR);
+		$stmt->bindParam(':transliterated_name', $transliteratedName, PDO::PARAM_STR);
+		$stmt->bindParam(':uri',                 $uri,                PDO::PARAM_STR);
+		$stmt->execute();
+		
+		return $stmt->fetch(PDO::FETCH_COLUMN);
+	}
+	
+	final public function characterExists(string $originalName, string $transliteratedName): bool
+	{
+		$uri = $this->buildUri($transliteratedName);
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT EXISTS
+			(
+				SELECT
+					1
+				FROM
+					characters
+				WHERE
+					original_name = :original_name
+				OR
+					transliterated_name = :transliterated_name
+				OR
+					uri = :uri
+			)
+			'
+		);
+		
+		$stmt->bindParam(':original_name',       $originalName,       PDO::PARAM_STR);
+		$stmt->bindParam(':transliterated_name', $transliteratedName, PDO::PARAM_STR);
+		$stmt->bindParam(':uri',                 $uri,                PDO::PARAM_STR);
+		$stmt->execute();
+		
+		return $stmt->fetch(PDO::FETCH_COLUMN);
+	}
+	
+	final public function songExists
+	(
+		string $albumUri,
+		string $songOriginalName,
+		string $songTransliteratedName
+	): bool
+	{
+		$songUri = $this->buildUri($songTransliteratedName);
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT EXISTS
+			(
+				SELECT
+					1
+				FROM
+					songs AS s
+				JOIN
+					albums AS a
+				ON
+					s.album_id = a.id
+				WHERE
+					a.uri = :album_uri
+				AND
+				(
+					s.original_name = :song_original_name
+				OR
+					s.transliterated_name = :transliterated_name
+				OR
+					s.uri = :song_uri
+				)
+			)
+			'
+		);
+		
+		$stmt->bindParam(':album_uri',           $albumUri,                PDO::PARAM_STR);
+		$stmt->bindParam(':song_original_name',  $songOriginalName,        PDO::PARAM_STR);
+		$stmt->bindParam(':transliterated_name', $songTransliteratedName,  PDO::PARAM_STR);
+		$stmt->bindParam(':song_uri',            $songUri,                 PDO::PARAM_STR);
+		
+		$stmt->execute();
+		
+		return $stmt->fetch(PDO::FETCH_COLUMN);
+	}
+	
+	final public function translationExists
+	(
+		string $albumUri,
+		string $songUri,
+		int    $languageId,
+		int    $userAddedId
+	): bool
+	{
+		$language = $this->getLanguage($languageId);
+		
+		$translationUri = $this->buildUri($language['language_en_name'].'-'.$userAddedId);
+		
+		$stmt = $this->pdo->prepare
+		(
+			'
+			SELECT EXISTS
+			(
+				SELECT
+					1
+				FROM
+					translations AS t
+				JOIN
+					songs AS s
+				ON
+					t.song_id = s.id
+				JOIN
+					albums AS a
+				ON
+					s.album_id = a.id
+				WHERE
+					t.uri = :translation_uri
+				AND
+					s.uri = :song_uri
+				AND
+					a.uri = :album_uri
+			)
+			'
+		);
+		
+		$stmt->bindParam(':translation_uri', $translationUri, PDO::PARAM_STR);
+		$stmt->bindParam(':song_uri',        $songUri,        PDO::PARAM_STR);
+		$stmt->bindParam(':album_uri',       $albumUri,       PDO::PARAM_STR);
+		$stmt->execute();
+		
+		return $stmt->fetch(PDO::FETCH_COLUMN);
 	}
 	
 	//-------------------------------------------//
@@ -559,7 +780,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to add lyrics to a song', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to add lyrics to a song', get_defined_vars());
 	}
 	
 	final public function addTranslation
@@ -784,7 +1005,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to update game', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to update game', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -879,7 +1100,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to update album', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to update album', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -974,7 +1195,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to update artist', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to update artist', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -1066,7 +1287,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to update character', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to update character', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -1143,7 +1364,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to update song', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to update song', get_defined_vars());
 		
 		$id = $this->pdo->lastInsertId();
 		
@@ -1201,7 +1422,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to update lyrics', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to update lyrics', get_defined_vars());
 	}
 	
 	final public function updateTranslation
@@ -1264,7 +1485,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to update translation', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to update translation', get_defined_vars());
 	}
 	
 	//-----------------------------------------------//
@@ -1288,7 +1509,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to delete game', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to delete game', get_defined_vars());
 		
 		if ($game['is_image_uploaded'])
 		{
@@ -1317,7 +1538,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to delete album', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to delete album', get_defined_vars());
 		
 		if ($album['is_image_uploaded'])
 		{
@@ -1346,7 +1567,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to delete artist', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to delete artist', get_defined_vars());
 		
 		if ($artist['is_image_uploaded'])
 		{
@@ -1375,7 +1596,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to delete character', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to delete character', get_defined_vars());
 		
 		if ($character['is_image_uploaded'])
 		{
@@ -1411,7 +1632,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to delete lyrics', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to delete lyrics', get_defined_vars());
 	}
 	
 	public function deleteTranslation(array $translation): void
@@ -1429,7 +1650,7 @@ class UserModel extends ViolatorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new DatabaseLogicException('Failed to delete translation', get_defined_vars());
+			throw new HttpInternalServerError500('Failed to delete translation', get_defined_vars());
 	}
 	
 	final public function deleteGameAlbumRelation
@@ -1439,7 +1660,7 @@ class UserModel extends ViolatorModel
 	): void
 	{
 		if (is_null($gameId) && is_null($albumId))
-			throw new DatabaseLogicException('Method called without conditions', get_defined_vars());
+			throw new HttpInternalServerError500('Method called without conditions', get_defined_vars());
 		
 		$where = ['status = "unchecked"'];
 		$binds = [];
@@ -1479,7 +1700,7 @@ class UserModel extends ViolatorModel
 	): void
 	{
 		if (is_null($songId) && is_null($artistId) && is_null($characterId))
-			throw new DatabaseLogicException('Method called without conditions', get_defined_vars());
+			throw new HttpInternalServerError500('Method called without conditions', get_defined_vars());
 		
 		$where = ['status = "unchecked"'];
 		$binds = [];
@@ -1524,7 +1745,7 @@ class UserModel extends ViolatorModel
 	): void
 	{
 		if (is_null($characterId) && is_null($gameId))
-			throw new DatabaseLogicException('Method called without conditions', get_defined_vars());
+			throw new HttpInternalServerError500('Method called without conditions', get_defined_vars());
 		
 		$where = ['status = "unchecked"'];
 		$binds = [];

@@ -30,7 +30,7 @@ function getPdo(string $userRole): PDO
 			break;
 			
 		default:
-			throw DatabaseLogicException('Database connection problem', get_defined_vars());
+			throw HttpInternalServerError500('Database connection problem', get_defined_vars());
 	}
 	
 	$dsn = 'mysql:dbname='.$settings['dbName'].';host='.$settings['dbHost'].';charset='.$settings['dbChar'];

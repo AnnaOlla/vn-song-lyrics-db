@@ -1097,41 +1097,98 @@ namespace Localization\LyricsExamplePage
 	const Notes      = 'Заметки';
 }
 
-namespace Localization\ErrorPage
+namespace Localization\ErrorPage\BadRequest400
 {
-	const textBadRequest1 = 'Введено некорректное или запрещённое значение.';
-	const textBadRequest2 = 'Вернитесь и попробуйте снова, проверив ввод ещё раз.';
-	
-	const textUnauthorized1 = 'Доступ к этой странице могут иметь зарегистрированные пользователи.';
-	const textUnauthorized2 = 'Убедитесь, что вы вошли в свой аккаунт.';
-	
-	const textPaymentRequired1 = 'Только те, кто платит за сервер, имеют сюда доступ.';
-	const textPaymentRequired2 = '~♪~ Хорошего дня ~♪~';
-	
-	const textForbidden1 = 'Вам не разрешён доступ на эту страницу.';
-	const textForbidden2 = 'Вы ничего с этим поделать не можете.';
-	
-	const textNotFound1 = 'Запрошенная страница не найдена.';
-	const textNotFound2 = 'Может быть, её переименовали?';
-	
-	const textMethodNotAllowed1 = 'Сервер понял запрос, но выбранный метод не разрешён.';
-	const textMethodNotAllowed2 = 'Пожалуйста, напишите подробности нам на почту support@vn-song-lyrics-db.ru.';
-	
-	const textNotAcceptable1 = 'Выбранный язык не поддерживается сайтом.';
-	const textNotAcceptable2 = 'Выберите один из языков вверху страницы.';
-	
-	const textUnavailableForLegalReasons1 = 'Доступ к этой странице ограничен по официальному требованию.';
-	const textUnavailableForLegalReasons2 = 'Вы ничего с этим поделать не можете.';
-	
-	const textInternalServerError1 = 'В ходе обработки запроса обнаружилась критическая ошибка.';
-	const textInternalServerError2 = 'Пожалуйста, напишите подробности нам на почту support@vn-song-lyrics-db.ru.';
-	
-	const textNotImplemented1 = 'Запрошенный метод не является известным.';
-	const textNotImplemented2 = 'Пожалуйста, используйте сайт задуманным способом.';
-	
-	const textBadGateway1 = 'Сервер получил ошибку от другого требуемого сервера.';
-	const textBadGateway2 = 'Пожалуйста, приходите позже.';
-	
-	const textServiceUnavailable1 = 'Cайт в данный момент недоступен.';
-	const textServiceUnavailable2 = 'Пожалуйста, приходите позже.';
+	const Reason = 'Введено некорректное или запрещённое значение.';
+	const Hint   = 'Вернитесь и проверьте ввод ещё раз.';
+}
+
+namespace Localization\ErrorPage\Unauthorized401
+{
+	const Reason = 'Доступ к этой странице могут иметь зарегистрированные пользователи.';
+	const Hint   = 'Убедитесь, что вы вошли в свой аккаунт.';
+}
+
+namespace Localization\ErrorPage\PaymentRequired402
+{
+	const Reason = 'Только те, кто платит за сервер, имеют сюда доступ.';
+	const Hint   = '~♪~ Хорошего дня ~♪~';
+}
+
+namespace Localization\ErrorPage\Forbidden403
+{
+	const Reason = 'Вам не разрешён доступ на эту страницу.';
+	const Hint   = 'Способа получить доступ не существует.';
+}
+
+namespace Localization\ErrorPage\NotFound404
+{
+	const Reason = 'Запрошенная страница не найдена.';
+	const Hint   = 'Может быть, её переименовали?';
+}
+
+namespace Localization\ErrorPage\MethodNotAllowed405
+{
+	const Reason = 'Сервер понял запрос, но выбранный метод не разрешён.';
+	const Hint   = 'Пожалуйста, используйте сайт так, как это задумывалось.';
+}
+
+namespace Localization\ErrorPage\NotAcceptable406
+{
+	const Reason = 'Выбранный язык не поддерживается сайтом.';
+	const Hint   = 'Выберите один из языков вверху страницы.';
+}
+
+namespace Localization\ErrorPage\Conflict409
+{
+	const Reason = 'Добавляемые данные уже существуют в базе данных.';
+	const Hint   = 'Просим проверять наличие данных до ввода.';
+}
+
+namespace Localization\ErrorPage\ContentTooLarge413
+{
+	const Reason = 'Загружаемый файл имел вес больше допустимого.';
+	const Hint   = 'Пожалуйста, вернитесь и выберите другой файл.';
+}
+
+namespace Localization\ErrorPage\UnsupportedMediaType415
+{
+	const Reason = 'Загружаемый файл не принадлежал к разрешённому формату.';
+	const Hint   = 'Пожалуйста, вернитесь и выберите другой файл.';
+}
+
+namespace Localization\ErrorPage\UnprocessableEntity422
+{
+	const Reason = 'Вводимые вами данные не смогли пройти проверку на сервере.';
+	const Hint   = 'Пожалуйста, напишите подробности нам на почту support@vn-song-lyrics-db.ru.';
+}
+
+namespace Localization\ErrorPage\UnavailableForLegalReasons451
+{
+	const Reason = 'Доступ к этой странице ограничен по официальному требованию.';
+	const Hint   = 'На данный момент способа получить доступ нет.';
+}
+
+namespace Localization\ErrorPage\InternalServerError500
+{
+	const Reason = 'В ходе обработки вашего запроса обнаружилась критическая ошибка.';
+	const Hint   = 'Пожалуйста, напишите подробности нам на почту support@vn-song-lyrics-db.ru.';
+}
+
+namespace Localization\ErrorPage\NotImplemented501
+{
+	const Reason = 'Запрошенный метод не является известным.';
+	const Hint   = 'Пожалуйста, используйте сайт так, как это задумывалось.';
+}
+
+namespace Localization\ErrorPage\BadGateway502
+{
+	const Reason = 'Сервер получил ошибку от другого требуемого сервера.';
+	const Hint   = 'Попробуйте ещё раз немного позже.';
+}
+
+namespace Localization\ErrorPage\ServiceUnavailable503
+{
+	const Reason = 'Сайт недоступен, так как ведутся технические работы.';
+	const Hint   = 'Пожалуйста, приходите позже.';
 }

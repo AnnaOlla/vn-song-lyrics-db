@@ -43,11 +43,6 @@ class VisitorController extends ErrorController
 	
 	public function handleLogInPage(): void
 	{
-		if (isset($_SERVER['HTTP_REFERER']))
-			$_SESSION['redirect']['logIn'] = $_SERVER['HTTP_REFERER'];
-		else
-			$_SESSION['redirect']['logIn'] = Http::buildInternalPath($this->language);
-		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
@@ -57,9 +52,18 @@ class VisitorController extends ErrorController
 			case 'POST':
 				$this->handleLogInPagePost();
 				break;
-				
-			default:
+			
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -69,11 +73,19 @@ class VisitorController extends ErrorController
 		InputError  $error = InputError::None
 	): void
 	{
+		if (isset($_SERVER['HTTP_REFERER']))
+			$_SESSION['redirect']['logIn'] = $_SERVER['HTTP_REFERER'];
+		else
+			$_SESSION['redirect']['logIn'] = Http::buildInternalPath($this->language);
+		
 		$this->view->renderLogInPage($email, $error);
 	}
 	
 	private function handleLogInPagePost(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$email     = $_POST['email']         ?? null;
 		$password  = $_POST['password']      ?? null;
 		$ipAddress = $_SERVER['REMOTE_ADDR'] ?? null;
@@ -107,11 +119,6 @@ class VisitorController extends ErrorController
 	
 	public function handleSignUpPage(): void
 	{
-		if (isset($_SERVER['HTTP_REFERER']))
-			$_SESSION['redirect']['signUp'] = $_SERVER['HTTP_REFERER'];
-		else
-			$_SESSION['redirect']['signUp'] = Http::buildInternalPath($this->language);
-		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
@@ -122,8 +129,17 @@ class VisitorController extends ErrorController
 				$this->handleSignUpPagePost();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -134,6 +150,11 @@ class VisitorController extends ErrorController
 		InputError  $error    = InputError::None
 	): void
 	{
+		if (isset($_SERVER['HTTP_REFERER']))
+			$_SESSION['redirect']['signUp'] = $_SERVER['HTTP_REFERER'];
+		else
+			$_SESSION['redirect']['signUp'] = Http::buildInternalPath($this->language);
+		
 		$captchaData = $this->model->getRandomCaptcha(6, 3);
 		
 		$_SESSION['captcha']['signUp'] = $captchaData[0];
@@ -144,6 +165,9 @@ class VisitorController extends ErrorController
 	
 	private function handleSignUpPagePost(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$username    = $_POST['username']             ?? null;
 		$email       = $_POST['email']                ?? null;
 		$password    = $_POST['password']             ?? null;
@@ -241,9 +265,19 @@ class VisitorController extends ErrorController
 			case 'GET':
 				$this->handleHomePageGet();
 				break;
-				
-			default:
+			
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -267,13 +301,26 @@ class VisitorController extends ErrorController
 				$this->handleGameListPageGet();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
 	private function handleGameListPageGet(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_GET))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
@@ -308,13 +355,26 @@ class VisitorController extends ErrorController
 				$this->handleAlbumListPageGet();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
 	private function handleAlbumListPageGet(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_GET))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
@@ -349,13 +409,26 @@ class VisitorController extends ErrorController
 				$this->handleArtistListPageGet();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
 	private function handleArtistListPageGet(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_GET))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
@@ -390,13 +463,26 @@ class VisitorController extends ErrorController
 				$this->handleCharacterListPageGet();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
 	private function handleCharacterListPageGet(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_GET))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
@@ -431,13 +517,26 @@ class VisitorController extends ErrorController
 				$this->handleSongListPageGet();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
 	private function handleSongListPageGet(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_GET))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
@@ -472,13 +571,26 @@ class VisitorController extends ErrorController
 				$this->handleTranslationListPageGet();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
 	private function handleTranslationListPageGet(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_GET))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
@@ -521,8 +633,18 @@ class VisitorController extends ErrorController
 				$this->handleGamePageGet($game);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -550,8 +672,18 @@ class VisitorController extends ErrorController
 				$this->handleAlbumPageGet($album);
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -583,8 +715,18 @@ class VisitorController extends ErrorController
 				$this->handleArtistPageGet($artist);
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -612,8 +754,18 @@ class VisitorController extends ErrorController
 				$this->handleCharacterPageGet($character);
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -651,8 +803,18 @@ class VisitorController extends ErrorController
 				$this->handleLyricsPageGet($album, $song);
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -781,8 +943,17 @@ class VisitorController extends ErrorController
 				$this->handleFeedbackPagePost();
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -803,6 +974,9 @@ class VisitorController extends ErrorController
 	
 	private function handleFeedbackPagePost(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$senderId    = $_SESSION['user']['id']          ?? null;
 		$senderIp    = $_SERVER['REMOTE_ADDR']          ?? null;
 		$message     = $_POST['message']                ?? null;
@@ -812,7 +986,7 @@ class VisitorController extends ErrorController
 		$message     = Parsing::trimNullableString($message);
 		
 		if (Validation::isNullOrEmpty($senderIp, $message))
-			throw new HttpBadRequest400('Feedback data was not sent');
+			throw new HttpUnprocessableEntity422('Feedback data was not sent');
 		
 		if (!Validation::areCaptchasEqual($madeCaptcha, $sentCaptcha))
 		{
@@ -832,13 +1006,26 @@ class VisitorController extends ErrorController
 				$this->handleReportPost();
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'GET':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
 	private function handleReportPost(): void
 	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
 		$senderId  = $_SESSION['user']['id']     ?? null;
 		$ipAddress = $_SERVER['REMOTE_ADDR']     ?? null;
 		$message   = $_POST['report-text']       ?? null;
@@ -846,7 +1033,7 @@ class VisitorController extends ErrorController
 		$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
 		
 		if (Validation::haveNullOrEmpty($ipAddress, $message, $entityUri, $userAgent))
-			throw new HttpBadRequest400('Null or empty submitted', [$message, $entityUri, $userAgent]);
+			throw new HttpUnprocessableEntity422('Null or empty submitted', get_defined_vars());
 		
 		$this->model->addReport
 		(
@@ -876,8 +1063,18 @@ class VisitorController extends ErrorController
 				$this->handleReportGamePageGet($game);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -903,8 +1100,18 @@ class VisitorController extends ErrorController
 				$this->handleReportAlbumPageGet($album);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -930,8 +1137,18 @@ class VisitorController extends ErrorController
 				$this->handleReportArtistPageGet($artist);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -957,8 +1174,18 @@ class VisitorController extends ErrorController
 				$this->handleReportCharacterPageGet($character);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -991,8 +1218,18 @@ class VisitorController extends ErrorController
 				$this->handleReportLyricsPageGet($album, $song);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1053,8 +1290,18 @@ class VisitorController extends ErrorController
 				$this->handleReportTranslationPageGet($album, $song, $translation);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1186,8 +1433,18 @@ class VisitorController extends ErrorController
 				$this->handleUserPageGet($user);
 				break;
 			
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1220,8 +1477,18 @@ class VisitorController extends ErrorController
 				$this->view->renderAboutPage();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1233,8 +1500,18 @@ class VisitorController extends ErrorController
 				$this->view->renderPolicyPage();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1246,8 +1523,18 @@ class VisitorController extends ErrorController
 				$this->view->renderRulesPage();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1259,8 +1546,18 @@ class VisitorController extends ErrorController
 				$this->view->renderWritingGuidePage();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -1272,8 +1569,18 @@ class VisitorController extends ErrorController
 				$this->view->renderLyricsExamplePage();
 				break;
 				
-			default:
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	

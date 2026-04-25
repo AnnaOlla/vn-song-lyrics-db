@@ -1097,41 +1097,98 @@ namespace Localization\LyricsExamplePage
 	const Notes      = 'Notes';
 }
 
-namespace Localization\ErrorPage
+namespace Localization\ErrorPage\BadRequest400
 {
-	const textBadRequest1 = 'You entered something either forbidden or invalid.';
-	const textBadRequest2 = 'Go back and check the input one time more.';
-	
-	const textUnauthorized1 = 'Only authorized users may have access to this page.';
-	const textUnauthorized2 = 'Make sure you are logged in.';
-	
-	const textPaymentRequired1 = 'Only those who pay for the server are allowed to visit this page.';
-	const textPaymentRequired2 = '~♪~ Have a good day ~♪~';
-	
-	const textForbidden1 = 'You are not allowed to visit this page.';
-	const textForbidden2 = 'There is nothing you can do to get access.';
-	
-	const textNotFound1 = 'The requested page was not found.';
-	const textNotFound2 = 'Perhaps, it was renamed?';
-	
-	const textMethodNotAllowed1 = 'The server understood your request, but the selected method is not allowed.';
-	const textMethodNotAllowed2 = 'Please, send a mail to support@vn-song-lyrics-db.ru with details.';
-	
-	const textNotAcceptable1 = 'The server does not support the language you selected.';
-	const textNotAcceptable2 = 'Select one of the available languages in the header of the page.';
-	
-	const textUnavailableForLegalReasons1 = 'The website got a legal note to restrict access to this page.';
-	const textUnavailableForLegalReasons2 = 'There is nothing you can do to get access.';
-	
-	const textInternalServerError1 = 'The server has encountered an error while processing your request.';
-	const textInternalServerError2 = 'Please, send a mail to support@vn-song-lyrics-db.ru with details.';
-	
-	const textNotImplemented1 = 'The method to complete your request is unknown.';
-	const textNotImplemented2 = 'Please, do not misuse the service.';
-	
-	const textBadGateway1 = 'The server received an error from another one.';
-	const textBadGateway2 = 'Please, visit us later.';
-	
-	const textServiceUnavailable1 = 'The website is not available right now.';
-	const textServiceUnavailable2 = 'Please, visit us later.';
+	const Reason = 'You entered something either forbidden or invalid.';
+	const Hint   = 'Please, go back and check the input one time more.';
+}
+
+namespace Localization\ErrorPage\Unauthorized401
+{
+	const Reason = 'Only authorized users may have access to this page.';
+	const Hint   = 'Make sure you are logged in.';
+}
+
+namespace Localization\ErrorPage\PaymentRequired402
+{
+	const Reason = 'Only those who pay for the server are allowed to visit this page.';
+	const Hint   = '~♪~ Have a good day ~♪~';
+}
+
+namespace Localization\ErrorPage\Forbidden403
+{
+	const Reason = 'You are not allowed to visit this page.';
+	const Hint   = 'There is nothing you can do to get access.';
+}
+
+namespace Localization\ErrorPage\NotFound404
+{
+	const Reason = 'The requested page was not found.';
+	const Hint   = 'Perhaps, it was renamed?';
+}
+
+namespace Localization\ErrorPage\MethodNotAllowed405
+{
+	const Reason = 'The server understood your request, but the selected method is not allowed.';
+	const Hint   = 'Please, do not misuse the service.';
+}
+
+namespace Localization\ErrorPage\NotAcceptable406
+{
+	const Reason = 'The server does not support the language you selected.';
+	const Hint   = 'Select one of the available languages in the header of the page.';
+}
+
+namespace Localization\ErrorPage\Conflict409
+{
+	const Reason = 'The content you tried to add already exists in the database.';
+	const Hint   = 'Please, check the existence of the content before you add it.';
+}
+
+namespace Localization\ErrorPage\ContentTooLarge413
+{
+	const Reason = 'The file you tried to upload was too large.';
+	const Hint   = 'Please, go back and choose another file.';
+}
+
+namespace Localization\ErrorPage\UnsupportedMediaType415
+{
+	const Reason = 'The file you tried to upload has an incorrect type.';
+	const Hint   = 'Please, go back and choose another file.';
+}
+
+namespace Localization\ErrorPage\UnprocessableEntity422
+{
+	const Reason = 'Your input failed to pass validation rules on the server.';
+	const Hint   = 'Please, send a mail to support@vn-song-lyrics-db.ru with details.';
+}
+
+namespace Localization\ErrorPage\UnavailableForLegalReasons451
+{
+	const Reason = 'The website got a legal note to restrict access to this page.';
+	const Hint   = 'There is nothing you can do to get access.';
+}
+
+namespace Localization\ErrorPage\InternalServerError500
+{
+	const Reason = 'The server has encountered an error while processing your request.';
+	const Hint   = 'Please, send a mail to support@vn-song-lyrics-db.ru with details.';
+}
+
+namespace Localization\ErrorPage\NotImplemented501
+{
+	const Reason = 'The method to complete your request is unknown.';
+	const Hint   = 'Please, do not misuse the service.';
+}
+
+namespace Localization\ErrorPage\BadGateway502
+{
+	const Reason = 'The server received an error from another one.';
+	const Hint   = 'Please, try again later.';
+}
+
+namespace Localization\ErrorPage\ServiceUnavailable503
+{
+	const Reason = 'The website is not available right now due to maintenance.';
+	const Hint   = 'Please, visit us later.';
 }
