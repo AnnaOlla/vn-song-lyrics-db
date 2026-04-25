@@ -17,12 +17,12 @@ class ViolatorController extends VisitorController
 	
 	final public function handleLogInPage(): void
 	{
-		$this->handleRedirect(Session::buildInternalLink($this->language));
+		$this->handleRedirect(Http::buildInternalPath($this->language));
 	}
 	
 	final public function handleSignUpPage(): void
 	{
-		$this->handleRedirect(Session::buildInternalLink($this->language));
+		$this->handleRedirect(Http::buildInternalPath($this->language));
 	}
 	
 	final public function handleLogOutPage(): void

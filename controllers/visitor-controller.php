@@ -46,7 +46,7 @@ class VisitorController extends ErrorController
 		if (isset($_SERVER['HTTP_REFERER']))
 			$_SESSION['redirect']['logIn'] = $_SERVER['HTTP_REFERER'];
 		else
-			$_SESSION['redirect']['logIn'] = Session::buildInternalLink($this->language);
+			$_SESSION['redirect']['logIn'] = Http::buildInternalPath($this->language);
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -110,7 +110,7 @@ class VisitorController extends ErrorController
 		if (isset($_SERVER['HTTP_REFERER']))
 			$_SESSION['redirect']['signUp'] = $_SERVER['HTTP_REFERER'];
 		else
-			$_SESSION['redirect']['signUp'] = Session::buildInternalLink($this->language);
+			$_SESSION['redirect']['signUp'] = Http::buildInternalPath($this->language);
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -227,7 +227,7 @@ class VisitorController extends ErrorController
 	
 	public function handleLogOutPage(): void
 	{
-		$this->handleRedirect(Session::buildInternalLink($this->language));
+		$this->handleRedirect(Http::buildInternalPath($this->language));
 	}
 	
 	//---------------------------------//
@@ -821,7 +821,7 @@ class VisitorController extends ErrorController
 		}
 		
 		$this->model->addFeedback($senderId, $senderIp, $message);
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'feedback'));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'feedback'));
 	}
 	
 	final public function handleReport(): void
@@ -883,7 +883,7 @@ class VisitorController extends ErrorController
 	
 	final public function handleReportGamePageGet(array $game): void
 	{
-		$linkBack = Session::buildInternalLink($this->language, 'game', $game['uri']);
+		$linkBack = Http::buildInternalPath($this->language, 'game', $game['uri']);
 		$this->view->renderReportPage('game', $game['transliterated_name'], $linkBack);
 	}
 	
@@ -910,7 +910,7 @@ class VisitorController extends ErrorController
 	
 	private function handleReportAlbumPageGet(array $album): void
 	{
-		$linkBack = Session::buildInternalLink($this->language, 'album', $album['uri']);
+		$linkBack = Http::buildInternalPath($this->language, 'album', $album['uri']);
 		$this->view->renderReportPage('album', $album['transliterated_name'], $linkBack);
 	}
 	
@@ -937,7 +937,7 @@ class VisitorController extends ErrorController
 	
 	private function handleReportArtistPageGet(array $artist): void
 	{
-		$linkBack = Session::buildInternalLink($this->language, 'artist', $artist['uri']);
+		$linkBack = Http::buildInternalPath($this->language, 'artist', $artist['uri']);
 		$this->view->renderReportPage('artist', $artist['transliterated_name'], $linkBack);
 	}
 	
@@ -964,7 +964,7 @@ class VisitorController extends ErrorController
 	
 	private function handleReportCharacterPageGet(array $character): void
 	{
-		$linkBack = Session::buildInternalLink($this->language, 'character', $character['uri']);
+		$linkBack = Http::buildInternalPath($this->language, 'character', $character['uri']);
 		$this->view->renderReportPage('character', $character['transliterated_name'], $linkBack);
 	}
 	
@@ -998,7 +998,7 @@ class VisitorController extends ErrorController
 	
 	private function handleReportLyricsPageGet(array $album, array $song): void
 	{
-		$linkBack = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
+		$linkBack = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		$this->view->renderReportPage('lyrics', $song['transliterated_name'], $linkBack);
 	}
 	
@@ -1060,7 +1060,7 @@ class VisitorController extends ErrorController
 	
 	private function handleReportTranslationPageGet(array $album, array $song, array $translation): void
 	{
-		$linkBack = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+		$linkBack = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		$this->view->renderReportPage('translation', $translation['name'], $linkBack);
 	}
 	

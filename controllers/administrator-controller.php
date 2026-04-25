@@ -511,7 +511,7 @@ class AdministratorController extends UserController
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		$this->model->addLanguage($ownName, $ruName, $enName, $jaName);
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'control-panel'));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'control-panel'));
 	}
 	
 	final public function handleReportListPage(): void
@@ -683,6 +683,6 @@ class AdministratorController extends UserController
 			$userAddedId
 		);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $albumUri));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $albumUri));
 	}
 }

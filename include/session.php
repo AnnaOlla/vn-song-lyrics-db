@@ -2,45 +2,11 @@
 
 final class Session
 {
-	public static function buildInternalLink(string ...$linkParts): string
-	{
-		for ($i = 0; $i < count($linkParts); $i++)
-			$linkParts[$i] = rawurlencode($linkParts[$i]);
-		
-		return '/'.implode('/', $linkParts);
-	}
-
-	public static function buildQueryParameters(array|null $keysToValues): string
-	{
-		if (!$keysToValues)
-			return '';
-		
-		$parameters = [];
-		
-		foreach ($keysToValues as $key => $value)
-			$parameters[] = $key.'='.$value;
-		
-		return '?'.implode("&", $parameters);
-	}
-	
-	public static function getQueryParametersFromLastVisitedPage(): string
-	{
-		$referer = parse_url($_SERVER['HTTP_REFERER'] ?? '');
-		
-		$host    = $referer['host']  ?? '';
-		$query   = $referer['query'] ?? '';
-		
-		if ($referer['host'] === $_SERVER['HTTP_HOST'] && $query)
-			return '?'.$query;
-		
-		return '';
-	}
-	
 	public static function isCurrentUserModerator(): bool
 	{
 		return $_SESSION['user']['role'] === 'administrator';
 	}
-
+	
 	public static function isCurrentUser(int|null $id): bool
 	{
 		if (isset($_SESSION['user']['id']))
@@ -48,22 +14,22 @@ final class Session
 		
 		return false;
 	}
-
+	
 	public static function isCurrentUserVisitor(): bool
 	{
 		return $_SESSION['user']['role'] === 'visitor';
 	}
-
+	
 	public static function isCurrentUserViolator(): bool
 	{
 		return $_SESSION['user']['role'] === 'violator';
 	}
-
+	
 	public static function canCurrentUserPost(): bool
 	{
 		return !in_array($_SESSION['user']['role'], ['visitor', 'violator'], true);
 	}
-
+	
 	public static function canCurrentUserAddEntity(): array
 	{
 		if (Session::isCurrentUserVisitor())
@@ -84,7 +50,7 @@ final class Session
 		
 		return [$canUserDoIt, $reason];
 	}
-
+	
 	public static function canCurrentUserEditEntity(int|null $contributorId, string $entityStatus): array
 	{
 		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
@@ -115,12 +81,12 @@ final class Session
 		
 		return [$canUserDoIt, $reason];
 	}
-
+	
 	public static function canCurrentUserDeleteEntity(int|null $contributorId, string $entityStatus): array
 	{
 		return Session::canCurrentUserEditEntity($contributorId, $entityStatus);
 	}
-
+	
 	public static function canCurrentUserReportEntity(string $entityStatus)
 	{
 		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
@@ -136,7 +102,7 @@ final class Session
 		
 		return [$canUserDoIt, $reason];
 	}
-
+	
 	public static function canCurrentUserAddLyrics(string $entityStatus): array
 	{
 		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
@@ -162,7 +128,7 @@ final class Session
 		
 		return [$canUserDoIt, $reason];
 	}
-
+	
 	public static function canCurrentUserEditLyrics(int|null $contributorId, string $entityStatus, bool $songHasTranslations): array
 	{
 		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
@@ -203,7 +169,7 @@ final class Session
 		
 		return [$canUserDoIt, $reason];
 	}
-
+	
 	public static function canCurrentUserEditTranslation(int|null $contributorId, string $entityStatus, bool $isSongOriginal): array
 	{
 		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
@@ -234,7 +200,7 @@ final class Session
 		
 		return [$canUserDoIt, $reason];
 	}
-
+	
 	public static function canCurrentUserDeleteTranslation(int|null $contributorId, string $entityStatus, bool $isSongOriginal): array
 	{
 		return Session::canCurrentUserEditTranslation($contributorId, $entityStatus, $isSongOriginal);

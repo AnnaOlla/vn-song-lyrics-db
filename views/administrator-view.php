@@ -50,7 +50,7 @@ class AdministratorView extends UserView
 			$jaName  = '';
 		}
 		
-		$cancelLink = Session::buildInternalLink($this->language, 'control-panel');
+		$cancelLink = Http::buildInternalPath($this->language, 'control-panel');
 		
 		$html = $this->startRender
 		(
@@ -112,7 +112,7 @@ class AdministratorView extends UserView
 	final public function renderReportListPage(array $reports): void
 	{
 		$heading = 'Report List';
-		$cancelLink = Session::buildInternalLink($this->language, 'control-panel');
+		$cancelLink = Http::buildInternalPath($this->language, 'control-panel');
 		
 		$html = $this->startRender
 		(
@@ -184,7 +184,7 @@ class AdministratorView extends UserView
 	final public function renderUserListPage(array $users): void
 	{
 		$heading = 'User List';
-		$cancelLink = Session::buildInternalLink($this->language, 'control-panel');
+		$cancelLink = Http::buildInternalPath($this->language, 'control-panel');
 		
 		$html = $this->startRender
 		(
@@ -255,7 +255,7 @@ class AdministratorView extends UserView
 	
 	final public function renderFillAlbumEditorPage(array $album, array $discography, string $heading): void
 	{
-		$cancelLink = Session::buildInternalLink($this->language, 'album', $album['uri']);
+		$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
 		
 		$vocalOptions =
 		[

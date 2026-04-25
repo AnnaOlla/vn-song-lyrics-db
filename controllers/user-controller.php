@@ -94,7 +94,7 @@ class UserController extends ViolatorController
 		foreach ($characterIds as $characterId)
 			$this->model->addCharacterGameRelation($gameId, $characterId);
 		
-		$link = Session::buildInternalLink($this->language, 'game', $gameUri);
+		$link = Http::buildInternalPath($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -168,7 +168,7 @@ class UserController extends ViolatorController
 		foreach ($gameIds as $gameId)
 			$this->model->addGameAlbumRelation($gameId, $albumId);
 		
-		$link = Session::buildInternalLink($this->language, 'album', $albumUri);
+		$link = Http::buildInternalPath($this->language, 'album', $albumUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -236,7 +236,7 @@ class UserController extends ViolatorController
 			$userAddedId
 		);
 		
-		$link = Session::buildInternalLink($this->language, 'artist', $artistUri);
+		$link = Http::buildInternalPath($this->language, 'artist', $artistUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -307,7 +307,7 @@ class UserController extends ViolatorController
 		foreach ($gameIds as $gameId)
 			$this->model->addCharacterGameRelation($characterId, $gameId);
 		
-		$link = Session::buildInternalLink($this->language, 'character', $characterUri);
+		$link = Http::buildInternalPath($this->language, 'character', $characterUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -408,9 +408,9 @@ class UserController extends ViolatorController
 		$songCount++;
 		
 		if ($songCount === $album['song_count'])
-			$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri']));
+			$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri']));
 		else
-			$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri'], 'add-song'));
+			$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri'], 'add-song'));
 	}
 	
 	final public function handleAddLyricsPage(string $albumUri, string $songUri): void
@@ -552,7 +552,7 @@ class UserController extends ViolatorController
 		foreach (array_combine($artistIds, $characterIds) as $artistId => $characterId)
 			$this->model->addSongArtistCharacterRelation($song['id'], $artistId, $characterId);
 		
-		$link = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']);
+		$link = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		$this->handleRedirect($link);
 	}
 	
@@ -655,7 +655,7 @@ class UserController extends ViolatorController
 			$userAddedId
 		);
 		
-		$link = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translationUri);
+		$link = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translationUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -763,7 +763,7 @@ class UserController extends ViolatorController
 		foreach ($characterIds as $characterId)
 			$this->model->addCharacterGameRelation($gameId, $characterId);
 		
-		$link = Session::buildInternalLink($this->language, 'game', $gameUri);
+		$link = Http::buildInternalPath($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
 	}
 	
@@ -865,7 +865,7 @@ class UserController extends ViolatorController
 		foreach ($gameIds as $gameId)
 			$this->model->addGameAlbumRelation($gameId, $albumId);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $albumUri));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $albumUri));
 	}
 	
 	final public function handleEditArtistPage(string $artistUri): void
@@ -944,7 +944,7 @@ class UserController extends ViolatorController
 			$userUpdatedId
 		);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'artist', $artistUri));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'artist', $artistUri));
 	}
 	
 	final public function handleEditCharacterPage(string $characterUri): void
@@ -1029,7 +1029,7 @@ class UserController extends ViolatorController
 		foreach ($gameIds as $gameId)
 			$this->model->addCharacterGameRelation($characterId, $gameId);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'character', $characterUri));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'character', $characterUri));
 	}
 	
 	final public function handleEditSongPage(string $albumUri, string $songUri): void
@@ -1102,7 +1102,7 @@ class UserController extends ViolatorController
 			$userUpdatedId
 		);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri']));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri']));
 	}
 	
 	final public function handleEditLyricsPage(string $albumUri, string $songUri): void
@@ -1265,7 +1265,7 @@ class UserController extends ViolatorController
 		foreach (array_combine($artistIds, $characterIds) as $artistId => $characterId)
 			$this->model->addSongArtistCharacterRelation($song['id'], $artistId, $characterId);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']));
 	}
 	
 	final public function handleEditTranslationPage(string $albumUri, string $songUri, string $translationUri): void
@@ -1347,7 +1347,7 @@ class UserController extends ViolatorController
 			$userUpdatedId
 		);
 		
-		$link = Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+		$link = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		$this->handleRedirect($link);
 	}
 	
@@ -1396,7 +1396,7 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteGame($game);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'game-list'));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'game-list'));
 	}
 	
 	final public function handleDeleteAlbumPage(string $albumUri): void
@@ -1444,7 +1444,7 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteAlbum($album);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'album-list'));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'album-list'));
 	}
 	
 	final public function handleDeleteArtistPage(string $artistUri): void
@@ -1492,7 +1492,7 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteArtist($artist);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'artist-list'));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'artist-list'));
 	}
 	
 	final public function handleDeleteCharacterPage(string $characterUri): void
@@ -1541,7 +1541,7 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteCharacter($character);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'character-list'));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'character-list'));
 	}
 	
 	final public function handleDeleteLyricsPage(string $albumUri, string $songUri): void
@@ -1609,7 +1609,7 @@ class UserController extends ViolatorController
 		$this->model->deleteLyrics($song);
 		$this->model->deleteSongArtistCharacterRelation(songId: $song['id']);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri']));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri']));
 	}
 	
 	final public function handleDeleteTranslationPage(string $albumUri, string $songUri, string $translationUri): void
@@ -1665,7 +1665,7 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteTranslation($translation);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'album', $album['uri'], 'song', $song['uri']));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']));
 	}
 	
 	final public function handleChangeAccountDataPage(string $userUri): void
@@ -1774,7 +1774,7 @@ class UserController extends ViolatorController
 		$this->model->getUserData($user['id']);
 		$this->createUserSession($user);
 		
-		$this->handleRedirect(Session::buildInternalLink($this->language, 'user', $newUsername));
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'user', $newUsername));
 	}
 	
 	final public function handleDeleteAccountPage(string $userUri): void
