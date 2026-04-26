@@ -37,9 +37,19 @@ enum InputError
 	case PasswordLengthIncorrect;
 }
 
-enum EntityStatus
+enum AccessState
 {
-	case Hidden;
-	case Unchecked;
-	case Checked;
+	case Ok;
+	
+	case AgentIsVisitorError;
+	case AgentIsViolatorError;
+	case AgentIsNotAuthorError;
+	
+	case EntityIsHiddenError;
+	case EntityIsCheckedError;
+	
+	case SongHasTranslationsError;
+	case LyricsAreNotOriginalError;
+	case LyricsUseSameLanguageError;
+	case AgentUsedSameLanguageError;
 }

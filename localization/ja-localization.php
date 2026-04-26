@@ -60,6 +60,47 @@ namespace Localization\Functions
 				throw new Exception(__FUNCTION__.': value '.$error->name.' was not found');
 		}
 	}
+	
+	use AccessState;
+	
+	function localizeAccessState(AccessState $error): string
+	{
+		switch ($error)
+		{
+			case AccessState::Ok:
+				return '';
+			
+			case AccessState::AgentIsVisitorError:
+				return '貢献するのようにログインしなければなりません。';
+			
+			case AccessState::AgentIsViolatorError:
+				return 'あなたのアカウントは限られています。';
+			
+			case AccessState::AgentIsNotAuthorError:
+				return 'この情報を出した者はあなたではありません。';
+			
+			case AccessState::EntityIsHiddenError:
+				return 'サイトは公式の手紙もらって、アクセスは限られています。';
+			
+			case AccessState::EntityIsCheckedError:
+				return '情報はスタッフに確認されました。';
+			
+			case AccessState::SongHasTranslationsError:
+				return '歌は翻訳があります。';
+			
+			case AccessState::LyricsAreNotOriginalError:
+				return '原作の歌のページに訪れてください。';
+			
+			case AccessState::LyricsUseSameLanguageError:
+				return 'これは歌の言語です。';
+			
+			case AccessState::AgentUsedSameLanguageError:
+				return 'あなたはこの言語に歌をもう翻訳しました。';
+			
+			default:
+				throw new Exception(__FUNCTION__.': value '.$error->name.' was not found');
+		}
+	}
 }
 
 namespace Localization\HomePage
@@ -518,19 +559,6 @@ namespace Localization\ModerationStatus
 	const Checked        = '確認された';
 	const Hidden         = '隠された';
 	const Unknown        = '不明';
-}
-
-namespace Localization\Tooltip
-{
-	const UserVisitor         = '貢献するのようにログインしなければなりません';
-	const UserViolator        = 'あなたのアカウントは限られている';
-	const UserNotAuthor       = '出した者はあなたではありません';
-	const NotOriginalSong     = '原作の歌のページに訪れてください';
-	const InfoHidden          = 'サイトは公式の手紙もらって、アクセスを限りました';
-	const InfoChecked         = '情報はスタッフに確認されました';
-	const SongHasTranslations = '歌は翻訳があります';
-	const OriginalLanguage    = 'これは歌の言語です';
-	const AlreadyTranslated   = 'あなたはこの言語に歌をもう翻訳しました';
 }
 
 namespace Localization\Controls

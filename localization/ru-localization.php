@@ -60,6 +60,47 @@ namespace Localization\Functions
 				throw new Exception(__FUNCTION__.': value '.$error->name.' was not found');
 		}
 	}
+	
+	use AccessState;
+	
+	function localizeAccessState(AccessState $error): string
+	{
+		switch ($error)
+		{
+			case AccessState::Ok:
+				return '';
+			
+			case AccessState::AgentIsVisitorError:
+				return 'Сначала нужно войти в свой аккаунт или зарегистрироваться.';
+			
+			case AccessState::AgentIsViolatorError:
+				return 'Ваш аккаунт ограничен в праве изменения данных.';
+			
+			case AccessState::AgentIsNotAuthorError:
+				return 'Вы не являетесь пользователем, добавившим эту информацию.';
+			
+			case AccessState::EntityIsHiddenError:
+				return 'Информация скрыта администрацией по формальным причинам.';
+			
+			case AccessState::EntityIsCheckedError:
+				return 'Эта информация была проверена администрацией.';
+			
+			case AccessState::SongHasTranslationsError:
+				return 'У песни есть переводы.';
+			
+			case AccessState::LyricsAreNotOriginalError:
+				return 'Данная песня копирует слова из другой.';
+			
+			case AccessState::LyricsUseSameLanguageError:
+				return 'Нельзя сделать перевод песни на язык её исполнения.';
+			
+			case AccessState::AgentUsedSameLanguageError:
+				return 'Вы уже переводили данную песню на этот язык.';
+			
+			default:
+				throw new Exception(__FUNCTION__.': value '.$error->name.' was not found');
+		}
+	}
 }
 
 namespace Localization\HomePage
@@ -518,19 +559,6 @@ namespace Localization\ModerationStatus
 	const Checked        = 'Подтверждено';
 	const Hidden         = 'Скрыто';
 	const Unknown        = 'Неизвестно';
-}
-
-namespace Localization\Tooltip
-{
-	const UserVisitor         = 'Сначала нужно войти или зарегистрироваться';
-	const UserViolator        = 'Ваш аккаунт был ограничен в праве изменения данных';
-	const UserNotAuthor       = 'Вы не являетесь участником, добавившим эту информацию';
-	const NotOriginalSong     = 'Перейдите к оригинальной песне и узнайте, можете ли вы редактировать её';
-	const InfoHidden          = 'Информация скрыта администрацией по формальным причинам';
-	const InfoChecked         = 'Информация проверена администрацией';
-	const SongHasTranslations = 'У песни есть переводы';
-	const OriginalLanguage    = 'Нельзя сделать перевод песни на язык её исполнения';
-	const AlreadyTranslated   = 'Вы уже переводили данную песню на этот язык';
 }
 
 namespace Localization\Controls

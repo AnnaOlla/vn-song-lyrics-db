@@ -19,12 +19,12 @@ namespace Localization\Functions
 	
 	use InputError;
 	
-	function localizeInputError(InputError $error): string|null
+	function localizeInputError(InputError $error): string
 	{
 		switch ($error)
 		{
 			case InputError::None:
-				return null;
+				return '';
 			
 			case InputError::CaptchaInvalid:
 				return 'The code was incorrect.';
@@ -55,6 +55,47 @@ namespace Localization\Functions
 			
 			case InputError::PasswordLengthIncorrect:
 				return 'The password had incorrect length.';
+			
+			default:
+				throw new Exception(__FUNCTION__.': value '.$error->name.' was not found');
+		}
+	}
+	
+	use AccessState;
+	
+	function localizeAccessState(AccessState $error): string
+	{
+		switch ($error)
+		{
+			case AccessState::Ok:
+				return '';
+			
+			case AccessState::AgentIsVisitorError:
+				return 'Log in or sign up to contribute.';
+			
+			case AccessState::AgentIsViolatorError:
+				return 'You have been restricted from making any changes.';
+			
+			case AccessState::AgentIsNotAuthorError:
+				return 'You are not the submitter of this information.';
+			
+			case AccessState::EntityIsHiddenError:
+				return 'The information is not available due to formal reasons.';
+			
+			case AccessState::EntityIsCheckedError:
+				return 'The information has been approved by the staff.';
+			
+			case AccessState::SongHasTranslationsError:
+				return 'The song has translations.';
+			
+			case AccessState::LyricsAreNotOriginalError:
+				return 'These lyrics are copied from another song.';
+			
+			case AccessState::LyricsUseSameLanguageError:
+				return 'It is the language of the song.';
+			
+			case AccessState::AgentUsedSameLanguageError:
+				return 'You have already translated this song to this language.';
 			
 			default:
 				throw new Exception(__FUNCTION__.': value '.$error->name.' was not found');
@@ -520,24 +561,11 @@ namespace Localization\ModerationStatus
 	const Unknown        = 'Unknown';
 }
 
-namespace Localization\Tooltip
-{
-	const UserVisitor         = 'Log in or sign up to contribute';
-	const UserViolator        = 'You have been restricted from making any changes';
-	const UserNotAuthor       = 'You are not the submitter of this information';
-	const NotOriginalSong     = 'Go to the original song to see if you can edit the information there';
-	const InfoHidden          = 'The information has been removed by the staff due to formal reasons';
-	const InfoChecked         = 'The information has been approved by the staff';
-	const SongHasTranslations = 'The song has translations';
-	const OriginalLanguage    = 'It is the language of the song';
-	const AlreadyTranslated   = 'You have already translated this song to this language';
-}
-
 namespace Localization\Controls
 {
-	const Report       = 'Report Issue on This Page';
-	const Edit         = 'Edit Information';
-	const Delete       = 'Delete Information';
+	const Report       = 'Report Issue';
+	const Edit         = 'Edit Data';
+	const Delete       = 'Delete Data';
 	
 	const SearchHeading     = 'Search over the database';
 	const SearchPlaceholder = 'Start typing …';

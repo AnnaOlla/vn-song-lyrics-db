@@ -624,7 +624,7 @@ class VisitorController extends ErrorController
 		if (!$game)
 			throw new HttpNotFound404();
 		
-		if ($game['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewGame($game) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -663,7 +663,7 @@ class VisitorController extends ErrorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -706,7 +706,7 @@ class VisitorController extends ErrorController
 		if (!$artist)
 			throw new HttpNotFound404();
 		
-		if ($artist['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewArtist($artist) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -745,7 +745,7 @@ class VisitorController extends ErrorController
 		if (!$character)
 			throw new HttpNotFound404();
 		
-		if ($character['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewCharacter($character) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -779,19 +779,53 @@ class VisitorController extends ErrorController
 	
 	final public function handleLyricsPage(string $albumUri, string $songUri): void
 	{
-		$album = $this->model->getAlbum($albumUri);
-		$song  = $this->model->getSong($albumUri, $songUri);
+		$album         = $this->model->getAlbum($albumUri);
+		$song          = $this->model->getSong($albumUri, $songUri);
+		$performerList = $this->model->getPerformerList(albumUri: $album['uri'], songUri: $song['uri']);
+		
+		if ($song['original_song_id'])
+		{
+			$originalSong    = $this->model->getSong(songId: $song['original_song_id']);
+			$originalAlbum   = $this->model->getAlbum(albumUri: $originalSong['album_uri']);
+			$translationList = $this->model->getTranslationList
+			(
+				albumUri: $originalAlbum['uri'],
+				songUri:  $originalSong['uri']
+			);
+		}
+		else
+		{
+			$originalSong    = null;
+			$originalAlbum   = null;
+			$translationList = $this->model->getTranslationList
+			(
+				albumUri: $album['uri'],
+				songUri:  $song['uri']
+			);
+		}
 		
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
-			throw new HttpUnavailableForLegalReasons451();
-		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToViewLyrics($song) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if ($originalAlbum && Session::agentHasRightToViewAlbum($originalAlbum) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if ($originalSong && Session::agentHasRightToViewSong($originalSong) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if ($originalSong && Session::agentHasRightToViewLyrics($originalSong) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song['has_vocal'])
@@ -800,9 +834,17 @@ class VisitorController extends ErrorController
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
-				$this->handleLyricsPageGet($album, $song);
+				$this->handleLyricsPageGet
+				(
+					$album,
+					$song,
+					$performerList,
+					$originalAlbum,
+					$originalSong,
+					$translationList
+				);
 				break;
-				
+			
 			case 'CONNECT':
 			case 'DELETE':
 			case 'HEAD':
@@ -818,25 +860,20 @@ class VisitorController extends ErrorController
 		}
 	}
 	
-	private function handleLyricsPageGet(array $album, array $song): void
+	private function handleLyricsPageGet
+	(
+		array      $album,
+		array      $song,
+		array      $performerList,
+		array|null $originalAlbum,
+		array|null $originalSong,
+		array      $translationList
+	): void
 	{
-		$performerList = $this->model->getPerformerList(albumUri: $album['uri'], songUri: $song['uri']);
-		
-		if ($song['original_song_id'])
-		{
-			$originalSong    = $this->model->getSong(songId: $song['original_song_id']);
-			$translationList = $this->model->getTranslationList(albumUri: $originalSong['album_uri'], songUri: $originalSong['uri']);
-		}
-		else
-		{
-			$originalSong    = null;
-			$translationList = $this->model->getTranslationList(albumUri: $album['uri'], songUri: $song['uri']);
-		}
-		
 		if (!$song['lyrics'] && !$originalSong || !$song['lyrics'] && $originalSong && !$originalSong['lyrics'])
 			$this->view->renderNoLyricsPage($album, $song);
 		else
-			$this->view->renderLyricsPage($album, $song, $originalSong, $performerList, $translationList);
+			$this->view->renderLyricsPage($album, $song, $originalAlbum, $originalSong, $performerList, $translationList);
 	}
 	
 	final public function handleTranslationPage(string $albumUri, string $songUri, string $translationUri): void
@@ -845,31 +882,16 @@ class VisitorController extends ErrorController
 		$song          = $this->model->getSong($albumUri, $songUri);
 		$performerList = $this->model->getPerformerList(albumUri: $albumUri, songUri: $songUri);
 		
-		if (!$album)
-			throw new HttpNotFound404();
-		
-		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
-			throw new HttpUnavailableForLegalReasons451();
-		
-		if (!$song)
-			throw new HttpNotFound404();
-		
-		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
-			throw new HttpUnavailableForLegalReasons451();
-		
-		if (!$song['has_vocal'])
-			throw new HttpForbidden403();
-		
-		if ($song['original_song_id'])
+		if ($album && $song && $song['original_song_id'])
 		{
-			$originalSong = $this->model->getSong(songId: $song['original_song_id']);
-			$translation  = $this->model->getTranslation
+			$originalSong  = $this->model->getSong(songId: $song['original_song_id']);
+			$originalAlbum = $this->model->getAlbum(albumUri: $originalSong['album_uri']);
+			$translation   = $this->model->getTranslation
 			(
 				$originalSong['album_uri'],
 				$originalSong['uri'],
 				$translationUri
 			);
-			
 			$translationList = $this->model->getTranslationList
 			(
 				albumUri: $originalSong['album_uri'],
@@ -878,14 +900,14 @@ class VisitorController extends ErrorController
 		}
 		else
 		{
-			$originalSong = null;
-			$translation  = $this->model->getTranslation
+			$originalSong  = null;
+			$originalAlbum = null;
+			$translation   = $this->model->getTranslation
 			(
 				$albumUri,
 				$songUri,
 				$translationUri
 			);
-			
 			$translationList = $this->model->getTranslationList
 			(
 				albumUri: $albumUri,
@@ -893,20 +915,66 @@ class VisitorController extends ErrorController
 			);
 		}
 		
+		if (!$album)
+			throw new HttpNotFound404();
+		
+		if (!$song)
+			throw new HttpNotFound404();
+		
+		if ($song['original_song_id'] && !$originalSong)
+			throw new HttpNotFound404();
+		
 		if (!$translation)
 			throw new HttpNotFound404();
 		
-		if ($translation['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToViewLyrics($song) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if ($originalAlbum && Session::agentHasRightToViewAlbum($originalAlbum) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if ($originalSong && Session::agentHasRightToViewSong($originalSong) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if ($originalSong && Session::agentHasRightToViewLyrics($originalSong) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToViewTranslation($translation) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
-				$this->handleTranslationPageGet($album, $song, $originalSong, $translation, $performerList, $translationList);
+				$this->handleTranslationPageGet
+				(
+					$album,
+					$song,
+					$originalAlbum,
+					$originalSong,
+					$translation,
+					$performerList,
+					$translationList
+				);
 				break;
-				
-			default:
+			
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'POST':
+			case 'PUT':
+			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
 	}
 	
@@ -914,6 +982,7 @@ class VisitorController extends ErrorController
 	(
 		array      $album,
 		array      $song,
+		array|null $originalAlbum,
 		array|null $originalSong,
 		array      $translation,
 		array      $performerList,
@@ -924,6 +993,7 @@ class VisitorController extends ErrorController
 		(
 			$album,
 			$song,
+			$originalAlbum,
 			$originalSong,
 			$translation,
 			$performerList,
@@ -1054,8 +1124,11 @@ class VisitorController extends ErrorController
 		if (!$game)
 			throw new HttpNotFound404();
 		
-		if ($game['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewGame($game) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToReportGame($game) !== AccessState::Ok)
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1091,8 +1164,11 @@ class VisitorController extends ErrorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToReportAlbum($album) !== AccessState::Ok)
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1128,8 +1204,11 @@ class VisitorController extends ErrorController
 		if (!$artist)
 			throw new HttpNotFound404();
 		
-		if ($artist['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewArtist($artist) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToReportArtist($artist) !== AccessState::Ok)
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1165,8 +1244,11 @@ class VisitorController extends ErrorController
 		if (!$character)
 			throw new HttpNotFound404();
 		
-		if ($character['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewCharacter($character) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToReportCharacter($character) !== AccessState::Ok)
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1203,14 +1285,26 @@ class VisitorController extends ErrorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
-			throw new HttpUnavailableForLegalReasons451();
-		
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToReportAlbum($album) !== AccessState::Ok)
+			throw new HttpForbidden403();
+		
+		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToReportSong($song) !== AccessState::Ok)
+			throw new HttpForbidden403();
+		
+		if (Session::agentHasRightToViewLyrics($song) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToReportLyrics($song) !== AccessState::Ok)
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1241,23 +1335,10 @@ class VisitorController extends ErrorController
 	
 	final public function handleReportTranslationPage(string $albumUri, string $songUri, string $translationUri): void
 	{
-		$album       = $this->model->getAlbum($albumUri);
-		$song        = $this->model->getSong($albumUri, $songUri);
-		$translation = $this->model->getTranslation($albumUri, $songUri, $translationUri);
+		$album = $this->model->getAlbum($albumUri);
+		$song  = $this->model->getSong($albumUri, $songUri);
 		
-		if (!$album)
-			throw new HttpNotFound404();
-		
-		if ($album['status'] === 'hidden' && !Session::isCurrentUserModerator())
-			throw new HttpUnavailableForLegalReasons451();
-		
-		if (!$song)
-			throw new HttpNotFound404();
-		
-		if ($song['status'] === 'hidden' && !Session::isCurrentUserModerator())
-			throw new HttpUnavailableForLegalReasons451();
-		
-		if ($song['original_song_id'])
+		if ($album && $song && $song['original_song_id'])
 		{
 			$originalSong = $this->model->getSong(songId: $song['original_song_id']);
 			$translation  = $this->model->getTranslation
@@ -1278,11 +1359,38 @@ class VisitorController extends ErrorController
 			);
 		}
 		
+		if (!$album)
+			throw new HttpNotFound404();
+		
+		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToReportAlbum($album) !== AccessState::Ok)
+			throw new HttpForbidden403();
+		
+		if (!$song)
+			throw new HttpNotFound404();
+		
+		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToReportSong($song) !== AccessState::Ok)
+			throw new HttpForbidden403();
+		
+		if (Session::agentHasRightToViewLyrics($song) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToReportLyrics($song) !== AccessState::Ok)
+			throw new HttpForbidden403();
+		
 		if (!$translation)
 			throw new HttpNotFound404();
 		
-		if ($translation['status'] === 'hidden' && !Session::isCurrentUserModerator())
+		if (Session::agentHasRightToViewTranslation($translation) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToReportTranslation($translation) !== AccessState::Ok)
+			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{

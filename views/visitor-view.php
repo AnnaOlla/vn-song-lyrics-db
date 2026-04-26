@@ -204,7 +204,7 @@ class VisitorView extends ErrorView
 			
 			if ($relationKey)
 			{
-				if (Session::isCurrentUserModerator())
+				if (Session::agentIsAdministrator())
 					$textEntities[] = $this->createStatusSelect($game, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($game[$relationKey], true);
@@ -239,7 +239,7 @@ class VisitorView extends ErrorView
 			
 			if ($relationKey)
 			{
-				if (Session::isCurrentUserModerator())
+				if (Session::agentIsAdministrator())
 					$textEntities[] = $this->createStatusSelect($album, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($album[$relationKey], true);
@@ -274,7 +274,7 @@ class VisitorView extends ErrorView
 			
 			if ($relationKey)
 			{
-				if (Session::isCurrentUserModerator())
+				if (Session::agentIsAdministrator())
 					$textEntities[] = $this->createStatusSelect($artist, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($artist[$relationKey], true);
@@ -309,7 +309,7 @@ class VisitorView extends ErrorView
 			
 			if ($relationKey)
 			{
-				if (Session::isCurrentUserModerator())
+				if (Session::agentIsAdministrator())
 					$textEntities[] = $this->createStatusSelect($character, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($character[$relationKey], true);
@@ -337,7 +337,7 @@ class VisitorView extends ErrorView
 			else
 				$transliteratedName = $this->createParagraph($songs[$i]['transliterated_name']);
 			
-			$href = Http::buildInternalPath
+			$editHref = Http::buildInternalPath
 			(
 				$this->language,
 				'album',
@@ -347,18 +347,16 @@ class VisitorView extends ErrorView
 				'edit'
 			);
 			
-			[$isEnabled, $tooltipIfDisabled] = Session::canCurrentUserEditEntity
-			(
-				$songs[$i]['user_added_id'],
-				$songs[$i]['status']
-			);
+			$editAccess  = Session::agentHasRightToEditAlbum($album);
+			$editEnabled = $editAccess === AccessState::Ok;
+			$editTooltip = \Localization\Functions\localizeAccessState($editAccess);
 			
 			$editButton = $this->createButton
 			(
 				\Localization\AlbumPage\EditSong,
-				$href,
-				$isEnabled,
-				$tooltipIfDisabled
+				$editHref,
+				$editEnabled,
+				$editTooltip
 			);
 			
 			$cells['disc_number']         = htmlspecialchars($songs[$i]['disc_number']);
@@ -403,14 +401,11 @@ class VisitorView extends ErrorView
 		
 		if (count($songs) < $album['song_count'])
 		{
-			$title = \Localization\AlbumPage\AddSong;
-			$href  = Http::buildInternalPath($this->language, 'album', $album['uri'], 'add-song');
-			
-			[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserEditEntity
-			(
-				$album['user_added_id'],
-				$album['status']
-			);
+			$addLabel   = \Localization\AlbumPage\AddSong;
+			$addHref    = Http::buildInternalPath($this->language, 'album', $album['uri'], 'add-song');
+			$addAccess  = Session::agentHasRightToEditAlbum($album);
+			$addEnabled = $addAccess === AccessState::Ok;
+			$addTooltip = \Localization\Functions\localizeAccessState($addAccess);
 			
 			$html .=
 			'
@@ -418,17 +413,17 @@ class VisitorView extends ErrorView
 						<td></td>
 						<td></td>
 						<td></td>
-						<td>'.$this->createButton($title, $href, $isButtonEnabled, $tooltipIfDisabled).'</td>
+						<td>'.$this->createButton($addLabel, $addHref, $addEnabled, $addTooltip).'</td>
 					</tr>
 			';
 		}
 		
-		if (count($songs) === 0 && Session::isCurrentUserModerator())
+		if (count($songs) === 0 && Session::agentIsAdministrator())
 		{
 			$title = \Localization\AlbumPage\FillAlbum;
 			$href  = Http::buildInternalPath($this->language, 'album', $album['uri'], 'fill-album');
 			
-			[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserEditEntity
+			[$isButtonEnabled, $tooltipIfDisabled] = Session::agentHasRightToEditEntity
 			(
 				$album['user_added_id'],
 				$album['status']
@@ -865,8 +860,11 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefButton = Http::buildInternalPath($this->language, 'add-game');
-		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserAddEntity();
+		$buttonLabel    = \Localization\GameListPage\AddGame;
+		$buttonHref     = Http::buildInternalPath($this->language, 'add-game');
+		$buttonAccess   = Session::agentHasRightToAddGame();
+		$buttonIsActive = $buttonAccess === AccessState::Ok;
+		$buttonTooltip  = \Localization\Functions\localizeAccessState($buttonAccess);
 		
 		$hrefThisPage      = Http::buildInternalPath($this->language, 'game-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $gameCount, $hrefThisPage);
@@ -890,7 +888,7 @@ class VisitorView extends ErrorView
 				'.$this->createHeading(\Localization\GameListPage\Heading, 1).'
 				<section class="filter-section">
 					'.$this->createFilterBar().'
-					'.$this->createButton(\Localization\GameListPage\AddGame, $hrefButton, $isButtonEnabled, $tooltipIfDisabled).'
+					'.$this->createButton($buttonLabel, $buttonHref, $buttonIsActive, $buttonTooltip).'
 				</section>
 			</section>
 			<section>
@@ -933,8 +931,11 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefButton = Http::buildInternalPath($this->language, 'add-album');
-		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserAddEntity();
+		$buttonLabel    = \Localization\AlbumListPage\AddAlbum;
+		$buttonHref     = Http::buildInternalPath($this->language, 'add-album');
+		$buttonAccess   = Session::agentHasRightToAddAlbum();
+		$buttonIsActive = $buttonAccess === AccessState::Ok;
+		$buttonTooltip  = \Localization\Functions\localizeAccessState($buttonAccess);
 		
 		$hrefThisPage      = Http::buildInternalPath($this->language, 'album-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $albumCount, $hrefThisPage);
@@ -958,7 +959,7 @@ class VisitorView extends ErrorView
 				'.$this->createHeading(\Localization\AlbumListPage\Heading, 1).'
 				<section class="filter-section">
 					'.$this->createFilterBar().'
-					'.$this->createButton(\Localization\AlbumListPage\AddAlbum, $hrefButton, $isButtonEnabled, $tooltipIfDisabled).'
+					'.$this->createButton($buttonLabel, $buttonHref, $buttonIsActive, $buttonTooltip).'
 				</section>
 			</section>
 			<section>
@@ -1001,8 +1002,11 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefButton = Http::buildInternalPath($this->language, 'add-artist');
-		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserAddEntity();
+		$buttonLabel    = \Localization\ArtistListPage\AddArtist;
+		$buttonHref     = Http::buildInternalPath($this->language, 'add-artist');
+		$buttonAccess   = Session::agentHasRightToAddArtist();
+		$buttonIsActive = $buttonAccess === AccessState::Ok;
+		$buttonTooltip  = \Localization\Functions\localizeAccessState($buttonAccess);
 		
 		$hrefThisPage      = Http::buildInternalPath($this->language, 'artist-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $artistCount, $hrefThisPage);
@@ -1026,7 +1030,7 @@ class VisitorView extends ErrorView
 				'.$this->createHeading(\Localization\ArtistListPage\Heading, 1).'
 				<section class="filter-section">
 					'.$this->createFilterBar().'
-					'.$this->createButton(\Localization\ArtistListPage\AddArtist, $hrefButton, $isButtonEnabled, $tooltipIfDisabled).'
+					'.$this->createButton($buttonLabel, $buttonHref, $buttonIsActive, $buttonTooltip).'
 				</section>
 			</section>
 			<section>
@@ -1069,8 +1073,11 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefButton = Http::buildInternalPath($this->language, 'add-character');
-		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserAddEntity();
+		$buttonLabel    = \Localization\CharacterListPage\AddCharacter;
+		$buttonHref     = Http::buildInternalPath($this->language, 'add-character');
+		$buttonAccess   = Session::agentHasRightToAddCharacter();
+		$buttonIsActive = $buttonAccess === AccessState::Ok;
+		$buttonTooltip  = \Localization\Functions\localizeAccessState($buttonAccess);
 		
 		$hrefThisPage      = Http::buildInternalPath($this->language, 'character-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $characterCount, $hrefThisPage);
@@ -1094,7 +1101,7 @@ class VisitorView extends ErrorView
 				'.$this->createHeading(\Localization\CharacterListPage\Heading, 1).'
 				<section class="filter-section">
 					'.$this->createFilterBar().'
-					'.$this->createButton(\Localization\CharacterListPage\AddCharacter, $hrefButton, $isButtonEnabled, $tooltipIfDisabled).'
+					'.$this->createButton($buttonLabel, $buttonHref, $buttonIsActive, $buttonTooltip).'
 				</section>
 			</section>
 			<section>
@@ -1299,12 +1306,12 @@ class VisitorView extends ErrorView
 		$html .= 
 		'
 			'.$this->createTimestampBlock($game).'
-			'.$this->createControlButtonsBlock($game, 'game').'
+			'.$this->createControlButtonsBlock([$game], ['game'], $game, 'Game').'
 		</article>
 		';
 		
 		$js = [];
-		if (Session::isCurrentUserModerator())
+		if (Session::agentIsAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1351,12 +1358,12 @@ class VisitorView extends ErrorView
 		$html .= 
 		'
 			'.$this->createTimestampBlock($album).'
-			'.$this->createControlButtonsBlock($album, 'album').'
+			'.$this->createControlButtonsBlock([$album], ['album'], $album, 'Album').'
 		</article>
 		';
 		
 		$js = [];
-		if (Session::isCurrentUserModerator())
+		if (Session::agentIsAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1412,12 +1419,12 @@ class VisitorView extends ErrorView
 		$html .= 
 		'
 			'.$this->createTimestampBlock($artist).'
-			'.$this->createControlButtonsBlock($artist, 'artist').'
+			'.$this->createControlButtonsBlock([$artist], ['artist'], $artist, 'Artist').'
 		</article>
 		';
 		
 		$js = [];
-		if (Session::isCurrentUserModerator())
+		if (Session::agentIsAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1473,12 +1480,12 @@ class VisitorView extends ErrorView
 		$html .= 
 		'
 			'.$this->createTimestampBlock($character).'
-			'.$this->createControlButtonsBlock($character, 'character').'
+			'.$this->createControlButtonsBlock([$character], ['character'], $character, 'Character').'
 		</article>
 		';
 		
 		$js = [];
-		if (Session::isCurrentUserModerator())
+		if (Session::agentIsAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1516,17 +1523,17 @@ class VisitorView extends ErrorView
 					<p>'.\Localization\LyricsPage\NoLyricsAdded.'</p>
 		';
 		
-		$button = $this->createButton
-		(
-			\Localization\LyricsPage\AddLyrics,
-			Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'add-lyrics'),
-			!Session::isCurrentUserVisitor(),
-			\Localization\Tooltip\UserVisitor
-		);
+		$addLabel   = \Localization\LyricsPage\AddLyrics;
+		$addHref    = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'add-lyrics');
+		$addAccess  = Session::agentHasRightToAddLyrics($song);
+		$addEnabled = $addAccess === AccessState::Ok;
+		$addTooltip = \Localization\Functions\localizeAccessState($addAccess);
+		
+		$addButton  = $this->createButton($addLabel, $addHref, $addEnabled, $addTooltip);
 		
 		$html .= 
 		'
-					<p>'.$button.'</p>
+					<p>'.$addButton.'</p>
 				</section>
 			</section>
 		</article>
@@ -1541,6 +1548,7 @@ class VisitorView extends ErrorView
 	(
 		array      $album,
 		array      $song,
+		array|null $originalAlbum,
 		array|null $originalSong,
 		array      $performers,
 		array      $translations
@@ -1561,18 +1569,20 @@ class VisitorView extends ErrorView
 			$originalSong
 		);
 		
-		if ($originalSong)
+		if ($originalAlbum && $originalSong)
 		{
-			$songToShow = $originalSong;
+			$albumToShow = $originalAlbum;
+			$songToShow  = $originalSong;
 			
 			$parts    = explode('/', $_SERVER['REQUEST_URI']);
-			$parts[3] = $originalSong['album_uri'];
+			$parts[3] = $originalAlbum['uri'];
 			$parts[5] = $originalSong['uri'];
 			
 			$canonicalUri = implode('/', $parts);
 		}
 		else
 		{
+			$albumToShow  = $album;
 			$songToShow   = $song;
 			$canonicalUri = $_SERVER['REQUEST_URI'];
 		}
@@ -1596,13 +1606,13 @@ class VisitorView extends ErrorView
 				'.$this->createSongLyrics($songToShow).'
 				'.$this->createSongNotes($songToShow).'
 				'.$this->createTimestampBlock($song).'
-				'.$this->createControlButtonsBlockForSong($album, $song, $translations).'
+				'.$this->createControlButtonsBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
 			</section>
 		</article>
 		';
 		
 		$js = [];
-		if (Session::isCurrentUserModerator())
+		if (Session::agentIsAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1619,6 +1629,7 @@ class VisitorView extends ErrorView
 	(
 		array      $album,
 		array      $song,
+		array|null $originalAlbum,
 		array|null $originalSong,
 		array      $translation,
 		array      $performers,
@@ -1643,18 +1654,20 @@ class VisitorView extends ErrorView
 			$originalSong
 		);
 		
-		if ($originalSong)
+		if ($originalAlbum && $originalSong)
 		{
-			$songToShow = $originalSong;
+			$albumToShow = $originalAlbum;
+			$songToShow  = $originalSong;
 			
 			$parts    = explode('/', $_SERVER['REQUEST_URI']);
-			$parts[3] = $originalSong['album_uri'];
+			$parts[3] = $originalAlbum['uri'];
 			$parts[5] = $originalSong['uri'];
 			
 			$canonicalUri = implode('/', $parts);
 		}
 		else
 		{
+			$albumToShow  = $album;
 			$songToShow   = $song;
 			$canonicalUri = $_SERVER['REQUEST_URI'];
 		}
@@ -1681,14 +1694,14 @@ class VisitorView extends ErrorView
 				'.$this->createSongNotes($songToShow).'
 				'.$this->createTimestampBlock($translation).'
 				'.$this->createTimestampBlock($songToShow).'
-				'.$this->createControlButtonsBlockForTranslation($album, $songToShow, $translation).'
-				'.$this->createControlButtonsBlockForSong($album, $songToShow, $translations).'
+				'.$this->createControlButtonsBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
+				'.$this->createControlButtonsBlock([$albumToShow, $songToShow, $translation], ['album', 'song', 'translation'], $translation, 'Translation').'
 			</section>
 		</article>
 		';
 		
 		$js = ['/js/translation-page.js'];
-		if (Session::isCurrentUserModerator())
+		if (Session::agentIsAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1750,7 +1763,7 @@ class VisitorView extends ErrorView
 			$ip        = Cryptography::generateSimpleHash($ip);
 			$timestamp = $feedback['message_timestamp'];
 			$message   = $feedback['message'];
-			$id        = Session::isCurrentUserModerator() ? ' data-id="'.$feedback['id'].'"' : '';
+			$id        = Session::agentIsAdministrator() ? ' data-id="'.$feedback['id'].'"' : '';
 			
 			$html .= 
 			'
@@ -1774,7 +1787,7 @@ class VisitorView extends ErrorView
 				';
 			}
 			
-			if (Session::isCurrentUserModerator())
+			if (Session::agentIsAdministrator())
 			{
 				$html .= 
 				'
@@ -1801,7 +1814,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (Session::isCurrentUserModerator())
+		if (Session::agentIsAdministrator())
 		{
 			$js[] = '/js/moderation/feedback.js';
 		}
@@ -1927,13 +1940,13 @@ class VisitorView extends ErrorView
 				'.$this->createParagraph(\Localization\UserPage\Role.htmlspecialchars($role)).'
 		';
 		
-		if (Session::isCurrentUser($userData['user_id']) || Session::isCurrentUserModerator())
+		if (Session::agentIs($userData['user_id']) || Session::agentIsAdministrator())
 		{
 			$href1 = Http::buildInternalPath($this->language, 'user', $userData['user_username'], 'change-account-data');
 			$href4 = Http::buildInternalPath($this->language, 'user', $userData['user_username'], 'delete-account');
 			
-			$condition = !Session::isCurrentUserViolator();
-			$tooltip = \Localization\Tooltip\UserViolator;
+			$condition = !Session::agentIsViolator();
+			$tooltip   = \Localization\Functions\localizeAccessState(AccessState::agentIsViolator);
 			
 			$html .= 
 			'

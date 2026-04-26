@@ -2,207 +2,314 @@
 
 final class Session
 {
-	public static function isCurrentUserModerator(): bool
+	/*
+	
+	Here are the functions to restrict access to various parts of the website.
+	
+	Most of them repeat each other now. This behavior may change in the future.
+	
+	*/
+	
+	// ---------------- //
+	// Function-Helpers //
+	// ---------------- //
+	
+	public static function entityIsUnchecked(array $entity): bool
 	{
-		return $_SESSION['user']['role'] === 'administrator';
+		return $entity['status'] === 'unchecked';
 	}
 	
-	public static function isCurrentUser(int|null $id): bool
+	public static function entityIsChecked(array $entity): bool
 	{
-		if (isset($_SESSION['user']['id']))
+		return $entity['status'] === 'checked';
+	}
+	
+	public static function entityIsHidden(array $entity): bool
+	{
+		return $entity['status'] === 'hidden';
+	}
+	
+	public static function agentIs(int|null $id): bool
+	{
+		if (isset($_SESSION['user']['id']) && isset($id))
 			return $_SESSION['user']['id'] === $id;
 		
 		return false;
 	}
 	
-	public static function isCurrentUserVisitor(): bool
+	public static function agentIsVisitor(): bool
 	{
 		return $_SESSION['user']['role'] === 'visitor';
 	}
 	
-	public static function isCurrentUserViolator(): bool
+	public static function agentIsViolator(): bool
 	{
 		return $_SESSION['user']['role'] === 'violator';
 	}
 	
-	public static function canCurrentUserPost(): bool
+	public static function agentIsUser(): bool
 	{
-		return !in_array($_SESSION['user']['role'], ['visitor', 'violator'], true);
+		return $_SESSION['user']['role'] === 'user';
 	}
 	
-	public static function canCurrentUserAddEntity(): array
+	public static function agentIsAdministrator(): bool
 	{
-		if (Session::isCurrentUserVisitor())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\UserVisitor;
-		}
-		else if (Session::isCurrentUserViolator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\UserViolator;
-		}
-		else
-		{
-			$canUserDoIt = true;
-			$reason = '';
-		}
+		return $_SESSION['user']['role'] === 'administrator';
+	}
+	
+	// -------------------------------------------------------------- //
+	// Viewing: if the entry is hidden, block its button or throw 451 //
+	// -------------------------------------------------------------- //
+	
+	private static function agentHasRightToViewEntity(array $entity): AccessState
+	{
+		if (Session::agentIsAdministrator())
+			return AccessState::Ok;
 		
-		return [$canUserDoIt, $reason];
-	}
-	
-	public static function canCurrentUserEditEntity(int|null $contributorId, string $entityStatus): array
-	{
-		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\InfoHidden;
-		}
-		else if (!Session::isCurrentUser($contributorId) && !Session::isCurrentUserModerator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\UserNotAuthor;
-		}
-		else if ($entityStatus === 'checked' && !Session::isCurrentUserModerator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\InfoChecked;
-		}
-		else if (Session::isCurrentUserViolator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\UserViolator;
-		}
-		else
-		{
-			$canUserDoIt = true;
-			$reason = '';
-		}
+		if (Session::entityIsHidden($entity))
+			return AccessState::EntityIsHiddenError;
 		
-		return [$canUserDoIt, $reason];
+		return AccessState::Ok;
 	}
 	
-	public static function canCurrentUserDeleteEntity(int|null $contributorId, string $entityStatus): array
+	public static function agentHasRightToViewGame(array $game): AccessState
 	{
-		return Session::canCurrentUserEditEntity($contributorId, $entityStatus);
+		return Session::agentHasRightToViewEntity($game);
 	}
 	
-	public static function canCurrentUserReportEntity(string $entityStatus)
+	public static function agentHasRightToViewAlbum(array $album): AccessState
 	{
-		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\InfoHidden;
-		}
-		else
-		{
-			$canUserDoIt = true;
-			$reason = '';
-		}
+		return Session::agentHasRightToViewEntity($album);
+	}
+	
+	public static function agentHasRightToViewArtist(array $artist): AccessState
+	{
+		return Session::agentHasRightToViewEntity($artist);
+	}
+	
+	public static function agentHasRightToViewCharacter(array $character): AccessState
+	{
+		return Session::agentHasRightToViewEntity($character);
+	}
+	
+	public static function agentHasRightToViewSong(array $song): AccessState
+	{
+		return Session::agentHasRightToViewEntity($song);
+	}
+	
+	public static function agentHasRightToViewLyrics(array $song): AccessState
+	{
+		return Session::agentHasRightToViewEntity($song);
+	}
+	
+	public static function agentHasRightToViewTranslation(array $translation): AccessState
+	{
+		return Session::agentHasRightToViewEntity($translation);
+	}
+	
+	// ----------------------------------------------------------------- //
+	// Reporting: if the entry is hidden, block its button or throw 451  //
+	// ----------------------------------------------------------------- //
+	
+	private static function agentHasRightToReportEntity(array $entity): AccessState
+	{
+		return Session::agentHasRightToViewEntity($entity);
+	}
+	
+	public static function agentHasRightToReportGame(array $game)
+	{
+		return Session::agentHasRightToReportEntity($game);
+	}
+	
+	public static function agentHasRightToReportAlbum(array $album)
+	{
+		return Session::agentHasRightToReportEntity($album);
+	}
+	
+	public static function agentHasRightToReportArtist(array $artist)
+	{
+		return Session::agentHasRightToReportEntity($artist);
+	}
+	
+	public static function agentHasRightToReportCharacter(array $character)
+	{
+		return Session::agentHasRightToReportEntity($character);
+	}
+	
+	public static function agentHasRightToReportSong(array $song)
+	{
+		return Session::agentHasRightToReportEntity($song);
+	}
+	
+	public static function agentHasRightToReportLyrics(array $song)
+	{
+		return Session::agentHasRightToReportEntity($song);
+	}
+	
+	public static function agentHasRightToReportTranslation(array $translation)
+	{
+		return Session::agentHasRightToReportEntity($translation);
+	}
+	
+	// ---------------------------------------------------------------------- //
+	// Adding: if the user is not allowed, then block the button or throw 403 //
+	// ---------------------------------------------------------------------- //
+	
+	private static function agentHasRightToAddEntity(): AccessState
+	{
+		if (Session::agentIsAdministrator())
+			return AccessState::Ok;
 		
-		return [$canUserDoIt, $reason];
-	}
-	
-	public static function canCurrentUserAddLyrics(string $entityStatus): array
-	{
-		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\InfoHidden;
-		}
-		else if (Session::isCurrentUserVisitor())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\UserVisitor;
-		}
-		else if (Session::isCurrentUserViolator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\UserViolator;
-		}
-		else
-		{
-			$canUserDoIt = true;
-			$reason = '';
-		}
+		if (Session::agentIsVisitor())
+			return AccessState::AgentIsVisitorError;
 		
-		return [$canUserDoIt, $reason];
-	}
-	
-	public static function canCurrentUserEditLyrics(int|null $contributorId, string $entityStatus, bool $songHasTranslations): array
-	{
-		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\InfoHidden;
-		}
-		else if (!Session::isCurrentUser($contributorId) && !Session::isCurrentUserModerator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\UserNotAuthor;
-		}
-		else if ($entityStatus === 'checked' && !Session::isCurrentUserModerator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\InfoChecked;
-		}
-		else if ($songHasTranslations && !Session::isCurrentUserModerator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\SongHasTranslations;
-		}
-		else if (Session::isCurrentUserVisitor())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\UserVisitor;
-		}
-		else if (Session::isCurrentUserViolator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\UserViolator;
-		}
-		else
-		{
-			$canUserDoIt = true;
-			$reason = '';
-		}
+		if (Session::agentIsViolator())
+			return AccessState::AgentIsViolatorError;
 		
-		return [$canUserDoIt, $reason];
+		return AccessState::Ok;
 	}
 	
-	public static function canCurrentUserEditTranslation(int|null $contributorId, string $entityStatus, bool $isSongOriginal): array
+	public static function agentHasRightToAddGame(): AccessState
 	{
-		if ($entityStatus === 'hidden' && !Session::isCurrentUserModerator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\InfoHidden;
-		}
-		else if (!Session::isCurrentUser($contributorId) && !Session::isCurrentUserModerator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\UserNotAuthor;
-		}
-		else if (!$isSongOriginal)
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\NotOriginalSong;
-		}
-		else if (Session::isCurrentUserViolator())
-		{
-			$canUserDoIt = false;
-			$reason = \Localization\Tooltip\UserViolator;
-		}
-		else
-		{
-			$canUserDoIt = true;
-			$reason = '';
-		}
+		return Session::agentHasRightToAddEntity();
+	}
+	
+	public static function agentHasRightToAddAlbum(): AccessState
+	{
+		return Session::agentHasRightToAddEntity();
+	}
+	
+	public static function agentHasRightToAddArtist(): AccessState
+	{
+		return Session::agentHasRightToAddEntity();
+	}
+	
+	public static function agentHasRightToAddCharacter(): AccessState
+	{
+		return Session::agentHasRightToAddEntity();
+	}
+	
+	public static function agentHasRightToAddSong(): AccessState
+	{
+		return Session::agentHasRightToAddEntity();
+	}
+	
+	public static function agentHasRightToAddLyrics(): AccessState
+	{
+		return Session::agentHasRightToAddEntity();
+	}
+	
+	public static function agentHasRightToAddTranslation(): AccessState
+	{
+		return Session::agentHasRightToAddEntity();
+	}
+	
+	// -------------------------------------------------------------------------- //
+	// Editing: if the user is not the author, then block the button or throw 403 //
+	// -------------------------------------------------------------------------- //
+	
+	private static function agentHasRightToEditEntity(array $entity): AccessState
+	{
+		if (Session::agentIsAdministrator())
+			return AccessState::Ok;
 		
-		return [$canUserDoIt, $reason];
+		if (Session::entityIsChecked($entity))
+			return AccessState::EntityIsCheckedError;
+		
+		if (!Session::agentIs($entity['user_added_id']))
+			return AccessState::AgentIsNotAuthorError;
+		
+		if (Session::agentIs($entity['user_added_id']) && Session::agentIsViolator())
+			return AccessState::AgentIsViolatorError;
+		
+		return AccessState::Ok;
 	}
 	
-	public static function canCurrentUserDeleteTranslation(int|null $contributorId, string $entityStatus, bool $isSongOriginal): array
+	public static function agentHasRightToEditGame(array $game): AccessState
 	{
-		return Session::canCurrentUserEditTranslation($contributorId, $entityStatus, $isSongOriginal);
+		return Session::agentHasRightToEditEntity($game);
+	}
+	
+	public static function agentHasRightToEditAlbum(array $album): AccessState
+	{
+		return Session::agentHasRightToEditEntity($album);
+	}
+	
+	public static function agentHasRightToEditArtist(array $artist): AccessState
+	{
+		return Session::agentHasRightToEditEntity($artist);
+	}
+	
+	public static function agentHasRightToEditCharacter(array $character): AccessState
+	{
+		return Session::agentHasRightToEditEntity($character);
+	}
+	
+	public static function agentHasRightToEditSong(array $song): AccessState
+	{
+		return Session::agentHasRightToEditEntity($song);
+	}
+	
+	public static function agentHasRightToEditLyrics(array $song): AccessState
+	{
+		return Session::agentHasRightToEditEntity($song);
+	}
+	
+	public static function agentHasRightToEditTranslation(array $translation): AccessState
+	{
+		if (Session::agentIsAdministrator())
+			return AccessState::Ok;
+		
+		if (!Session::agentIs($translation['user_added_id']))
+			return AccessState::AgentIsNotAuthorError;
+		
+		if (Session::agentIs($translation['user_added_id']) && Session::agentIsViolator())
+			return AccessState::AgentIsViolatorError;
+		
+		return AccessState::Ok;
+	}
+	
+	// ---------------------------------------------------------------------------- //
+	// Deleting: if the user is not the author, then block the button or throw 403  //
+	// ---------------------------------------------------------------------------- //
+	
+	private static function agentHasRightToDeleteEntity(array $entity): AccessState
+	{
+		return Session::agentHasRightToEditEntity($entity);
+	}
+	
+	public static function agentHasRightToDeleteGame(array $game): AccessState
+	{
+		return Session::agentHasRightToDeleteEntity($game);
+	}
+	
+	public static function agentHasRightToDeleteAlbum(array $album): AccessState
+	{
+		return Session::agentHasRightToDeleteEntity($album);
+	}
+	
+	public static function agentHasRightToDeleteArtist(array $artist): AccessState
+	{
+		return Session::agentHasRightToDeleteEntity($artist);
+	}
+	
+	public static function agentHasRightToDeleteCharacter(array $character): AccessState
+	{
+		return Session::agentHasRightToDeleteEntity($character);
+	}
+	
+	public static function agentHasRightToDeleteSong(array $song): AccessState
+	{
+		return Session::agentHasRightToDeleteEntity($song);
+	}
+	
+	public static function agentHasRightToDeleteLyrics(array $song): AccessState
+	{
+		return Session::agentHasRightToDeleteEntity($song);
+	}
+	
+	public static function agentHasRightToDeleteTranslation(array $translation): AccessState
+	{
+		return Session::agentHasRightToEditTranslation($translation);
 	}
 }

@@ -2,7 +2,7 @@
 
 abstract class View
 {
-	protected const ENTITY_LIST_DEFAULT_QUERY = '?limit=10&page=1';
+	protected const ENTITY_LIST_DEFAULT_QUERY = ['limit' => 10, 'page' => 1];
 	
 	protected $language;
 	private $cssVersion;
@@ -139,7 +139,7 @@ abstract class View
 		$ruLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'ru');
 		$jaLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'ja');
 		
-		if (Session::isCurrentUserVisitor())
+		if (Session::agentIsVisitor())
 		{
 			$logIn    = '<a href="/'.$this->language.'/log-in">'.\Localization\Header\LogIn.'</a>';
 			$signUp   = '<a href="/'.$this->language.'/sign-up">'.\Localization\Header\SignUp.'</a>';
@@ -572,124 +572,48 @@ HTML;
 		return $html;
 	}
 	
-	/* The function is not suitable for lyrics and translations because they have different logic */
-	final protected function createControlButtonsBlock(array $entity, string $entityName): string
+	final protected function createControlButtonsBlock
+	(
+		array  $entities,
+		array  $entitiesNames,
+		array  $currentEntity,
+		string $currentEntityName,
+		string $editEntityPathPart   = 'edit',
+		string $deleteEntityPathPart = 'delete',
+		string $reportEntityPathPart = 'report'
+	): string
 	{
-		$editHref   = Http::buildInternalPath($this->language, $entityName, $entity['uri'], 'edit');
-		$deleteHref = Http::buildInternalPath($this->language, $entityName, $entity['uri'], 'delete');
-		$reportHref = Http::buildInternalPath($this->language, $entityName, $entity['uri'], 'report');
+		$entityCount     = count($entities);
+		$entityNameCount = count($entitiesNames);
 		
-		[$editEnabled,   $editTooltipIfDisabled]   = Session::canCurrentUserEditEntity  ($entity['user_added_id'], $entity['status']);
-		[$deleteEnabled, $deleteTooltipIfDisabled] = Session::canCurrentUserDeleteEntity($entity['user_added_id'], $entity['status']);
-		[$reportEnabled, $reportTooltipIfDisabled] = Session::canCurrentUserReportEntity($entity['status']);
+		if ($entityCount !== $entityNameCount || $entityCount === 0 || $entityNameCount === 0)
+			throw new HttpInternalServerError500(__METHOD__.' was called incorrectly', get_defined_vars());
 		
-		$editButton   = $this->createButton(\Localization\Controls\Edit,   $editHref,   $editEnabled,   $editTooltipIfDisabled);
-		$deleteButton = $this->createButton(\Localization\Controls\Delete, $deleteHref, $deleteEnabled, $deleteTooltipIfDisabled);
-		$reportButton = $this->createButton(\Localization\Controls\Report, $reportHref, $reportEnabled, $reportTooltipIfDisabled);
+		for ($i = 0; $i < $entityCount; $i++)
+		{
+			$path[] = $entitiesNames[$i];
+			$path[] = $entities[$i]['uri'];
+		}
 		
-		$html =
-		'
-			<section>
-				'.$editButton.'
-				'.$deleteButton.'
-				'.$reportButton.'
-			</section>
-		';
+		$editHref   = Http::buildInternalPath($this->language, ...$path, ...[$editEntityPathPart]);
+		$deleteHref = Http::buildInternalPath($this->language, ...$path, ...[$deleteEntityPathPart]);
+		$reportHref = Http::buildInternalPath($this->language, ...$path, ...[$reportEntityPathPart]);
 		
-		return $html;
-	}
-	
-	/* It was easier to copy-paste than writing a new wrapper*/
-	final protected function createControlButtonsBlockForSong(array $album, array $song, array $translations): string
-	{
-		$editLink   = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'edit-lyrics');
-		$deleteLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'delete-lyrics');
-		$reportLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'report-lyrics');
+		$editAccess   = ('Session::agentHasRightToEdit'  .$currentEntityName)($currentEntity);
+		$deleteAccess = ('Session::agentHasRightToDelete'.$currentEntityName)($currentEntity);
+		$reportAccess = ('Session::agentHasRightToReport'.$currentEntityName)($currentEntity);
 		
-		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserEditLyrics
-		(
-			$song['user_added_id'],
-			$song['status'],
-			!empty($translations)
-		);
+		$editEnabled   = ($editAccess   === AccessState::Ok);
+		$deleteEnabled = ($deleteAccess === AccessState::Ok);
+		$reportEnabled = ($reportAccess === AccessState::Ok);
 		
-		$editButton = $this->createButton
-		(
-			\Localization\LyricsPage\EditLyrics,
-			$editLink,
-			$isButtonEnabled,
-			$tooltipIfDisabled
-		);
+		$editTooltip   = \Localization\Functions\localizeAccessState($editAccess);
+		$deleteTooltip = \Localization\Functions\localizeAccessState($deleteAccess);
+		$reportTooltip = \Localization\Functions\localizeAccessState($reportAccess);
 		
-		$deleteButton = $this->createButton
-		(
-			\Localization\LyricsPage\DeleteLyrics,
-			$deleteLink,
-			$isButtonEnabled,
-			$tooltipIfDisabled
-		);
-		
-		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserReportEntity($song['status']);
-		
-		$reportButton = $this->createButton
-		(
-			\Localization\LyricsPage\ReportLyrics,
-			$reportLink,
-			$isButtonEnabled,
-			$tooltipIfDisabled
-		);
-		
-		$html =
-		'
-			<section>
-				'.$editButton.'
-				'.$deleteButton.'
-				'.$reportButton.'
-			</section>
-		';
-		
-		return $html;
-	}
-	
-	/* It was easier to copy-paste than writing a new wrapper*/
-	final protected function createControlButtonsBlockForTranslation(array $album, array $song, array $translation): string
-	{
-		$editLink   = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri'], 'edit');
-		$deleteLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri'], 'delete');
-		$reportLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri'], 'report');
-		
-		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserEditTranslation
-		(
-			$translation['user_added_id'],
-			$translation['status'],
-			is_null($song['original_song_id'])
-		);
-		
-		$editButton = $this->createButton
-		(
-			\Localization\LyricsPage\EditTranslation,
-			$editLink,
-			$isButtonEnabled,
-			$tooltipIfDisabled
-		);
-		
-		$deleteButton = $this->createButton
-		(
-			\Localization\LyricsPage\DeleteTranslation,
-			$deleteLink,
-			$isButtonEnabled,
-			$tooltipIfDisabled
-		);
-		
-		[$isButtonEnabled, $tooltipIfDisabled] = Session::canCurrentUserReportEntity($translation['status']);
-	
-		$reportButton = $this->createButton
-		(
-			\Localization\LyricsPage\ReportTranslation,
-			$reportLink,
-			$isButtonEnabled,
-			$tooltipIfDisabled
-		);
+		$editButton   = $this->createButton(\Localization\Controls\Edit,   $editHref,   $editEnabled,   $editTooltip);
+		$deleteButton = $this->createButton(\Localization\Controls\Delete, $deleteHref, $deleteEnabled, $deleteTooltip);
+		$reportButton = $this->createButton(\Localization\Controls\Report, $reportHref, $reportEnabled, $reportTooltip);
 		
 		$html =
 		'
@@ -804,7 +728,7 @@ HTML;
 			if (array_key_exists($language, $translationCount))
 				$translationCount[$language]['totalCount']++;
 			else
-				$translationCount[$language] = ['currentCount' => 1, 'totalCount' => 1];
+				$translationCount[$language] = ['currentCount' => 0, 'totalCount' => 1];
 		}
 		
 		$links = [];
@@ -843,7 +767,7 @@ HTML;
 			}
 		}
 		
-		if (Session::canCurrentUserPost() && is_null($song['original_song_id']))
+		if ((Session::agentIsUser() || Session::agentIsAdministrator()) && is_null($song['original_song_id']))
 		{
 			$href = Http::buildInternalPath
 			(
@@ -1032,7 +956,7 @@ HTML;
 	
 	final protected function createTimestampBlock(array $entity): string
 	{
-		if (Session::isCurrentUserModerator())
+		if (Session::agentIsAdministrator())
 			$statusRow = $this->createStatusSelect($entity);
 		else
 			$statusRow = $this->createStatus($entity['status']);

@@ -1364,9 +1364,9 @@ class UserView extends ViolatorView
 			foreach ($languages as $language)
 			{
 				if (in_array($language['id'], $forbiddenLanguages, true))
-					$languageInput .= '<option value="'.$language['id'].'" disabled title="'.\Localization\Tooltip\AlreadyTranslated.'">'.htmlspecialchars(\Localization\Functions\localizeLanguageName($language)).'</option>';
+					$languageInput .= '<option value="'.$language['id'].'" disabled>'.htmlspecialchars(\Localization\Functions\localizeLanguageName($language)).'</option>';
 				else if ($song['language_id'] === $language['id'])
-					$languageInput .= '<option value="'.$language['id'].'" disabled title="'.\Localization\Tooltip\OriginalLanguage.'">'.htmlspecialchars(\Localization\Functions\localizeLanguageName($language)).'</option>';
+					$languageInput .= '<option value="'.$language['id'].'" disabled>'.htmlspecialchars(\Localization\Functions\localizeLanguageName($language)).'</option>';
 				else
 					$languageInput .= '<option value="'.$language['id'].'">'.htmlspecialchars(\Localization\Functions\localizeLanguageName($language)).'</option>';
 			}
@@ -1626,7 +1626,6 @@ class UserView extends ViolatorView
 	(
 		array $album,
 		array $relatedGames,
-		array $relatedSongs,
 		int   $currentSongCount,
 		array $games
 	): void
