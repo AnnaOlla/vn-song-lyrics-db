@@ -54,11 +54,6 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$allAlbumIds     = $this->model->getAlbumList(fetchMinInfo: true);
-		$allAlbumIds     = array_column($allAlbumIds, 'id');
-		$allCharacterIds = $this->model->getCharacterList(fetchMinInfo: true);
-		$allCharacterIds = array_column($allCharacterIds, 'id');
-		
 		$originalName       = $_POST['original-name']       ?? null;
 		$transliteratedName = $_POST['transliterated-name'] ?? null;
 		$localizedName      = $_POST['localized-name']      ?? null;
@@ -77,6 +72,11 @@ class UserController extends ViolatorController
 		$albumIds           = Parsing::removeNullValues($albumIds);
 		$characterIds       = Parsing::parseNullableIntegerArray($characterIds, 1);
 		$characterIds       = Parsing::removeNullValues($characterIds);
+		
+		$allAlbumIds        = $this->model->getAlbumList(fetchMinInfo: true);
+		$allAlbumIds        = array_column($allAlbumIds, 'id');
+		$allCharacterIds    = $this->model->getCharacterList(fetchMinInfo: true);
+		$allCharacterIds    = array_column($allCharacterIds, 'id');
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -151,9 +151,6 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$allGameIds         = $this->model->getGameList(fetchMinInfo: true);
-		$allGameIds         = array_column($allGameIds, 'id');
-		
 		$originalName       = $_POST['original-name']       ?? null;
 		$transliteratedName = $_POST['transliterated-name'] ?? null;
 		$localizedName      = $_POST['localized-name']      ?? null;
@@ -171,6 +168,9 @@ class UserController extends ViolatorController
 		$songCount          = Parsing::parseNullableInteger($songCount, 1);
 		$gameIds            = Parsing::parseNullableIntegerArray($gameIds, 1);
 		$gameIds            = Parsing::removeNullValues($gameIds);
+		
+		$allGameIds         = $this->model->getGameList(fetchMinInfo: true);
+		$allGameIds         = array_column($allGameIds, 'id');
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $songCount))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -240,9 +240,6 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$originalArtists    = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
-		$originalArtists    = array_column($originalArtists, 'id');
-		
 		$originalName       = $_POST['original-name']       ?? null;
 		$transliteratedName = $_POST['transliterated-name'] ?? null;
 		$localizedName      = $_POST['localized-name']      ?? null;
@@ -257,6 +254,9 @@ class UserController extends ViolatorController
 		$photo              = Parsing::getNullableFile($photo);
 		$vgmdbId            = Parsing::parseNullableVgmdbId($vgmdbLink, 'artist');
 		$aliasOfId          = Parsing::parseNullableInteger($aliasOfId, 1);
+		
+		$originalArtists    = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
+		$originalArtists    = array_column($originalArtists, 'id');
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -323,9 +323,6 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$allGameIds         = $this->model->getGameList(fetchMinInfo: true);
-		$allGameIds         = array_column($allGameIds, 'id');
-		
 		$originalName       = $_POST['original-name']       ?? null;
 		$transliteratedName = $_POST['transliterated-name'] ?? null;
 		$localizedName      = $_POST['localized-name']      ?? null;
@@ -341,6 +338,9 @@ class UserController extends ViolatorController
 		$vndbId             = Parsing::parseNullableVndbId($vndbLink, 'c');
 		$gameIds            = Parsing::parseNullableIntegerArray($gameIds, 1);
 		$gameIds            = Parsing::removeNullValues($gameIds);
+		
+		$allGameIds         = $this->model->getGameList(fetchMinInfo: true);
+		$allGameIds         = array_column($allGameIds, 'id');
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -430,11 +430,6 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$lastSongInfo       = $this->model->getLastDiscAndTrack($album['uri']);
-		$currentDiscNumber  = $lastSongInfo ? $lastSongInfo['disc_number']      : 1;
-		$currentTrackNumber = $lastSongInfo ? $lastSongInfo['track_number'] + 1 : 1;
-		$isLastSong         = ($album['song_count'] - $songCount === 1);
-		
 		$discNumber         = $_POST['disc-number']         ?? null;
 		$trackNumber        = $_POST['track-number']        ?? null;
 		$originalName       = $_POST['original-name']       ?? null;
@@ -449,6 +444,11 @@ class UserController extends ViolatorController
 		$transliteratedName = Parsing::trimNullableString($transliteratedName);
 		$localizedName      = Parsing::trimNullableString($localizedName);
 		$hasVocal           = Parsing::parseNullableInteger($hasVocal, 0, 1);
+		
+		$lastSongInfo       = $this->model->getLastDiscAndTrack($album['uri']);
+		$currentDiscNumber  = $lastSongInfo ? $lastSongInfo['disc_number']      : 1;
+		$currentTrackNumber = $lastSongInfo ? $lastSongInfo['track_number'] + 1 : 1;
+		$isLastSong         = ($album['song_count'] - $songCount === 1);
 		
 		$isSameDiscNextTrack   = ($discNumber === $currentDiscNumber && $trackNumber === $currentTrackNumber);
 		$isNextDiscFirstTrack  = ($discNumber === $currentDiscNumber + 1 && $trackNumber === 1);
@@ -565,6 +565,21 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
+		$artistIds         = $_POST['artist-ids']       ?? [];
+		$characterIds      = $_POST['character-ids']    ?? [];
+		$originalSongId    = $_POST['original-song-id'] ?? null;
+		$languageId        = $_POST['language-id']      ?? null;
+		$lyrics            = $_POST['lyrics']           ?? null;
+		$notes             = $_POST['notes']            ?? null;
+		$userAddedId       = $_SESSION['user']['id'];
+		
+		$artistIds         = Parsing::parseNullableIntegerArray($artistIds, 1);
+		$characterIds      = Parsing::parseNullableIntegerArray($characterIds, 1);
+		$originalSongId    = Parsing::parseNullableInteger($originalSongId, 1);
+		$languageId        = Parsing::parseNullableInteger($languageId, 1);
+		$lyrics            = Parsing::trimNullableText($lyrics);
+		$notes             = Parsing::trimNullableText($notes);
+		
 		$allArtistIds      = $this->model->getArtistList(fetchMinInfo: true);
 		$allArtistIds      = array_column($allArtistIds, 'id');
 		$allCharacterIds   = $this->model->getCharacterList(fetchMinInfo: true);
@@ -581,25 +596,6 @@ class UserController extends ViolatorController
 		);
 		$allOriginalIds    = array_column($allOriginalIds, 'id');
 		$allOriginalIds[]  = null;
-		
-		$artistIds         = $_POST['artist-ids']       ?? [];
-		$characterIds      = $_POST['character-ids']    ?? [];
-		$originalSongId    = $_POST['original-song-id'] ?? null;
-		$languageId        = $_POST['language-id']      ?? null;
-		$lyrics            = $_POST['lyrics']           ?? null;
-		$notes             = $_POST['notes']            ?? null;
-		$userAddedId       = $_SESSION['user']['id'];
-		
-		$artistIds         = Parsing::parseNullableIntegerArray($artistIds, 1);
-		$characterIds      = Parsing::parseNullableIntegerArray($characterIds, 1);
-		$originalSongId    = Parsing::parseNullableInteger($originalSongId, 1);
-		$languageId        = Parsing::parseNullableInteger($languageId, 1);
-		$lyrics            = Parsing::trimNullableText($lyrics);
-		$notes             = Parsing::trimNullableText($notes);
-		
-		// Empty should be reduced to null
-		$lyrics            = Parsing::trimNullableString($lyrics);
-		$notes             = Parsing::trimNullableString($notes);
 		
 		if (count($artistIds) === 0)
 			throw new HttpUnprocessableEntity422('Artists were not provided', get_defined_vars());
@@ -706,19 +702,6 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$translationsByUser = $this->model->getTranslationList
-		(
-			fetchMinInfo: true,
-			albumUri:     $album['uri'],
-			songUri:      $song['uri'],
-			userAddedUri: $_SESSION['user']['username']
-		);
-		
-		$allLanguages         = $this->model->getLanguageList();
-		$allLanguages         = array_column($allLanguages, 'id');
-		$forbiddenLanguages   = array_column($translationsByUser, 'language_id');
-		$forbiddenLanguages[] = $song['language_id'];
-		
 		$languageId           = $_POST['translation-language-id'] ?? null;
 		$name                 = $_POST['translation-name']        ?? null;
 		$lyrics               = $_POST['translation-lyrics']      ?? null;
@@ -730,9 +713,18 @@ class UserController extends ViolatorController
 		$lyrics               = Parsing::trimNullableText($lyrics);
 		$notes                = Parsing::trimNullableText($notes);
 		
-		// Empty should be reduced to null
-		$lyrics               = Parsing::trimNullableString($lyrics);
-		$notes                = Parsing::trimNullableString($notes);
+		$translationsByUser   = $this->model->getTranslationList
+		(
+			fetchMinInfo: true,
+			albumUri:     $album['uri'],
+			songUri:      $song['uri'],
+			userAddedUri: $_SESSION['user']['username']
+		);
+		
+		$allLanguages         = $this->model->getLanguageList();
+		$allLanguages         = array_column($allLanguages, 'id');
+		$forbiddenLanguages   = array_column($translationsByUser, 'language_id');
+		$forbiddenLanguages[] = $song['language_id'];
 		
 		if (Validation::haveNullOrEmpty($name, $lyrics, $languageId))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -820,29 +812,39 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$allAlbumIds         = $this->model->getAlbumList(fetchMinInfo: true);
-		$allAlbumIds         = array_column($allAlbumIds, 'id');
-		$allCharacterIds     = $this->model->getCharacterList(fetchMinInfo: true);
-		$allCharacterIds     = array_column($allCharacterIds, 'id');
+		$originalName         = $_POST['original-name']       ?? null;
+		$transliteratedName   = $_POST['transliterated-name'] ?? null;
+		$localizedName        = $_POST['localized-name']      ?? null;
+		$logo                 = $_FILES['logo']               ?? null;
+		$vndbLink             = $_POST['vndb-link']           ?? null;
+		$albumIds             = $_POST['album-ids']           ?? [];
+		$characterIds         = $_POST['character-ids']       ?? [];
+		$userUpdatedId        = $_SESSION['user']['id'];
 		
-		$originalName        = $_POST['original-name']       ?? null;
-		$transliteratedName  = $_POST['transliterated-name'] ?? null;
-		$localizedName       = $_POST['localized-name']      ?? null;
-		$logo                = $_FILES['logo']               ?? null;
-		$vndbLink            = $_POST['vndb-link']           ?? null;
-		$albumIds            = $_POST['album-ids']           ?? [];
-		$characterIds        = $_POST['character-ids']       ?? [];
-		$userUpdatedId       = $_SESSION['user']['id'];
+		$originalName         = Parsing::trimNullableString($originalName);
+		$transliteratedName   = Parsing::trimNullableString($transliteratedName);
+		$localizedName        = Parsing::trimNullableString($localizedName);
+		$logo                 = Parsing::getNullableFile($logo);
+		$vndbId               = Parsing::parseNullableVndbId($vndbLink, 'v');
+		$albumIds             = Parsing::parseNullableIntegerArray($albumIds, 1);
+		$albumIds             = Parsing::removeNullValues($albumIds);
+		$characterIds         = Parsing::parseNullableIntegerArray($characterIds, 1);
+		$characterIds         = Parsing::removeNullValues($characterIds);
 		
-		$originalName        = Parsing::trimNullableString($originalName);
-		$transliteratedName  = Parsing::trimNullableString($transliteratedName);
-		$localizedName       = Parsing::trimNullableString($localizedName);
-		$logo                = Parsing::getNullableFile($logo);
-		$vndbId              = Parsing::parseNullableVndbId($vndbLink, 'v');
-		$albumIds            = Parsing::parseNullableIntegerArray($albumIds, 1);
-		$albumIds            = Parsing::removeNullValues($albumIds);
-		$characterIds        = Parsing::parseNullableIntegerArray($characterIds, 1);
-		$characterIds        = Parsing::removeNullValues($characterIds);
+		$allAlbumIds          = $this->model->getAlbumList(fetchMinInfo: true);
+		$allAlbumIds          = array_column($allAlbumIds, 'id');
+		$allCharacterIds      = $this->model->getCharacterList(fetchMinInfo: true);
+		$allCharacterIds      = array_column($allCharacterIds, 'id');
+		
+		$currentAlbumIds      = $this->model->getAlbumList(gameUri: $game['uri'], fetchMinInfo: true);
+		$currentAlbumIds      = array_column($currentAlbumIds, 'id');
+		$albumIdsToAdd        = array_diff($albumIds, $currentAlbumIds);
+		$albumIdsToDelete     = array_diff($currentAlbumIds, $albumIds);
+		
+		$currentCharacterIds  = $this->model->getCharacterList(gameUri: $game['uri'], fetchMinInfo: true);
+		$currentCharacterIds  = array_column($currentCharacterIds, 'id');
+		$characterIdsToAdd    = array_diff($characterIds, $currentCharacterIds);
+		$characterIdsToDelete = array_diff($currentCharacterIds, $characterIds);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -867,15 +869,17 @@ class UserController extends ViolatorController
 			$userUpdatedId
 		);
 		
-		$this->model->deleteGameAlbumRelation(gameId: $gameId);
-		
-		foreach ($albumIds as $albumId)
+		foreach ($albumIdsToAdd as $albumId)
 			$this->model->addGameAlbumRelation($gameId, $albumId);
 		
-		$this->model->deleteCharacterGameRelation(gameId: $gameId);
+		foreach ($albumIdsToDelete as $albumId)
+			$this->model->deleteGameAlbumRelation($gameId, $albumId);
+			
+		foreach ($characterIdsToAdd as $characterId)
+			$this->model->addCharacterGameRelation($characterId, $gameId);
 		
-		foreach ($characterIds as $characterId)
-			$this->model->addCharacterGameRelation($gameId, $characterId);
+		foreach ($characterIdsToDelete as $characterId)
+			$this->model->deleteCharacterGameRelation($characterId, $gameId);
 		
 		$link = Http::buildInternalPath($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
@@ -940,10 +944,6 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$allGameIds          = $this->model->getGameList(fetchMinInfo: true);
-		$allGameIds          = array_column($allGameIds, 'id');
-		$currentSongCount    = $this->model->getSongCurrentCount($album['uri']);
-		
 		$originalName        = $_POST['original-name']       ?? null;
 		$transliteratedName  = $_POST['transliterated-name'] ?? null;
 		$localizedName       = $_POST['localized-name']      ?? null;
@@ -961,6 +961,16 @@ class UserController extends ViolatorController
 		$songCount           = Parsing::parseNullableInteger($songCount, 1);
 		$gameIds             = Parsing::parseNullableIntegerArray($gameIds, 1);
 		$gameIds             = Parsing::removeNullValues($gameIds);
+		
+		$allGameIds          = $this->model->getGameList(fetchMinInfo: true);
+		$allGameIds          = array_column($allGameIds, 'id');
+		
+		$currentGameIds      = $this->model->getGameList(albumUri: $album['uri'], fetchMinInfo: true);
+		$currentGameIds      = array_column($currentGameIds, 'id');
+		$gameIdsToAdd        = array_diff($gameIds, $currentGameIds);
+		$gameIdsToDelete     = array_diff($currentGameIds, $gameIds);
+		
+		$currentSongCount    = $this->model->getSongCurrentCount($album['uri']);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $songCount))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -986,10 +996,11 @@ class UserController extends ViolatorController
 			$userUpdatedId
 		);
 		
-		$this->model->deleteGameAlbumRelation(albumId: $albumId);
-		
-		foreach ($gameIds as $gameId)
+		foreach ($gameIdsToAdd as $gameId)
 			$this->model->addGameAlbumRelation($gameId, $albumId);
+		
+		foreach ($gameIdsToDelete as $gameId)
+			$this->model->deleteGameAlbumRelation($gameId, $albumId);
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $albumUri));
 	}
@@ -1043,9 +1054,6 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$originalArtists     = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
-		$originalArtists     = array_column($originalArtists, 'id');
-		
 		$originalName        = $_POST['original-name']       ?? null;
 		$transliteratedName  = $_POST['transliterated-name'] ?? null;
 		$localizedName       = $_POST['localized-name']      ?? null;
@@ -1060,6 +1068,9 @@ class UserController extends ViolatorController
 		$photo               = Parsing::getNullableFile($photo);
 		$vgmdbId             = Parsing::parseNullableVgmdbId($vgmdbLink, 'artist');
 		$aliasOfId           = Parsing::parseNullableInteger($aliasOfId, 1);
+		
+		$originalArtists     = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
+		$originalArtists     = array_column($originalArtists, 'id');
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -1135,9 +1146,6 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$allGameIds          = $this->model->getGameList(fetchMinInfo: true);
-		$allGameIds          = array_column($allGameIds, 'id');
-		
 		$originalName        = $_POST['original-name']       ?? null;
 		$transliteratedName  = $_POST['transliterated-name'] ?? null;
 		$localizedName       = $_POST['localized-name']      ?? null;
@@ -1153,6 +1161,14 @@ class UserController extends ViolatorController
 		$vndbId              = Parsing::parseNullableVndbId($vndbLink, 'c');
 		$gameIds             = Parsing::parseNullableIntegerArray($gameIds, 1);
 		$gameIds             = Parsing::removeNullValues($gameIds);
+		
+		$allGameIds          = $this->model->getGameList(fetchMinInfo: true);
+		$allGameIds          = array_column($allGameIds, 'id');
+		
+		$currentGameIds      = $this->model->getGameList(characterUri: $character['uri'], fetchMinInfo: true);
+		$currentGameIds      = array_column($currentGameIds, 'id');
+		$gameIdsToAdd        = array_diff($gameIds, $currentGameIds);
+		$gameIdsToDelete     = array_diff($currentGameIds, $gameIds);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -1174,10 +1190,11 @@ class UserController extends ViolatorController
 			$userUpdatedId
 		);
 		
-		$this->model->deleteCharacterGameRelation(characterId: $characterId);
-		
-		foreach ($gameIds as $gameId)
+		foreach ($gameIdsToAdd as $gameId)
 			$this->model->addCharacterGameRelation($characterId, $gameId);
+		
+		foreach ($gameIdsToDelete as $gameId)
+			$this->model->deleteCharacterGameRelation($characterId, $gameId);
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'character', $characterUri));
 	}
@@ -1363,6 +1380,21 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
+		$artistIds           = $_POST['artist-ids']       ?? [];
+		$characterIds        = $_POST['character-ids']    ?? [];
+		$originalSongId      = $_POST['original-song-id'] ?? null;
+		$languageId          = $_POST['language-id']      ?? null;
+		$lyrics              = $_POST['lyrics']           ?? null;
+		$notes               = $_POST['notes']            ?? null;
+		$userUpdatedId       = $_SESSION['user']['id'];
+		
+		$artistIds           = Parsing::parseNullableIntegerArray($artistIds, 1);
+		$characterIds        = Parsing::parseNullableIntegerArray($characterIds, 1);
+		$originalSongId      = Parsing::parseNullableInteger($originalSongId, 1);
+		$languageId          = Parsing::parseNullableInteger($languageId, 1);
+		$lyrics              = Parsing::trimNullableText($lyrics);
+		$notes               = Parsing::trimNullableText($notes);
+		
 		$allArtistIds        = $this->model->getArtistList(fetchMinInfo: true);
 		$allArtistIds        = array_column($allArtistIds, 'id');
 		$allCharacterIds     = $this->model->getCharacterList(fetchMinInfo: true);
@@ -1379,25 +1411,6 @@ class UserController extends ViolatorController
 		);
 		$allOriginalIds      = array_column($allOriginalIds, 'id');
 		$allOriginalIds[]    = null;
-		
-		$artistIds           = $_POST['artist-ids']       ?? [];
-		$characterIds        = $_POST['character-ids']    ?? [];
-		$originalSongId      = $_POST['original-song-id'] ?? null;
-		$languageId          = $_POST['language-id']      ?? null;
-		$lyrics              = $_POST['lyrics']           ?? null;
-		$notes               = $_POST['notes']            ?? null;
-		$userUpdatedId       = $_SESSION['user']['id'];
-		
-		$artistIds           = Parsing::parseNullableIntegerArray($artistIds, 1);
-		$characterIds        = Parsing::parseNullableIntegerArray($characterIds, 1);
-		$originalSongId      = Parsing::parseNullableInteger($originalSongId, 1);
-		$languageId          = Parsing::parseNullableInteger($languageId, 1);
-		$lyrics              = Parsing::trimNullableText($lyrics);
-		$notes               = Parsing::trimNullableText($notes);
-		
-		// Empty should be reduced to null
-		$lyrics              = Parsing::trimNullableString($lyrics);
-		$notes               = Parsing::trimNullableString($notes);
 		
 		if (count($artistIds) === 0)
 			throw new HttpUnprocessableEntity422('Artists were not provided', get_defined_vars());
@@ -1514,10 +1527,6 @@ class UserController extends ViolatorController
 		$name          = Parsing::trimNullableString($name);
 		$lyrics        = Parsing::trimNullableText($lyrics);
 		$notes         = Parsing::trimNullableText($notes);
-		
-		// Empty should be reduced to null
-		$lyrics        = Parsing::trimNullableString($lyrics);
-		$notes         = Parsing::trimNullableString($notes);
 		
 		if (Validation::haveNullOrEmpty($name, $lyrics))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());

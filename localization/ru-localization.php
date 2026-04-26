@@ -14,13 +14,7 @@ namespace Localization\Functions
 
 	function localizeTranslationNumber(int $number): string
 	{
-		// Japanese only:
-		// $halfWidthDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-		// $fullWidthDigits = ['０', '１', '２', '３', '４', '５', '６', '７', '８', '９'];
-		//
-		// return '＃'.str_replace($halfWidthDigits, $fullWidthDigits, (string)$number);
-		
-		return '#'.$number;
+		return ' #'.$number;
 	}
 	
 	use InputError;

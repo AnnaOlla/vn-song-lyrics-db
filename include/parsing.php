@@ -54,11 +54,23 @@ final class Parsing
 		if (is_null($multilineString))
 			return null;
 		
+		// Use only '\n' as the line-break
+		$multilineString = preg_replace('/\R/u', "\n", $multilineString);
+		
+		// Allow only one empty line in-between lyrics: i.e. the maximum is 2 line breaks
+		$multilineString = preg_replace("/\n{3,}/u", "\n\n", $multilineString);
+		
+		// Remove empty lines from the beginning and the end
+		$multilineString = mb_trim($multilineString, "\n");
+		
+		if ($multilineString === '')
+			return null;
+		
 		$lines = explode("\n", $multilineString);
 		
-		// Important: it is allowed that the text may have empty lines
+		// Trim only right whitespaces (see lyrics from FLOWERS);
 		for ($i = 0; $i < count($lines); $i++)
-			$lines[$i] = mb_trim($lines[$i]);
+			$lines[$i] = mb_rtrim($lines[$i]);	
 		
 		$multilineString = implode("\n", $lines);
 		

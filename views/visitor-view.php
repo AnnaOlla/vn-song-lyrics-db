@@ -838,8 +838,8 @@ class VisitorView extends ErrorView
 						<p>'.\Localization\SignUpPage\Warning.'</p>
 					</section>
 					<section>
-						<input type="text" name="captcha-code" id="captcha-input" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" placeholder="code:" required/>
-						<img src="'.htmlspecialchars($captchaBase64Image).'" alt="captcha" id="captcha-image"/>
+						<input type="text" name="captcha-code" id="captcha-input" class="captcha-input" placeholder="code:" required/>
+						<img src="'.htmlspecialchars($captchaBase64Image).'" alt="captcha" class="captcha-image"/>
 						<input type="submit" value="'.\Localization\SignUpPage\Submit.'"/>
 					</section>
 				</form>
@@ -1735,8 +1735,8 @@ class VisitorView extends ErrorView
 					<textarea name="message" rows="4" maxlength="500" placeholder="'.\Localization\Controls\Textarea.'" required>'.$feedback.'</textarea>
 					'.$this->createParagraph($errorMessage).'
 					<section>
-						<input type="text" name="captcha-code" id="captcha-input" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" placeholder="code:" required/>
-						<img src="'.htmlspecialchars($captchaBase64Image).'" alt="captcha" id="captcha-image"/>
+						<input type="text" name="captcha-code" class="captcha-input" placeholder="code:" required/>
+						<img src="'.htmlspecialchars($captchaBase64Image).'" alt="captcha" class="captcha-image"/>
 						<input type="submit" value="'.\Localization\FeedbackPage\Submit.'"/>
 					</section>
 				</form>

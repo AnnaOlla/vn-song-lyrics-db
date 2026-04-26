@@ -2,7 +2,7 @@
 
 abstract class View
 {
-	protected const ENTITY_LIST_DEFAULT_QUERY = 'limit=10&page=1';
+	protected const ENTITY_LIST_DEFAULT_QUERY = '?limit=10&page=1';
 	
 	protected $language;
 	private $cssVersion;
@@ -240,6 +240,7 @@ HTML;
 			</main>
 			{$this->createFooter()}
 			<script src="/js/core/emulate-event.js?v={$this->jsVersion}"/></script>
+			<script src="/js/custom-inputs/captcha-input.js?v={$this->jsVersion}"/></script>
 			<script src="/js/custom-inputs/fileupload.js?v={$this->jsVersion}"/></script>
 			<script src="/js/custom-inputs/select.js?v={$this->jsVersion}"/></script>
 			<script src="/js/custom-inputs/textarea.js?v={$this->jsVersion}"/></script>
@@ -814,10 +815,10 @@ HTML;
 			
 			if ($translationCount[$language]['totalCount'] !== 1)
 			{
+				$translationCount[$language]['currentCount']++;
+				
 				$number = \Localization\Functions\localizeTranslationNumber($translationCount[$language]['currentCount']);
 				$language = $language.$number;
-				
-				$translationCount[$language]['currentCount']++;
 			}
 			
 			if (!is_null($currentTranslation) && $translation['uri'] === $currentTranslation['uri'])

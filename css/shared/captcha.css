@@ -8,14 +8,13 @@
 	--font-captcha: Juliamo;
 }
 
-#captcha-input {
+input[type="text"].captcha-input {
 	font-family: var(--font-captcha);
-	padding-top: 0px;
-	padding-bottom: 0px;
 	font-size: 32px;
+	line-height: normal; /* If a space is entered, the text goes down without it */
 }
 
-#captcha-image {
+img.captcha-image {
 	border-radius: var(--border-radius);
 	margin-top: var(--text-margin);
 	margin-bottom: var(--text-margin);

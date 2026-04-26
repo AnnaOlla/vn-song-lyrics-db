@@ -1753,13 +1753,13 @@ class UserModel extends ViolatorModel
 		if (!is_null($characterId))
 		{
 			$where[] = 'character_id = :character_id';
-			$binds[] = [':character_id', $artistId, PDO::PARAM_INT];
+			$binds[] = [':character_id', $characterId, PDO::PARAM_INT];
 		}
 		
 		if (!is_null($gameId))
 		{
 			$where[] = 'game_id = :game_id';
-			$binds[] = [':game_id',  $gameId,  PDO::PARAM_INT];
+			$binds[] = [':game_id', $gameId, PDO::PARAM_INT];
 		}
 		
 		$stmt = $this->pdo->prepare

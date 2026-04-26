@@ -14,13 +14,7 @@ namespace Localization\Functions
 
 	function localizeTranslationNumber(int $number): string
 	{
-		// Japanese only:
-		$halfWidthDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-		$fullWidthDigits = ['０', '１', '２', '３', '４', '５', '６', '７', '８', '９'];
-		
-		return '＃'.str_replace($halfWidthDigits, $fullWidthDigits, (string)$number);
-		
-		// return '#'.$number;
+		return mb_convert_kana('#'.$number, 'A');
 	}
 	
 	use InputError;
@@ -182,7 +176,7 @@ namespace Localization\FeedbackPage
 	const SymbolLimit         = 'メッセージの長さは５００文字以下です。';
 	
 	const TextareaPlaceholder = 'あなたのメッセージ';
-	const AnonymousAuthor     = 'アノニマス';
+	const AnonymousAuthor     = 'ｱﾉﾆﾏｽ';
 	const ReplyFromStaff      = 'スタッフ';
 	const Submit              = '出す';
 	

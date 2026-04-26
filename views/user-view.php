@@ -43,7 +43,12 @@ class UserView extends ViolatorView
 			$isImageUploaded    = false;
 			$vndbLink           = '';
 			
-			// Create a fake to avoid duplicating code when creating <selects>
+			$query = Http::getLastVisitedQuery(queryIfNull: self::ENTITY_LIST_DEFAULT_QUERY);
+			$cancelLink = Http::buildInternalPath($this->language, 'game-list').$query;
+		}
+		
+		if (Validation::isNullOrEmpty($relatedAlbums))
+		{
 			$relatedAlbums =
 			[
 				[
@@ -52,18 +57,18 @@ class UserView extends ViolatorView
 					'game_album_relation_status' => 'unchecked'
 				]
 			];
-			
+		}
+		
+		if (Validation::isNullOrEmpty($relatedCharacters))
+		{
 			$relatedCharacters =
 			[
 				[
-					'id'                         => '',
-					'transliterated_name'        => '',
+					'id'                             => '',
+					'transliterated_name'            => '',
 					'character_game_relation_status' => 'unchecked'
 				]
 			];
-			
-			$query = Http::getLastVisitedQuery(queryIfNull: self::ENTITY_LIST_DEFAULT_QUERY);
-			$cancelLink = Http::buildInternalPath($this->language, 'game-list').'?'.$query;
 		}
 		
 		$html = $this->startRender
@@ -323,7 +328,12 @@ class UserView extends ViolatorView
 			$vgmdbLink          = '';
 			$songCount          = '';
 			
-			// Create a fake to avoid duplicating code when creating <selects>
+			$query = Http::getLastVisitedQuery(queryIfNull: self::ENTITY_LIST_DEFAULT_QUERY);
+			$cancelLink = Http::buildInternalPath($this->language, 'album-list').$query;
+		}
+		
+		if (Validation::isNullOrEmpty($relatedGames))
+		{
 			$relatedGames =
 			[
 				[
@@ -332,9 +342,6 @@ class UserView extends ViolatorView
 					'game_album_relation_status' => 'unchecked'
 				]
 			];
-			
-			$query = Http::getLastVisitedQuery(queryIfNull: self::ENTITY_LIST_DEFAULT_QUERY);
-			$cancelLink = Http::buildInternalPath($this->language, 'album-list').'?'.$query;
 		}
 		
 		$html = $this->startRender
@@ -551,7 +558,7 @@ class UserView extends ViolatorView
 			$originalArtist     = null;
 			
 			$query = Http::getLastVisitedQuery(queryIfNull: self::ENTITY_LIST_DEFAULT_QUERY);
-			$cancelLink = Http::buildInternalPath($this->language, 'artist-list').'?'.$query;
+			$cancelLink = Http::buildInternalPath($this->language, 'artist-list').$query;
 		}
 		
 		$html = $this->startRender
@@ -741,7 +748,12 @@ class UserView extends ViolatorView
 			$isImageUploaded    = false;
 			$vndbLink           = '';
 			
-			// Create a fake to avoid duplicating code when creating <selects>
+			$query = Http::getLastVisitedQuery(queryIfNull: self::ENTITY_LIST_DEFAULT_QUERY);
+			$cancelLink = Http::buildInternalPath($this->language, 'character-list').$query;
+		}
+		
+		if (Validation::isNullOrEmpty($relatedGames))
+		{
 			$relatedGames =
 			[
 				[
@@ -750,9 +762,6 @@ class UserView extends ViolatorView
 					'character_game_relation_status' => 'unchecked'
 				]
 			];
-			
-			$query = Http::getLastVisitedQuery(queryIfNull: self::ENTITY_LIST_DEFAULT_QUERY);
-			$cancelLink = Http::buildInternalPath($this->language, 'character-list').'?'.$query;
 		}
 		
 		$html = $this->startRender

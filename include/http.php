@@ -51,6 +51,6 @@ final class Http
 		if (is_null($query))
 			return $queryIfNull;
 		
-		return $query;
+		return '?'.$query;
 	}
 }
