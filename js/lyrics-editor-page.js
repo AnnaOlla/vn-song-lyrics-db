@@ -25,6 +25,8 @@ function switchElementsOnLyricsPage(e) {
 }
 
 /* function main() */ {
+	addEventListenersToAddDeleteButtons(document, 'artist-select character-select')
+	
 	const copyLyricsSelect = document.getElementById('original-song-select');
 	copyLyricsSelect.addEventListener('change', switchElementsOnLyricsPage);
 	emulateEvent(copyLyricsSelect, 'change');
