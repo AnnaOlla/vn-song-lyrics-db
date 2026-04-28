@@ -2,7 +2,7 @@
 
 abstract class View
 {
-	protected const ENTITY_LIST_DEFAULT_QUERY = ['limit' => 10, 'page' => 1];
+	protected const ENTITY_LIST_DEFAULT_QUERY = '?limit=10&page=1';
 	
 	protected $language;
 	private $cssVersion;
