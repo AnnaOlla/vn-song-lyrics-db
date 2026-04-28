@@ -423,19 +423,13 @@ class VisitorView extends ErrorView
 			$title = \Localization\AlbumPage\FillAlbum;
 			$href  = Http::buildInternalPath($this->language, 'album', $album['uri'], 'fill-album');
 			
-			[$isButtonEnabled, $tooltipIfDisabled] = Session::agentHasRightToEditEntity
-			(
-				$album['user_added_id'],
-				$album['status']
-			);
-			
 			$html .=
 			'
 					<tr>
 						<td></td>
 						<td></td>
 						<td></td>
-						<td>'.$this->createButton($title, $href, $isButtonEnabled, $tooltipIfDisabled).'</td>
+						<td>'.$this->createButton($title, $href, true, '').'</td>
 					</tr>
 			';
 		}
