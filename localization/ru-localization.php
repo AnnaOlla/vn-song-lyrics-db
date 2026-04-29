@@ -563,9 +563,9 @@ namespace Localization\ModerationStatus
 
 namespace Localization\Controls
 {
-	const Report       = 'Пожаловаться на эту страницу';
-	const Edit         = 'Редактировать информацию';
-	const Delete       = 'Удалить информацию';
+	const Report       = 'Пожаловаться';
+	const Edit         = 'Редактировать';
+	const Delete       = 'Удалить';
 	
 	const SearchHeading     = 'Поиск по всей базе данных';
 	const SearchPlaceholder = 'Введите текст …';
