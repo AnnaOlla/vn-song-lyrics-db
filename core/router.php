@@ -15,6 +15,8 @@ final class Router
 	private const ACCEPTED_LANGUAGES = ['en', 'ru', 'ja'];
 	private const DEFAULT_LANGUAGE   = 'en';
 	
+	private const ERROR_LOG_FILENAME = '.custom-error.log';
+	
 	private static function isUserKnownViolatorBot(): bool
 	{
 		$bannedIps = file(self::VIOLATOR_BOT_IPS_FILENAME, self::FILE_FLAGS);
@@ -97,6 +99,21 @@ final class Router
 		$slash = mb_strrpos($requestedPath, '/');
 		
 		return ($dot > $slash);
+	}
+	
+	private static function logError(Throwable $exception): void
+	{
+		$currentDateTime = date("Y-m-d H:i:s").PHP_EOL;
+		$currentAgentIp  = $_SERVER['REMOTE_ADDR'].PHP_EOL;
+		$endOfLine       = PHP_EOL.'-------------------------------------'.PHP_EOL;
+		
+		error_log($currentDateTime, 3, self::ERROR_LOG_FILENAME);
+		error_log($currentAgentIp,  3, self::ERROR_LOG_FILENAME);
+		error_log($exception,       3, self::ERROR_LOG_FILENAME);
+		error_log($endOfLine,       3, self::ERROR_LOG_FILENAME);
+		
+		// Use the default logger too;
+		error_log($exception);
 	}
 	
 	public static function run()
@@ -661,7 +678,7 @@ final class Router
 			
 			// Complete the request
 			
-			if (file_exists(self::MAINTENANCE_MODE_FILENAME) && !Session::isCurrentUserModerator())
+			if (file_exists(self::MAINTENANCE_MODE_FILENAME) && !Session::agentIsAdministrator())
 				throw new HttpServiceUnavailable503();
 			
 			if (!in_array($language, self::ACCEPTED_LANGUAGES))
@@ -677,87 +694,87 @@ final class Router
 		}
 		catch (HttpBadRequest400 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleBadRequest400();
 		}
 		catch (HttpUnauthorized401 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleUnauthorized401();
 		}
 		catch (HttpPaymentRequired402 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handlePaymentRequired402();
 		}
 		catch (HttpForbidden403 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleForbidden403();
 		}
 		catch (HttpNotFound404 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleNotFound404();
 		}
 		catch (HttpMethodNotAllowed405 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleMethodNotAllowed405();
 		}
 		catch (HttpNotAcceptable406 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleNotAcceptable406();
 		}
 		catch (HttpConflict409 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleConflict409();
 		}
 		catch (HttpContentTooLarge413 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleContentTooLarge413();
 		}
 		catch (HttpUnsupportedMediaType415 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleUnsupportedMediaType415();
 		}
 		catch (HttpUnprocessableEntity422 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleUnprocessableEntity422();
 		}
 		catch (HttpUnavailableForLegalReasons451 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleUnavailableForLegalReasons451();
 		}
 		catch (HttpInternalServerError500 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleInternalServerError500();
 		}
 		catch (HttpNotImplemented501 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleNotImplemented501();
 		}
 		catch (HttpBadGateway502 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleBadGateway502();
 		}
 		catch (HttpServiceUnavailable503 $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleServiceUnavailable503();
 		}
 		catch (Throwable $e)
 		{
-			error_log($e);
+			self::logError($e);
 			$controller->handleInternalServerError500();
 		}
 	}
