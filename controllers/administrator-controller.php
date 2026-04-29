@@ -365,7 +365,7 @@ class AdministratorController extends UserController
 			return;
 		}
 		
-		$feedbackId = $this->Parsing::parseNullableInteger($feedbackId, 1);
+		$feedbackId = Parsing::parseNullableInteger($feedbackId, 1);
 		
 		if (!$feedbackId)
 		{
@@ -402,7 +402,7 @@ class AdministratorController extends UserController
 			return;
 		}
 		
-		$feedbackId = $this->Parsing::parseNullableInteger($feedbackId, 1);
+		$feedbackId = Parsing::parseNullableInteger($feedbackId, 1);
 		
 		if (!$feedbackId)
 		{
