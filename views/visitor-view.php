@@ -1688,8 +1688,8 @@ class VisitorView extends ErrorView
 				'.$this->createSongNotes($songToShow).'
 				'.$this->createTimestampBlock($translation).'
 				'.$this->createTimestampBlock($songToShow).'
-				'.$this->createControlButtonsBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
 				'.$this->createControlButtonsBlock([$albumToShow, $songToShow, $translation], ['album', 'song', 'translation'], $translation, 'Translation').'
+				'.$this->createControlButtonsBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
 			</section>
 		</article>
 		';
