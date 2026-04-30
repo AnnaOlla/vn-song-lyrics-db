@@ -15,7 +15,8 @@ final class Router
 	private const ACCEPTED_LANGUAGES = ['en', 'ru', 'ja'];
 	private const DEFAULT_LANGUAGE   = 'en';
 	
-	private const ERROR_LOG_FILENAME = '.custom-error.log';
+	private const ERROR_LOG_DIRNAME  = '.custom-logs';
+	private const ERROR_LOG_FILENAME = '-error.log';
 	
 	private static function isUserKnownViolatorBot(): bool
 	{
@@ -103,16 +104,34 @@ final class Router
 	
 	private static function logError(Throwable $exception): void
 	{
-		$currentDateTime = date("Y-m-d H:i:s").PHP_EOL;
-		$currentAgentIp  = $_SERVER['REMOTE_ADDR'].PHP_EOL;
-		$endOfLine       = PHP_EOL.'-------------------------------------'.PHP_EOL;
+		$currentDate = date("Y-m-d");
+		$logFilename = self::ERROR_LOG_DIRNAME.'/.'.$currentDate.self::ERROR_LOG_FILENAME;
 		
-		error_log($currentDateTime, 3, self::ERROR_LOG_FILENAME);
-		error_log($currentAgentIp,  3, self::ERROR_LOG_FILENAME);
-		error_log($exception,       3, self::ERROR_LOG_FILENAME);
-		error_log($endOfLine,       3, self::ERROR_LOG_FILENAME);
+		$trace      = $exception->getTrace();
+		$stackTrace = [];
 		
-		// Use the default logger too;
+		for ($i = 0; $i < count($trace); $i++)
+		{
+			$index = '#'.$i;
+			$place = $trace[$i]['file'].'('.$trace[$i]['line'].')';
+			$class = ($trace[$i]['class'] ? $trace[$i]['class'].'->' : '').$trace[$i]['function'];
+			$args  = PHP_EOL.'('.var_export($trace[$i]['args'], true).')';
+			
+			$stackTrace[] = $index.' '.$place.': '.$class.$args;
+		}
+		
+		$log['datetime']   = date("Y-m-d H:i:s");
+		$log['agentIp']    = $_SERVER['REMOTE_ADDR'];
+		$log['class']      = get_class($exception);
+		$log['message']    = $exception->getMessage();
+		$log['emptyLine']  = '';
+		$log['stackTrace'] = implode(PHP_EOL, $stackTrace);
+		$log['separator']  = '----------------------------------------------------------';
+		
+		foreach ($log as $part => $line)
+			error_log($line.PHP_EOL, 3, $logFilename);
+		
+		// Use the default logger too [just in case]
 		error_log($exception);
 	}
 	
