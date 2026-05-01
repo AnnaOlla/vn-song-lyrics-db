@@ -405,7 +405,7 @@ namespace Localization\LyricsEditorPage
 	const HeadingAdd         = '歌詞を加える：';
 	const HeadingEdit        = '歌詞を編集：';
 	const ArtistAndCharacter = 'カシュとキャラ';
-	const PerformsAs         = 'にＣＶされる';
+	const PerformsAs         = 'ＣＶする';
 	const OriginalSong       = '原作の歌';
 	const Language           = '言語';
 	const Lyrics             = '歌詞';

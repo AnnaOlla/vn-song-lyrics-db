@@ -405,7 +405,7 @@ namespace Localization\LyricsEditorPage
 	const HeadingAdd         = 'Add Lyrics: ';
 	const HeadingEdit        = 'Edit Lyrics: ';
 	const ArtistAndCharacter = 'Artist & Character';
-	const PerformsAs         = 'performs as';
+	const PerformsAs         = 'as';
 	const OriginalSong       = 'Original Song';
 	const Language           = 'Language';
 	const Lyrics             = 'Lyrics';
