@@ -19,12 +19,12 @@ namespace Localization\Functions
 	
 	use InputError;
 	
-	function localizeInputError(InputError $error): string|null
+	function localizeInputError(InputError $error): string
 	{
 		switch ($error)
 		{
 			case InputError::None:
-				return null;
+				return '';
 			
 			case InputError::CaptchaInvalid:
 				return 'コードは正しくなかったです。';

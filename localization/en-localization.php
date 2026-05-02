@@ -1211,6 +1211,6 @@ namespace Localization\ErrorPage\BadGateway502
 
 namespace Localization\ErrorPage\ServiceUnavailable503
 {
-	const Reason = 'The website is not available right now due to maintenance.';
+	const Reason = 'The website is under maintenance.';
 	const Hint   = 'Please, visit us later.';
 }

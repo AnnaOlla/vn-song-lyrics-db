@@ -19,12 +19,12 @@ namespace Localization\Functions
 	
 	use InputError;
 	
-	function localizeInputError(InputError $error): string|null
+	function localizeInputError(InputError $error): string
 	{
 		switch ($error)
 		{
 			case InputError::None:
-				return null;
+				return '';
 			
 			case InputError::CaptchaInvalid:
 				return 'Код был введён неверно.';
@@ -1211,6 +1211,6 @@ namespace Localization\ErrorPage\BadGateway502
 
 namespace Localization\ErrorPage\ServiceUnavailable503
 {
-	const Reason = 'Сайт недоступен, так как ведутся технические работы.';
+	const Reason = 'На сайте ведутся технические работы.';
 	const Hint   = 'Пожалуйста, приходите позже.';
 }
