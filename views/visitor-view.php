@@ -1903,13 +1903,10 @@ class VisitorView extends ErrorView
 		<article>
 			<section>
 				<h1>'.$heading.'</h1>
-				<p>'.\Localization\ReportPage\Introduction.'</p>
 				<p>'.\Localization\ReportPage\AboutReportContent.'</p>
-				<p>'.\Localization\ReportPage\NoActionWarning.'</p>
 				<p>'.\Localization\ReportPage\ReplyOpportunity.'</p>
-				<p>'.\Localization\ReportPage\Redirect.'</p>
 				<form method="POST" autocomplete="off" action="'.$reportLink.'">
-					<textarea name="report-text" rows="4" maxlength="250" placeholder="'.\Localization\Controls\Textarea.'" required></textarea></td>
+					<textarea name="report-text" rows="4" maxlength="500" placeholder="'.\Localization\Controls\Textarea.'" required></textarea></td>
 					<section>
 						'.$this->createButton(\Localization\Controls\Cancel, $entityLink).'
 						<section class="filler"></section>
