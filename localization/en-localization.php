@@ -580,7 +580,7 @@ namespace Localization\Controls
 	const ChooseFile   = 'Choose file (max. size: 512 KiB) …';
 	const FileTooBig   = 'File is too big. Try another file …';
 	
-	const Cancel       = 'Back';
+	const Cancel       = 'Return';
 	const Confirmation = 'I confirm';
 	const Submit       = 'Submit';
 }
