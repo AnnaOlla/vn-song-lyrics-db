@@ -318,6 +318,10 @@ CREATE TABLE fingerprints
 ALTER TABLE `users` DROP `verification_token`;
 ALTER TABLE `users` DROP `is_verified`;
 ALTER TABLE `users` DROP `ip_address`;
-ALTER TABLE `users` CHANGE `email` `email` VARBINARY(128) NOT NULL;
-ALTER TABLE `users` CHANGE `password_hash` `password` VARBINARY(255) NOT NULL;
-ALTER TABLE `reports` ADD `ip_address` VARBINARY(190) NOT NULL ;
+
+ALTER TABLE `users`     CHANGE `email`         `email`      VARBINARY(128) NOT NULL;
+ALTER TABLE `users`     CHANGE `password_hash` `password`   VARBINARY(255) NOT NULL;
+ALTER TABLE `feedbacks` CHANGE `ip_address`    `ip_address` VARBINARY(190) NOT NULL;
+ALTER TABLE `reports`   ADD    `ip_address`                 VARBINARY(190) NOT NULL;
+ALTER TABLE `feedbacks` CHANGE `reply`         `reply`      VARCHAR(500)   CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;
+ALTER TABLE `reports`   CHANGE `message`       `message`    VARCHAR(500)   CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
