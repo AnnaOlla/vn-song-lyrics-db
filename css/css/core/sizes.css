@@ -1,0 +1,21 @@
+:root {
+	--border-radius: 10px;
+	--image-border-radius: var(--border-radius);
+	
+	--font-size-h1: 32px;
+	--font-size-h2: 24px;
+	--font-size-h3: 16px;
+	--font-size-plain: 16px;
+	
+	--section-margin: 32px;
+	--section-padding: 10px;
+	
+	--text-padding: 4px;
+	--text-margin: 4px;
+	
+	/* Depends on the font-size and max count of paragraphs to look good */
+	--image-size-main-page: 128px;
+	--image-size-big:       180px;
+	--image-size-medium:    105.6px;
+	--image-size-small:     89.6px;
+}

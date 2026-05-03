@@ -1,0 +1,80 @@
+main {
+	flex: 1;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main > article {
+	width: 50%;
+}
+
+article > section {
+	padding: var(--section-padding);
+}
+
+article > section > p,
+article > section > h1,
+article > section > h3 {
+	margin: var(--text-margin);
+	padding: 0px;
+	overflow-wrap: break-word;
+}
+
+article > section:first-child {
+	text-align: center;
+}
+
+textarea, input {
+	display: block;
+	width: 100%;
+}
+
+textarea {
+	margin-bottom: var(--section-padding);
+	overflow: auto;
+	white-space: normal;
+}
+
+.feedback-reply {
+	background-color: var(--color-input-primary);
+	border-radius: var(--border-radius);
+	margin: var(--section-padding);
+	padding: var(--section-padding);
+}
+
+.feedback-reply-controls {
+	display: flex;
+	padding: 0px;
+	margin: var(--section-padding);
+}
+
+.feedback-reply-controls > .filler {
+	flex: 1 1 0;
+}
+
+input {
+	text-align: center;
+}
+
+form section:has(input[type="submit"]) {
+	margin-top: var(--section-padding);
+	display: flex;
+	gap: var(--section-padding);
+}
+
+form section:has(input[type="submit"]) > * {
+	flex: 1 1 0;
+}
+
+/* Mobile Devices */
+
+@media (max-width: 1023px) {
+	main > article {
+		width: 100%;
+	}
+	
+	form section:has(input[type="submit"]) {
+		flex-direction: column;
+	}
+}
