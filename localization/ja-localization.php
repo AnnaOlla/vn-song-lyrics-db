@@ -252,10 +252,11 @@ namespace Localization\AlbumPage
 
 namespace Localization\ArtistPage
 {
-	const Details      = '詳細：';
-	const AliasOf      = '通称名を持っているアーチスト：';
-	const Aliases      = '通称名';
-	const RelatedSongs = '関係があるウタ';
+	const Details           = '詳細：';
+	const AliasOf           = '通称名を持っているアーチスト：';
+	const Aliases           = '通称名';
+	const RelatedCharacters = '関係があるキャラ';
+	const RelatedSongs      = '関係があるウタ';
 }
 
 namespace Localization\CharacterPage

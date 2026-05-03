@@ -186,7 +186,8 @@ class VisitorView extends ErrorView
 		array       $games,
 		int         $headingLevel,
 		string      $entityClass,
-		string|null $relationKey = null
+		string|null $relationKey         = null,
+		bool        $statusChangeAllowed = true
 	): array
 	{
 		$html = [];
@@ -204,7 +205,7 @@ class VisitorView extends ErrorView
 			
 			if ($relationKey)
 			{
-				if (Session::agentIsAdministrator())
+				if (Session::agentIsAdministrator() && $statusChangeAllowed)
 					$textEntities[] = $this->createStatusSelect($game, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($game[$relationKey], true);
@@ -221,7 +222,8 @@ class VisitorView extends ErrorView
 		array       $albums,
 		int         $headingLevel,
 		string      $entityClass,
-		string|null $relationKey = null
+		string|null $relationKey         = null,
+		bool        $statusChangeAllowed = true
 	): array
 	{
 		$html = [];
@@ -239,7 +241,7 @@ class VisitorView extends ErrorView
 			
 			if ($relationKey)
 			{
-				if (Session::agentIsAdministrator())
+				if (Session::agentIsAdministrator()&& $statusChangeAllowed)
 					$textEntities[] = $this->createStatusSelect($album, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($album[$relationKey], true);
@@ -256,7 +258,8 @@ class VisitorView extends ErrorView
 		array       $artists,
 		int         $headingLevel,
 		string      $entityClass,
-		string|null $relationKey = null
+		string|null $relationKey         = null,
+		bool        $statusChangeAllowed = true
 	): array
 	{
 		$html = [];
@@ -291,7 +294,8 @@ class VisitorView extends ErrorView
 		array       $characters,
 		int         $headingLevel,
 		string      $entityClass,
-		string|null $relationKey = null
+		string|null $relationKey         = null,
+		bool        $statusChangeAllowed = true
 	): array
 	{
 		$html = [];
@@ -309,7 +313,7 @@ class VisitorView extends ErrorView
 			
 			if ($relationKey)
 			{
-				if (Session::agentIsAdministrator())
+				if (Session::agentIsAdministrator() && $statusChangeAllowed)
 					$textEntities[] = $this->createStatusSelect($character, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($character[$relationKey], true);
@@ -1398,7 +1402,13 @@ class VisitorView extends ErrorView
 		$this->echoHtml($html);
 	}
 	
-	final public function renderArtistPage(array $artist, array $aliases, array $songs): void
+	final public function renderArtistPage
+	(
+		array $artist,
+		array $aliases,
+		array $characters,
+		array $songs
+	): void
 	{
 		$html[] = $this->startRender
 		(
@@ -1426,6 +1436,18 @@ class VisitorView extends ErrorView
 			';
 			
 			$html[] = $this->createArtistList($aliases, 3, 'related-entity');
+		}
+		
+		if ($characters)
+		{
+			$html[] = 
+			'
+			<section>
+				'.$this->createHeading(\Localization\ArtistPage\RelatedCharacters, 2).'
+			</section>
+			';
+			
+			$html[] = $this->createCharacterList($characters, 3, 'related-entity', 'song_artist_character_relation_status', false);
 		}
 		
 		if ($songs)

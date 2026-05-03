@@ -732,10 +732,11 @@ class VisitorController extends ErrorController
 	
 	private function handleArtistPageGet(array $artist): void
 	{
-		$artistAliases = $this->model->getArtistList(aliasesOfId: $artist['id']);
+		$aliasList     = $this->model->getArtistList(aliasesOfId: $artist['id']);
+		$characterList = $this->model->getCharacterList(artistUri: $artist['uri']);
 		$songList      = $this->model->getSongList(artistUri: $artist['uri']);
 		
-		$this->view->renderArtistPage($artist, $artistAliases, $songList);
+		$this->view->renderArtistPage($artist, $aliasList, $characterList, $songList);
 	}
 	
 	final public function handleCharacterPage(string $characterUri): void

@@ -252,10 +252,11 @@ namespace Localization\AlbumPage
 
 namespace Localization\ArtistPage
 {
-	const Details      = 'Подробности: ';
-	const AliasOf      = 'Является псевдонимом исполнителя: ';
-	const Aliases      = 'Псевдонимы';
-	const RelatedSongs = 'Связанные с исполнителем песни';
+	const Details           = 'Подробности: ';
+	const AliasOf           = 'Является псевдонимом исполнителя: ';
+	const Aliases           = 'Псевдонимы';
+	const RelatedCharacters = 'Связанные с игрой персонажи';
+	const RelatedSongs      = 'Связанные с исполнителем песни';
 }
 
 namespace Localization\CharacterPage

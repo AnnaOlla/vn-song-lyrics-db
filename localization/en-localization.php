@@ -252,10 +252,11 @@ namespace Localization\AlbumPage
 
 namespace Localization\ArtistPage
 {
-	const Details        = 'Details: ';
-	const AliasOf        = 'Alias of: ';
-	const Aliases        = 'Aliases';
-	const RelatedSongs   = 'Related Songs';
+	const Details           = 'Details: ';
+	const AliasOf           = 'Alias of: ';
+	const Aliases           = 'Aliases';
+	const RelatedCharacters = 'Related Characters';
+	const RelatedSongs      = 'Related Songs';
 }
 
 namespace Localization\CharacterPage

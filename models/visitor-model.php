@@ -515,8 +515,8 @@ class VisitorModel extends Model
 	(
 		bool        $fetchMinInfo = false,
 		string|null $userAddedUri = null,
-		int   |null $aliasesOfId  = null,
-		bool  |null $mayBeAlias   = null,
+		int|null    $aliasesOfId  = null,
+		bool|null   $mayBeAlias   = null,
 		array       $orderBy      = ['a.transliterated_name ASC'],
 		int|null    $page         = null,
 		int|null    $limit        = null,
@@ -613,6 +613,7 @@ class VisitorModel extends Model
 	(
 		bool        $fetchMinInfo = false,
 		string|null $gameUri      = null,
+		string|null $artistUri    = null,
 		string|null $userAddedUri = null,
 		array       $orderBy      = ['c.transliterated_name ASC'],
 		int|null    $page         = null,
@@ -620,12 +621,13 @@ class VisitorModel extends Model
 		string|null $search       = null
 	): array
 	{
-		$select = ['c.id', 'c.transliterated_name'];
-		$from   = ['characters AS c'];
-		$join   = [];
-		$where  = ['TRUE'];
-		$binds  = [];
-		$limits = '';
+		$select   = ['c.id', 'c.transliterated_name'];
+		$distinct = '';
+		$from     = ['characters AS c'];
+		$join     = [];
+		$where    = ['TRUE'];
+		$binds    = [];
+		$limits   = '';
 		
 		if (!$fetchMinInfo)
 		{
@@ -651,6 +653,25 @@ class VisitorModel extends Model
 			';
 			$where[]  = 'g.uri = :game_uri';
 			$binds[]  = [':game_uri', $gameUri, PDO::PARAM_STR];
+		}
+		
+		if (!is_null($artistUri))
+		{
+			$distinct = 'DISTINCT';
+			$select[] = 'sar.status AS song_artist_character_relation_status';
+			$join[]   =
+			'
+			JOIN
+				song_artist_character_relations AS sar
+			ON
+				c.id = sar.character_id
+			JOIN
+				artists AS a
+			ON
+				a.id = sar.artist_id
+			';
+			$where[]  = 'a.uri = :artist_uri';
+			$binds[]  = [':artist_uri', $artistUri, PDO::PARAM_STR];
 		}
 		
 		if (!is_null($userAddedUri))
@@ -689,7 +710,7 @@ class VisitorModel extends Model
 		$stmt = $this->pdo->prepare
 		(
 			'
-			SELECT
+			SELECT '.$distinct.'
 				'.implode(', ', $select).'
 			FROM
 				'.implode(', ', $from).'
