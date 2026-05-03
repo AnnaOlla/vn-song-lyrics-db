@@ -1982,7 +1982,7 @@ class UserController extends ViolatorController
 	
 	private function handleChangeAccountDataPageGet(array $user, InputError $error = InputError::None): void
 	{
-		$this->view->renderChangeAccountDataPage($user);
+		$this->view->renderChangeAccountDataPage($user, $error);
 	}
 	
 	private function handleChangeAccountDataPagePost(array $user): void
@@ -1998,7 +1998,7 @@ class UserController extends ViolatorController
 		if (Validation::haveNullOrEmpty($newUsername, $oldPassword, $newEmail))
 			throw new HttpUnprocessableEntity422();
 		
-		if (!$this->model->isPasswordCorrect($user['id'], $oldPassword))
+		if (!$this->model->isPasswordCorrect($user['user_id'], $oldPassword))
 		{
 			$this->handleChangeAccountDataPageGet($user, InputError::IncorrectPassword);
 			return;
@@ -2060,7 +2060,7 @@ class UserController extends ViolatorController
 		
 		$this->model->updateUserData($user['user_id'], $newUsername, $newEmail, $newPassword);
 		
-		$this->model->getUserData($user['id']);
+		$this->model->getUserData($user['user_id']);
 		$this->createUserSession($user);
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'user', $newUsername));
