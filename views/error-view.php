@@ -11,13 +11,13 @@ class ErrorView extends View
 	
 	private function renderError(string $codename, string $reason, string $hint): void
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $codename,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
-		$html .=
+		$html[] =
 		'
 		<article>
 			<section>
@@ -28,9 +28,9 @@ class ErrorView extends View
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderBadRequest400(): void

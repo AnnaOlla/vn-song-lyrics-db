@@ -22,6 +22,17 @@ abstract class View
 		$this->jsVersion  = '2.0';
 	}
 	
+	final protected function echoHtml(string|array $html): void
+	{
+		if (is_array($html))
+		{
+			foreach ($html as $part)
+				$this->echoHtml($part);
+		}
+		else
+			echo $html;
+	}
+	
 	private function changeUriLocale(string $uri, string $newCode): string
 	{
 		$parts = explode('/', $uri, 3);
@@ -56,7 +67,7 @@ abstract class View
 		$ogUrl          = $currentUrl;
 		$ogImageUrl     = 'https://'.$_SERVER['HTTP_HOST'].($ogImageUri ?? '/assets/static-images/wee-hagana-og.webp');
 		
-		$html = <<<HTML
+		$html[] = <<<HTML
 		<head>
 			<meta charset="UTF-8" />
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -97,6 +108,7 @@ abstract class View
 			<link rel="manifest"                                              href="/site.webmanifest" />
 			
 			<link type="text/css" rel="stylesheet" href="/css/core/font-hanazono-mincho-type-a.css?v={$this->cssVersion}" />
+			<link type="text/css" rel="stylesheet" href="/css/core/font-juliamo-ampleksa.css?v={$this->cssVersion}" />
 			<link type="text/css" rel="stylesheet" href="/css/core/sizes.css?v={$this->cssVersion}" />
 			<link type="text/css" rel="stylesheet" href="/css/core/dark-theme.css?v={$this->cssVersion}" />
 			<link type="text/css" rel="stylesheet" href="/css/core/general.css?v={$this->cssVersion}" />
@@ -112,7 +124,7 @@ abstract class View
 		
 		foreach ($cssSheetUris as $cssSheetUri)
 		{
-			$html .= <<<HTML
+			$html[] = <<<HTML
 			<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={$this->cssVersion}"/>
 
 		HTML;
@@ -120,17 +132,17 @@ abstract class View
 		
         foreach ($jsScriptUris as $jsScriptUri)
 		{
-			$html .= <<<HTML
+			$html[] = <<<HTML
 			<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
 
 		HTML;
 		}
 		
-        $html .= <<<HTML
+        $html[] = <<<HTML
 		</head>
 		HTML;
 		
-		return $html;
+		return implode($html);
 	}
 	
 	private function createHeader(): string
@@ -198,14 +210,14 @@ abstract class View
 	): string
 	{
 		return <<<HTML
-<!DOCTYPE html>
-<html lang="{$this->language}">
-{$this->createHead($title, $description, $canonicalUri, $ogImageUri, $cssSheetUris, $jsScriptUris)}
-<body>
-	{$this->createHeader()}
-	<main>
+		<!DOCTYPE html>
+		<html lang="{$this->language}">
+		{$this->createHead($title, $description, $canonicalUri, $ogImageUri, $cssSheetUris, $jsScriptUris)}
+		<body>
+			{$this->createHeader()}
+			<main>
 
-HTML;
+		HTML;
 	}
 	
 	private function createFooter(): string
@@ -235,7 +247,7 @@ HTML;
 	
 	final protected function endRender(array $jsScriptUris = []): string
 	{
-		$html = <<<HTML
+		$html[] = <<<HTML
 
 			</main>
 			{$this->createFooter()}
@@ -248,19 +260,19 @@ HTML;
 		
         foreach ($jsScriptUris as $jsScriptUri)
 		{
-			$html .= <<<HTML
+			$html[] = <<<HTML
 			<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
 
 		HTML;
 		}
 		
-		$html .= <<<HTML
+		$html[] = <<<HTML
 
 		</body>
 		</html>
 		HTML;
 		
-		return $html;
+		return implode($html);
 	}
 	
 	//-----------------------------------------------------------//
@@ -300,7 +312,7 @@ HTML;
 		return '<h'.$level.'>'.htmlspecialchars($header).'</h'.$level.'>';
 	}
 	
-	final protected function createHeadingAsLink(string $header, int $level, string $href, string ...$cssClasses): string
+	final protected function createHeadingAsLink(string $header, int $level, string $href, string ...$cssClasses): string|array
 	{
 		return '<h'.$level.'>'.$this->createLink($href, $header, ...$cssClasses).'</h'.$level.'>';
 	}
@@ -418,19 +430,19 @@ HTML;
 			'hidden'    => \Localization\ModerationStatus\Hidden
 		];
 		
-		$html = '<section><p>'.$prefix.'</p><select class="status-select" '.$dataEntityUri.'>';
+		$html[] = '<section><p>'.$prefix.'</p><select class="status-select" '.$dataEntityUri.'>';
 		
 		foreach ($statuses as $status => $name)
 		{
 			if ($status === $entity[$keyToStatus])
-				$html .= '<option value="'.$status.'" selected>'.$name.'</option>';
+				$html[] = '<option value="'.$status.'" selected>'.$name.'</option>';
 			else
-				$html .= '<option value="'.$status.'">'.$name.'</option>';
+				$html[] = '<option value="'.$status.'">'.$name.'</option>';
 		}
 		
-		$html .= '</select><section class="select-fake-filler"></section></section>';
+		$html[] = '</select><section class="select-fake-filler"></section></section>';
 		
-		return $html;
+		return implode($html);
 	}
 	
 	final protected function createButton
@@ -548,7 +560,7 @@ HTML;
 		string $entityClass
 	): string
 	{
-		$html =
+		$html[] =
 		'
 			<section class="'.$entityClass.'">
 				'.$htmlImage.'
@@ -557,19 +569,19 @@ HTML;
 		
 		foreach ($htmlValues as $htmlValue)
 		{
-			$html .= 
+			$html[] = 
 			'
 					'.$htmlValue.'
 			';
 		}
 		
-		$html .=
+		$html[] =
 		'
 				</section>
 			</section>
 		';
 		
-		return $html;
+		return implode($html);
 	}
 	
 	final protected function createControlButtonsBlock
@@ -615,7 +627,7 @@ HTML;
 		$deleteButton = $this->createButton(\Localization\Controls\Delete, $deleteHref, $deleteEnabled, $deleteTooltip);
 		$reportButton = $this->createButton(\Localization\Controls\Report, $reportHref, $reportEnabled, $reportTooltip);
 		
-		$html =
+		return
 		'
 			<section>
 				'.$editButton.'
@@ -623,8 +635,6 @@ HTML;
 				'.$reportButton.'
 			</section>
 		';
-		
-		return $html;
 	}
 	
 	final protected function createMarkupLine
@@ -833,28 +843,28 @@ HTML;
 		array|null $originalSong
 	): string
 	{
-		$html = '<section class="main-entity">';
-		$html .= $this->createAlbumImage($album);
+		$html[] = '<section class="main-entity">';
+		$html[] = $this->createAlbumImage($album);
 		
-		$html .= '<section>';
-		$html .= $this->createHeading($headingText, 1);
-		$html .= $this->createLyricsReferenceToAlbum($album);
+		$html[] = '<section>';
+		$html[] = $this->createHeading($headingText, 1);
+		$html[] = $this->createLyricsReferenceToAlbum($album);
 		
 		if (!is_null($translation))
-			$html .= $this->createLyricsReferenceToCurrentSong($song);
+			$html[] = $this->createLyricsReferenceToCurrentSong($song);
 		
 		if (!is_null($performers))
-			$html .= $this->createLyricsPerformerList($performers);
+			$html[] = $this->createLyricsPerformerList($performers);
 		
 		if (!is_null($originalSong))
-			$html .= $this->createLyricsReferenceToOriginalSong($originalSong);
+			$html[] = $this->createLyricsReferenceToOriginalSong($originalSong);
 		
 		if (!is_null($translations))
-			$html .= $this->createLyricsTranslationList($album, $song, $translation, $translations);
+			$html[] = $this->createLyricsTranslationList($album, $song, $translation, $translations);
 		
-		$html .= '</section></section>';
+		$html[] = '</section></section>';
 		
-		return $html;
+		return implode($html);
 	}
 	
 	private function createMarkupText
@@ -865,93 +875,65 @@ HTML;
 		string $noteClass
 	): string
 	{
-		$html = '';
+		$html = [];
 		
 		$lines = explode("\n", $lyrics);
 		
 		foreach ($lines as $line)
 		{
 			if ($line !== '')
-				$line = '<span class="text-line">'.$this->createMarkupLine($line, $noteFrom, $noteTo, $noteClass).'</span>';
+				$html[] = '<span class="text-line">'.$this->createMarkupLine($line, $noteFrom, $noteTo, $noteClass).'</span>';
 			else
-				$line = '<br/>';
-			
-			$html .= $line;
+				$html[] = '<br/>';
 		}
 		
-		return $html;
+		return implode($html);
 	}
 	
 	final protected function createSongLyrics(array $song): string
 	{
-		$html = '';
-		
-		$html .= '<section>';
-		$html .= $this->createHeading($song['original_name'], 2);
-		$html .= $this->createHeading(\Localization\Functions\localizeLanguageName($song), 3);
-		$html .= $this->createMarkupText($song['lyrics'], 'lyrics-reference-', 'lyrics-note-', 'note-small');
-		$html .= '</section>';
-		
-		return $html;
+		return
+		'
+			<section>
+				'.$this->createHeading($song['original_name'], 2).'
+				'.$this->createHeading(\Localization\Functions\localizeLanguageName($song), 3).'
+				'.$this->createMarkupText($song['lyrics'], 'lyrics-reference-', 'lyrics-note-', 'note-small').'
+			</section>
+		';
 	}
 	
 	final protected function createSongNotes(array $song): string
 	{
-		if (is_null($song['notes']))
-		{
-			return
-			'
+		return
+		'
 			<section>
 				'.$this->createHeading(\Localization\LyricsPage\LyricsNotes, 2).'
-				<span>'.\Localization\LyricsPage\LyricsNoNotes.'</span>
+				'.$this->createMarkupText($song['notes'] ?? \Localization\LyricsPage\LyricsNoNotes, 'lyrics-note-', 'lyrics-reference-', 'note-big').'
 			</section>
-			';
-		}
-		
-		$html = '';
-		
-		$html .= '<section>';
-		$html .= $this->createHeading(\Localization\LyricsPage\LyricsNotes, 2);
-		$html .= $this->createMarkupText($song['notes'], 'lyrics-note-', 'lyrics-reference-', 'note-big');
-		$html .= '</section>';
-		
-		return $html;
+		';
 	}
 	
 	final protected function createTranslationLyrics(array $translation): string
 	{
-		$html = '';
-		
-		$html .= '<section>';
-		$html .= $this->createHeading($translation['name'], 2);
-		$html .= $this->createHeading(\Localization\Functions\localizeLanguageName($translation), 3);
-		$html .= $this->createMarkupText($translation['lyrics'], 'translation-reference-', 'translation-note-', 'note-small');
-		$html .= '</section>';
-		
-		return $html;
+		return
+		'
+			<section>
+				'.$this->createHeading($translation['name'], 2).'
+				'.$this->createHeading(\Localization\Functions\localizeLanguageName($translation), 3).'
+				'.$this->createMarkupText($translation['lyrics'], 'translation-reference-', 'translation-note-', 'note-small').'
+			</section>
+		';
 	}
 	
 	final protected function createTranslationNotes(array $translation): string
 	{
-		if (is_null($translation['notes']))
-		{
-			return
-			'
+		return
+		'
 			<section>
 				'.$this->createHeading(\Localization\LyricsPage\TranslationNotes, 2).'
-				<span>'.\Localization\LyricsPage\TranslationNoNotes.'</span>
+				'.$this->createMarkupText($translation['notes'] ?? \Localization\LyricsPage\TranslationNoNotes, 'translation-note-', 'translation-reference-', 'note-big').'
 			</section>
-			';
-		}
-		
-		$html = '';
-		
-		$html .= '<section>';
-		$html .= $this->createHeading(\Localization\LyricsPage\TranslationNotes, 2);
-		$html .= $this->createMarkupText($translation['notes'], 'translation-note-', 'translation-reference-', 'note-big');
-		$html .= '</section>';
-		
-		return $html;
+		';
 	}
 	
 	final protected function createTimestampBlock(array $entity): string
@@ -1079,10 +1061,10 @@ HTML;
 		$readonly = ($isReadonly) ? ' readonly'                           : '';
 		$required = ($isRequired) ? ' required'                           : '';
 		
-		$html = '<select'.$name.$id.$class.$disabled.$readonly.$required.'>';
+		$html[] = '<select'.$name.$id.$class.$disabled.$readonly.$required.'>';
 		
 		if ($addEmptyOption)
-			$html .= '<option></option>';
+			$html[] = '<option></option>';
 		
 		foreach ($options as $option)
 		{
@@ -1094,48 +1076,43 @@ HTML;
 			$valueToSend = htmlspecialchars($option[$keyToSend] ?? '');
 			$valueToShow = htmlspecialchars($option[$keyToShow] ?? '');
 			
-			$html .= '<option value="'.$valueToSend.'"'.$selected.'>'.$valueToShow.'</option>';
+			$html[] = '<option value="'.$valueToSend.'"'.$selected.'>'.$valueToShow.'</option>';
 		}
 		
-		$html .= '</select><section class="select-fake-filler"></section>';
+		$html[] = '</select><section class="select-fake-filler"></section>';
 		
-		return $html;
+		return implode($html);
 	}
 	
 	final protected function createDatalist(string $id, string $key, array $entities): string
 	{
-		$html = '<datalist id="'.$id.'">';
+		$html[] = '<datalist id="'.$id.'">';
 		
 		foreach ($entities as $entity)
-			$html .= '<option value="'.$entity[$key].'"></option>';
+			$html[] = '<option value="'.$entity[$key].'"></option>';
 		
-		$html .= '</datalist>';
+		$html[] = '</datalist>';
 		
-		return $html;
+		return implode($html);
 	}
 	
-	final protected function createDatalistInput(string $name, string $listName, string|null $value): string
+	final protected function createAddRowButton(string $class, bool $isEnabled): string
 	{
-		if (is_null($value))
-			return '<input name="'.$name.'" list="'.$listName.'" />';
-		
-		return '<input name="'.$name.'" list="'.$listName.'" value="'.$value.'" />';
-	}
-	
-	final protected function createAddRowButton(string $selectClass): string
-	{
-		return '<button type="button" class="'.$selectClass.' add-input-row">＋</button>';
+		if ($isEnabled)
+			return '<button type="button" class="'.$class.' add-input-row">＋</button>';
+		else
+			return '<button type="button" class="'.$class.' add-input-row disabled">＋</button>';
 	}
 	
 	final protected function createDeleteRowButton(string $class, bool $isEnabled): string
 	{
 		if ($isEnabled)
 			return '<button type="button" class="'.$class.' delete-input-row">ー</button>';
-		
-		return '<button type="button" class="'.$class.' delete-input-row" disabled>ー</button>';
+		else
+			return '<button type="button" class="'.$class.' delete-input-row" disabled>ー</button>';
 	}
 	
-	final protected function createTooltipWindow()
+	final protected function createTooltipWindow(): string
 	{
 		return
 		'
@@ -1150,26 +1127,26 @@ HTML;
 	
 	final protected function createTooltipHeadingDatalist(string ...$headings): string
 	{
-		$html = '<datalist id="tooltip-headings">';
+		$html[] = '<datalist id="tooltip-headings">';
 		
 		foreach ($headings as $heading)
-			$html .= '<option>'.$heading.'</option>';
+			$html[] = '<option>'.$heading.'</option>';
 			
-		$html .= '</datalist>';
+		$html[] = '</datalist>';
 		
-		return $html;
+		return implode($html);
 	}
 	
-	final protected function createTooltipContentDatalist(string ...$contents): string
+	final protected function createTooltipContentDatalist(string ...$contents): string|array
 	{
-		$html = '<datalist id="tooltip-contents">';
+		$html[] = '<datalist id="tooltip-contents">';
 		
 		foreach ($contents as $content)
-			$html .= '<option>'.$content.'</option>';
+			$html[] = '<option>'.$content.'</option>';
 			
-		$html .= '</datalist>';
+		$html[] = '</datalist>';
 		
-		return $html;
+		return implode($html);
 	}
 	
 	final protected function buildPaginationParameters

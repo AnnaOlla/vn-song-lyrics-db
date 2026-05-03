@@ -11,11 +11,11 @@ class AdministratorView extends UserView
 	
 	final public function renderControlPanelPage(): void
 	{
-		$html = $this->startRender(title: 'Control Panel');
+		$html[] = $this->startRender(title: 'Control Panel');
 		
 		// Add new links as new pages appear
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -28,9 +28,9 @@ class AdministratorView extends UserView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	private function renderLanguageEditor(array|null $language, string $heading): void
@@ -52,13 +52,13 @@ class AdministratorView extends UserView
 		
 		$cancelLink = Http::buildInternalPath($this->language, 'control-panel');
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/editor-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -94,9 +94,9 @@ class AdministratorView extends UserView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderAddLanguagePage(): void
@@ -114,12 +114,12 @@ class AdministratorView extends UserView
 		$heading = 'Report List';
 		$cancelLink = Http::buildInternalPath($this->language, 'control-panel');
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: $heading
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -143,7 +143,7 @@ class AdministratorView extends UserView
 		{
 			$ipAddress = Cryptography::decryptData($report['ip_address']);
 			
-			$html .= 
+			$html[] = 
 			'
 						<tr>
 							<td>'.htmlspecialchars($report['id']).'</td>
@@ -159,7 +159,7 @@ class AdministratorView extends UserView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 					</tbody>
 				</table>
@@ -170,7 +170,7 @@ class AdministratorView extends UserView
 		</article>
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -178,7 +178,7 @@ class AdministratorView extends UserView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderUserListPage(array $users): void
@@ -186,12 +186,12 @@ class AdministratorView extends UserView
 		$heading = 'User List';
 		$cancelLink = Http::buildInternalPath($this->language, 'control-panel');
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: $heading
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -223,7 +223,7 @@ class AdministratorView extends UserView
 				$fingerprints[$i] = Cryptography::decryptData($fingerprints[$i]);
 			$fingerprints = implode(', ', $fingerprints);
 			
-			$html .= 
+			$html[] = 
 			'
 						<tr>
 							<td>'.htmlspecialchars($user['id']).'</td>
@@ -237,7 +237,7 @@ class AdministratorView extends UserView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 					</tbody>
 				</table>
@@ -248,9 +248,9 @@ class AdministratorView extends UserView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderFillAlbumEditorPage(array $album, array $discography, string $heading): void
@@ -279,7 +279,7 @@ class AdministratorView extends UserView
 			'id'
 		);
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/editor-page.css', '/css/fill-album-page.css']
@@ -288,7 +288,7 @@ class AdministratorView extends UserView
 		// My site supports 3 names: original, transliteration, localization
 		$LOCALIZATION_MIN_COUNT = 3;
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -306,7 +306,7 @@ class AdministratorView extends UserView
 			// Could not come up with idea how to use $this->createSelect, so made this time manually
 			// It'll definitely break if something in $this->createSelect changes
 			
-			$html .= 
+			$html[] = 
 			'
 								<th>
 									<select class="name-type-select" data-column="'.$i.'">
@@ -320,7 +320,7 @@ class AdministratorView extends UserView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 								<th>'.\Localization\FillAlbumEditorPage\HasVocal.'</th>
 							</tr>
@@ -330,7 +330,7 @@ class AdministratorView extends UserView
 		{
 			for ($j = 0; $j < count($discography[$i]); $j++)
 			{
-				$html .= 
+				$html[] = 
 				'
 							<tr>
 								<td><input type="text" name="disc-number[]" value="'.($i + 1).'" readonly/></td>
@@ -340,13 +340,13 @@ class AdministratorView extends UserView
 				for ($k = 0; $k < count($discography[$i][$j]) || $k < $LOCALIZATION_MIN_COUNT; $k++)
 				{
 					$value = htmlspecialchars($discography[$i][$j][$k] ?? '');
-					$html .= 
+					$html[] = 
 					'
 								<td><input type="text" data-column-id="'.$k.'" value="'.$value.'"/></td>
 					';
 				}
 				
-				$html .= 
+				$html[] = 
 				'
 								<td>
 									'.$selectVocal.'
@@ -356,7 +356,7 @@ class AdministratorView extends UserView
 			}
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 						</tbody>
 					</table>
@@ -386,14 +386,14 @@ class AdministratorView extends UserView
 			\Localization\FillAlbumPage\TooltipContent\Controls
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		'.$tooltipWindow.'
 		'.$tooltipHeadings.'
 		'.$tooltipContents.'
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			[
 				'/js/shared/tooltip-window.js',
@@ -401,7 +401,7 @@ class AdministratorView extends UserView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderFillAlbumPage

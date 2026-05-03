@@ -48,13 +48,13 @@ class VisitorView extends ErrorView
 			'toSend'
 		);
 		
-		$html =
+		return
 		'
 			<section>'.\Localization\Controls\LimitHeading.'</section>
-			<section class="results-limit">'.$select.'</section>
+			<section class="results-limit">
+				'.$select.'
+			</section>
 		';
-		
-		return $html;
 	}
 	
 	final protected function createPaginationButton
@@ -92,7 +92,7 @@ class VisitorView extends ErrorView
 			$pageCount = intdiv($entityCount, $limit) + 1;
 		
 		// If you change it,
-		// then change divisor of pagination.button in search-filter-section.css
+		// then change the divisor of pagination.button in search-filter-section.css
 		$mostLeftPage       = 1;
 		$pageCountFromLeft  = 3;
 		$pageCountfromRight = 3;
@@ -104,7 +104,7 @@ class VisitorView extends ErrorView
 		$fromRight = $currentPageIndex + $pageCountfromRight;
 		$fromRight = $fromRight < $mostRightPage ? $fromRight : $mostRightPage;
 		
-		$html =
+		$html[] =
 		'
 			<section>'.\Localization\Controls\PageHeading.'</section>
 			<section class="pagination">
@@ -113,35 +113,35 @@ class VisitorView extends ErrorView
 		if ($fromLeft > $mostLeftPage)
 		{
 			$href = $pageLink.$this->buildPaginationParameters($limit, $mostLeftPage, $search);
-			$html .= $this->createPaginationButton($mostLeftPage, $href, 'enabled');
+			$html[] = $this->createPaginationButton($mostLeftPage, $href, 'enabled');
 		}
 		
 		if ($fromLeft > $mostLeftPage + 1)
-			$html .= $this->createPaginationButton('…', null, 'disabled');
+			$html[] = $this->createPaginationButton('…', null, 'disabled');
 		
 		for ($i = $fromLeft; $i <= $fromRight; $i++)
 		{
 			$href  = $pageLink.$this->buildPaginationParameters($limit, $i, $search);
 			$state = ($i === $currentPageIndex) ? 'current' : 'enabled';
 			
-			$html .= $this->createPaginationButton($i, $href, $state);
+			$html[] = $this->createPaginationButton($i, $href, $state);
 		}
 		
 		if ($fromRight < $mostRightPage - 1)
-			$html .= $this->createPaginationButton('…', null, 'disabled');
+			$html[] = $this->createPaginationButton('…', null, 'disabled');
 		
 		if ($fromRight < $mostRightPage)
 		{
 			$href = $pageLink.$this->buildPaginationParameters($limit, $mostRightPage, $search);
-			$html .= $this->createPaginationButton($mostRightPage, $href, 'enabled');
+			$html[] = $this->createPaginationButton($mostRightPage, $href, 'enabled');
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 			</section>
 		';
 		
-		return $html;
+		return implode($html);
 	}
 	
 	final protected function createSearchBarBlock
@@ -187,9 +187,9 @@ class VisitorView extends ErrorView
 		int         $headingLevel,
 		string      $entityClass,
 		string|null $relationKey = null
-	): string
+	): array
 	{
-		$html = '';
+		$html = [];
 		
 		foreach ($games as $game)
 		{
@@ -210,7 +210,7 @@ class VisitorView extends ErrorView
 					$textEntities[] = $this->createStatus($game[$relationKey], true);
 			}
 			
-			$html .= $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
 		}
 		
 		return $html;
@@ -222,9 +222,9 @@ class VisitorView extends ErrorView
 		int         $headingLevel,
 		string      $entityClass,
 		string|null $relationKey = null
-	): string
+	): array
 	{
-		$html = '';
+		$html = [];
 		
 		foreach ($albums as $album)
 		{
@@ -245,7 +245,7 @@ class VisitorView extends ErrorView
 					$textEntities[] = $this->createStatus($album[$relationKey], true);
 			}
 			
-			$html .= $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
 		}
 		
 		return $html;
@@ -257,9 +257,9 @@ class VisitorView extends ErrorView
 		int         $headingLevel,
 		string      $entityClass,
 		string|null $relationKey = null
-	): string
+	): array
 	{
-		$html = '';
+		$html = [];
 		
 		foreach ($artists as $artist)
 		{
@@ -280,7 +280,7 @@ class VisitorView extends ErrorView
 					$textEntities[] = $this->createStatus($artist[$relationKey], true);
 			}
 			
-			$html .= $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
 		}
 		
 		return $html;
@@ -292,9 +292,9 @@ class VisitorView extends ErrorView
 		int         $headingLevel,
 		string      $entityClass,
 		string|null $relationKey = null
-	): string
+	): array
 	{
-		$html = '';
+		$html = [];
 		
 		foreach ($characters as $character)
 		{
@@ -315,13 +315,18 @@ class VisitorView extends ErrorView
 					$textEntities[] = $this->createStatus($character[$relationKey], true);
 			}
 			
-			$html .= $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
 		}
 		
 		return $html;
 	}
 	
-	final protected function createAlbumSongList(array $album, array $songs, int $headingLevel): string
+	final protected function createAlbumSongList
+	(
+		array $album,
+		array $songs,
+		int   $headingLevel
+	): array
 	{
 		$rows = [];
 		
@@ -369,7 +374,7 @@ class VisitorView extends ErrorView
 			$rows[] = $cells;
 		}
 		
-		$html =
+		$html[] =
 		'
 		<section>
 			'.$this->createHeading(\Localization\AlbumPage\SongList, 2).'
@@ -384,7 +389,7 @@ class VisitorView extends ErrorView
 		
 		foreach ($rows as $row)
 		{
-			$html .=
+			$html[] =
 			'
 					<tr>
 						<td>'.$row['disc_number'].'</td>
@@ -407,7 +412,7 @@ class VisitorView extends ErrorView
 			$addEnabled = $addAccess === AccessState::Ok;
 			$addTooltip = \Localization\Functions\localizeAccessState($addAccess);
 			
-			$html .=
+			$html[] =
 			'
 					<tr>
 						<td></td>
@@ -423,7 +428,7 @@ class VisitorView extends ErrorView
 			$title = \Localization\AlbumPage\FillAlbum;
 			$href  = Http::buildInternalPath($this->language, 'album', $album['uri'], 'fill-album');
 			
-			$html .=
+			$html[] =
 			'
 					<tr>
 						<td></td>
@@ -434,7 +439,7 @@ class VisitorView extends ErrorView
 			';
 		}
 		
-		$html .=
+		$html[] =
 		'
 				</tbody>
 			</table>
@@ -450,15 +455,12 @@ class VisitorView extends ErrorView
 		int         $headingLevel,
 		string      $entityClass,
 		string|null $relationKey = null
-	): string
+	): array
 	{
-		$html = '';
+		$html = [];
 		
 		foreach ($songs as $song)
 		{
-			// It is not how it is supposed to work
-			// The song uses the cover of its album
-			// The function requires keys transliterated_name and uri of ALBUM
 			$album = [];
 			$album['transliterated_name'] = $song['album_transliterated_name'];
 			$album['uri']                 = $song['album_uri'];
@@ -483,7 +485,7 @@ class VisitorView extends ErrorView
 			else
 				$textEntities[] = '';
 			
-			$html .= $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
 		}
 		
 		return $html;
@@ -494,15 +496,12 @@ class VisitorView extends ErrorView
 		array  $translations,
 		int    $headingLevel,
 		string $entityClass
-	): string
+	): array
 	{
-		$html = '';
+		$html = [];
 		
 		foreach ($translations as $translation)
 		{
-			// It is not how it is supposed to work
-			// The song uses the cover of its album
-			// The function requires keys transliterated_name and uri of ALBUM
 			$album = [];
 			$album['transliterated_name'] = $translation['album_transliterated_name'];
 			$album['uri']                 = $translation['album_uri'];
@@ -525,13 +524,8 @@ class VisitorView extends ErrorView
 			$textEntities[] = $this->createHeadingAsLink($translation['name'], $headingLevel, $href, 'entity-name');
 			$textEntities[] = $this->createParagraph(\Localization\Functions\localizeLanguageName($translation));
 			
-			$html .= $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
 		}
-		
-		$html .=
-		'
-		</section>
-		';
 		
 		return $html;
 	}
@@ -607,13 +601,13 @@ class VisitorView extends ErrorView
 	
 	final public function renderHomePage(array $albums, array $lyrics, array $translations): void
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        \Localization\HomePage\Heading,
 			cssSheetUris: ['/css/home-page.css']
 		);
 		
-		$html .=
+		$html[] =
 		'
 		<article>
 			<section class="home-page-heading">
@@ -638,7 +632,7 @@ class VisitorView extends ErrorView
 			$image   = $this->createAlbumImage($album);
 			$heading = $this->createHeading($album['transliterated_name'], $headingLevel);
 			
-			$html .=
+			$html[] =
 			'
 					<a href='.$href.'>
 						'.$image.'
@@ -647,7 +641,7 @@ class VisitorView extends ErrorView
 			';
 		}
 		
-		$html .=
+		$html[] =
 		'
 				</section>
 			</section>
@@ -669,7 +663,7 @@ class VisitorView extends ErrorView
 			$image   = $this->createAlbumImage($album);
 			$heading = $this->createHeading($lyric['transliterated_name'], $headingLevel);
 			
-			$html .=
+			$html[] =
 			'
 					<a href='.$href.'>
 						'.$image.'
@@ -678,7 +672,7 @@ class VisitorView extends ErrorView
 			';
 		}
 		
-		$html .=
+		$html[] =
 		'
 				</section>
 			</section>
@@ -709,7 +703,7 @@ class VisitorView extends ErrorView
 			$image   = $this->createAlbumImage($album);
 			$heading = $this->createHeading($translation['name'], $headingLevel);
 			
-			$html .=
+			$html[] =
 			'
 					<a href='.$href.'>
 						'.$image.'
@@ -718,15 +712,15 @@ class VisitorView extends ErrorView
 			';
 		}
 		
-		$html .=
+		$html[] =
 		'
 			</section>
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	//------------------------//
@@ -742,13 +736,13 @@ class VisitorView extends ErrorView
 		$email        = htmlspecialchars($email ?? '');
 		$errorMessage = \Localization\Functions\localizeInputError($error);
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        \Localization\LogInPage\Heading,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -774,9 +768,9 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderSignUpPage
@@ -791,13 +785,13 @@ class VisitorView extends ErrorView
 		$email        = htmlspecialchars($email ?? '');
 		$errorMessage = \Localization\Functions\localizeInputError($error);
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        \Localization\SignUpPage\Heading,
 			cssSheetUris: ['/css/window-in-center-page.css', '/css/shared/captcha.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -836,9 +830,9 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	//-------------------------//
@@ -865,7 +859,7 @@ class VisitorView extends ErrorView
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: \Localization\GameListPage\Heading,
 			cssSheetUris:
@@ -875,7 +869,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -892,7 +886,12 @@ class VisitorView extends ErrorView
 					<section>'.$resultsLimitBlock.'</section>
 				</form>
 			</section>
-			'.$this->createGameList($games, 2, 'list-entity').'
+		';
+		
+		$html[] = $this->createGameList($games, 2, 'list-entity');
+		
+		$html[] = 
+		'
 			<section>
 				<section class="search-section">
 					<section></section>
@@ -903,7 +902,7 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -913,7 +912,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderAlbumListPage
@@ -936,7 +935,7 @@ class VisitorView extends ErrorView
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: \Localization\AlbumListPage\Heading,
 			cssSheetUris:
@@ -946,7 +945,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -963,7 +962,12 @@ class VisitorView extends ErrorView
 					<section>'.$resultsLimitBlock.'</section>
 				</form>
 			</section>
-			'.$this->createAlbumList($albums, 2, 'list-entity').'
+		';
+		
+		$html[] = $this->createAlbumList($albums, 2, 'list-entity');
+		
+		$html[] = 
+		'
 			<section>
 				<section class="search-section">
 					<section></section>
@@ -974,7 +978,7 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -984,7 +988,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderArtistListPage
@@ -1007,7 +1011,7 @@ class VisitorView extends ErrorView
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: \Localization\ArtistListPage\Heading,
 			cssSheetUris:
@@ -1017,7 +1021,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1034,7 +1038,12 @@ class VisitorView extends ErrorView
 					<section>'.$resultsLimitBlock.'</section>
 				</form>
 			</section>
-			'.$this->createArtistList($artists, 2, 'list-entity').'
+		';
+		
+		$html[] = $this->createArtistList($artists, 2, 'list-entity');
+		
+		$html[] = 
+		'
 			<section>
 				<section class="search-section">
 					<section></section>
@@ -1045,7 +1054,7 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -1055,7 +1064,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderCharacterListPage
@@ -1078,7 +1087,7 @@ class VisitorView extends ErrorView
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: \Localization\CharacterListPage\Heading,
 			cssSheetUris:
@@ -1088,7 +1097,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1105,7 +1114,12 @@ class VisitorView extends ErrorView
 					<section>'.$resultsLimitBlock.'</section>
 				</form>
 			</section>
-			'.$this->createCharacterList($characters, 2, 'list-entity').'
+		';
+		
+		$html[] = $this->createCharacterList($characters, 2, 'list-entity');
+		
+		$html[] = 
+		'
 			<section>
 				<section class="search-section">
 					<section></section>
@@ -1116,7 +1130,7 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -1126,7 +1140,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderSongListPage
@@ -1143,7 +1157,7 @@ class VisitorView extends ErrorView
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: \Localization\SongListPage\Heading,
 			cssSheetUris:
@@ -1153,7 +1167,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1169,7 +1183,12 @@ class VisitorView extends ErrorView
 					<section>'.$resultsLimitBlock.'</section>
 				</form>
 			</section>
-			'.$this->createSongList($songs, 2, 'list-entity').'
+		';
+		
+		$html[] = $this->createSongList($songs, 2, 'list-entity');
+		
+		$html[] = 
+		'
 			<section>
 				<section class="search-section">
 					<section></section>
@@ -1180,7 +1199,7 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -1190,7 +1209,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderTranslationListPage
@@ -1207,7 +1226,7 @@ class VisitorView extends ErrorView
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: \Localization\TranslationListPage\Heading,
 			cssSheetUris:
@@ -1217,7 +1236,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1233,7 +1252,12 @@ class VisitorView extends ErrorView
 					<section>'.$resultsLimitBlock.'</section>
 				</form>
 			</section>
-			'.$this->createTranslationList($translations, 2, 'list-entity').'
+		';
+		
+		$html[] = $this->createTranslationList($translations, 2, 'list-entity');
+		
+		$html[] = 
+		'
 			<section>
 				<section class="search-section">
 					<section></section>
@@ -1244,7 +1268,7 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -1254,12 +1278,12 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderGamePage(array $game, array $albums, array $characters): void
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: $game['transliterated_name'],
 			cssSheetUris:
@@ -1269,7 +1293,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			'.$this->createGame($game, 1).'
@@ -1277,27 +1301,29 @@ class VisitorView extends ErrorView
 		
 		if ($characters)
 		{
-			$html .= 
+			$html[] = 
 			'
 			<section>
 				'.$this->createHeading(\Localization\GamePage\RelatedCharacters, 2).'
 			</section>
-			'.$this->createCharacterList($characters, 3, 'related-entity', 'character_game_relation_status').'
 			';
+			
+			$html[] = $this->createCharacterList($characters, 3, 'related-entity', 'character_game_relation_status');
 		}
 		
 		if ($albums)
 		{
-			$html .= 
+			$html[] = 
 			'
 			<section>
 				'.$this->createHeading(\Localization\GamePage\RelatedAlbums, 2).'
 			</section>
-			'.$this->createAlbumList($albums, 3, 'related-entity', 'game_album_relation_status').'
 			';
+			
+			$html[] = $this->createAlbumList($albums, 3, 'related-entity', 'game_album_relation_status');
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 			'.$this->createTimestampBlock($game).'
 			'.$this->createControlButtonsBlock([$game], ['game'], $game, 'Game').'
@@ -1310,17 +1336,17 @@ class VisitorView extends ErrorView
 			$js[] = '/js/moderation/change-status-select.js';
 		}
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris: $js
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderAlbumPage(array $album, array $songs, array $games): void
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: $album['transliterated_name'],
 			cssSheetUris:
@@ -1331,25 +1357,27 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			'.$this->createAlbum($album, 1).'
-			'.$this->createAlbumSongList($album, $songs, 2).'
 		';
+		
+		$html[] = $this->createAlbumSongList($album, $songs, 2);
 		
 		if ($games)
 		{
-			$html .= 
+			$html[] = 
 			'
 			<section>
 				'.$this->createHeading(\Localization\AlbumPage\RelatedGames, 2).'
 			</section>
-			'.$this->createGameList($games, 3, 'related-entity', 'game_album_relation_status').'
 			';
+			
+			$html[] = $this->createGameList($games, 3, 'related-entity', 'game_album_relation_status');
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 			'.$this->createTimestampBlock($album).'
 			'.$this->createControlButtonsBlock([$album], ['album'], $album, 'Album').'
@@ -1362,17 +1390,17 @@ class VisitorView extends ErrorView
 			$js[] = '/js/moderation/change-status-select.js';
 		}
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris: $js
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderArtistPage(array $artist, array $aliases, array $songs): void
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: $artist['transliterated_name'],
 			cssSheetUris:
@@ -1382,7 +1410,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			'.$this->createArtist($artist, 1).'
@@ -1390,27 +1418,29 @@ class VisitorView extends ErrorView
 		
 		if ($aliases)
 		{
-			$html .= 
+			$html[] = 
 			'
 			<section>
 				'.$this->createHeading(\Localization\ArtistPage\Aliases, 2).'
 			</section>
-			'.$this->createArtistList($aliases, 3, 'related-entity').'
 			';
+			
+			$html[] = $this->createArtistList($aliases, 3, 'related-entity');
 		}
 		
 		if ($songs)
 		{
-			$html .= 
+			$html[] = 
 			'
 			<section>
 				'.$this->createHeading(\Localization\ArtistPage\RelatedSongs, 2).'
 			</section>
-			'.$this->createSongList($songs, 3, 'related-entity', 'song_artist_character_relation_status').'
 			';
+			
+			$html[] = $this->createSongList($songs, 3, 'related-entity', 'song_artist_character_relation_status');
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 			'.$this->createTimestampBlock($artist).'
 			'.$this->createControlButtonsBlock([$artist], ['artist'], $artist, 'Artist').'
@@ -1423,17 +1453,17 @@ class VisitorView extends ErrorView
 			$js[] = '/js/moderation/change-status-select.js';
 		}
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris: $js
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderCharacterPage(array $character, array $games, array $songs): void
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: $character['transliterated_name'],
 			cssSheetUris:
@@ -1443,7 +1473,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			'.$this->createCharacter($character, 1).'
@@ -1451,27 +1481,29 @@ class VisitorView extends ErrorView
 		
 		if ($games)
 		{
-			$html .= 
+			$html[] = 
 			'
 			<section>
 				'.$this->createHeading(\Localization\CharacterPage\RelatedGames, 2).'
 			</section>
-			'.$this->createGameList($games, 3, 'related-entity', 'character_game_relation_status').'
 			';
+			
+			$html[] = $this->createGameList($games, 3, 'related-entity', 'character_game_relation_status');
 		}
 		
 		if ($songs)
 		{
-			$html .= 
+			$html[] = 
 			'
 			<section>
 				'.$this->createHeading(\Localization\CharacterPage\RelatedSongs, 2).'
 			</section>
-			'.$this->createSongList($songs, 3, 'related-entity', 'song_artist_character_relation_status').'
 			';
+			
+			$html[] = $this->createSongList($songs, 3, 'related-entity', 'song_artist_character_relation_status');
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 			'.$this->createTimestampBlock($character).'
 			'.$this->createControlButtonsBlock([$character], ['character'], $character, 'Character').'
@@ -1484,12 +1516,12 @@ class VisitorView extends ErrorView
 			$js[] = '/js/moderation/change-status-select.js';
 		}
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris: $js
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderNoLyricsPage(array $album, array $song): void
@@ -1498,7 +1530,7 @@ class VisitorView extends ErrorView
 		               $song['transliterated_name'].
 					   \Localization\LyricsPage\LyricsHeadingEnd;
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: $headingText,     
 			cssSheetUris:
@@ -1508,7 +1540,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			'.$this->createLyricsPageHeading($headingText, $album, $song, null, null, null, null).'
@@ -1517,25 +1549,25 @@ class VisitorView extends ErrorView
 					<p>'.\Localization\LyricsPage\NoLyricsAdded.'</p>
 		';
 		
-		$addLabel   = \Localization\LyricsPage\AddLyrics;
-		$addHref    = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'add-lyrics');
-		$addAccess  = Session::agentHasRightToAddLyrics($song);
-		$addEnabled = $addAccess === AccessState::Ok;
-		$addTooltip = \Localization\Functions\localizeAccessState($addAccess);
+		$label   = \Localization\LyricsPage\AddLyrics;
+		$href    = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'add-lyrics');
+		$access  = Session::agentHasRightToAddLyrics($song);
+		$enabled = $access === AccessState::Ok;
+		$tooltip = \Localization\Functions\localizeAccessState($access);
 		
-		$addButton  = $this->createButton($addLabel, $addHref, $addEnabled, $addTooltip);
+		$addLyricsButton = $this->createButton($label, $href, $enabled, $tooltip);
 		
-		$html .= 
+		$html[] = 
 		'
-					<p>'.$addButton.'</p>
+					<p>'.$addLyricsButton.'</p>
 				</section>
 			</section>
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderLyricsPage
@@ -1581,7 +1613,7 @@ class VisitorView extends ErrorView
 			$canonicalUri = $_SERVER['REQUEST_URI'];
 		}
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $headingText,
 			canonicalUri: $canonicalUri,
@@ -1592,7 +1624,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			'.$heading.'
@@ -1611,12 +1643,12 @@ class VisitorView extends ErrorView
 			$js[] = '/js/moderation/change-status-select.js';
 		}
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris: $js
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderTranslationPage
@@ -1666,7 +1698,7 @@ class VisitorView extends ErrorView
 			$canonicalUri = $_SERVER['REQUEST_URI'];
 		}
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $headingText,
 			canonicalUri: $canonicalUri,
@@ -1677,7 +1709,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			'.$heading.'
@@ -1700,12 +1732,12 @@ class VisitorView extends ErrorView
 			$js[] = '/js/moderation/change-status-select.js';
 		}
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris: $js
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderFeedbackPage
@@ -1719,7 +1751,7 @@ class VisitorView extends ErrorView
 		$feedback     = htmlspecialchars($feedback ?? '');
 		$errorMessage = \Localization\Functions\localizeInputError($error);
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: \Localization\FeedbackPage\Heading,
 			cssSheetUris:
@@ -1729,7 +1761,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1753,16 +1785,15 @@ class VisitorView extends ErrorView
 		foreach ($feedbacks as $feedback)
 		{
 			$author    = $feedback['sender_username'] ?? \Localization\FeedbackPage\AnonymousAuthor;
-			$ip        = Cryptography::decryptData($feedback['sender_ip']);
-			$ip        = Cryptography::generateSimpleHash($ip);
+			$ip        = Cryptography::generateSimpleHash($feedback['sender_ip']);
 			$timestamp = $feedback['message_timestamp'];
 			$message   = $feedback['message'];
 			$id        = Session::agentIsAdministrator() ? ' data-id="'.$feedback['id'].'"' : '';
 			
-			$html .= 
+			$html[] = 
 			'
 			<section class="feedback-message"'.$id.'>
-				'.$this->createHeading("$author #$ip ($timestamp)", 3).'
+				'.$this->createHeading("$author [ID: #$ip] ($timestamp)", 3).'
 				'.$this->createParagraph($message).'
 			';
 			
@@ -1772,7 +1803,7 @@ class VisitorView extends ErrorView
 				$timestamp = $feedback['reply_timestamp'];
 				$reply     = $feedback['reply'];
 				
-				$html .= 
+				$html[] = 
 				'
 				<section class="feedback-reply">
 					'.$this->createHeading(\Localization\FeedbackPage\ReplyFromStaff."($timestamp)", 3).'
@@ -1783,7 +1814,7 @@ class VisitorView extends ErrorView
 			
 			if (Session::agentIsAdministrator())
 			{
-				$html .= 
+				$html[] = 
 				'
 				<section class="feedback-reply-controls">
 					<textarea></textarea>
@@ -1796,13 +1827,13 @@ class VisitorView extends ErrorView
 				';
 			}
 			
-			$html .= 
+			$html[] = 
 			'
 			</section>
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 		</article>
 		';
@@ -1813,12 +1844,12 @@ class VisitorView extends ErrorView
 			$js[] = '/js/moderation/feedback.js';
 		}
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris: $js
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderReportPage(string $entityType, string $entityName, string $entityLink)
@@ -1861,13 +1892,13 @@ class VisitorView extends ErrorView
 		$heading = \Localization\ReportPage\Heading.htmlspecialchars($entityName).htmlspecialchars($entityType);
 		$reportLink = Http::buildInternalPath($this->language, 'report');
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1890,9 +1921,9 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderUserPage
@@ -1909,16 +1940,9 @@ class VisitorView extends ErrorView
 		$headingText = \Localization\UserPage\User.htmlspecialchars($userData['user_username']);
 		$role = \Localization\Functions\localizeLanguageName($userData);
 		
-		$games        = $this->createGameList($relatedGames, 3, 'related-entity');
-		$albums       = $this->createAlbumList($relatedAlbums, 3, 'related-entity');
-		$artists      = $this->createArtistList($relatedArtists, 3, 'related-entity');
-		$characters   = $this->createCharacterList($relatedCharacters, 3, 'related-entity');
-		$songs        = $this->createSongList($relatedSongs, 3, 'related-entity');
-		$translations = $this->createTranslationList($relatedTranslations, 3, 'related-entity');
-		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
-			title:        $headingText,
+			title: $headingText,
 			cssSheetUris:
 			[
 				'/css/user-page.css',
@@ -1926,7 +1950,7 @@ class VisitorView extends ErrorView
 			]
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1940,20 +1964,20 @@ class VisitorView extends ErrorView
 			$href4 = Http::buildInternalPath($this->language, 'user', $userData['user_username'], 'delete-account');
 			
 			$condition = !Session::agentIsViolator();
-			$tooltip   = \Localization\Functions\localizeAccessState(AccessState::agentIsViolator);
+			$tooltip   = \Localization\Functions\localizeAccessState(AccessState::AgentIsViolatorError);
 			
-			$html .= 
+			$html[] = 
 			'
 				<section class="account-control">
 					'.$this->createButton(\Localization\UserPage\ChangeAccountData, $href1, $condition, $tooltip).'
 					<section class="filler"></section>
 					<section class="filler"></section>
-					'.$this->createButton(\Localization\UserPage\DeleteAccount,  $href4, $condition, $tooltip).'
+					'.$this->createButton(\Localization\UserPage\DeleteAccount, $href4, $condition, $tooltip).'
 				</section>
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 			</section>
 			<section>
@@ -1962,44 +1986,74 @@ class VisitorView extends ErrorView
 			<section>
 				'.$this->createHeading(\Localization\UserPage\RelatedGames.count($relatedGames), 3).'
 			</section>
-			'.$games.'
+		';
+		
+		$html[] = $this->createGameList($relatedGames, 3, 'related-entity');
+		
+		$html[] =
+		'
 			<section>
 				'.$this->createHeading(\Localization\UserPage\RelatedAlbums.count($relatedAlbums), 3).'
 			</section>
-			'.$albums.'
+		';
+		
+		$html[] = $this->createAlbumList($relatedAlbums, 3, 'related-entity');
+		
+		$html[] =
+		'
 			<section>
 				'.$this->createHeading(\Localization\UserPage\RelatedArtists.count($relatedArtists), 3).'
 			</section>
-			'.$artists.'
+		';
+		
+		$html[] = $this->createArtistList($relatedArtists, 3, 'related-entity');
+		
+		$html[] =
+		'
 			<section>
 				'.$this->createHeading(\Localization\UserPage\RelatedCharacters.count($relatedCharacters), 3).'
 			</section>
-			'.$characters.'
+		';
+		
+		$html[] = $this->createCharacterList($relatedCharacters, 3, 'related-entity');
+		
+		$html[] = 
+		'
 			<section>
 				'.$this->createHeading(\Localization\UserPage\RelatedSongs.count($relatedSongs), 3).'
 			</section>
-			'.$songs.'
+		';
+		
+		$html[] = $this->createSongList($relatedSongs, 3, 'related-entity');
+		
+		$html[] = 
+		'
 			<section>
 				'.$this->createHeading(\Localization\UserPage\RelatedTranslations.count($relatedTranslations), 3).'
 			</section>
-			'.$translations.'
+		';
+		
+		$html[] = $this->createTranslationList($relatedTranslations, 3, 'related-entity');
+		
+		$html[] = 
+		'
 			</section>
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderAboutPage(): void
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: \Localization\AboutPage\Heading
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -2019,19 +2073,19 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderPolicyPage(): void
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: \Localization\PolicyPage\Heading
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -2070,19 +2124,19 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderRulesPage(): void
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: \Localization\RulesPage\Heading
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -2115,20 +2169,20 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderWritingGuidePage(): void
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        \Localization\WritingGuidePage\Heading,
 			cssSheetUris: ['/css/writing-guide-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -2618,20 +2672,20 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderLyricsExamplePage(): void
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        \Localization\LyricsExamplePage\Heading,
 			cssSheetUris: ['/css/translation-page.css']
 		);
 		
-		$html .=
+		$html[] =
 		'
 		<article>
 			<section>
@@ -2725,8 +2779,8 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html .= $this->endRender(['/js/translation-page.js']);
+		$html[] = $this->endRender(['/js/translation-page.js']);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 }

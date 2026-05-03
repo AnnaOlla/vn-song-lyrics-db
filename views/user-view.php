@@ -71,13 +71,13 @@ class UserView extends ViolatorView
 			];
 		}
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/editor-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -110,7 +110,7 @@ class UserView extends ViolatorView
 		
 		if ($isImageUploaded)
 		{
-			$html .= 
+			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="4">
 						<h2>'.\Localization\GameEditorPage\OldLogo.'</h2>
@@ -124,7 +124,7 @@ class UserView extends ViolatorView
 		}
 		else
 		{
-			$html .= 
+			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="6">
 						<h2>'.\Localization\GameEditorPage\Logo.'</h2>
@@ -133,7 +133,7 @@ class UserView extends ViolatorView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						<h2>'.\Localization\GameEditorPage\VndbLink.'</h2>
@@ -162,7 +162,8 @@ class UserView extends ViolatorView
 			
 			$addRowButton = $this->createAddRowButton
 			(
-				'album-select'
+				'album-select',
+				true
 			);
 			
 			$deleteRowButton = $this->createDeleteRowButton
@@ -171,7 +172,7 @@ class UserView extends ViolatorView
 				$relatedAlbum['game_album_relation_status'] === 'unchecked'
 			);
 			
-			$html .= 
+			$html[] = 
 			'
 					<section class="related-entity-controls">
 						'.$albumInput.'
@@ -181,7 +182,7 @@ class UserView extends ViolatorView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 					</section>
 					<section class="has-tooltip" tooltip-id="9">
@@ -207,7 +208,8 @@ class UserView extends ViolatorView
 			
 			$addRowButton = $this->createAddRowButton
 			(
-				'character-select'
+				'character-select',
+				true
 			);
 			
 			$deleteRowButton = $this->createDeleteRowButton
@@ -216,7 +218,7 @@ class UserView extends ViolatorView
 				$relatedCharacter['character_game_relation_status'] === 'unchecked',
 			);
 			
-			$html .= 
+			$html[] = 
 			'
 					<section class="related-entity-controls">
 						'.$characterInput.'
@@ -226,7 +228,7 @@ class UserView extends ViolatorView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 					</section>
 					<section class="has-tooltip" tooltip-id="10">
@@ -273,14 +275,14 @@ class UserView extends ViolatorView
 			\Localization\GameEditorPage\TooltipContent\Controls
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		'.$tooltipWindow.'
 		'.$tooltipHeadings.'
 		'.$tooltipContents.'
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -290,7 +292,7 @@ class UserView extends ViolatorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	private function renderAlbumEditorPage
@@ -344,13 +346,13 @@ class UserView extends ViolatorView
 			];
 		}
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/editor-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -383,7 +385,7 @@ class UserView extends ViolatorView
 		
 		if ($isImageUploaded)
 		{
-			$html .= 
+			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="4">
 						<h2>'.\Localization\AlbumEditorPage\OldCover.'</h2>
@@ -397,7 +399,7 @@ class UserView extends ViolatorView
 		}
 		else
 		{
-			$html .= 
+			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="6">
 						<h2>'.\Localization\AlbumEditorPage\Cover.'</h2>
@@ -406,7 +408,7 @@ class UserView extends ViolatorView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						<h2>'.\Localization\AlbumEditorPage\VgmdbLink.'</h2>
@@ -435,7 +437,8 @@ class UserView extends ViolatorView
 			
 			$addRowButton = $this->createAddRowButton
 			(
-				'game-select'
+				'game-select',
+				true
 			);
 			
 			$deleteRowButton = $this->createDeleteRowButton
@@ -444,7 +447,7 @@ class UserView extends ViolatorView
 				$relatedGame['game_album_relation_status'] === 'unchecked'
 			);
 			
-			$html .= 
+			$html[] = 
 			'
 					<section class="related-entity-controls">
 						'.$gameInput.'
@@ -454,7 +457,7 @@ class UserView extends ViolatorView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 					</section>
 					<section class="has-tooltip" tooltip-id="9">
@@ -505,14 +508,14 @@ class UserView extends ViolatorView
 			\Localization\AlbumEditorPage\TooltipContent\Controls
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		'.$tooltipWindow.'
 		'.$tooltipHeadings.'
 		'.$tooltipContents.'
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -522,7 +525,7 @@ class UserView extends ViolatorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	private function renderArtistEditorPage
@@ -561,13 +564,13 @@ class UserView extends ViolatorView
 			$cancelLink = Http::buildInternalPath($this->language, 'artist-list').$query;
 		}
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/editor-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -600,7 +603,7 @@ class UserView extends ViolatorView
 		
 		if ($isImageUploaded)
 		{
-			$html .= 
+			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="4">
 						<h2>'.\Localization\ArtistEditorPage\OldPhoto.'</h2>
@@ -614,7 +617,7 @@ class UserView extends ViolatorView
 		}
 		else
 		{
-			$html .= 
+			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="6">
 						<h2>'.\Localization\ArtistEditorPage\Photo.'</h2>
@@ -623,7 +626,7 @@ class UserView extends ViolatorView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						<h2>'.\Localization\ArtistEditorPage\VgmdbLink.'</h2>
@@ -646,7 +649,7 @@ class UserView extends ViolatorView
 			'id'
 		);
 		
-		$html .=
+		$html[] =
 		'
 					<section class="has-tooltip" tooltip-id="8">
 						<h2>'.\Localization\ArtistEditorPage\OriginalArtist.'</h2>
@@ -654,7 +657,7 @@ class UserView extends ViolatorView
 					</section>
 		';
 		
-		$html .=
+		$html[] =
 		'
 					<section class="has-tooltip" tooltip-id="9">
 						<section class="page-controls">
@@ -698,14 +701,14 @@ class UserView extends ViolatorView
 			\Localization\ArtistEditorPage\TooltipContent\Controls
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		'.$tooltipWindow.'
 		'.$tooltipHeadings.'
 		'.$tooltipContents.'
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -715,7 +718,7 @@ class UserView extends ViolatorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	private function renderCharacterEditorPage
@@ -764,13 +767,13 @@ class UserView extends ViolatorView
 			];
 		}
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/editor-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -803,7 +806,7 @@ class UserView extends ViolatorView
 		
 		if ($isImageUploaded)
 		{
-			$html .= 
+			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="4">
 						<h2>'.\Localization\CharacterEditorPage\OldImage.'</h2>
@@ -817,7 +820,7 @@ class UserView extends ViolatorView
 		}
 		else
 		{
-			$html .= 
+			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="6">
 						<h2>'.\Localization\CharacterEditorPage\Image.'</h2>
@@ -826,7 +829,7 @@ class UserView extends ViolatorView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						<h2>'.\Localization\CharacterEditorPage\VndbLink.'</h2>
@@ -855,7 +858,8 @@ class UserView extends ViolatorView
 			
 			$addRowButton = $this->createAddRowButton
 			(
-				'game-select'
+				'game-select',
+				true
 			);
 
 			$deleteRowButton = $this->createDeleteRowButton
@@ -864,7 +868,7 @@ class UserView extends ViolatorView
 				$relatedGame['character_game_relation_status'] === 'unchecked'
 			);
 
-			$html .= 
+			$html[] = 
 			'
 					<section class="related-entity-controls">
 						'.$gameInput.'
@@ -874,7 +878,7 @@ class UserView extends ViolatorView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 					</section>
 					<section class="has-tooltip" tooltip-id="9">
@@ -919,14 +923,14 @@ class UserView extends ViolatorView
 			\Localization\CharacterEditorPage\TooltipContent\Controls
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		'.$tooltipWindow.'
 		'.$tooltipHeadings.'
 		'.$tooltipContents.'
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -936,7 +940,7 @@ class UserView extends ViolatorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderSongEditorPage
@@ -1002,13 +1006,13 @@ class UserView extends ViolatorView
 		else
 			$submitButtonValue = \Localization\SongEditorPage\SubmitChanges;
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/editor-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1075,14 +1079,14 @@ class UserView extends ViolatorView
 			\Localization\SongEditorPage\TooltipContent\Controls
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		'.$tooltipWindow.'
 		'.$tooltipHeadings.'
 		'.$tooltipContents.'
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -1092,7 +1096,7 @@ class UserView extends ViolatorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	private function renderLyricsEditorPage
@@ -1122,13 +1126,13 @@ class UserView extends ViolatorView
 			];
 		}
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/editor-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1187,7 +1191,8 @@ class UserView extends ViolatorView
 			
 			$addRowButton = $this->createAddRowButton
 			(
-				'artist-select character-select'
+				'artist-select character-select',
+				true
 			);
 			
 			$deleteRowButton = $this->createDeleteRowButton
@@ -1196,7 +1201,7 @@ class UserView extends ViolatorView
 				$relatedPerformer['song_artist_character_relation_status'] === 'unchecked'
 			);
 			
-			$html .= 
+			$html[] = 
 			'
 					<section class="related-entity-controls">
 						'.$artistInput.'
@@ -1208,7 +1213,7 @@ class UserView extends ViolatorView
 			';
 		}
 		
-		$html .= 
+		$html[] = 
 		'
 					</section>
 		';
@@ -1237,7 +1242,7 @@ class UserView extends ViolatorView
 			'id'
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 					<section class="has-tooltip" tooltip-id="2">
 						<h2>'.Localization\LyricsEditorPage\OriginalSong.'</h2>
@@ -1265,7 +1270,7 @@ class UserView extends ViolatorView
 		
 		$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		
-		$html .= 
+		$html[] = 
 		'
 					<section class="has-tooltip" tooltip-id="3">
 						<h2>'.\Localization\LyricsEditorPage\Language.'<span class="required-input"> *</h2>
@@ -1315,14 +1320,14 @@ class UserView extends ViolatorView
 			\Localization\LyricsEditorPage\TooltipContent\Controls
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		'.$tooltipWindow.'
 		'.$tooltipHeadings.'
 		'.$tooltipContents.'
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -1332,7 +1337,7 @@ class UserView extends ViolatorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderTranslationEditorPage
@@ -1380,13 +1385,13 @@ class UserView extends ViolatorView
 			$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		}
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/editor-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1461,14 +1466,14 @@ class UserView extends ViolatorView
 			\Localization\TranslationEditorPage\TooltipContent\Controls
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		'.$tooltipWindow.'
 		'.$tooltipHeadings.'
 		'.$tooltipContents.'
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -1478,7 +1483,7 @@ class UserView extends ViolatorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderAddGamePage
@@ -1732,7 +1737,7 @@ class UserView extends ViolatorView
 	
 	final public function renderDeletePage(string $heading, string $cancelLink)
 	{
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/window-in-center-page.css']
@@ -1756,7 +1761,7 @@ class UserView extends ViolatorView
 			\Localization\Controls\Confirmation
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1764,7 +1769,7 @@ class UserView extends ViolatorView
 				'.$this->createParagraph(\Localization\DeleteEntityPage\Introduction).'
 		';
 		
-		$html .= 
+		$html[] = 
 		'
 				'.$this->createParagraph(\Localization\DeleteEntityPage\Warning).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
@@ -1779,7 +1784,7 @@ class UserView extends ViolatorView
 		</article>
 		';
 		
-		$html .= $this->endRender
+		$html[] = $this->endRender
 		(
 			jsScriptUris:
 			[
@@ -1788,7 +1793,7 @@ class UserView extends ViolatorView
 			]
 		);
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderDeleteGamePage(array $game): void
@@ -1845,67 +1850,17 @@ class UserView extends ViolatorView
 	
 	final public function renderChangeAccountDataPage(array $user, InputError $error = InputError::None)
 	{
-		$heading = $user['user_username'].\Localization\UserAccountDataPage\Edit;
-		$cancelLink = Http::buildInternalPath($this->language, 'user', $user['user_username']);
+		$heading      = $user['user_username'].\Localization\UserAccountDataPage\Edit;
+		$cancelLink   = Http::buildInternalPath($this->language, 'user', $user['user_username']);
+		$errorMessage = \Localization\Functions\localizeInputError($error);
 		
-		switch ($error)
-		{
-			case InputError::IncorrectPassword:
-				$errorMessage = \Localization\InputError\IncorrectPassword;
-				break;
-			
-			case InputError::UsernameTrimmable:
-				$errorMessage = \Localization\InputError\UsernameTrimmable;
-				break;
-			
-			case InputError::UsernameForbiddenSymbols:
-				$errorMessage = \Localization\InputError\UsernameForbiddenSymbols;
-				break;
-			
-			case InputError::UsernameLengthIncorrect:
-				$errorMessage = \Localization\InputError\UsernameLengthIncorrect;
-				break;
-			
-			case InputError::UsernameTaken:
-				$errorMessage = \Localization\InputError\UsernameTaken;
-				break;
-			
-			case InputError::PasswordTrimmable:
-				$errorMessage = \Localization\InputError\PasswordTrimmable;
-				break;
-				
-			case InputError::PasswordForbiddenSymbols:
-				$errorMessage = \Localization\InputError\PasswordForbiddenSymbols;
-				break;
-			
-			case InputError::UsernameLengthIncorrect:
-				$errorMessage = \Localization\InputError\UsernameLengthIncorrect;
-				break;
-			
-			case InputError::EmailTaken:
-				$errorMessage = \Localization\InputError\EmailTaken;
-				break;
-			
-			case InputError::EmailInvalid:
-				$errorMessage = \Localization\InputError\EmailInvalid;
-				break;
-			
-			case InputError::EmailNotExists:
-				$errorMessage = \Localization\InputError\EmailNotExists;
-				break;
-			
-			default:
-				$errorMessage = '';
-				break;
-		}
-		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title: $heading,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1941,9 +1896,9 @@ class UserView extends ViolatorView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 	
 	final public function renderDeleteAccountPage(array $user, InputError $error = InputError::None)
@@ -1962,13 +1917,13 @@ class UserView extends ViolatorView
 				break;
 		}
 		
-		$html = $this->startRender
+		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
-		$html .= 
+		$html[] = 
 		'
 		<article>
 			<section>
@@ -1997,8 +1952,8 @@ class UserView extends ViolatorView
 		</article>
 		';
 		
-		$html .= $this->endRender();
+		$html[] = $this->endRender();
 		
-		echo $html;
+		$this->echoHtml($html);
 	}
 }
