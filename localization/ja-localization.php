@@ -217,7 +217,7 @@ namespace Localization\FeedbackPage
 	const SymbolLimit         = 'メッセージの長さは５００文字以下です。';
 	
 	const TextareaPlaceholder = 'あなたのメッセージ';
-	const AnonymousAuthor     = 'ｱﾉﾆﾏｽ';
+	const AnonymousAuthor     = '[ｱﾉﾆﾏｽ]';
 	const ReplyFromStaff      = 'スタッフ';
 	const Submit              = '出す';
 	

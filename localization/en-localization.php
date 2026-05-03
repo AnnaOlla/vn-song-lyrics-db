@@ -217,7 +217,7 @@ namespace Localization\FeedbackPage
 	const SymbolLimit         = 'The message is limited with 500 symbols.';
 	
 	const TextareaPlaceholder = 'Text of your message';
-	const AnonymousAuthor     = 'Anonymous';
+	const AnonymousAuthor     = '[Anonymous]';
 	const ReplyFromStaff      = 'Website Staff ';
 	const Submit              = 'Submit';
 	

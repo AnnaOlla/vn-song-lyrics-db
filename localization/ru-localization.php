@@ -217,7 +217,7 @@ namespace Localization\FeedbackPage
 	const SymbolLimit         = 'Длина сообщения: не более 500 символов.';
 	
 	const TextareaPlaceholder = 'Текст отзыва';
-	const AnonymousAuthor     = 'Аноним';
+	const AnonymousAuthor     = '[Аноним]';
 	const ReplyFromStaff      = 'Администрация ';
 	const Submit              = 'Отправить';
 	
