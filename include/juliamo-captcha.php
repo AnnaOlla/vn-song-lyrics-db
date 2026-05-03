@@ -2,7 +2,7 @@
 
 final class JuliamoCaptcha
 {
-	private const FONT_PATH = 'fonts/juliamo.ttf';
+	private const FONT_PATH = 'fonts/juliamo-ampleksa.ttf';
 	
 	private static function convertHsvaToRgba(array $hsva): array
 	{
@@ -34,6 +34,30 @@ final class JuliamoCaptcha
 			'b' => round($b * 255),
 			'a' => round($a * 255)
 		];
+	}
+	
+	private static function generateLetterColor(GDImage &$image)
+	{
+		$hsva = 
+		[
+			'h' => rand(45, 165),
+			's' => rand(90, 100),
+			'v' => rand(90, 100),
+			'a' => 1
+		];
+		
+		$rgba = self::convertHsvaToRgba($hsva);
+		
+		$color = imagecolorallocatealpha
+		(
+			$image,
+			$rgba['r'],
+			$rgba['g'],
+			$rgba['b'],
+			(int)((255 - $rgba['a']) / 2)
+		);
+		
+		return $color;
 	}
 	
 	private static function generateCharacters(int $length, int $strength): array
@@ -85,30 +109,6 @@ final class JuliamoCaptcha
 		}
 	}
 	
-	private static function generateColor(GDImage &$image)
-	{
-		$hsva = 
-		[
-			'h' => rand(30, 180),
-			's' => rand(90, 100),
-			'v' => rand(90, 100),
-			'a' => 1
-		];
-		
-		$rgba = self::convertHsvaToRgba($hsva);
-		
-		$color = imagecolorallocatealpha
-		(
-			$image,
-			$rgba['r'],
-			$rgba['g'],
-			$rgba['b'],
-			(int)((255 - $rgba['a']) / 2)
-		);
-		
-		return $color;
-	}
-	
 	public static function generateBase64Captcha
 	(
 		int    $length,
@@ -127,6 +127,28 @@ final class JuliamoCaptcha
 		// All constants are calculated empirically for the Juliamo font
 		// Intensity and Transparence for generated noise are also chosen empirically
 		
+		// 0. Geometric calculations
+		// --A--A--A--A--A--A--
+		// Gap between letters       = (widthPx / count + 1)
+		// Gap before first letter   = (widthPx / count + 1)
+		//
+		// widthPx of a Juliamo letter          = heightPx * 524 / 1024
+		// widthPx of a Juliamo-Ampleksa letter = heightPx * 500 / 1000
+		// Aligning to the center of the letter = heightPx * 500 / 1000 / 2
+		
+		$fontSize = (int)round($heightPx * 2 / 3);
+		
+		$xOffset  = $widthPx / ($length + 1);
+		$xStart   = $xOffset - $heightPx * 500 / 1000 / 2;
+		$yOffset  = 0;
+		$yStart   = $heightPx * 5 / 6;
+		
+		$randomizer       = new \Random\Randomizer();
+		$xMaxRandomOffset = $xStart / 16;
+		$yMaxRandomOffset = $yStart / 16;
+		$intervalType     = \Random\IntervalBoundary::ClosedClosed;
+		$maxRandomAngle   = 8;
+		
 		// 1. Generate noise
 		$image = imagecreatetruecolor($widthPx, $heightPx);
 		self::generateNoise($image, 64, 192, 0);
@@ -134,28 +156,17 @@ final class JuliamoCaptcha
 		// 2. Generate letters
 		$characters = self::generateCharacters($length, $strength);
 		
-		// --A--A--A--A--A--A--
-		// Gap between letters       = (widthPx / count + 1)
-		// Gap before first letter   = (widthPx / count + 1)
-		//
-		// widthPx of a Juliamo letter = 192/418 * heightPx
-		// To align with the center  = (192/418 * heightPx) / 2
-		
-		$xOffset  = $widthPx / (count($characters) + 1);
-		$xStart   = $xOffset - $heightPx * 192 / 418 / 2;
-		$yOffset  = 0;
-		$yStart   = $heightPx * 5 / 6;
-		$fontSize = round($heightPx * 2 / 3);
-		
-		for ($i = 0; $i < count($characters); $i++)
+		for ($i = 0; $i < $length; $i++)
 		{
-			// A little randomization to make it harder
-			$x     = round($xStart + $xOffset * $i) + rand(-2, 2);
-			$y     = round($yStart + $yOffset * $i) + rand(-2, 2);
-			$angle = rand(-10, +10);
-			$color = self::generateColor($image);
+			$xRandomOffset = $randomizer->getFloat(-$xMaxRandomOffset, +$xMaxRandomOffset, $intervalType);
+			$yRandomOffset = $randomizer->getFloat(-$yMaxRandomOffset, +$yMaxRandomOffset, $intervalType);
+			$randomAngle   = $randomizer->getFloat(-$maxRandomAngle,   +$maxRandomAngle,   $intervalType);
 			
-			imagettftext($image, $fontSize, $angle, $x, $y, $color, self::FONT_PATH, $characters[$i]);
+			$x     = (int)round($xStart + $xOffset * $i + $xRandomOffset);
+			$y     = (int)round($yStart + $yOffset * $i + $yRandomOffset);
+			$color = self::generateLetterColor($image);
+			
+			imagettftext($image, $fontSize, $randomAngle, $x, $y, $color, realpath(self::FONT_PATH), $characters[$i]);
 		}
 		
 		// 3. Generate half-transparent noise
@@ -179,11 +190,8 @@ final class JuliamoCaptcha
 		$convert($image, null, ...$outputParams);
 		$binaryData = ob_get_clean();
 		
-		// 6. Clean memory
-		imagedestroy($image);
-		
-		// 7. Result
-		$solution = implode('', $characters);
+		// 6. Result
+		$solution     = implode('', $characters);
 		$encodedImage = 'data:'.$type.';base64,'.base64_encode($binaryData);
 		
 		return [$solution, $encodedImage];
