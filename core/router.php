@@ -39,7 +39,7 @@ final class Router
 	
 	private static function banUnknownViolatorBot(): void
 	{
-		$file = fopen(self::VIOLATOR_BOT_REQUESTS_FILENAME, 'a');
+		$file = fopen(self::VIOLATOR_BOT_IPS_FILENAME, 'a');
 		fwrite($file, $_SERVER['REMOTE_ADDR'].PHP_EOL);
 		fclose($file);
 	}
@@ -114,10 +114,18 @@ final class Router
 		{
 			$index = '#'.$i;
 			$place = $trace[$i]['file'].'('.$trace[$i]['line'].')';
-			$class = ($trace[$i]['class'] ? $trace[$i]['class'].'->' : '').$trace[$i]['function'];
-			$args  = PHP_EOL.'('.var_export($trace[$i]['args'], true).')';
 			
-			$stackTrace[] = $index.' '.$place.': '.$class.$args;
+			if (isset($trace[$i]['class']))
+				$function = $trace[$i]['class'].'->'.$trace[$i]['function'];
+			else
+				$function = $trace[$i]['function'];
+			
+			if (isset($trace[$i]['args']))
+				$args = PHP_EOL.'('.var_export($trace[$i]['args'], true).')';
+			else
+				$args = '';
+			
+			$stackTrace[] = $index.' '.$place.': '.$function.$args;
 		}
 		
 		$log['datetime']   = date("Y-m-d H:i:s");
@@ -140,6 +148,7 @@ final class Router
 		if (self::isUserKnownViolatorBot())
 		{
 			http_response_code(403);
+			header("Connection: close");
 			exit;
 		}
 		
@@ -147,13 +156,15 @@ final class Router
 		{
 			self::banUnknownViolatorBot();
 			http_response_code(403);
+			header("Connection: close");
 			exit;
 		}
 		
 		if (self::isUserKnownViolatorHuman())
 		{
-			require_once self::VIOLATOR_HUMAN_PAGE_FILENAME;
 			http_response_code(403);
+			require_once self::VIOLATOR_HUMAN_PAGE_FILENAME;
+			header("Connection: close");
 			exit;
 		}
 		
