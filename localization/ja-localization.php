@@ -106,9 +106,10 @@ namespace Localization\Functions
 namespace Localization\HomePage
 {
 	const Heading          = 'Visual Novel Song Lyrics Database';
-	const DescriptionOne   = '「vn-song-lyrics-db.ru」はビジュアルノベルにある歌のデータベースになりたいです。';
-	const DescriptionTwo   = 'ビジュアルノベルの歌はメインストリームではなき、歌詞と翻訳を探すのは難しです。';
-	const DescriptionThree = 'このウエッブサイトはウィキという百科事典ような所です。誰でも力になることができます。';
+	const DescriptionOne   = '「vn-song-lyrics-db.ru」はＶＮにある歌の無料図書館です。';
+	const DescriptionTwo   = 'あの歌はメインストリームではないから、歌詞を探すのはよく難しくなります。';
+	const DescriptionThree = '翻訳は特別な知識で、真の美実品で、ここから内を見つかれます。';
+	const DescriptionFour  = 'このウエッブサイトはウィキという百科事典ような所です。誰でも力になることができます。';
 	const LastAlbums       = '最近加えたアルバム';
 	const LastLyrics       = '最近加えた歌詞';
 	const LastTranslations = '最近加えた翻訳';

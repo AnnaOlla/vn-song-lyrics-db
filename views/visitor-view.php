@@ -615,12 +615,13 @@ class VisitorView extends ErrorView
 		'
 		<article>
 			<section class="home-page-heading">
-				<img class="website-mascot" src="/assets/static-images/wee-hagana.png" alt="Hagana from World End Economica"/>
+				<img class="website-mascot" src="/assets/static-images/wee-hagana.png" alt="Hagana of World End Economica"/>
 				<section class="home-page-text">
 					<h1 class="home-page-text">'.\Localization\HomePage\Heading.'</h1>
 					<p class="home-page-text">'.\Localization\HomePage\DescriptionOne.'</p>
 					<p class="home-page-text">'.\Localization\HomePage\DescriptionTwo.'</p>
 					<p class="home-page-text">'.\Localization\HomePage\DescriptionThree.'</p>
+					<p class="home-page-text">'.\Localization\HomePage\DescriptionFour.'</p>
 				</section>
 			</section>
 			<section>
@@ -2558,10 +2559,11 @@ class VisitorView extends ErrorView
 				<br/>
 				
 				<h3>'.\Localization\WritingGuidePage\ParticlesRules.'</h3>
-				<p>1. <span class="highlight">こ…、そ…、あ…</span>： '.\Localization\WritingGuidePage\Together.'</p>
+				<p>1. <span class="highlight">こ…、そ…、あ…、ど…</span>： '.\Localization\WritingGuidePage\Together.'</p>
 				<p>---- ここ　→　koko</p>
 				<p>---- それ　→　sore</p>
 				<p>---- あの　→　ano</p>
+				<p>---- どんな　→　donna</p>
 				<p>2. <span class="highlight">〇＋は、じゃ、へ、と、が、か、を、に、まで、で、も、から、って、の、…</span>： '.\Localization\WritingGuidePage\Apart.'</p>
 				<p>---- わたしは　→　watashi wa</p>
 				<p>---- なにかの　→　nani ka no</p>
@@ -2608,6 +2610,7 @@ class VisitorView extends ErrorView
 				<p>---- 今夜　→　kon\'ya</p>
 				<p>---- キラキラ　→　kirakira</p>
 				<p>---- 懐中時計　→　kaichuudokei</p>
+				<p>---- 無限軌道　→　mugenkidou</p>
 				<p>9. <span class="highlight">お、ご＋〇</span>： '.\Localization\WritingGuidePage\Together.'</p>
 				<p>---- お電話　→　odenwa</p>
 				<p>---- ご家族　→　gokazoku</p>
@@ -2626,8 +2629,12 @@ class VisitorView extends ErrorView
 				<p>---- 来たりする　→　kitari suru</p>
 				<p>13. <span class="highlight">〇い＋〇う、〇え＋〇う</span>： '.\Localization\WritingGuidePage\Together.'</p>
 				<p>---- 歩き出す　→　arukidasu</p>
+				<p>---- 語り始める　→　katarihajimeru</p>
 				<p>---- 信じ続く　→　shinjitsuzuku</p>
+				<p>---- 巡り回る　→　megurimawaru</p>
+				<p>---- 舞い降り出す　→　maioridasu</p>
 				<p>---- 燃え立つ　→　moetatsu</p>
+				<p>---- 寝過ごす　→　nesugosu</p>
 				<p>14. <span class="highlight">〇て＋〇う</span>： '.\Localization\WritingGuidePage\Apart.'</p>
 				<p>---- 働いて疲れる　→　hataraite tsukareru</p>
 				<p>---- 教えてあげる　→　oshiete ageru</p>
@@ -2727,11 +2734,11 @@ class VisitorView extends ErrorView
 					
 					<span class="text-line">{cl #FF0000}いろはにほへと{/cl}</span>
 					<span class="text-line">{cl #FF7F00}ちりぬるをわ{/cl}か</span>
-					<span class="text-line">{cl #FFFF00}よたれそつ{/cl}ねな</span>
-					<span class="text-line">{cl #00FF00}らむうゐ{/cl}のおく</span>
-					<span class="text-line">{cl #0000FF}やまけ{/cl}ふこえて</span>
-					<span class="text-line">{cl #4B0082}あさ{/cl}きゆめみし</span>
-					<span class="text-line">{cl #9400D3}ゑ{/cl}ひもせす……</span>
+					<span class="text-line">よ{cl #FFFF00}たれそつ{/cl}ねな</span>
+					<span class="text-line">ら{cl #00FF00}むうゐ{/cl}のおく</span>
+					<span class="text-line">やま{cl #0000FF}けふこ{/cl}えて</span>
+					<span class="text-line">あさ{cl #4B0082}きゆ{/cl}めみし</span>
+					<span class="text-line">ゑひも{cl #9400D3}せ{/cl}す……</span>
 					<br/>
 					
 					<span class="text-line">あらら、歌のテキストに漢字がない！</span>
@@ -2763,11 +2770,11 @@ class VisitorView extends ErrorView
 					
 					<span class="text-line"><span style="color: #FF0000">いろはにほへと</span></span>
 					<span class="text-line"><span style="color: #FF7F00">ちりぬるをわ</span>か</span>
-					<span class="text-line"><span style="color: #FFFF00">よたれそつ</span>ねな</span>
-					<span class="text-line"><span style="color: #00FF00">らむうゐ</span>のおく</span>
-					<span class="text-line"><span style="color: #0000FF">やまけ</span>ふこえて</span>
-					<span class="text-line"><span style="color: #4B0082">あさ</span>きゆめみし</span>
-					<span class="text-line"><span style="color: #9400D3">ゑ</span>ひもせす……</span>
+					<span class="text-line">よ<span style="color: #FFFF00">たれそつね</span>な</span>
+					<span class="text-line">ら<span style="color: #00FF00">むうゐの</span>おく</span>
+					<span class="text-line">やま<span style="color: #0000FF">けふこ</span>えて</span>
+					<span class="text-line">あさ<span style="color: #4B0082">きゆ</span>めみし</span>
+					<span class="text-line">ゑひも<span style="color: #9400D3">せ</span>す……</span>
 					<br/>
 					
 					<span class="text-line">あらら、歌のテキストに漢字がない！</span>

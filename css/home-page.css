@@ -13,6 +13,12 @@ img {
 	height: var(--image-size-main-page);
 }
 
+img.website-mascot {
+	width: var(--image-size-mascot);
+	height: var(--image-size-mascot);
+	border: none;
+}
+
 .home-page-text {
 	flex-grow: 1;
 	text-align: center;
@@ -44,12 +50,6 @@ section.entity-container > a > h3 {
 
 section.entity-container > a:hover > img {
 	border: 2px solid var(--color-clickable-item-secondary);
-}
-
-img.website-mascot {
-	width: var(--image-size-main-page);
-	height: var(--image-size-main-page);
-	border: none;
 }
 
 /* Mobile Devices */
