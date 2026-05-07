@@ -943,8 +943,9 @@ namespace Localization\PolicyPage
 	                        'It includes malfunctions and deliberate malicious actions by a third party.';
 	const ContentPolicy7  = '7. The user agrees not to use any part of the website content for commercial purposes.';
 	const ContentPolicy8  = '8. The user agrees not to use any part of the website content for AI machine learning purposes.';
-	const ContentPolicy9  = '9. The user agrees not to copy, modify, derive or exploit any part of the website content with the purpose of distribution without a reference to the database and creator of the content in question.';
-	const ContentPolicy10 = '10. The policy may be changed without notifying users.';
+	const ContentPolicy9  = '9. The user is kindly asked to give a reference to the database in cases of copying any part of the website content.';
+	const ContentPolicy10 = '10. The user agrees not to modify, derive or exploit any part of the website content without a reference to the database and creator of the content in question.';
+	const ContentPolicy11 = '11. The policy may be changed without notifying users.';
 	
 	const HeadingPrivacy = 'Privacy Policy';
 	const PrivacyPolicy1 = '1. The user uses the service at their sole risk. The service is provided on basis “as is”. The website makes no warranties on anything.';
@@ -958,7 +959,7 @@ namespace Localization\PolicyPage
 	const RightholderPolicy1 = '1. If you are not comfortable with the fact that any data about you or your work is included in the database, please, contact us at support@vn-song-lyrics-db.ru.';
 	const RightholderPolicy2 = '2. The website is ready to find a solution to your claims.';
 	
-	const LastUpdated        = 'Policies were last edited on 17 February 2026.';
+	const LastUpdated        = 'Policies were last edited on 7 May 2026.';
 	const Timezone           = 'All dates and times are UTC+3.';
 }
 

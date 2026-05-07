@@ -943,8 +943,9 @@ namespace Localization\PolicyPage
 	                        '';
 	const ContentPolicy7  = '７．ユーザーはお金を稼ぐため、コンテントを使ってはいけません。';
 	const ContentPolicy8  = '８．ユーザーは機械学習のため、コンテントを使ってはいけません。';
-	const ContentPolicy9  = '９．ユーザーはコンテントをコピーしくて、変更しなくて、導かなくて、役に立たせなくてはいけません。、コンテントを使って、参照は必要です。';
-	const ContentPolicy10 = '１０．ポリシーは変わって、誰も知らせません。';
+	const ContentPolicy9  = '９．ユーザーはコンテントをコピーすると、ウェブサイトへの参照はおすすめです。';
+	const ContentPolicy10 = '１０．ユーザーはコンテントを変更する、導かすと、ウェブサイトへの参照は必要です。';
+	const ContentPolicy11 = '１１．ポリシーは変わって、誰も知らせません。';
 	
 	const HeadingPrivacy = 'プライバシーポリシー';
 	const PrivacyPolicy1 = '１．ユーザーはウェブサイトを使るのが自己責任です。ウェブサイトは「ＡＳ　ＩＳ」というポリシーを使う。何も保証はありません。';
@@ -958,7 +959,7 @@ namespace Localization\PolicyPage
 	const RightholderPolicy1 = '１．あなたに情報の所有権はよろしかったら、support@vn-song-lyrics-db.ruへメールを送ってください。';
 	const RightholderPolicy2 = '２．ウェブサイトは問題への解決策を見つけたいです。';
 	
-	const LastUpdated        = '最後の編集：２０２６年０２月１７日。';
+	const LastUpdated        = '最後の編集：２０２６年０５月０７日。';
 	const Timezone           = '全部の日付：ＵＴＣ＋３。';
 }
 
