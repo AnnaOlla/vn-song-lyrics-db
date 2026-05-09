@@ -370,11 +370,11 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(g.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			$where[]  = '(REGEXP_REPLACE(g.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
-			            ' REGEXP_REPLACE(g.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' REGEXP_REPLACE(g.transliterated_name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 						' OR'.
-						' REGEXP_REPLACE(g.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+						' REGEXP_REPLACE(g.localized_name,      "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
@@ -475,11 +475,11 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(a.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			$where[]  = '(REGEXP_REPLACE(a.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
-			            ' REGEXP_REPLACE(a.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' REGEXP_REPLACE(a.transliterated_name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 						' OR'.
-						' REGEXP_REPLACE(a.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+						' REGEXP_REPLACE(a.localized_name,      "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
@@ -573,11 +573,11 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(a.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			$where[]  = '(REGEXP_REPLACE(a.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
-			            ' REGEXP_REPLACE(a.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' REGEXP_REPLACE(a.transliterated_name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 						' OR'.
-						' REGEXP_REPLACE(a.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+						' REGEXP_REPLACE(a.localized_name,      "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
@@ -698,11 +698,11 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(c.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			$where[]  = '(REGEXP_REPLACE(c.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
-			            ' REGEXP_REPLACE(c.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' REGEXP_REPLACE(c.transliterated_name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 						' OR'.
-						' REGEXP_REPLACE(c.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+						' REGEXP_REPLACE(c.localized_name,      "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
@@ -951,11 +951,11 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(sn.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			$where[]  = '(REGEXP_REPLACE(sn.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
-			            ' REGEXP_REPLACE(sn.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' REGEXP_REPLACE(sn.transliterated_name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 						' OR'.
-						' REGEXP_REPLACE(sn.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+						' REGEXP_REPLACE(sn.localized_name,      "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
@@ -1102,7 +1102,7 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = 'REGEXP_REPLACE(tr.name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")';
+			$where[]  = 'REGEXP_REPLACE(tr.name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")';
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
@@ -1200,11 +1200,11 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(g.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			$where[]  = '(REGEXP_REPLACE(g.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
-			            ' REGEXP_REPLACE(g.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' REGEXP_REPLACE(g.transliterated_name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 						' OR'.
-						' REGEXP_REPLACE(g.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+						' REGEXP_REPLACE(g.localized_name,      "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
@@ -1236,11 +1236,11 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(a.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			$where[]  = '(REGEXP_REPLACE(a.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
-			            ' REGEXP_REPLACE(a.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' REGEXP_REPLACE(a.transliterated_name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 						' OR'.
-						' REGEXP_REPLACE(a.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+						' REGEXP_REPLACE(a.localized_name,      "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
@@ -1272,11 +1272,11 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(a.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			$where[]  = '(REGEXP_REPLACE(a.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
-			            ' REGEXP_REPLACE(a.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' REGEXP_REPLACE(a.transliterated_name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 						' OR'.
-						' REGEXP_REPLACE(a.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+						' REGEXP_REPLACE(a.localized_name,      "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
@@ -1308,11 +1308,11 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(c.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			$where[]  = '(REGEXP_REPLACE(c.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
-			            ' REGEXP_REPLACE(c.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' REGEXP_REPLACE(c.transliterated_name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 						' OR'.
-						' REGEXP_REPLACE(c.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+						' REGEXP_REPLACE(c.localized_name,      "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
@@ -1344,11 +1344,11 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(s.original_name, "\\\\s+", "")       LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			$where[]  = '(REGEXP_REPLACE(s.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
-			            ' REGEXP_REPLACE(s.transliterated_name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")'.
+			            ' REGEXP_REPLACE(s.transliterated_name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 						' OR'.
-						' REGEXP_REPLACE(s.localized_name, "\\\\s+", "")      LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%"))';
+						' REGEXP_REPLACE(s.localized_name,      "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
@@ -1386,7 +1386,7 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(t.name, "\\\\s+", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "\\\\s+", ""), "%")';
+			$where[]  = '(REGEXP_REPLACE(t.name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")';
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
