@@ -81,6 +81,24 @@ select:hover:not([multiple]):not([disabled]) {
 					   no-repeat;
 }
 
+select:disabled:not([multiple]) {
+	background-image: linear-gradient(45deg, transparent 50%, var(--color-text-placeholder) 50%),
+	                  linear-gradient(135deg, var(--color-text-placeholder) 50%, transparent 50%),
+					  linear-gradient(0deg, var(--color-input-secondary), var(--color-input-secondary));
+	
+	background-position: right 15px top 50%,
+	                     right 11px top 50%,
+						 right 0px  top 0px;
+	
+	background-size: 5px 5px,
+	                 5px 5px,
+	                 30px 100%;
+	
+	background-repeat: no-repeat,
+	                   no-repeat,
+					   no-repeat;
+}
+
 section.select-fake-filler {
 	box-sizing: border-box;
 	padding: var(--section-padding);
