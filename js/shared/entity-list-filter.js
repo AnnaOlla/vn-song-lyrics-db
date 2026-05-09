@@ -1,6 +1,6 @@
 // User may enter the name romanized differently, remove all whitespaces
 function prepareInputForFiltering(anyString) {
-	return anyString.replaceAll(/\s/g, '');
+	return anyString.replaceAll(/[^\p{L}\p{Nd}]/gu, '');
 }
 
 function filterSections(e) {
