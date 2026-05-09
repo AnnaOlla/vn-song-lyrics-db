@@ -11,12 +11,12 @@ select {
 	border-radius: var(--border-radius);
 	outline: none;
 	
-	font: var(--font-family);
+	font-family: var(--font-content);
 	font-size: var(--font-size-plain);
 	
 	box-sizing: border-box;
 	padding: var(--section-padding);
-	padding-right: calc(var(--section-padding) + 15px); /* for arrow */
+	padding-right: calc(var(--section-padding) + 30px); /* for arrow */
 	margin-top: var(--text-margin);
 	margin-bottom: var(--text-margin);
 
@@ -45,19 +45,46 @@ select[multiple] {
 	padding-right: var(--section-padding); /* use arrow space */
 }
 
-/* A triangle on the select to show that it's a select */
 select:not([multiple]):not([disabled]) {
-	background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
-	                  linear-gradient(135deg, currentColor 50%, transparent 50%);
-	background-repeat: no-repeat;
-	background-position: right 15px top calc(50%), right 11px top calc(50%);
-	background-size: 5px 5px, 5px 5px;
+	background-image: linear-gradient(45deg, transparent 50%, var(--color-clickable-item-secondary) 50%),
+	                  linear-gradient(135deg, var(--color-clickable-item-secondary) 50%, transparent 50%),
+					  linear-gradient(0deg, var(--color-clickable-item-primary), var(--color-clickable-item-primary));
+	
+	background-position: right 15px top 50%,
+	                     right 11px top 50%,
+						 right 0px  top 0px;
+	
+	background-size: 5px 5px,
+	                 5px 5px,
+	                 30px 100%;
+	
+	background-repeat: no-repeat,
+	                   no-repeat,
+					   no-repeat;
+}
+
+select:hover:not([multiple]):not([disabled]) {
+	background-image: linear-gradient(45deg, transparent 50%, var(--color-clickable-item-primary) 50%),
+	                  linear-gradient(135deg, var(--color-clickable-item-primary) 50%, transparent 50%),
+					  linear-gradient(0deg, var(--color-clickable-item-secondary), var(--color-clickable-item-secondary));
+	
+	background-position: right 15px top 50%,
+	                     right 11px top 50%,
+						 right 0px  top 0px;
+	
+	background-size: 5px 5px,
+	                 5px 5px,
+	                 30px 100%;
+	
+	background-repeat: no-repeat,
+	                   no-repeat,
+					   no-repeat;
 }
 
 section.select-fake-filler {
 	box-sizing: border-box;
 	padding: var(--section-padding);
-	padding-right: calc(var(--section-padding) + 15px); /* for arrow */
+	padding-right: calc(var(--section-padding) + 30px); /* for arrow */
 	display: none;
 	color: transparent;
 	z-index: -9999;
@@ -76,11 +103,13 @@ option {
 	border-radius: calc(var(--border-radius)/2);
 }
 
-option:hover:not([disabled]),
-option:checked {
+option:checked,
+option:hover:not([disabled]) {
 	background: var(--color-clickable-item-primary)
 	            linear-gradient(0deg, var(--color-clickable-item-primary) 0%,
 				var(--color-clickable-item-primary) 100%);
+	
+	color: var(--color-clickable-item-secondary);
 }
 
 option:disabled {
