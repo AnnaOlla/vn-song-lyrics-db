@@ -22,7 +22,7 @@ function setSameHeightForH1(e) {
 }
 
 /* function main() */ {
-	window.addEventListener('onload', setSameHeightForH1);
+	window.addEventListener('load', setSameHeightForH1);
 	window.addEventListener('resize', setSameHeightForH1);
 	
 	const mainArea = document.querySelector('main');
