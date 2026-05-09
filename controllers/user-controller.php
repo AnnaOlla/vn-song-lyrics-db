@@ -107,10 +107,10 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($albumIds as $albumId)
-			$this->model->addGameAlbumRelation($gameId, $albumId);
+			$this->model->addGameAlbumRelation($gameId, $albumId, 'unchecked');
 		
 		foreach ($characterIds as $characterId)
-			$this->model->addCharacterGameRelation($gameId, $characterId);
+			$this->model->addCharacterGameRelation($gameId, $characterId, 'unchecked');
 		
 		$link = Http::buildInternalPath($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
@@ -202,7 +202,7 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($gameIds as $gameId)
-			$this->model->addGameAlbumRelation($gameId, $albumId);
+			$this->model->addGameAlbumRelation($gameId, $albumId, 'unchecked');
 		
 		$link = Http::buildInternalPath($this->language, 'album', $albumUri);
 		$this->handleRedirect($link);
@@ -377,7 +377,7 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($gameIds as $gameId)
-			$this->model->addCharacterGameRelation($characterId, $gameId);
+			$this->model->addCharacterGameRelation($characterId, $gameId, 'unchecked');
 		
 		$link = Http::buildInternalPath($this->language, 'character', $characterUri);
 		$this->handleRedirect($link);
@@ -642,7 +642,7 @@ class UserController extends ViolatorController
 		);
 		
 		foreach (array_combine($artistIds, $characterIds) as $artistId => $characterId)
-			$this->model->addSongArtistCharacterRelation($song['id'], $artistId, $characterId);
+			$this->model->addSongArtistCharacterRelation($song['id'], $artistId, $characterId, 'unchecked');
 		
 		$link = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		$this->handleRedirect($link);
@@ -848,14 +848,13 @@ class UserController extends ViolatorController
 		
 		$allAlbumIds          = $this->model->getAlbumList(fetchMinInfo: true);
 		$allAlbumIds          = array_column($allAlbumIds, 'id');
-		$allCharacterIds      = $this->model->getCharacterList(fetchMinInfo: true);
-		$allCharacterIds      = array_column($allCharacterIds, 'id');
-		
 		$currentAlbumIds      = $this->model->getAlbumList(gameUri: $game['uri'], fetchMinInfo: true);
 		$currentAlbumIds      = array_column($currentAlbumIds, 'id');
 		$albumIdsToAdd        = array_diff($albumIds, $currentAlbumIds);
 		$albumIdsToDelete     = array_diff($currentAlbumIds, $albumIds);
 		
+		$allCharacterIds      = $this->model->getCharacterList(fetchMinInfo: true);
+		$allCharacterIds      = array_column($allCharacterIds, 'id');
 		$currentCharacterIds  = $this->model->getCharacterList(gameUri: $game['uri'], fetchMinInfo: true);
 		$currentCharacterIds  = array_column($currentCharacterIds, 'id');
 		$characterIdsToAdd    = array_diff($characterIds, $currentCharacterIds);
@@ -885,16 +884,16 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($albumIdsToAdd as $albumId)
-			$this->model->addGameAlbumRelation($gameId, $albumId);
+			$this->model->addGameAlbumRelation($gameId, $albumId, 'unchecked');
 		
 		foreach ($albumIdsToDelete as $albumId)
-			$this->model->deleteGameAlbumRelation($gameId, $albumId);
+			$this->model->deleteGameAlbumRelation($gameId, $albumId, 'unchecked');
 			
 		foreach ($characterIdsToAdd as $characterId)
-			$this->model->addCharacterGameRelation($characterId, $gameId);
+			$this->model->addCharacterGameRelation($characterId, $gameId, 'unchecked');
 		
 		foreach ($characterIdsToDelete as $characterId)
-			$this->model->deleteCharacterGameRelation($characterId, $gameId);
+			$this->model->deleteCharacterGameRelation($characterId, $gameId, 'unchecked');
 		
 		$link = Http::buildInternalPath($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
@@ -977,7 +976,6 @@ class UserController extends ViolatorController
 		
 		$allGameIds          = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds          = array_column($allGameIds, 'id');
-		
 		$currentGameIds      = $this->model->getGameList(albumUri: $album['uri'], fetchMinInfo: true);
 		$currentGameIds      = array_column($currentGameIds, 'id');
 		$gameIdsToAdd        = array_diff($gameIds, $currentGameIds);
@@ -1010,10 +1008,10 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($gameIdsToAdd as $gameId)
-			$this->model->addGameAlbumRelation($gameId, $albumId);
+			$this->model->addGameAlbumRelation($gameId, $albumId, 'unchecked');
 		
 		foreach ($gameIdsToDelete as $gameId)
-			$this->model->deleteGameAlbumRelation($gameId, $albumId);
+			$this->model->deleteGameAlbumRelation($gameId, $albumId, 'unchecked');
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $albumUri));
 	}
@@ -1177,7 +1175,6 @@ class UserController extends ViolatorController
 		
 		$allGameIds          = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds          = array_column($allGameIds, 'id');
-		
 		$currentGameIds      = $this->model->getGameList(characterUri: $character['uri'], fetchMinInfo: true);
 		$currentGameIds      = array_column($currentGameIds, 'id');
 		$gameIdsToAdd        = array_diff($gameIds, $currentGameIds);
@@ -1204,10 +1201,10 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($gameIdsToAdd as $gameId)
-			$this->model->addCharacterGameRelation($characterId, $gameId);
+			$this->model->addCharacterGameRelation($characterId, $gameId, 'unchecked');
 		
 		foreach ($gameIdsToDelete as $gameId)
-			$this->model->deleteCharacterGameRelation($characterId, $gameId);
+			$this->model->deleteCharacterGameRelation($characterId, $gameId, 'unchecked');
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'character', $characterUri));
 	}
@@ -1387,40 +1384,70 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$artistIds           = $_POST['artist-ids']       ?? [];
-		$characterIds        = $_POST['character-ids']    ?? [];
-		$originalSongId      = $_POST['original-song-id'] ?? null;
-		$languageId          = $_POST['language-id']      ?? null;
-		$lyrics              = $_POST['lyrics']           ?? null;
-		$notes               = $_POST['notes']            ?? null;
-		$userUpdatedId       = $_SESSION['user']['id'];
+		$artistIds            = $_POST['artist-ids']       ?? [];
+		$characterIds         = $_POST['character-ids']    ?? [];
+		$originalSongId       = $_POST['original-song-id'] ?? null;
+		$languageId           = $_POST['language-id']      ?? null;
+		$lyrics               = $_POST['lyrics']           ?? null;
+		$notes                = $_POST['notes']            ?? null;
+		$userUpdatedId        = $_SESSION['user']['id'];
 		
-		$artistIds           = Parsing::parseNullableIntegerArray($artistIds, 1);
-		$characterIds        = Parsing::parseNullableIntegerArray($characterIds, 1);
-		$originalSongId      = Parsing::parseNullableInteger($originalSongId, 1);
-		$languageId          = Parsing::parseNullableInteger($languageId, 1);
-		$lyrics              = Parsing::trimNullableText($lyrics);
-		$notes               = Parsing::trimNullableText($notes);
+		$artistIds            = Parsing::parseNullableIntegerArray($artistIds, 1);
+		$characterIds         = Parsing::parseNullableIntegerArray($characterIds, 1);
+		$originalSongId       = Parsing::parseNullableInteger($originalSongId, 1);
+		$languageId           = Parsing::parseNullableInteger($languageId, 1);
+		$lyrics               = Parsing::trimNullableText($lyrics);
+		$notes                = Parsing::trimNullableText($notes);
 		
-		$allArtistIds        = $this->model->getArtistList(fetchMinInfo: true);
-		$allArtistIds        = array_column($allArtistIds, 'id');
-		$allCharacterIds     = $this->model->getCharacterList(fetchMinInfo: true);
-		$allCharacterIds     = array_column($allCharacterIds, 'id');
-		$allCharacterIds[]   = null;
-		$allLanguages        = $this->model->getLanguageList();
-		$allLanguages        = array_column($allLanguages, 'id');
-		$allOriginalIds      = $this->model->getSongList
+		$allLanguages         = $this->model->getLanguageList();
+		$allLanguages         = array_column($allLanguages, 'id');
+		$allOriginalIds       = $this->model->getSongList
 		(
 			fetchMinInfo: true,
 			isOriginal:   true,
 			excludeId:    $song['id'],
 			hasVocal:     true
 		);
-		$allOriginalIds      = array_column($allOriginalIds, 'id');
-		$allOriginalIds[]    = null;
+		$allOriginalIds       = array_column($allOriginalIds, 'id');
+		$allOriginalIds[]     = null;
 		
-		if (count($artistIds) === 0)
-			throw new HttpUnprocessableEntity422('Artists were not provided', get_defined_vars());
+		$allArtistIds         = $this->model->getArtistList(fetchMinInfo: true);
+		$allArtistIds         = array_column($allArtistIds, 'id');
+		$allCharacterIds      = $this->model->getCharacterList(fetchMinInfo: true);
+		$allCharacterIds      = array_column($allCharacterIds, 'id');
+		$allCharacterIds[]    = null;
+		
+		$performerIds         = [];
+		for ($i = 0; $i < count($artistIds); $i++)
+			$performerIds[] = ['artist_id' => $artistIds[$i], 'character_id' => $characterIds[$i]];
+		
+		$currentPerformerIds  = $this->model->getPerformerList(albumUri: $album['uri'], songUri: $song['uri'], fetchMinInfo: true);
+		$currentPerformerIds  = array_map
+		(
+			function ($array)
+			{
+				return ['artist_id' => $array['artist_id'], 'character_id' => $array['character_id']];
+			},
+			$currentPerformerIds
+		);
+		$performersToAdd      = array_udiff
+		(
+			$performerIds,
+			$currentPerformerIds,
+			function ($a, $b)
+			{
+				return $a <=> $b;
+			}
+		);
+		$performersToDelete   = array_udiff
+		(
+			$currentPerformerIds,
+			$performerIds,
+			function ($a, $b)
+			{
+				return $a <=> $b;
+			}
+		);
 		
 		if (count($artistIds) !== count($characterIds))
 			throw new HttpUnprocessableEntity422('Artist count was not equal to character count', get_defined_vars());
@@ -1454,10 +1481,11 @@ class UserController extends ViolatorController
 			$userUpdatedId
 		);
 		
-		$this->model->deleteSongArtistCharacterRelation(songId: $song['id']);
+		foreach ($performersToDelete as $performer)
+			$this->model->deleteSongArtistCharacterRelation($song['id'], $performer['artist_id'], $performer['character_id'], 'unchecked');
 		
-		foreach (array_combine($artistIds, $characterIds) as $artistId => $characterId)
-			$this->model->addSongArtistCharacterRelation($song['id'], $artistId, $characterId);
+		foreach ($performersToAdd as $performer)
+			$this->model->addSongArtistCharacterRelation($song['id'], $performer['artist_id'], $performer['character_id'], 'unchecked');
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']));
 	}

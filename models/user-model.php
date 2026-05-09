@@ -856,8 +856,16 @@ class UserModel extends ViolatorModel
 		return [$id, $uri];
 	}
 	
-	final public function addGameAlbumRelation(int $gameId, int $albumId): void
+	final public function addGameAlbumRelation
+	(
+		int    $gameId,
+		int    $albumId,
+		string $status = 'unchecked'
+	): void
 	{
+		if (!in_array($status, ['unchecked', 'checked', 'hidden'], true))
+			throw new HttpInternalServerError500(__METHOD__.' called with incorrect status', get_defined_vars());
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -871,13 +879,14 @@ class UserModel extends ViolatorModel
 			(
 				:game_id,
 				:album_id,
-				"unchecked"
+				:status
 			)
 			'
 		);
 		
 		$stmt->bindParam(':game_id',  $gameId,  PDO::PARAM_INT);
 		$stmt->bindParam(':album_id', $albumId, PDO::PARAM_INT);
+		$stmt->bindParam(':status',   $status,  PDO::PARAM_STR);
 		$stmt->execute();
 	}
 	
@@ -885,9 +894,13 @@ class UserModel extends ViolatorModel
 	(
 		int      $songId,
 		int      $artistId,
-		int|null $characterId
+		int|null $characterId,
+		string   $status = 'unchecked'
 	): void
 	{
+		if (!in_array($status, ['unchecked', 'checked', 'hidden'], true))
+			throw new HttpInternalServerError500(__METHOD__.' called with incorrect status', get_defined_vars());
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -903,7 +916,7 @@ class UserModel extends ViolatorModel
 				:song_id,
 				:artist_id,
 				:character_id,
-				"unchecked"
+				:status
 			)
 			'
 		);
@@ -911,11 +924,20 @@ class UserModel extends ViolatorModel
 		$stmt->bindParam(':song_id',      $songId,      PDO::PARAM_INT);
 		$stmt->bindParam(':artist_id',    $artistId,    PDO::PARAM_INT);
 		$stmt->bindParam(':character_id', $characterId, PDO::PARAM_INT);
+		$stmt->bindParam(':status',       $status,      PDO::PARAM_STR);
 		$stmt->execute();
 	}
 	
-	final public function addCharacterGameRelation(int $characterId, int $gameId): void
+	final public function addCharacterGameRelation
+	(
+		int    $characterId,
+		int    $gameId,
+		string $status = 'unchecked'
+	): void
 	{
+		if (!in_array($status, ['unchecked', 'checked', 'hidden'], true))
+			throw new HttpInternalServerError500(__METHOD__.' called with incorrect status', get_defined_vars());
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -929,13 +951,14 @@ class UserModel extends ViolatorModel
 			(
 				:character_id,
 				:game_id,
-				"unchecked"
+				:status
 			)
 			'
 		);
 		
 		$stmt->bindParam(':character_id', $characterId, PDO::PARAM_INT);
 		$stmt->bindParam(':game_id',      $gameId,      PDO::PARAM_INT);
+		$stmt->bindParam(':status',       $status,      PDO::PARAM_STR);
 		$stmt->execute();
 	}
 	
@@ -949,8 +972,8 @@ class UserModel extends ViolatorModel
 		string      $originalName,
 		string      $transliteratedName,
 		string|null $localizedName,
-		array |null $logo,
-		int   |null $vndbId,
+		array|null  $logo,
+		int|null    $vndbId,
 		int         $userUpdatedId
 	): array
 	{
@@ -1041,8 +1064,8 @@ class UserModel extends ViolatorModel
 		string      $originalName,
 		string      $transliteratedName,
 		string|null $localizedName,
-		array |null $cover,
-		int   |null $vgmdbId,
+		array|null  $cover,
+		int|null    $vgmdbId,
 		int         $songCount,
 		int         $userUpdatedId
 	): array
@@ -1136,9 +1159,9 @@ class UserModel extends ViolatorModel
 		string      $originalName,
 		string      $transliteratedName,
 		string|null $localizedName,
-		array |null $photo,
-		int   |null $vgmdbId,
-		int   |null $aliasOfId,
+		array|null  $photo,
+		int|null    $vgmdbId,
+		int|null    $aliasOfId,
 		int         $userUpdatedId
 	): array
 	{
@@ -1375,11 +1398,11 @@ class UserModel extends ViolatorModel
 	(
 		string      $albumUri,
 		string      $songUri,
-		int   |null $originalSongId,
-		int   |null $languageId,
+		int|null    $originalSongId,
+		int|null    $languageId,
 		string|null $lyrics,
 		string|null $notes,
-		int   |null $userUpdatedId
+		int|null    $userUpdatedId
 	): void
 	{
 		$stmt = $this->pdo->prepare
@@ -1655,20 +1678,30 @@ class UserModel extends ViolatorModel
 	
 	final public function deleteGameAlbumRelation
 	(
-		int|null $gameId  = null,
-		int|null $albumId = null
+		int|null    $gameId      = null,
+		int|null    $albumId     = null,
+		string|null $whereStatus = null
 	): void
 	{
 		if (is_null($gameId) && is_null($albumId))
-			throw new HttpInternalServerError500('Method called without conditions', get_defined_vars());
+			throw new HttpInternalServerError500(__METHOD__.' called without conditions', get_defined_vars());
 		
-		$where = ['status = "unchecked"'];
+		if (!in_array($whereStatus, [null, 'unchecked', 'checked', 'hidden'], true))
+			throw new HttpInternalServerError500(__METHOD__.' called with incorrect status', get_defined_vars());
+		
+		$where = [];
 		$binds = [];
+		
+		if (!is_null($whereStatus))
+		{
+			$where[] = 'status = :status';
+			$binds[] = [':status',  $whereStatus, PDO::PARAM_STR];
+		}
 		
 		if (!is_null($gameId))
 		{
 			$where[] = 'game_id = :game_id';
-			$binds[] = [':game_id',  $gameId,  PDO::PARAM_INT];
+			$binds[] = [':game_id', $gameId, PDO::PARAM_INT];
 		}
 		
 		if (!is_null($albumId))
@@ -1694,16 +1727,26 @@ class UserModel extends ViolatorModel
 	
 	final public function deleteSongArtistCharacterRelation
 	(
-		int|null $songId      = null,
-		int|null $artistId    = null,
-		int|null $characterId = null
+		int|null    $songId      = null,
+		int|null    $artistId    = null,
+		int|null    $characterId = null,
+		string|null $whereStatus = null
 	): void
 	{
 		if (is_null($songId) && is_null($artistId) && is_null($characterId))
 			throw new HttpInternalServerError500('Method called without conditions', get_defined_vars());
 		
-		$where = ['status = "unchecked"'];
+		if (!in_array($whereStatus, [null, 'unchecked', 'checked', 'hidden'], true))
+			throw new HttpInternalServerError500(__METHOD__.' called with incorrect status', get_defined_vars());
+		
+		$where = [];
 		$binds = [];
+		
+		if (!is_null($whereStatus))
+		{
+			$where[] = 'status = :status';
+			$binds[] = [':status',  $whereStatus, PDO::PARAM_STR];
+		}
 		
 		if (!is_null($songId))
 		{
@@ -1720,7 +1763,7 @@ class UserModel extends ViolatorModel
 		if (!is_null($characterId))
 		{
 			$where[] = 'character_id = :character_id';
-			$binds[] = [':character_id', $artistId, PDO::PARAM_INT];
+			$binds[] = [':character_id', $characterId, PDO::PARAM_INT];
 		}
 		
 		$stmt = $this->pdo->prepare
@@ -1740,15 +1783,25 @@ class UserModel extends ViolatorModel
 	
 	final public function deleteCharacterGameRelation
 	(
-		int|null $characterId = null,
-		int|null $gameId      = null
+		int|null $characterId    = null,
+		int|null $gameId         = null,
+		string|null $whereStatus = null
 	): void
 	{
 		if (is_null($characterId) && is_null($gameId))
 			throw new HttpInternalServerError500('Method called without conditions', get_defined_vars());
 		
-		$where = ['status = "unchecked"'];
+		if (!in_array($whereStatus, [null, 'unchecked', 'checked', 'hidden'], true))
+			throw new HttpInternalServerError500(__METHOD__.' called with incorrect status', get_defined_vars());
+		
+		$where = [];
 		$binds = [];
+		
+		if (!is_null($whereStatus))
+		{
+			$where[] = 'status = :status';
+			$binds[] = [':status',  $whereStatus, PDO::PARAM_STR];
+		}
 		
 		if (!is_null($characterId))
 		{
@@ -1785,7 +1838,7 @@ class UserModel extends ViolatorModel
 		string|null $newPassword
 	)
 	{
-		$email = Cryptography::encryptData(mb_strtolower($email));
+		$email = Cryptography::encryptData(mb_strtolower($newEmail));
 		
 		$setPassword = '';
 		
