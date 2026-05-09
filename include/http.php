@@ -61,4 +61,26 @@ final class Http
 		
 		return '?'.$query;
 	}
+	
+	public static function buildPaginationParameters
+	(
+		int|null    $limit,
+		int|null    $page,
+		string|null $search
+	): string
+	{
+		$params = [];
+		
+		if (!is_null($limit))
+			$params[] = 'limit='.$limit;
+		if (!is_null($page))
+			$params[] = 'page='.$page;
+		if (!is_null($search))
+			$params[] = 'search='.rawurlencode($search);
+		
+		if (count($params) === 0)
+			return '';
+		
+		return '?'.implode('&', $params);
+	}
 }

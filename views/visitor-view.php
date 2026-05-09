@@ -112,7 +112,7 @@ class VisitorView extends ErrorView
 		
 		if ($fromLeft > $mostLeftPage)
 		{
-			$href = $pageLink.$this->buildPaginationParameters($limit, $mostLeftPage, $search);
+			$href = $pageLink.Http::buildPaginationParameters($limit, $mostLeftPage, $search);
 			$html[] = $this->createPaginationButton($mostLeftPage, $href, 'enabled');
 		}
 		
@@ -121,7 +121,7 @@ class VisitorView extends ErrorView
 		
 		for ($i = $fromLeft; $i <= $fromRight; $i++)
 		{
-			$href  = $pageLink.$this->buildPaginationParameters($limit, $i, $search);
+			$href  = $pageLink.Http::buildPaginationParameters($limit, $i, $search);
 			$state = ($i === $currentPageIndex) ? 'current' : 'enabled';
 			
 			$html[] = $this->createPaginationButton($i, $href, $state);
@@ -132,7 +132,7 @@ class VisitorView extends ErrorView
 		
 		if ($fromRight < $mostRightPage)
 		{
-			$href = $pageLink.$this->buildPaginationParameters($limit, $mostRightPage, $search);
+			$href = $pageLink.Http::buildPaginationParameters($limit, $mostRightPage, $search);
 			$html[] = $this->createPaginationButton($mostRightPage, $href, 'enabled');
 		}
 		
