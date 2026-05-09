@@ -1,9 +1,0 @@
-@font-face {
-	font-family: Juliamo-Ampleksa;
-	src: url('/fonts/juliamo-ampleksa.woff2') format('woff2'),
-	     url('/fonts/juliamo-ampleksa.ttf') format('truetype');
-}
-
-:root {
-	--font-security: Juliamo-Ampleksa;
-}
