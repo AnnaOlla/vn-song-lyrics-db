@@ -1,17 +1,6 @@
-@font-face {
-	font-family: Juliamo;
-	src: url('/fonts/juliamo.woff2') format('woff2'),
-	     url('/fonts/juliamo.ttf') format('truetype');
-}
-
-:root {
-	--font-captcha: Juliamo;
-}
-
 input[type="text"].captcha-input {
-	font-family: var(--font-captcha);
+	font-family: var(--font-security);
 	font-size: 32px;
-	line-height: normal; /* If a space is entered, the text goes down without it */
 }
 
 img.captcha-image {

@@ -18,9 +18,10 @@ input[type="file"] {
 	background-color: var(--color-input-primary);
 	color: var(--color-text-placeholder);
 	
-	border-radius: var(--border-radius);
-	font: var(--font-family);
+	font-family: var(--font-content);
 	font-size: var(--font-size-plain);
+	
+	border-radius: var(--border-radius);
 	border: 0;
 	
 	box-sizing: border-box;

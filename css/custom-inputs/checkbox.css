@@ -43,6 +43,8 @@ label.custom-checkbox:has(input[type="checkbox"]:disabled) > span {
 /* The checkbox itself */
 
 input[type="checkbox"] {
+	font-family: var(--font-content);
+	
 	appearance: none;
 	
 	aspect-ratio: 1/1;
