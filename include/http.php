@@ -18,48 +18,35 @@ final class Http
 		return '?'.http_build_query($keysToValues);
 	}
 	
-	public static function getLastVisitedPath(string|null $pathIfNull = null): string
+	public static function getLastVisitedPage(string|null $fallback = null): string
 	{
-		if (is_null($pathIfNull))
-			$pathIfNull = '';
+		if (is_null($fallback))
+			$fallback = '';
 		
 		if (!isset($_SERVER['HTTP_REFERER']))
-			return $pathIfNull;
+			return $fallback;
 		
 		$host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
 		
 		if (is_null($host) || $host !== $_SERVER['HTTP_HOST'])
-			return $pathIfNull;
+			return $fallback;
 		
 		$path = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
 		
 		if (is_null($path))
-			return $pathIfNull;
+			return $fallback;
 		
-		return $path;
-	}
-	
-	public static function getLastVisitedQuery(string|null $queryIfNull = null): string
-	{
-		if ($queryIfNull)
-			$queryIfNull = '?'.$queryIfNull;
-		else
-			$queryIfNull = '';
+		$currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 		
-		if (!isset($_SERVER['HTTP_REFERER']))
-			return $queryIfNull;
-		
-		$host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
-		
-		if (is_null($host) || $host !== $_SERVER['HTTP_HOST'])
-			return $queryIfNull;
+		if ($path === $currentPath)
+			return $fallback;
 		
 		$query = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY);
 		
 		if (is_null($query))
-			return $queryIfNull;
+			return $path;
 		
-		return '?'.$query;
+		return $path.'?'.$query;
 	}
 	
 	public static function buildPaginationParameters
