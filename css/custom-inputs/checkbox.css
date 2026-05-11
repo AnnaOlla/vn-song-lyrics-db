@@ -46,19 +46,17 @@ input[type="checkbox"] {
 	font-family: var(--font-content);
 	
 	appearance: none;
+	cursor: pointer;
 	
 	aspect-ratio: 1/1;
 	width: auto;
 	height: 100%;
+	box-sizing: border-box;
+	margin: 0px;
+	padding: var(--section-padding);
 	
 	background-color: var(--color-input-primary);
 	border-radius: var(--border-radius);
-	border: 0.25em solid var(--color-input-primary);
-	cursor: pointer;
-	
-	margin: 0px;
-	padding: var(--section-padding);
-	box-sizing: border-box;
 	
 	/* For the checkmark */
 	position: relative;
@@ -66,18 +64,14 @@ input[type="checkbox"] {
 
 input[type="checkbox"]:checked {
 	background-color: var(--color-clickable-item-primary);
-	border-radius: var(--border-radius);
-	border: 0.25em solid var(--color-clickable-item-primary);
 }
 
 input[type="checkbox"]:hover {
-	border: 0.25em solid var(--color-clickable-item-secondary);
+	background-color: var(--color-clickable-item-secondary);
 }
 
 input[type="checkbox"]:disabled {
 	background-color: var(--color-clickable-item-disabled);
-	border-radius: var(--border-radius);
-	border: 0.25em solid var(--color-clickable-item-disabled);
 	cursor: not-allowed;
 }
 
@@ -99,7 +93,7 @@ input[type="checkbox"]:checked::after {
 }
 
 input[type="checkbox"]:hover::after {
-	color: var(--color-clickable-item-secondary);
+	color: var(--color-clickable-item-primary);
 }
 
 input[type="checkbox"]:disabled::after {
