@@ -21,7 +21,7 @@ class AdministratorView extends UserView
 			<section>
 				<h1>Control Panel</h1>
 				<h2><a href="/en/control-panel/add-language">Add Language</a></h2>
-				<h2><a href="/en/control-panel/edit-language">Edit Language</a></h2>
+				<!-- <h2><a href="/en/control-panel/edit-language">Edit Language</a></h2> -->
 				<h2><a href="/en/control-panel/report-list">Report List</a></h2>
 				<h2><a href="/en/control-panel/user-list">User List</a></h2>
 			</section>
@@ -37,20 +37,20 @@ class AdministratorView extends UserView
 	{
 		if ($language)
 		{
-			$ownName = htmlspecialchars($language['own_name']);
-			$ruName  = htmlspecialchars($language['ru_name']);
-			$enName  = htmlspecialchars($language['en_name']);
-			$jaName  = htmlspecialchars($language['ja_name']);
+			$ownName = $language['own_name'];
+			$ruName  = $language['ru_name'];
+			$enName  = $language['en_name'];
+			$jaName  = $language['ja_name'];
 		}
 		else
 		{
-			$ownName = '';
-			$ruName  = '';
-			$enName  = '';
-			$jaName  = '';
+			$ownName = null;
+			$ruName  = null;
+			$enName  = null;
+			$jaName  = null;
 		}
 		
-		$cancelLink = Http::buildInternalPath($this->language, 'control-panel');
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'control-panel');
 		
 		$html[] = $this->startRender
 		(
@@ -65,26 +65,26 @@ class AdministratorView extends UserView
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section>
-						<h2>Own Name<span class="required-input"> *</span></h2>
-						<input type="text" name="own-name" value="'.$ownName.'" required />
+						'.$this->createHeadingForInput('Own Name', 2, true).'
+						'.$this->createTextInput(['name' => 'own-name', 'value' => $ownName, 'required' => true]).'
 					</section>
 					<section>
-						<h2>Name in Russian<span class="required-input"> *</span></h2>
-						<input type="text" name="ru-name" value="'.$ruName.'" required />
+						'.$this->createHeadingForInput('Name in Russian', 2, true).'
+						'.$this->createTextInput(['name' => 'ru-name', 'value' => $ruName, 'required' => true]).'
 					</section>
 					<section>
-						<h2>Name in English<span class="required-input"> *</span></h2>
-						<input type="text" name="en-name" value="'.$enName.'" required />
+						'.$this->createHeadingForInput('Name in English', 2, true).'
+						'.$this->createTextInput(['name' => 'en-name', 'value' => $enName, 'required' => true]).'
 					</section>
 					<section>
-						<h2>Name in Japanese<span class="required-input"> *</span></h2>
-						<input type="text" name="ja-name" value="'.$jaName.'" required />
+						'.$this->createHeadingForInput('Name in Japanese', 2, true).'
+						'.$this->createTextInput(['name' => 'ja-name', 'value' => $jaName, 'required' => true]).'
 					</section>
 					<section>
 						<section class="page-controls">
-							'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
-							<section></section>
-							<input type="submit" value="'.\Localization\Controls\Submit.'"/>
+							'.$this->createReturnButton($defaultReturnLink).'
+							'.$this->createFillerSection().'
+							'.$this->createSubmitButton().'
 						</section>
 					</section>
 				</form>
@@ -112,7 +112,7 @@ class AdministratorView extends UserView
 	final public function renderReportListPage(array $reports): void
 	{
 		$heading = 'Report List';
-		$cancelLink = Http::buildInternalPath($this->language, 'control-panel');
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'control-panel');
 		
 		$html[] = $this->startRender
 		(
@@ -164,7 +164,7 @@ class AdministratorView extends UserView
 					</tbody>
 				</table>
 				<section>
-					'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
+					'.$this->createReturnButton($defaultReturnLink).'
 				</section>
 			</section>
 		</article>
@@ -184,7 +184,7 @@ class AdministratorView extends UserView
 	final public function renderUserListPage(array $users): void
 	{
 		$heading = 'User List';
-		$cancelLink = Http::buildInternalPath($this->language, 'control-panel');
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'control-panel');
 		
 		$html[] = $this->startRender
 		(
@@ -211,14 +211,9 @@ class AdministratorView extends UserView
 		
 		foreach ($users as $user)
 		{
-			$email = Cryptography::decryptData($user['email']);
-			
-			$separator = [];
-			for ($i = 0; $i < 16; $i++)
-				$separator[] = 0xFF;
-			$separator = pack('C*', $separator);
-			
+			$separator    = str_repeat(chr(0xFF), 8);
 			$fingerprints = explode($separator, $user['fingerprints']);
+			
 			for ($i = 0; $i < count($fingerprints); $i++)
 				$fingerprints[$i] = Cryptography::decryptData($fingerprints[$i]);
 			$fingerprints = implode(', ', $fingerprints);
@@ -229,7 +224,7 @@ class AdministratorView extends UserView
 							<td>'.htmlspecialchars($user['id']).'</td>
 							<td>'.htmlspecialchars($user['en_name']).'</td>
 							<td>'.htmlspecialchars($user['username']).'</td>
-							<td>'.htmlspecialchars($email).'</td>
+							<td>'.htmlspecialchars(Cryptography::decryptData($user['email'])).'</td>
 							<td>'.htmlspecialchars($user['timestamp_created']).'</td>
 							<td>'.htmlspecialchars($user['timestamp_last_log_in']).'</td>
 							<td>'.htmlspecialchars($fingerprints).'</td>
@@ -242,7 +237,7 @@ class AdministratorView extends UserView
 					</tbody>
 				</table>
 				<section>
-					'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
+					'.$this->createReturnButton($defaultReturnLink).'
 				</section>
 			</section>
 		</article>
@@ -255,28 +250,21 @@ class AdministratorView extends UserView
 	
 	final public function renderFillAlbumEditorPage(array $album, array $discography, string $heading): void
 	{
-		$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
 		
 		$vocalOptions =
 		[
-			// The null option is added automatically
 			['id' => 0, 'value' => \Localization\SongEditorPage\HasVocalFalse],
 			['id' => 1, 'value' => \Localization\SongEditorPage\HasVocalTrue],
 		];
 		
 		$selectVocal = $this->createSelect
 		(
-			'has-vocal[]',
-			null,
-			null,
-			true,
-			false,
-			true,
-			true,
-			$vocalOptions,
-			null,
-			'value',
-			'id'
+			iteratedOptions: $vocalOptions,
+			selectedOption:  ['id' => 0, 'value' => \Localization\SongEditorPage\HasVocalFalse],
+			keyToShownValue: 'value',
+			keyToSentValue:  'id',
+			attributes:      ['name' => 'has-vocal[]', 'required' => true]
 		);
 		
 		$html[] = $this->startRender
@@ -362,9 +350,9 @@ class AdministratorView extends UserView
 					</table>
 					<section class="has-tooltip" tooltip-id="2">
 						<section class="page-controls">
-							'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
-							<section></section>
-							<input type="submit" value="'.\Localization\Controls\Submit.'"/>
+							'.$this->createReturnButton($defaultReturnLink).'
+							'.$this->createFillerSection().'
+							'.$this->createSubmitButton().'
 						</section>
 					</section>
 				</form>
@@ -372,6 +360,7 @@ class AdministratorView extends UserView
 		</article>
 		';
 		
+		/*
 		$tooltipWindow = $this->createTooltipWindow();
 		$tooltipHeadings = $this->createTooltipHeadingDatalist
 		(
@@ -392,7 +381,7 @@ class AdministratorView extends UserView
 		'.$tooltipHeadings.'
 		'.$tooltipContents.'
 		';
-		
+		*/
 		$html[] = $this->endRender
 		(
 			[

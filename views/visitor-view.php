@@ -9,596 +9,6 @@ class VisitorView extends ErrorView
 		parent::__construct($language);
 	}
 	
-	//---------------------------------------//
-	//       Content Pages: Pagination       //
-	//---------------------------------------//
-	
-	final protected function createResultsLimitBlock(int|null $limit): string
-	{
-		$selectedValue = ['toShow' => $limit, 'toSend' => $limit];
-		
-		$values =
-		[
-			['toShow' => 10,  'toSend' => 10],
-			['toShow' => 25,  'toSend' => 25],
-			['toShow' => 50,  'toSend' => 50],
-			['toShow' => 100, 'toSend' => 100]
-		];
-		
-		if (!in_array($selectedValue, $values) && !is_null($limit))
-		{
-			$values[] = $selectedValue;
-			usort($values, function($a, $b) { return $a['toSend'] <=> $b['toSend']; });
-		}
-		
-		$values[] = ['toShow' => \Localization\Controls\NoLimit, 'toSend' => null];
-		
-		$select = $this->createSelect
-		(
-			null,
-			'limit-result-count-bar',
-			null,
-			true,
-			false,
-			false,
-			false,
-			$values,
-			$selectedValue,
-			'toShow',
-			'toSend'
-		);
-		
-		return
-		'
-			<section>'.\Localization\Controls\LimitHeading.'</section>
-			<section class="results-limit">
-				'.$select.'
-			</section>
-		';
-	}
-	
-	final protected function createPaginationButton
-	(
-		string      $text,
-		string|null $href,
-		string      $state
-	): string
-	{
-		$text = htmlspecialchars($text ?? '');
-		$href = htmlspecialchars($href ?? '');
-		
-		if ($state === 'disabled')
-			return '<a class="pagination-button disabled">'.$text.'</a>';
-		else if ($state === 'current')
-			return '<a class="pagination-button current">'.$text.'</a>';
-		else
-			return '<a href="'.$href.'" class="pagination-button">'.$text.'</a>';
-	}
-	
-	final protected function createPaginationBlock
-	(
-		int         $currentPageIndex,
-		int|null    $limit,
-		string|null $search,
-		int         $entityCount,
-		string      $pageLink
-	): string
-	{
-		if (is_null($limit))
-			$pageCount = 1;
-		else if ($entityCount > 0 && $entityCount % $limit === 0)
-			$pageCount = intdiv($entityCount, $limit);
-		else
-			$pageCount = intdiv($entityCount, $limit) + 1;
-		
-		// If you change it,
-		// then change the divisor of pagination.button in search-filter-section.css
-		$mostLeftPage       = 1;
-		$pageCountFromLeft  = 3;
-		$pageCountfromRight = 3;
-		$mostRightPage      = $pageCount;
-		
-		$fromLeft = $currentPageIndex - $pageCountFromLeft;
-		$fromLeft = $fromLeft > $mostLeftPage ? $fromLeft : $mostLeftPage;
-		
-		$fromRight = $currentPageIndex + $pageCountfromRight;
-		$fromRight = $fromRight < $mostRightPage ? $fromRight : $mostRightPage;
-		
-		$html[] =
-		'
-			<section>'.\Localization\Controls\PageHeading.'</section>
-			<section class="pagination">
-		';
-		
-		if ($fromLeft > $mostLeftPage)
-		{
-			$href = $pageLink.Http::buildPaginationParameters($limit, $mostLeftPage, $search);
-			$html[] = $this->createPaginationButton($mostLeftPage, $href, 'enabled');
-		}
-		
-		if ($fromLeft > $mostLeftPage + 1)
-			$html[] = $this->createPaginationButton('…', null, 'disabled');
-		
-		for ($i = $fromLeft; $i <= $fromRight; $i++)
-		{
-			$href  = $pageLink.Http::buildPaginationParameters($limit, $i, $search);
-			$state = ($i === $currentPageIndex) ? 'current' : 'enabled';
-			
-			$html[] = $this->createPaginationButton($i, $href, $state);
-		}
-		
-		if ($fromRight < $mostRightPage - 1)
-			$html[] = $this->createPaginationButton('…', null, 'disabled');
-		
-		if ($fromRight < $mostRightPage)
-		{
-			$href = $pageLink.Http::buildPaginationParameters($limit, $mostRightPage, $search);
-			$html[] = $this->createPaginationButton($mostRightPage, $href, 'enabled');
-		}
-		
-		$html[] = 
-		'
-			</section>
-		';
-		
-		return implode($html);
-	}
-	
-	final protected function createSearchBarBlock
-	(
-		int|null    $limit,
-		int|null    $page,
-		string|null $search
-	): string
-	{
-		if (!is_null($limit))
-		{
-			$limitInput  = '<input name="limit" type="hidden" value="'.htmlspecialchars($limit).'" />';
-			$pageInput   = '<input name="page" type="hidden" value="1" />';
-			
-		}
-		else
-		{
-			$limitInput = '';
-			$pageInput  = '';
-		}
-		
-		$searchInput = '<input name="search" type="search" id="search-bar" value="'.htmlspecialchars($search ?? '').'" placeholder="'.\Localization\Controls\SearchPlaceholder.'" required />';
-		
-		return
-		'
-		<section>'.\Localization\Controls\SearchHeading.'</section>
-		<section class="search-elements">
-			'.$limitInput.'
-			'.$pageInput.'
-			'.$searchInput.'
-			<button id="search-bar-button">'.\Localization\Controls\SearchButton.'</button>
-		</section>
-		';
-	}
-	
-	//---------------------------------------//
-	//      Content Pages: Entity Lists      //
-	//---------------------------------------//
-	
-	final protected function createGameList
-	(
-		array       $games,
-		int         $headingLevel,
-		string      $entityClass,
-		string|null $relationKey         = null,
-		bool        $statusChangeAllowed = true
-	): array
-	{
-		$html = [];
-		
-		foreach ($games as $game)
-		{
-			$href = Http::buildInternalPath($this->language, 'game', $game['uri']);
-			
-			$image        = $this->createGameImage($game);
-			$textEntities = [];
-			
-			$textEntities[] = $this->createHeadingAsLink($game['transliterated_name'], $headingLevel, $href, 'entity-name');
-			$textEntities[] = $this->createParagraph($game['original_name'], 'entity-name');
-			$textEntities[] = $this->createParagraph($game['localized_name'], 'entity-name');
-			
-			if ($relationKey)
-			{
-				if (Session::agentIsAdministrator() && $statusChangeAllowed)
-					$textEntities[] = $this->createStatusSelect($game, $relationKey, $href);
-				else
-					$textEntities[] = $this->createStatus($game[$relationKey], true);
-			}
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	final protected function createAlbumList
-	(
-		array       $albums,
-		int         $headingLevel,
-		string      $entityClass,
-		string|null $relationKey         = null,
-		bool        $statusChangeAllowed = true
-	): array
-	{
-		$html = [];
-		
-		foreach ($albums as $album)
-		{
-			$href = Http::buildInternalPath($this->language, 'album', $album['uri']);
-			
-			$image        = $this->createAlbumImage($album);
-			$textEntities = [];
-			
-			$textEntities[] = $this->createHeadingAsLink($album['transliterated_name'], $headingLevel, $href, 'entity-name');
-			$textEntities[] = $this->createParagraph($album['original_name'], 'entity-name');
-			$textEntities[] = $this->createParagraph($album['localized_name'], 'entity-name');
-			
-			if ($relationKey)
-			{
-				if (Session::agentIsAdministrator()&& $statusChangeAllowed)
-					$textEntities[] = $this->createStatusSelect($album, $relationKey, $href);
-				else
-					$textEntities[] = $this->createStatus($album[$relationKey], true);
-			}
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	final protected function createArtistList
-	(
-		array       $artists,
-		int         $headingLevel,
-		string      $entityClass,
-		string|null $relationKey         = null,
-		bool        $statusChangeAllowed = true
-	): array
-	{
-		$html = [];
-		
-		foreach ($artists as $artist)
-		{
-			$href = Http::buildInternalPath($this->language, 'artist', $artist['uri']);
-			
-			$image        = $this->createArtistImage($artist);
-			$textEntities = [];
-			
-			$textEntities[] = $this->createHeadingAsLink($artist['transliterated_name'], $headingLevel, $href, 'entity-name');
-			$textEntities[] = $this->createParagraph($artist['original_name'], 'entity-name');
-			$textEntities[] = $this->createParagraph($artist['localized_name'], 'entity-name');
-			
-			if ($relationKey)
-			{
-				if (Session::agentIsAdministrator())
-					$textEntities[] = $this->createStatusSelect($artist, $relationKey, $href);
-				else
-					$textEntities[] = $this->createStatus($artist[$relationKey], true);
-			}
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	final protected function createCharacterList
-	(
-		array       $characters,
-		int         $headingLevel,
-		string      $entityClass,
-		string|null $relationKey         = null,
-		bool        $statusChangeAllowed = true
-	): array
-	{
-		$html = [];
-		
-		foreach ($characters as $character)
-		{
-			$href = Http::buildInternalPath($this->language, 'character', $character['uri']);
-			
-			$image        = $this->createCharacterImage($character);
-			$textEntities = [];
-			
-			$textEntities[] = $this->createHeadingAsLink($character['transliterated_name'], $headingLevel, $href, 'entity-name');
-			$textEntities[] = $this->createParagraph($character['original_name'], 'entity-name');
-			$textEntities[] = $this->createParagraph($character['localized_name'], 'entity-name');
-			
-			if ($relationKey)
-			{
-				if (Session::agentIsAdministrator() && $statusChangeAllowed)
-					$textEntities[] = $this->createStatusSelect($character, $relationKey, $href);
-				else
-					$textEntities[] = $this->createStatus($character[$relationKey], true);
-			}
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	final protected function createAlbumSongList
-	(
-		array $album,
-		array $songs,
-		int   $headingLevel
-	): array
-	{
-		$rows = [];
-		
-		for ($i = 0; $i < count($songs); $i++)
-		{
-			$cells = [];
-			
-			if ($songs[$i]['has_vocal'])
-			{
-				$href = Http::buildInternalPath($this->language, 'album', $songs[$i]['album_uri'], 'song', $songs[$i]['uri']);
-				$transliteratedName = $this->createParagraphAsLink($songs[$i]['transliterated_name'], $href);
-			}
-			else
-				$transliteratedName = $this->createParagraph($songs[$i]['transliterated_name']);
-			
-			$editHref = Http::buildInternalPath
-			(
-				$this->language,
-				'album',
-				$songs[$i]['album_uri'],
-				'song',
-				$songs[$i]['uri'],
-				'edit'
-			);
-			
-			$editAccess  = Session::agentHasRightToEditAlbum($album);
-			$editEnabled = $editAccess === AccessState::Ok;
-			$editTooltip = \Localization\Functions\localizeAccessState($editAccess);
-			
-			$editButton = $this->createButton
-			(
-				\Localization\AlbumPage\EditSong,
-				$editHref,
-				$editEnabled,
-				$editTooltip
-			);
-			
-			$cells['disc_number']         = htmlspecialchars($songs[$i]['disc_number']);
-			$cells['track_number']        = htmlspecialchars($songs[$i]['track_number']);
-			$cells['transliterated_name'] = $transliteratedName;
-			$cells['original_name']       = $this->createParagraph($songs[$i]['original_name']);
-			$cells['localized_name']      = $this->createParagraph($songs[$i]['localized_name']);
-			$cells['edit_button']         = $editButton;
-			
-			$rows[] = $cells;
-		}
-		
-		$html[] =
-		'
-		<section>
-			'.$this->createHeading(\Localization\AlbumPage\SongList, 2).'
-			<table>
-				<tbody>
-					<tr>
-						<th>'.\Localization\AlbumPage\DiscNumber.'</th>
-						<th>'.\Localization\AlbumPage\TrackNumber.'</th>
-						<th>'.\Localization\AlbumPage\SongName.'</th>
-						<th></th>
-		';
-		
-		foreach ($rows as $row)
-		{
-			$html[] =
-			'
-					<tr>
-						<td>'.$row['disc_number'].'</td>
-						<td>'.$row['track_number'].'</td>
-						<td>
-							'.$row['transliterated_name'].'
-							'.$row['original_name'].'
-							'.$row['localized_name'].'
-						</td>
-						<td>'.$row['edit_button'].'</td>
-					</tr>
-			';
-		}
-		
-		if (count($songs) < $album['song_count'])
-		{
-			$addLabel   = \Localization\AlbumPage\AddSong;
-			$addHref    = Http::buildInternalPath($this->language, 'album', $album['uri'], 'add-song');
-			$addAccess  = Session::agentHasRightToEditAlbum($album);
-			$addEnabled = $addAccess === AccessState::Ok;
-			$addTooltip = \Localization\Functions\localizeAccessState($addAccess);
-			
-			$html[] =
-			'
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td>'.$this->createButton($addLabel, $addHref, $addEnabled, $addTooltip).'</td>
-					</tr>
-			';
-		}
-		
-		if (count($songs) === 0 && Session::agentIsAdministrator())
-		{
-			$title = \Localization\AlbumPage\FillAlbum;
-			$href  = Http::buildInternalPath($this->language, 'album', $album['uri'], 'fill-album');
-			
-			$html[] =
-			'
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td>'.$this->createButton($title, $href, true, '').'</td>
-					</tr>
-			';
-		}
-		
-		$html[] =
-		'
-				</tbody>
-			</table>
-		</section>
-		';
-		
-		return $html;
-	}
-	
-	final protected function createSongList
-	(
-		array       $songs,
-		int         $headingLevel,
-		string      $entityClass,
-		string|null $relationKey = null
-	): array
-	{
-		$html = [];
-		
-		foreach ($songs as $song)
-		{
-			$album = [];
-			$album['transliterated_name'] = $song['album_transliterated_name'];
-			$album['uri']                 = $song['album_uri'];
-			$album['is_image_uploaded']   = $song['is_image_uploaded'];
-			
-			$image        = $this->createAlbumImage($album);
-			$textEntities = [];
-			
-			if ($song['has_vocal'])
-			{
-				$href = Http::buildInternalPath($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
-				$textEntities[] = $this->createHeadingAsLink($song['transliterated_name'], $headingLevel, $href, 'entity-name');
-			}
-			else
-				$textEntities[] = $this->createHeading($song['transliterated_name'], $headingLevel, 'entity-name');
-			
-			$textEntities[] = $this->createParagraph($song['original_name'], 'entity-name');
-			$textEntities[] = $this->createParagraph($song['localized_name'], 'entity-name');
-			
-			if ($relationKey)
-				$textEntities[] = $this->createStatus($song['song_artist_character_relation_status'], true);
-			else
-				$textEntities[] = '';
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	final protected function createTranslationList
-	(
-		array  $translations,
-		int    $headingLevel,
-		string $entityClass
-	): array
-	{
-		$html = [];
-		
-		foreach ($translations as $translation)
-		{
-			$album = [];
-			$album['transliterated_name'] = $translation['album_transliterated_name'];
-			$album['uri']                 = $translation['album_uri'];
-			$album['is_image_uploaded']   = $translation['is_image_uploaded'];
-			
-			$image        = $this->createAlbumImage($album);
-			$textEntities = [];
-			
-			$href = Http::buildInternalPath
-			(
-				$this->language,
-				'album',
-				$translation['album_uri'],
-				'song',
-				$translation['song_uri'],
-				'translation',
-				$translation['uri']
-			);
-			
-			$textEntities[] = $this->createHeadingAsLink($translation['name'], $headingLevel, $href, 'entity-name');
-			$textEntities[] = $this->createParagraph(\Localization\Functions\localizeLanguageName($translation));
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	//-------------------------//
-	//----- Single Entity -----//
-	//-------------------------//
-	
-	final protected function createGame(array $game, int $headingLevel): string
-	{
-		$image        = $this->createGameImage($game);
-		$textEntities = [];
-		
-		$textEntities[] = $this->createHeading($game['transliterated_name'], $headingLevel);
-		$textEntities[] = $this->createParagraph($game['original_name']);
-		$textEntities[] = $this->createParagraph($game['localized_name']);
-		$textEntities[] = $this->createVndbLink(\Localization\GamePage\Details, $game, 'v');
-		
-		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
-	}
-	
-	final protected function createAlbum(array $album, int $headingLevel): string
-	{
-		$image        = $this->createAlbumImage($album);
-		$textEntities = [];
-		
-		$textEntities[] = $this->createHeading($album['transliterated_name'], $headingLevel);
-		$textEntities[] = $this->createParagraph($album['original_name']);
-		$textEntities[] = $this->createParagraph($album['localized_name']);
-		$textEntities[] = $this->createVgmdbLink(\Localization\AlbumPage\Details, $album, 'album');
-		$textEntities[] = $this->createParagraph(\Localization\AlbumPage\SongCount.$album['song_count']);
-		
-		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
-	}
-	
-	final protected function createArtist(array $artist, int $headingLevel): string
-	{
-		$image        = $this->createArtistImage($artist);
-		$textEntities = [];
-		
-		$textEntities[] = $this->createHeading($artist['transliterated_name'], $headingLevel);
-		$textEntities[] = $this->createParagraph($artist['original_name']);
-		$textEntities[] = $this->createParagraph($artist['localized_name']);
-		$textEntities[] = $this->createVgmdbLink(\Localization\ArtistPage\Details, $artist, 'artist');
-		
-		if ($artist['alias_of_transliterated_name'] && $artist['alias_of_uri'])
-		{
-			$href = Http::buildInternalPath($this->language, 'artist', $artist['alias_of_uri']);
-			$text = $artist['alias_of_transliterated_name'];
-			
-			$textEntities[] = '<p>'.\Localization\ArtistPage\AliasOf.$this->createLink($href, $text).'</p>';
-		}
-		
-		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
-	}
-	
-	final protected function createCharacter(array $character, int $headingLevel): string
-	{
-		$image        = $this->createCharacterImage($character);
-		$textEntities = [];
-		
-		$textEntities[] = $this->createHeading($character['transliterated_name'], $headingLevel);
-		$textEntities[] = $this->createParagraph($character['original_name']);
-		$textEntities[] = $this->createParagraph($character['localized_name']);
-		$textEntities[] = $this->createVndbLink(\Localization\CharacterPage\Details, $character, 'c');
-		
-		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
-	}
-	
 	//---------------------//
 	//      Home Page      //
 	//---------------------//
@@ -637,13 +47,7 @@ class VisitorView extends ErrorView
 			$image   = $this->createAlbumImage($album);
 			$heading = $this->createHeading($album['transliterated_name'], $headingLevel);
 			
-			$html[] =
-			'
-					<a href='.$href.'>
-						'.$image.'
-						'.$heading.'
-					</a>
-			';
+			$html[] = '<a href='.htmlspecialchars($href).'>'.$image.$heading.'</a>';
 		}
 		
 		$html[] =
@@ -668,13 +72,7 @@ class VisitorView extends ErrorView
 			$image   = $this->createAlbumImage($album);
 			$heading = $this->createHeading($lyric['transliterated_name'], $headingLevel);
 			
-			$html[] =
-			'
-					<a href='.$href.'>
-						'.$image.'
-						'.$heading.'
-					</a>
-			';
+			$html[] = '<a href='.htmlspecialchars($href).'>'.$image.$heading.'</a>';
 		}
 		
 		$html[] =
@@ -708,13 +106,7 @@ class VisitorView extends ErrorView
 			$image   = $this->createAlbumImage($album);
 			$heading = $this->createHeading($translation['name'], $headingLevel);
 			
-			$html[] =
-			'
-					<a href='.$href.'>
-						'.$image.'
-						'.$heading.'
-					</a>
-			';
+			$html[] = '<a href='.htmlspecialchars($href).'>'.$image.$heading.'</a>';
 		}
 		
 		$html[] =
@@ -738,9 +130,6 @@ class VisitorView extends ErrorView
 		InputError  $error = InputError::None
 	): void
 	{
-		$email        = htmlspecialchars($email ?? '');
-		$errorMessage = \Localization\Functions\localizeInputError($error);
-		
 		$html[] = $this->startRender
 		(
 			title:        \Localization\LogInPage\Heading,
@@ -751,22 +140,22 @@ class VisitorView extends ErrorView
 		'
 		<article>
 			<section>
-				<h1>'.\Localization\HomePage\Heading.'</h1>
+				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
 			</section>
 			<section>
-				<h2>'.\Localization\LogInPage\Heading.'</h2>
-				<p>'.$errorMessage.'</p>
+				'.$this->createHeading(\Localization\LogInPage\Heading, 2).'
+				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
 					<section>
-						<h3>'.\Localization\LogInPage\Email.'<span class="required-input"> *</span></h3>
-						<input type="email" name="email" value="'.$email.'" minlength="4" maxlength="32" required/>
+						'.$this->createHeadingForInput(\Localization\LogInPage\Email, 3, true).'
+						'.$this->createEmailInput(['name' => 'email', 'value' => $email, 'placeholder' => 'name@mailserver.domain', 'required' => true]).'
 					</section>
 					<section>
-						<h3>'.\Localization\LogInPage\Password.'<span class="required-input"> *</span></h3>
-						<input type="password" name="password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\LogInPage\HintPassword.'" required/>
+						'.$this->createHeadingForInput(\Localization\LogInPage\Password, 3, true).'
+						'.$this->createPasswordInput(['name' => 'password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
 					</section>
 					<section>
-						<input type="submit" value="'.\Localization\LogInPage\Submit.'"/>
+						'.$this->createSubmitButton().'
 					</section>
 				</form>
 			</section>
@@ -786,10 +175,6 @@ class VisitorView extends ErrorView
 		string      $captchaBase64Image = ''
 	): void
 	{
-		$username     = htmlspecialchars($username ?? '');
-		$email        = htmlspecialchars($email ?? '');
-		$errorMessage = \Localization\Functions\localizeInputError($error);
-		
 		$html[] = $this->startRender
 		(
 			title:        \Localization\SignUpPage\Heading,
@@ -800,23 +185,23 @@ class VisitorView extends ErrorView
 		'
 		<article>
 			<section>
-				<h1>'.\Localization\HomePage\Heading.'</h1>
+				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
 			</section>
 			<section>
-				<h2>'.\Localization\SignUpPage\Heading.'</h2>
-				<p>'.$errorMessage.'</p>
+				'.$this->createHeading(\Localization\SignUpPage\Heading, 2).'
+				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
 					<section>
-						<h3>'.\Localization\SignUpPage\Username.'<span class="required-input"> *</span></h3>
-						<input type="text" name="username" value="'.$username.'" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintUsername.'" required/>
+						'.$this->createHeadingForInput(\Localization\SignUpPage\Username, 3, true).'
+						'.$this->createUsernameInput(['name' => 'username', 'value' => $username, 'placeholder' => \Localization\SignUpPage\HintUsername, 'required' => true]).'
 					</section>
 					<section>
-						<h3>'.\Localization\SignUpPage\Email.'<span class="required-input"> *</span></h3>
-						<input type="email" name="email" value="'.$email.'" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintEmail.'" required/>
+						'.$this->createHeadingForInput(\Localization\SignUpPage\Email, 3, true).'
+						'.$this->createEmailInput(['name' => 'email', 'value' => $email, 'placeholder' => \Localization\SignUpPage\HintEmail, 'required' => true]).'
 					</section>
 					<section>
-						<h3>'.\Localization\SignUpPage\Password.'<span class="required-input"> *</span></h3>
-						<input type="password" name="password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintPassword.'" required/>
+						'.$this->createHeadingForInput(\Localization\SignUpPage\Password, 3, true).'
+						'.$this->createPasswordInput(['name' => 'password', 'placeholder' => \Localization\SignUpPage\HintPassword, 'required' => true]).'
 					</section>
 					<section>
 						<p>'.\Localization\SignUpPage\Confirmation.'</p>
@@ -826,9 +211,9 @@ class VisitorView extends ErrorView
 						<p>'.\Localization\SignUpPage\Warning.'</p>
 					</section>
 					<section>
-						<input type="text" name="captcha-code" id="captcha-input" class="captcha-input" placeholder="code:" required/>
-						<img src="'.htmlspecialchars($captchaBase64Image).'" alt="captcha" class="captcha-image"/>
-						<input type="submit" value="'.\Localization\SignUpPage\Submit.'"/>
+						'.$this->createCaptchaInput(['required' => true]).'
+						'.$this->createCaptchaImage($captchaBase64Image).'
+						'.$this->createSubmitButton().'
 					</section>
 				</form>
 			</section>
@@ -853,11 +238,9 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$buttonLabel    = \Localization\GameListPage\AddGame;
-		$buttonHref     = Http::buildInternalPath($this->language, 'add-game');
-		$buttonAccess   = Session::agentHasRightToAddGame();
-		$buttonIsActive = $buttonAccess === AccessState::Ok;
-		$buttonTooltip  = \Localization\Functions\localizeAccessState($buttonAccess);
+		$buttonAttributes = ['href'  => Http::buildInternalPath($this->language, 'add-game')];
+		$buttonLabel      = \Localization\GameListPage\AddGame;
+		$buttonAccess     = Session::agentHasRightToAddGame();
 		
 		$hrefThisPage      = Http::buildInternalPath($this->language, 'game-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $gameCount, $hrefThisPage);
@@ -881,7 +264,7 @@ class VisitorView extends ErrorView
 				'.$this->createHeading(\Localization\GameListPage\Heading, 1).'
 				<section class="filter-section">
 					'.$this->createFilterBar().'
-					'.$this->createButton($buttonLabel, $buttonHref, $buttonIsActive, $buttonTooltip).'
+					'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
 				</section>
 			</section>
 			<section>
@@ -929,11 +312,9 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$buttonLabel    = \Localization\AlbumListPage\AddAlbum;
-		$buttonHref     = Http::buildInternalPath($this->language, 'add-album');
-		$buttonAccess   = Session::agentHasRightToAddAlbum();
-		$buttonIsActive = $buttonAccess === AccessState::Ok;
-		$buttonTooltip  = \Localization\Functions\localizeAccessState($buttonAccess);
+		$buttonAttributes = ['href'  => Http::buildInternalPath($this->language, 'add-album')];
+		$buttonLabel      = \Localization\AlbumListPage\AddAlbum;
+		$buttonAccess     = Session::agentHasRightToAddAlbum();
 		
 		$hrefThisPage      = Http::buildInternalPath($this->language, 'album-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $albumCount, $hrefThisPage);
@@ -957,7 +338,7 @@ class VisitorView extends ErrorView
 				'.$this->createHeading(\Localization\AlbumListPage\Heading, 1).'
 				<section class="filter-section">
 					'.$this->createFilterBar().'
-					'.$this->createButton($buttonLabel, $buttonHref, $buttonIsActive, $buttonTooltip).'
+					'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
 				</section>
 			</section>
 			<section>
@@ -1005,11 +386,9 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$buttonLabel    = \Localization\ArtistListPage\AddArtist;
-		$buttonHref     = Http::buildInternalPath($this->language, 'add-artist');
-		$buttonAccess   = Session::agentHasRightToAddArtist();
-		$buttonIsActive = $buttonAccess === AccessState::Ok;
-		$buttonTooltip  = \Localization\Functions\localizeAccessState($buttonAccess);
+		$buttonAttributes = ['href'  => Http::buildInternalPath($this->language, 'add-artist')];
+		$buttonLabel      = \Localization\ArtistListPage\AddArtist;
+		$buttonAccess     = Session::agentHasRightToAddArtist();
 		
 		$hrefThisPage      = Http::buildInternalPath($this->language, 'artist-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $artistCount, $hrefThisPage);
@@ -1033,7 +412,7 @@ class VisitorView extends ErrorView
 				'.$this->createHeading(\Localization\ArtistListPage\Heading, 1).'
 				<section class="filter-section">
 					'.$this->createFilterBar().'
-					'.$this->createButton($buttonLabel, $buttonHref, $buttonIsActive, $buttonTooltip).'
+					'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
 				</section>
 			</section>
 			<section>
@@ -1081,11 +460,9 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$buttonLabel    = \Localization\CharacterListPage\AddCharacter;
-		$buttonHref     = Http::buildInternalPath($this->language, 'add-character');
-		$buttonAccess   = Session::agentHasRightToAddCharacter();
-		$buttonIsActive = $buttonAccess === AccessState::Ok;
-		$buttonTooltip  = \Localization\Functions\localizeAccessState($buttonAccess);
+		$buttonAttributes = ['href'  => Http::buildInternalPath($this->language, 'add-character')];
+		$buttonLabel      = \Localization\CharacterListPage\AddCharacter;
+		$buttonAccess     = Session::agentHasRightToAddCharacter();
 		
 		$hrefThisPage      = Http::buildInternalPath($this->language, 'character-list');
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $characterCount, $hrefThisPage);
@@ -1109,7 +486,7 @@ class VisitorView extends ErrorView
 				'.$this->createHeading(\Localization\CharacterListPage\Heading, 1).'
 				<section class="filter-section">
 					'.$this->createFilterBar().'
-					'.$this->createButton($buttonLabel, $buttonHref, $buttonIsActive, $buttonTooltip).'
+					'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
 				</section>
 			</section>
 			<section>
@@ -1331,7 +708,7 @@ class VisitorView extends ErrorView
 		$html[] = 
 		'
 			'.$this->createTimestampBlock($game).'
-			'.$this->createControlButtonsBlock([$game], ['game'], $game, 'Game').'
+			'.$this->createEntityControlBlock([$game], ['game'], $game, 'Game').'
 		</article>
 		';
 		
@@ -1385,7 +762,7 @@ class VisitorView extends ErrorView
 		$html[] = 
 		'
 			'.$this->createTimestampBlock($album).'
-			'.$this->createControlButtonsBlock([$album], ['album'], $album, 'Album').'
+			'.$this->createEntityControlBlock([$album], ['album'], $album, 'Album').'
 		</article>
 		';
 		
@@ -1466,7 +843,7 @@ class VisitorView extends ErrorView
 		$html[] = 
 		'
 			'.$this->createTimestampBlock($artist).'
-			'.$this->createControlButtonsBlock([$artist], ['artist'], $artist, 'Artist').'
+			'.$this->createEntityControlBlock([$artist], ['artist'], $artist, 'Artist').'
 		</article>
 		';
 		
@@ -1529,7 +906,7 @@ class VisitorView extends ErrorView
 		$html[] = 
 		'
 			'.$this->createTimestampBlock($character).'
-			'.$this->createControlButtonsBlock([$character], ['character'], $character, 'Character').'
+			'.$this->createEntityControlBlock([$character], ['character'], $character, 'Character').'
 		</article>
 		';
 		
@@ -1572,13 +949,11 @@ class VisitorView extends ErrorView
 					<p>'.\Localization\LyricsPage\NoLyricsAdded.'</p>
 		';
 		
-		$label   = \Localization\LyricsPage\AddLyrics;
-		$href    = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'add-lyrics');
-		$access  = Session::agentHasRightToAddLyrics($song);
-		$enabled = $access === AccessState::Ok;
-		$tooltip = \Localization\Functions\localizeAccessState($access);
+		$buttonAttributes = ['href'  => Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'add-lyrics')];
+		$buttonLabel      = \Localization\LyricsPage\AddLyrics;
+		$buttonAccess     = Session::agentHasRightToAddLyrics($song);
 		
-		$addLyricsButton = $this->createButton($label, $href, $enabled, $tooltip);
+		$addLyricsButton = $this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes);
 		
 		$html[] = 
 		'
@@ -1655,7 +1030,7 @@ class VisitorView extends ErrorView
 				'.$this->createSongLyrics($songToShow).'
 				'.$this->createSongNotes($songToShow).'
 				'.$this->createTimestampBlock($song).'
-				'.$this->createControlButtonsBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
+				'.$this->createEntityControlBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
 			</section>
 		</article>
 		';
@@ -1743,8 +1118,8 @@ class VisitorView extends ErrorView
 				'.$this->createSongNotes($songToShow).'
 				'.$this->createTimestampBlock($translation).'
 				'.$this->createTimestampBlock($songToShow).'
-				'.$this->createControlButtonsBlock([$albumToShow, $songToShow, $translation], ['album', 'song', 'translation'], $translation, 'Translation').'
-				'.$this->createControlButtonsBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
+				'.$this->createEntityControlBlock([$albumToShow, $songToShow, $translation], ['album', 'song', 'translation'], $translation, 'Translation').'
+				'.$this->createEntityControlBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
 			</section>
 		</article>
 		';
@@ -1768,12 +1143,9 @@ class VisitorView extends ErrorView
 		array       $feedbacks,
 		string|null $feedback           = null,
 		InputError  $error              = InputError::None,
-		string      $captchaBase64Image = ''
+		string|null $captchaBase64Image = ''
 	): void
 	{
-		$feedback     = htmlspecialchars($feedback ?? '');
-		$errorMessage = \Localization\Functions\localizeInputError($error);
-		
 		$html[] = $this->startRender
 		(
 			title: \Localization\FeedbackPage\Heading,
@@ -1794,12 +1166,12 @@ class VisitorView extends ErrorView
 				'.$this->createParagraph(\Localization\FeedbackPage\AboutAnswer).'
 				'.$this->createParagraph(\Localization\FeedbackPage\SymbolLimit).'
 				<form method="POST">
-					<textarea name="message" rows="4" maxlength="500" placeholder="'.\Localization\Controls\Textarea.'" required>'.$feedback.'</textarea>
-					'.$this->createParagraph($errorMessage).'
+					'.$this->createTextarea(attributes: ['name' => 'message', 'maxlength' => self::FEEDBACK_MAX_LENGTH, 'placeholder' => \Localization\Controls\Textarea, 'required' => true]).'
+					'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 					<section>
-						<input type="text" name="captcha-code" class="captcha-input" placeholder="code:" required/>
-						<img src="'.htmlspecialchars($captchaBase64Image).'" alt="captcha" class="captcha-image"/>
-						<input type="submit" value="'.\Localization\FeedbackPage\Submit.'"/>
+						'.$this->createCaptchaInput(['required' => true]).'
+						'.$this->createCaptchaImage($captchaBase64Image).'
+						'.$this->createSubmitButton().'
 					</section>
 				</form>
 			</section>
@@ -1811,7 +1183,7 @@ class VisitorView extends ErrorView
 			$ip        = Cryptography::generateSimpleHash($feedback['sender_ip']);
 			$timestamp = $feedback['message_timestamp'];
 			$message   = $feedback['message'];
-			$id        = Session::agentIsAdministrator() ? ' data-id="'.$feedback['id'].'"' : '';
+			$id        = Session::agentIsAdministrator() ? ' data-id="'.htmlspecialchars($feedback['id']).'"' : '';
 			
 			$html[] = 
 			'
@@ -1840,12 +1212,12 @@ class VisitorView extends ErrorView
 				$html[] = 
 				'
 				<section class="feedback-reply-controls">
-					<textarea></textarea>
+					'.$this->createTextarea().'
 				</section>
 				<section class="feedback-reply-controls">
-					<button class="delete-feedback-button" type="button">'.\Localization\FeedbackPage\Delete.'</button>
-					<section class="filler"></section>
-					<button class="send-reply-button" type="button">'.\Localization\FeedbackPage\SendReply.'</button>
+					'.$this->createButton(\Localization\FeedbackPage\Delete, ['class' => ['delete-feedback-button']]).'
+					'.$this->createFillerSection().'
+					'.$this->createButton(\Localization\FeedbackPage\SendReply, ['class' => ['send-reply-button']]).'
 				</section>
 				';
 			}
@@ -1912,7 +1284,7 @@ class VisitorView extends ErrorView
 				break;
 		}
 		
-		$heading = \Localization\ReportPage\Heading.htmlspecialchars($entityName).htmlspecialchars($entityType);
+		$heading = \Localization\ReportPage\Heading.$entityName.$entityType;
 		$reportLink = Http::buildInternalPath($this->language, 'report');
 		
 		$html[] = $this->startRender
@@ -1925,16 +1297,25 @@ class VisitorView extends ErrorView
 		'
 		<article>
 			<section>
-				<h1>'.$heading.'</h1>
-				<p>'.\Localization\ReportPage\AboutReportContent.'</p>
-				<p>'.\Localization\ReportPage\ReplyOpportunity.'</p>
+				'.$this->createHeading($heading, 1).'
+				'.$this->createParagraph(\Localization\ReportPage\AboutReportContent).'
+				'.$this->createParagraph(\Localization\ReportPage\ReplyOpportunity).'
 				<form method="POST" autocomplete="off" action="'.$reportLink.'">
-					<textarea name="report-text" rows="4" maxlength="500" placeholder="'.\Localization\Controls\Textarea.'" required></textarea></td>
+					'.$this->createTextarea
+					(
+						attributes:
+						[
+							'name'        => 'report-text',
+							'maxlength'   => self::REPORT_MAX_LENGTH,
+							'placeholder' => \Localization\Controls\Textarea,
+							'required'    => true,
+						]
+					).'
 					<section>
-						'.$this->createButton(\Localization\Controls\Cancel, $entityLink).'
-						<section class="filler"></section>
-						<input type="submit" value="'.\Localization\Controls\Submit.'"/>
-						<input type="hidden" name="entity-uri" value="'.$entityLink.'"/>
+						'.$this->createReturnButton($entityLink).'
+						'.$this->createFillerSection().'
+						'.$this->createSubmitButton().'
+						'.$this->createHiddenInput(['name' => 'entity-uri', 'value' => $entityLink]).'
 					</section>
 				</form>
 			</section>
@@ -1957,12 +1338,12 @@ class VisitorView extends ErrorView
 		array $relatedTranslations
 	): void
 	{
-		$headingText = \Localization\UserPage\User.htmlspecialchars($userData['user_username']);
-		$role = \Localization\Functions\localizeLanguageName($userData);
+		$heading = \Localization\UserPage\User.htmlspecialchars($userData['user_username']);
+		$role    = \Localization\Functions\localizeLanguageName($userData);
 		
 		$html[] = $this->startRender
 		(
-			title: $headingText,
+			title: $heading,
 			cssSheetUris:
 			[
 				'/css/user-page.css',
@@ -1974,25 +1355,31 @@ class VisitorView extends ErrorView
 		'
 		<article>
 			<section>
-				'.$this->createHeading($headingText, 1).'
-				'.$this->createParagraph(\Localization\UserPage\Role.htmlspecialchars($role)).'
+				'.$this->createHeading($heading, 1).'
+				'.$this->createParagraph(\Localization\UserPage\Role.$role).'
 		';
 		
 		if (Session::agentIs($userData['user_id']) || Session::agentIsAdministrator())
 		{
+			$label1 = \Localization\UserPage\ChangeAccountData;
+			$label4 = \Localization\UserPage\DeleteAccount;
+			
 			$href1 = Http::buildInternalPath($this->language, 'user', $userData['user_username'], 'change-account-data');
 			$href4 = Http::buildInternalPath($this->language, 'user', $userData['user_username'], 'delete-account');
 			
-			$condition = !Session::agentIsViolator();
-			$tooltip   = \Localization\Functions\localizeAccessState(AccessState::AgentIsViolatorError);
+			$attributes1 = ['href' => $href1];
+			$attributes4 = ['href' => $href4];
+			
+			$access1 = (Session::agentIsViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
+			$access4 = (Session::agentIsViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
 			
 			$html[] = 
 			'
 				<section class="account-control">
-					'.$this->createButton(\Localization\UserPage\ChangeAccountData, $href1, $condition, $tooltip).'
+					'.$this->createButtonAsRestrictedLink($label1, $access1, $attributes1).'
 					<section class="filler"></section>
 					<section class="filler"></section>
-					'.$this->createButton(\Localization\UserPage\DeleteAccount, $href4, $condition, $tooltip).'
+					'.$this->createButtonAsRestrictedLink($label4, $access4, $attributes4).'
 				</section>
 			';
 		}

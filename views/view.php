@@ -2,11 +2,16 @@
 
 abstract class View
 {
-	protected const ENTITY_LIST_DEFAULT_QUERY = '?limit=10&page=1';
+	protected const ENTITY_LIST_DEFAULT_QUERY = 'limit=10&page=1';
 	
 	protected $language;
 	private $cssVersion;
 	private $jsVersion;
+	
+	protected const ACCOUNT_DATA_MIN_LENGTH = 4;
+	protected const ACCOUNT_DATA_MAX_LENGTH = 32;
+	protected const FEEDBACK_MAX_LENGTH     = 500;
+	protected const REPORT_MAX_LENGTH       = 500;
 	
 	public function __construct(string $language)
 	{
@@ -40,6 +45,30 @@ abstract class View
 		return implode('/', $parts);
 	}
 	
+	private function buildAttributes(array|null $attributes): string
+	{
+		if (is_null($attributes))
+			return '';
+		
+		$parts = [];
+		
+		foreach ($attributes as $key => $value)
+		{
+			if ($value === false || is_null($value))
+				continue;
+			
+			if (is_array($value))
+				$value = implode(' ', $value);
+			
+			if ($value === true || $value === '')
+				$parts[] = htmlspecialchars($key ?? '');
+			else
+				$parts[] = htmlspecialchars($key ?? '').'="'.htmlspecialchars($value ?? '').'"';
+		}
+		
+		return implode(' ', $parts);
+	}
+	
 	//----------------------------//
 	//      Page Base Blocks      //
 	//----------------------------//
@@ -54,18 +83,18 @@ abstract class View
 		array       $jsScriptUris = []
 	): string
     {
-		$title          = htmlspecialchars($title).' | vn-song-lyrics-db';
-		$description    = $description ?? 'The database of lyrics for songs introduced in visual novels.';
+		$title          = htmlspecialchars($title.' | vn-song-lyrics-db');
+		$description    = htmlspecialchars($description ?? 'The database of lyrics for songs introduced in visual novels.');
 		
-		$requestUri     = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-		$currentUrl     = 'https://'.$_SERVER['HTTP_HOST'].$requestUri;
-		$canonicalUrl   = 'https://'.$_SERVER['HTTP_HOST'].($canonicalUri ?? $requestUri);
-		$alternateRefEn = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'en');
-		$alternateRefRu = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'ru');
-		$alternateRefJa = 'https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'ja');
+		$requestUri     = htmlspecialchars(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+		$currentUrl     = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$requestUri);
+		$canonicalUrl   = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].($canonicalUri ?? $requestUri));
+		$alternateRefEn = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'en'));
+		$alternateRefRu = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'ru'));
+		$alternateRefJa = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'ja'));
 		
-		$ogUrl          = $currentUrl;
-		$ogImageUrl     = 'https://'.$_SERVER['HTTP_HOST'].($ogImageUri ?? '/assets/static-images/wee-hagana-og.webp');
+		$ogUrl          = htmlspecialchars($currentUrl);
+		$ogImageUrl     = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].($ogImageUri ?? '/assets/static-images/wee-hagana-og.webp'));
 		
 		$html[] = <<<HTML
 		<head>
@@ -120,14 +149,14 @@ abstract class View
 			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textarea.css?v={$this->cssVersion}" />
 			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textinput.css?v={$this->cssVersion}" />
 
-		HTML;
+HTML;
 		
 		foreach ($cssSheetUris as $cssSheetUri)
 		{
 			$html[] = <<<HTML
 			<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={$this->cssVersion}"/>
 
-		HTML;
+HTML;
 		}
 		
         foreach ($jsScriptUris as $jsScriptUri)
@@ -135,12 +164,12 @@ abstract class View
 			$html[] = <<<HTML
 			<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
 
-		HTML;
+HTML;
 		}
 		
         $html[] = <<<HTML
 		</head>
-		HTML;
+HTML;
 		
 		return implode($html);
 	}
@@ -163,7 +192,7 @@ abstract class View
 			$logIn    = '';
 			$signUp   = '';
 			$logOut   = '<a href="/'.$this->language.'/log-out">'.\Localization\Header\LogOut.'</a>';
-			$username = '<a href="/'.$this->language.'/user/'.$_SESSION['user']['username'].'">'.$_SESSION['user']['username'].'</a>';
+			$username = '<a href="/'.$this->language.'/user/'.htmlspecialchars($_SESSION['user']['username']).'">'.htmlspecialchars($_SESSION['user']['username']).'</a>';
 		}
 		
 		return
@@ -217,7 +246,7 @@ abstract class View
 			{$this->createHeader()}
 			<main>
 
-		HTML;
+HTML;
 	}
 	
 	private function createFooter(): string
@@ -256,21 +285,21 @@ abstract class View
 			<script src="/js/custom-inputs/fileupload.js?v={$this->jsVersion}"/></script>
 			<script src="/js/custom-inputs/select.js?v={$this->jsVersion}"/></script>
 			<script src="/js/custom-inputs/textarea.js?v={$this->jsVersion}"/></script>
-		HTML;
+HTML;
 		
         foreach ($jsScriptUris as $jsScriptUri)
 		{
 			$html[] = <<<HTML
 			<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
 
-		HTML;
+HTML;
 		}
 		
 		$html[] = <<<HTML
 
 		</body>
 		</html>
-		HTML;
+HTML;
 		
 		return implode($html);
 	}
@@ -279,13 +308,24 @@ abstract class View
 	//      Content Pages: Small Blocks To Build Pages With      //
 	//-----------------------------------------------------------//
 	
-	final protected function createLink(string $href, string $content, string ...$cssClasses): string
+	final protected function createLink
+	(
+		string     $href,
+		string     $content,
+		array|null $attributes = null
+	): string
 	{
-		$class = $cssClasses ? ' class="'.implode(' ', $cssClasses).'" ' : ' ';
-		return '<a'.$class.'href="'.htmlspecialchars($href).'">'.htmlspecialchars($content).'</a>';
+		$attributes['href'] = $href;
+		
+		return '<a '.$this->buildAttributes($attributes).'>'.htmlspecialchars($content).'</a>';
 	}
 	
-	final protected function createVndbLink(string $contentBefore, array $entity, string $entityFirstLetter): string
+	final protected function createVndbLinkParagraph
+	(
+		string $contentBefore,
+		array  $entity,
+		string $entityFirstLetter
+	): string
 	{
 		if (is_null($entity['vndb_id']))
 			return '';
@@ -296,7 +336,12 @@ abstract class View
 		return '<p>'.htmlspecialchars($contentBefore).$link.'</p>';
 	}
 	
-	final protected function createVgmdbLink(string $contentBefore, array $entity, string $entityName): string
+	final protected function createVgmdbLinkParagraph
+	(
+		string $contentBefore,
+		array  $entity,
+		string $entityName
+	): string
 	{
 		if (is_null($entity['vgmdb_id']))
 			return '';
@@ -307,32 +352,66 @@ abstract class View
 		return '<p>'.htmlspecialchars($contentBefore).$link.'</p>';
 	}
 	
-	final protected function createHeading(string $header, int $level): string
+	final protected function createHeading
+	(
+		string     $heading,
+		int        $level,
+		array|null $attributes = null
+	): string
 	{
-		return '<h'.$level.'>'.htmlspecialchars($header).'</h'.$level.'>';
+		return '<h'.$level.' '.$this->buildAttributes($attributes).'>'.htmlspecialchars($heading).'</h'.$level.'>';
 	}
 	
-	final protected function createHeadingAsLink(string $header, int $level, string $href, string ...$cssClasses): string|array
+	final protected function createHeadingAsLink
+	(
+		string     $heading,
+		int        $level,
+		string     $href,
+		array|null $attributes = null
+	): string
 	{
-		return '<h'.$level.'>'.$this->createLink($href, $header, ...$cssClasses).'</h'.$level.'>';
+		return '<h'.$level.' '.$this->buildAttributes($attributes).'>'.$this->createLink($href, $heading, $attributes).'</h'.$level.'>';
 	}
 	
-	final protected function createParagraph(string|null $content, string ...$cssClasses): string
+	final protected function createHeadingForInput
+	(
+		string     $string,
+		int        $level,
+		bool       $isRequired,
+		array|null $attributes = null
+	): string
 	{
-		if (is_null($content))
-			return '';
-		
-		$class = $cssClasses ? ' class="'.implode(' ', $cssClasses).'"' : '';
-		return '<p'.$class.'>'.htmlspecialchars($content).'</p>';
+		if ($isRequired)
+			return '<h'.$level.' '.$this->buildAttributes($attributes).'>'.htmlspecialchars($string).'<span class="required-input"> *</span></h'.$level.'>';
+		else
+			return '<h'.$level.' '.$this->buildAttributes($attributes).'>'.htmlspecialchars($string).'</h'.$level.'>';
 	}
 	
-	final protected function createParagraphAsLink(string $content, string $href, string ...$cssClasses): string
+	final protected function createParagraph
+	(
+		string|null $string,
+		array|null  $attributes = null
+	): string
 	{
-		$class = $cssClasses ? ' class="'.implode(' ', $cssClasses).'"' : '';
-		return '<p'.$class.'>'.$this->createLink($href, $content).'</p>';
+		return '<p '.$this->buildAttributes($attributes).'>'.htmlspecialchars($string ?? '').'</p>';
 	}
 	
-	private function createTimestamp(string|null $timestamp, string|null $username, string $status): string
+	final protected function createParagraphAsLink
+	(
+		string     $string,
+		string     $href,
+		array|null $attributes = null
+	): string
+	{
+		return '<p '.$this->buildAttributes($attributes).'>'.$this->createLink($href, $string).'</p>';
+	}
+	
+	private function createTimestamp
+	(
+		string|null $timestamp,
+		string|null $username,
+		string      $status
+	): string
 	{
 		if (is_null($timestamp))
 			return '';
@@ -342,54 +421,58 @@ abstract class View
 		else
 			$username = $this->createLink(Http::buildInternalPath($this->language, 'user', $username), $username);
 		
-		return
-			'<p>'.
-			htmlspecialchars($status).
-			\Localization\TimestampString\Delimeter.
-			htmlspecialchars($timestamp).
-			\Localization\TimestampString\By.
-			$username.
-			'</p>';
+		return '<p>'.htmlspecialchars($status.\Localization\TimestampString\Delimeter.$timestamp.\Localization\TimestampString\By).$username.'</p>';
 	}
 	
-	final protected function createTimestampAdded(string|null $timestamp, string|null $username): string
+	final protected function createTimestampAdded
+	(
+		string|null $timestamp,
+		string|null $username
+	): string
 	{
 		return $this->createTimestamp($timestamp, $username, \Localization\TimestampString\Added);
 	}
 	
-	final protected function createTimestampUpdated(string|null $timestamp, string|null $username): string
+	final protected function createTimestampUpdated
+	(
+		string|null $timestamp,
+		string|null $username
+	): string
 	{
 		return $this->createTimestamp($timestamp, $username, \Localization\TimestampString\Updated);
 	}
 	
-	final protected function createTimestampReviewed(string|null $timestamp, string|null $username): string
+	final protected function createTimestampReviewed
+	(
+		string|null $timestamp,
+		string|null $username
+	): string
 	{
 		return $this->createTimestamp($timestamp, $username, \Localization\TimestampString\Reviewed);
 	}
 	
-	final protected function createStatus(string $status, bool $isRelation = false): string
+	final protected function createStatus
+	(
+		string $status,
+		bool   $isRelation = false
+	): string
 	{
 		switch ($status)
 		{
 			case 'unchecked':
 				$status = \Localization\ModerationStatus\Unchecked;
-				$cssClasses = ['important-status'];
 				break;
 			
 			case 'checked':
 				$status = \Localization\ModerationStatus\Checked;
-				$cssClasses = [];
 				break;
 			
 			case 'hidden':
 				$status = \Localization\ModerationStatus\Hidden;
-				$cssClasses = ['important-status'];
 				break;
 				
 			default:
-				$status = \Localization\ModerationStatus\Unknown;
-				$cssClasses = ['important-status'];
-				break;
+				throw new HttpInternalServerError500(__METHOD__.' received unknown status');
 		}
 		
 		if ($isRelation)
@@ -397,7 +480,7 @@ abstract class View
 		else
 			$prefix = \Localization\ModerationStatus\Status;
 		
-		return $this->createParagraph($prefix.$status, ...$cssClasses);
+		return $this->createParagraph($prefix.$status);
 	}
 	
 	final protected function createStatusSelect
@@ -413,7 +496,7 @@ abstract class View
 			$relationName = str_replace('_', '-', $relationName);
 			
 			$keyToStatus      = $relationKey;
-			$dataEntityUri    = 'data-entity-uri="'.$relationHref.'"';
+			$dataEntityUri    = $relationHref;
 			$prefix           = \Localization\ModerationStatus\RelationStatus;
 		}
 		else
@@ -425,43 +508,68 @@ abstract class View
 		
 		$statuses =
 		[
-			'unchecked' => \Localization\ModerationStatus\Unchecked,
-			'checked'   => \Localization\ModerationStatus\Checked,
-			'hidden'    => \Localization\ModerationStatus\Hidden
+			['toSend' => 'unchecked', 'toShow' => \Localization\ModerationStatus\Unchecked],
+			['toSend' => 'checked',   'toShow' => \Localization\ModerationStatus\Checked],
+			['toSend' => 'hidden',    'toShow' => \Localization\ModerationStatus\Hidden]
 		];
 		
-		$html[] = '<section><p>'.$prefix.'</p><select class="status-select" '.$dataEntityUri.'>';
+		$currentStatusIndex = array_search($entity[$keyToStatus], array_column($statuses, 'toSend'));
+		$currentStatus      = $statuses[$currentStatusIndex];
 		
-		foreach ($statuses as $status => $name)
-		{
-			if ($status === $entity[$keyToStatus])
-				$html[] = '<option value="'.$status.'" selected>'.$name.'</option>';
-			else
-				$html[] = '<option value="'.$status.'">'.$name.'</option>';
-		}
-		
-		$html[] = '</select><section class="select-fake-filler"></section></section>';
-		
-		return implode($html);
+		return
+		'
+			<section>
+				<p>'.$prefix.'</p>
+				'.$select = $this->createSelect
+				(
+					iteratedOptions: $statuses,
+					selectedOption:  $currentStatus,
+					addEmptyOption:  false,
+					keyToShownValue: 'toShow',
+					keyToSentValue:  'toSend',
+					attributes:      ['class' => ['status-select'], 'data-entity-uri' => $dataEntityUri]
+				).
+			'</section>
+		';
 	}
 	
-	final protected function createButton
+	final protected function createButtonAsLink
 	(
-		string $content,
-		string $href,
-		bool   $isEnabled = true,
-		string $tooltipIfDisabled = ''
+		string|null $label      = null,
+		array|null  $attributes = null
 	): string
 	{
-		if ($isEnabled)
-			return '<a href="'.htmlspecialchars($href).'" class="custom-button">'.htmlspecialchars($content).'</a>';
-		else
-			return '<a class="custom-button disabled" title="'.$tooltipIfDisabled.'">'.htmlspecialchars($content).'</a>';
+		$attributes['class'][] = 'custom-button';
+		
+		return '<a '.$this->buildAttributes($attributes).'>'.htmlspecialchars($label ?? '').'</a>';
 	}
 	
-	final protected function createImage(string $src, string $alt = ""): string
+	final protected function createButtonAsRestrictedLink
+	(
+		string|null $label      = null,
+		AccessState $access     = AccessState::Ok,
+		array|null  $attributes = null
+	): string
 	{
-		return '<img src="'.$src.'" alt="'.htmlspecialchars($alt).'"/>';
+		if ($access !== AccessState::Ok)
+		{
+			if (isset($attributes['href']))
+				unset($attributes['href']);
+			
+			$attributes['class'][] = 'disabled';
+			$attributes['title']   = \Localization\Functions\localizeAccessState($access);
+		}
+		
+		return $this->createButtonAsLink($label, $attributes);
+	}
+	
+	final protected function createImage
+	(
+		string $src,
+		string $alt = ""
+	): string
+	{
+		return '<img src="'.htmlspecialchars($src).'" alt="'.htmlspecialchars($alt).'"/>';
 	}
 	
 	private function createEntityImage
@@ -568,12 +676,7 @@ abstract class View
 		';
 		
 		foreach ($htmlValues as $htmlValue)
-		{
-			$html[] = 
-			'
-					'.$htmlValue.'
-			';
-		}
+			$html[] = $htmlValue;
 		
 		$html[] =
 		'
@@ -584,7 +687,7 @@ abstract class View
 		return implode($html);
 	}
 	
-	final protected function createControlButtonsBlock
+	final protected function createEntityControlBlock
 	(
 		array  $entities,
 		array  $entitiesNames,
@@ -611,21 +714,17 @@ abstract class View
 		$deleteHref = Http::buildInternalPath($this->language, ...$path, ...[$deleteEntityPathPart]);
 		$reportHref = Http::buildInternalPath($this->language, ...$path, ...[$reportEntityPathPart]);
 		
+		$editAttributes   = ['href' => $editHref];
+		$deleteAttributes = ['href' => $deleteHref];
+		$reportAttributes = ['href' => $reportHref];
+		
 		$editAccess   = ('Session::agentHasRightToEdit'  .$currentEntityName)($currentEntity);
 		$deleteAccess = ('Session::agentHasRightToDelete'.$currentEntityName)($currentEntity);
 		$reportAccess = ('Session::agentHasRightToReport'.$currentEntityName)($currentEntity);
 		
-		$editEnabled   = ($editAccess   === AccessState::Ok);
-		$deleteEnabled = ($deleteAccess === AccessState::Ok);
-		$reportEnabled = ($reportAccess === AccessState::Ok);
-		
-		$editTooltip   = \Localization\Functions\localizeAccessState($editAccess);
-		$deleteTooltip = \Localization\Functions\localizeAccessState($deleteAccess);
-		$reportTooltip = \Localization\Functions\localizeAccessState($reportAccess);
-		
-		$editButton   = $this->createButton(\Localization\Controls\Edit,   $editHref,   $editEnabled,   $editTooltip);
-		$deleteButton = $this->createButton(\Localization\Controls\Delete, $deleteHref, $deleteEnabled, $deleteTooltip);
-		$reportButton = $this->createButton(\Localization\Controls\Report, $reportHref, $reportEnabled, $reportTooltip);
+		$editButton   = $this->createButtonAsRestrictedLink(\Localization\Controls\Edit,   $editAccess,   $editAttributes);
+		$deleteButton = $this->createButtonAsRestrictedLink(\Localization\Controls\Delete, $deleteAccess, $deleteAttributes);
+		$reportButton = $this->createButtonAsRestrictedLink(\Localization\Controls\Report, $reportAccess, $reportAttributes);
 		
 		return
 		'
@@ -635,63 +734,6 @@ abstract class View
 				'.$reportButton.'
 			</section>
 		';
-	}
-	
-	final protected function createMarkupLine
-	(
-		string $line,
-		string $noteId,
-		string $noteName,
-		string $noteClass,
-	): string
-	{
-		// Ideal solution (maybe):
-		
-		// Look the string from the start and add opening pseudotags onto the stack
-		// When we find a closing tag, we compare it with the top of the stack
-		// If they are the same, replace both with HTML
-		// If they are not, the markup is invalid, don't do anything
-		
-		// But the current solution works too, so who cares?
-		// If the markup is invalid, working parts are replaced and broken are not.
-		
-		// Combined these two examples to allow nested markup:
-		//
-		// https://www.php.net/manual/en/function.preg-replace-callback.php
-		// https://www.php.net/manual/en/function.preg-replace-callback-array.php
-		
-		// u = unicode, U = ungreedy, (...) - capture and reuse in ${N}
-		
-		$patterns = 
-		[
-			'/{nt}(\d+){\/nt}/uU' =>
-			function(array $x) use($noteName, $noteId, $noteClass)
-			{
-				return '<a href="#'.$noteName.$x[1].'" class="'.$noteClass.'" id="'.$noteId.$x[1].'">['.$x[1].']</a>';
-			},
-			
-			'/{kj}(.+){fg}(.+){\/fg}/uU' =>
-			function(array $x)
-			{
-				return '<ruby>'.$x[1].'<rt>'.$x[2].'</rt></ruby>';
-			},
-			
-			'/{cl (#[0-9A-Fa-f]{6})}(.+){\/cl}/uU' =>
-			function(array $x)
-			{
-				return '<span style="color: '.$x[1].'">'.$x[2].'</span>';
-			}
-		];
-		
-		$line = htmlspecialchars($line);
-		
-		do
-		{
-			$line = preg_replace_callback_array($patterns, $line, -1, $count);
-		}
-		while ($count > 0);
-		
-		return $line;
 	}
 	
 	private function createLyricsReferenceToAlbum(array $album): string
@@ -867,6 +909,63 @@ abstract class View
 		return implode($html);
 	}
 	
+	final protected function createMarkupLine
+	(
+		string $line,
+		string $noteId,
+		string $noteName,
+		string $noteClass,
+	): string
+	{
+		// Ideal solution (maybe):
+		
+		// Look the string from the start and add opening pseudotags onto the stack
+		// When we find a closing tag, we compare it with the top of the stack
+		// If they are the same, replace both with HTML
+		// If they are not, the markup is invalid, don't do anything
+		
+		// But the current solution works too, so who cares?
+		// If the markup is invalid, working parts are replaced and broken are not.
+		
+		// Combined these two examples to allow nested markup:
+		//
+		// https://www.php.net/manual/en/function.preg-replace-callback.php
+		// https://www.php.net/manual/en/function.preg-replace-callback-array.php
+		
+		// u = unicode, U = ungreedy, (...) - capture and reuse in ${N}
+		
+		$patterns = 
+		[
+			'/{nt}(\d+){\/nt}/uU' =>
+			function (array $x) use ($noteName, $noteId, $noteClass)
+			{
+				return '<a href="#'.$noteName.$x[1].'" class="'.$noteClass.'" id="'.$noteId.$x[1].'">['.$x[1].']</a>';
+			},
+			
+			'/{kj}(.+){fg}(.+){\/fg}/uU' =>
+			function (array $x)
+			{
+				return '<ruby>'.$x[1].'<rt>'.$x[2].'</rt></ruby>';
+			},
+			
+			'/{cl (#[0-9A-Fa-f]{6})}(.+){\/cl}/uU' =>
+			function (array $x)
+			{
+				return '<span style="color: '.$x[1].'">'.$x[2].'</span>';
+			}
+		];
+		
+		$line = htmlspecialchars($line);
+		
+		do
+		{
+			$line = preg_replace_callback_array($patterns, $line, -1, $count);
+		}
+		while ($count > 0);
+		
+		return $line;
+	}
+	
 	private function createMarkupText
 	(
 		string $lyrics,
@@ -954,129 +1053,97 @@ abstract class View
 		';
 	}
 	
-	final protected function createTranslationTimestamps(array $translation): string
+	final protected function createCheckbox
+	(
+		string|null $label         = null,
+		bool        $isLabelBefore = true,
+		array|null  $attributes    = null,
+	): string
 	{
-		return $this->createSongTimestamps($translation);
+		$attributes['type'] = 'checkbox';
+		
+		$span  = '<span>'.htmlspecialchars($label ?? '').'</span>';
+		$input = '<input '.$this->buildAttributes($attributes).' />';
+		
+		if ($isLabelBefore)
+			return '<label class="custom-checkbox">'.$span.$input.'</label>';
+		else
+			return '<label class="custom-checkbox">'.$input.$span.'</label>';
 	}
 	
 	final protected function createFilterBar(): string
 	{
-		return '<input type="search" id="filter-bar" placeholder="'.\Localization\Controls\FilterPage.'" />';
+		$attributes =
+		[
+			'type'        => 'search',
+			'id'          => 'filter-bar',
+			'placeholder' => \Localization\Controls\FilterPage
+		];
+		
+		return '<input '.$this->buildAttributes($attributes).' />';
 	}
 	
-	final protected function createCheckbox
-	(
-		string|null $name,
-		string|null $id,
-		array|null  $classes,
-		bool        $isEnabled,
-		bool        $isReadonly,
-		bool        $isRequired,
-		string|null $value,
-		string|null $label
-	): string
+	final protected function createFileupload(array|null $attributes = null): string
 	{
-		if (!is_null($classes))
-			$classes[] = 'custom-checkbox';
-		else
-			$classes = ['custom-checkbox'];
+		$attributes['type'] = 'file';
 		
-		$name     = ($name)       ? ' name="'.$name.'"'                   : '';
-		$id       = ($id)         ? ' id="'.$id.'"'                       : '';
-		$class    = ($classes)    ? ' class="'.implode(' ', $classes).'"' : '';
-		$disabled = (!$isEnabled) ? ' disabled'                           : '';
-		$readonly = ($isReadonly) ? ' readonly'                           : '';
-		$required = ($isRequired) ? ' required'                           : '';
-		$value    = ($value)      ? htmlspecialchars($value)              : '';
-		$label    = ($label)      ? htmlspecialchars($label)              : '';
+		$attributes2 =
+		[
+			'text-file-not-selected' => \Localization\Controls\ChooseFile,
+			'text-file-too-big'      => \Localization\Controls\FileTooBig
+		];
 		
 		return
 		'
-		<label'.$class.'>
-			<span>'.htmlspecialchars($label).'</span>
-			<input type="checkbox"'.$name.$id.$disabled.$readonly.$required.$value.'/>
-		</label>
-		';
-	}
-	
-	final protected function createFileupload
-	(
-		string|null $name,
-		string|null $id,
-		array|null  $classes,
-		bool        $isEnabled,
-		bool        $isReadonly,
-		bool        $isRequired,
-		array|null  $accept,
-		string      $value               = \Localization\Controls\ChooseFile,
-		string      $fileNotSelectedText = \Localization\Controls\ChooseFile,
-		string      $fileTooBigText      = \Localization\Controls\FileTooBig
-	): string
-	{
-		if (!is_null($classes))
-			$classes[] = 'custom-fileupload';
-		else
-			$classes = ['custom-fileupload'];
-		
-		$name     = ($name)       ? ' name="'.$name.'"'                   : '';
-		$id       = ($id)         ? ' id="'.$id.'"'                       : '';
-		$class    = ($classes)    ? ' class="'.implode(' ', $classes).'"' : '';
-		$disabled = (!$isEnabled) ? ' disabled'                           : '';
-		$readonly = ($isReadonly) ? ' readonly'                           : '';
-		$required = ($isRequired) ? ' required'                           : '';
-		$accept   = ($accept)     ? ' accept="'.implode(',', $accept).'"' : '';
-		
-		$value    = htmlspecialchars($value ?? '');
-		$noSelect = htmlspecialchars($fileNotSelectedText ?? '');
-		$tooBig   = htmlspecialchars($fileTooBigText ?? '');
-		
-		return
-		'
-		<label'.$class.'>
-			<input type="file"'.$name.$id.$disabled.$readonly.$required.$accept.' />
-			<section text-file-not-selected="'.$noSelect.'" text-file-too-big="'.$tooBig.'">'.$value.'</section>
+		<label class="custom-fileupload">
+			<input '.$this->buildAttributes($attributes).' />
+			<section '.$this->buildAttributes($attributes2).' >'.\Localization\Controls\ChooseFile.'</section>
 		</label>
 		';
 	}
 	
 	final protected function createSelect
 	(
-		string|null $name,
-		string|null $id,
-		array|null  $classes,
-		bool        $isEnabled,
-		bool        $isReadonly,
-		bool        $isRequired,
-		bool        $addEmptyOption,
-		array       $options,
-		array|null  $selectedOption,
-		string      $keyToShow,
-		string      $keyToSend
+		array|null $iteratedOptions = null,
+		array|null $disabledOptions = null,
+		array|null $selectedOption  = null,
+		bool       $addEmptyOption  = true,
+		string     $keyToShownValue = '',
+		string     $keyToSentValue  = '',
+		array|null $attributes      = null
 	): string
 	{
-		$name     = ($name)       ? ' name="'.$name.'"'                   : '';
-		$id       = ($id)         ? ' id="'.$id.'"'                       : '';
-		$class    = ($classes)    ? ' class="'.implode(' ', $classes).'"' : '';
-		$disabled = (!$isEnabled) ? ' disabled'                           : '';
-		$readonly = ($isReadonly) ? ' readonly'                           : '';
-		$required = ($isRequired) ? ' required'                           : '';
+		if (is_null($iteratedOptions))
+			$iteratedOptions = [];
 		
-		$html[] = '<select'.$name.$id.$class.$disabled.$readonly.$required.'>';
+		if (is_null($disabledOptions))
+			$disabledOptions = [];
+		
+		if (isset($attributes['class']))
+			$attributes['class'][] = 'custom-select';
+		
+		$html[] = '<select '.$this->buildAttributes($attributes).'>';
+		
+		$iterated = array_column($iteratedOptions, $keyToSentValue, $keyToShownValue);
+		$disabled = array_column($disabledOptions, $keyToSentValue);
+		$selected = is_null($selectedOption) ? null : $selectedOption[$keyToSentValue];
 		
 		if ($addEmptyOption)
-			$html[] = '<option></option>';
+			$iterated = ['' => ''] + $iterated;
 		
-		foreach ($options as $option)
+		foreach ($iterated as $shown => $sent)
 		{
-			if ($selectedOption && $option[$keyToSend] === $selectedOption[$keyToSend])
-				$selected = ' selected';
-			else
-				$selected = '';
+			$attributes = [];
 			
-			$valueToSend = htmlspecialchars($option[$keyToSend] ?? '');
-			$valueToShow = htmlspecialchars($option[$keyToShow] ?? '');
+			if (in_array($sent, $disabled, true))
+				$attributes['disabled'] = true;
 			
-			$html[] = '<option value="'.$valueToSend.'"'.$selected.'>'.$valueToShow.'</option>';
+			if ($sent === $selected)
+				$attributes['selected'] = true;
+			
+			$attributes['value'] = $sent;
+			
+			$html[] = '<option '.$this->buildAttributes($attributes).'>'.htmlspecialchars($shown ?? '').'</option>';
 		}
 		
 		$html[] = '</select><section class="select-fake-filler"></section>';
@@ -1084,32 +1151,164 @@ abstract class View
 		return implode($html);
 	}
 	
-	final protected function createDatalist(string $id, string $key, array $entities): string
+	final protected function createButton
+	(
+		string|null $label      = null,
+		array|null  $attributes = null
+	): string
 	{
-		$html[] = '<datalist id="'.$id.'">';
+		$attributes['type'] = 'button';
 		
-		foreach ($entities as $entity)
-			$html[] = '<option value="'.$entity[$key].'"></option>';
-		
-		$html[] = '</datalist>';
-		
-		return implode($html);
+		return '<button '.$this->buildAttributes($attributes).'>'.htmlspecialchars($label).'</button>';
 	}
 	
-	final protected function createAddRowButton(string $class, bool $isEnabled): string
+	final protected function createAddRowButton
+	(
+		array|null $attributes = null
+	): string
 	{
-		if ($isEnabled)
-			return '<button type="button" class="'.$class.' add-input-row">＋</button>';
-		else
-			return '<button type="button" class="'.$class.' add-input-row disabled">＋</button>';
+		$attributes['class'][] = 'add-input-row';
+		return $this->createButton('＋', $attributes);
 	}
 	
-	final protected function createDeleteRowButton(string $class, bool $isEnabled): string
+	final protected function createDeleteRowButton
+	(
+		array|null $attributes = null
+	): string
 	{
-		if ($isEnabled)
-			return '<button type="button" class="'.$class.' delete-input-row">ー</button>';
-		else
-			return '<button type="button" class="'.$class.' delete-input-row" disabled>ー</button>';
+		$attributes['class'][] = 'delete-input-row';
+		return $this->createButton('ー', $attributes);
+	}
+	
+	final protected function createReturnButton
+	(
+		string|null $fallbackHref = null,
+		string      $label        = \Localization\Controls\Cancel,
+		array|null  $attributes   = null
+	): string
+	{
+		$attributes['href'] = Http::getLastVisitedPage($fallbackHref);
+		
+		return $this->createButtonAsLink($label, $attributes);
+	}
+	
+	final protected function createSubmitButton
+	(
+		string     $label      = \localization\Controls\Submit,
+		array|null $attributes = null
+	): string
+	{
+		$attributes['type']  = 'submit';
+		$attributes['value'] = $label;
+		
+		return '<input '.$this->buildAttributes($attributes).'/>';
+	}
+	
+	final protected function createHiddenInput
+	(
+		array|null $attributes = null
+	): string
+	{
+		$attributes['type'] = 'hidden';
+		return '<input '.$this->buildAttributes($attributes).'/>';
+	}
+	
+	final protected function createTextarea
+	(
+		string|null $value      = null,
+		array|null  $attributes = null
+	): string
+	{
+		return '<textarea '.$this->buildAttributes($attributes).'>'.htmlspecialchars($value ?? '').'</textarea>';
+	}
+	
+	final protected function createCaptchaInput
+	(
+		array|null $attributes = null
+	): string
+	{
+		$attributes['type']        = 'text';
+		$attributes['name'][]      = 'captcha-code';
+		$attributes['class'][]     = 'captcha-input';
+		$attributes['placeholder'] = 'code:';
+		
+		return '<input '.$this->buildAttributes($attributes).' />';
+	}
+	
+	final protected function createCaptchaImage
+	(
+		string|null $base64,
+		array|null  $attributes = null
+	): string
+	{
+		$attributes['src']     = htmlspecialchars($base64 ?? '');
+		$attributes['alt']     = 'captcha';
+		$attributes['class'][] = 'captcha-image';
+		
+		return '<img '.$this->buildAttributes($attributes).' />';
+	}
+	
+	final protected function createTextInput
+	(
+		array|null $attributes = null
+	): string
+	{
+		$attributes['type'] = 'text';
+		
+		return '<input '.$this->buildAttributes($attributes).' />';
+	}
+	
+	final protected function createUsernameInput
+	(
+		array|null $attributes = null
+	): string
+	{
+		$attributes['type']      = 'text';
+		$attributes['pattern']   = '[a-zA-Z0-9]+';
+		$attributes['minlength'] = self::ACCOUNT_DATA_MIN_LENGTH;
+		$attributes['maxlength'] = self::ACCOUNT_DATA_MAX_LENGTH;
+		
+		return '<input '.$this->buildAttributes($attributes).' />';
+	}
+	
+	final protected function createPasswordInput
+	(
+		array|null $attributes = null
+	): string
+	{
+		$attributes['type']      = 'password';
+		$attributes['pattern']   = '[a-zA-Z0-9]+';
+		$attributes['minlength'] = self::ACCOUNT_DATA_MIN_LENGTH;
+		$attributes['maxlength'] = self::ACCOUNT_DATA_MAX_LENGTH;
+		
+		return '<input '.$this->buildAttributes($attributes).' />';
+	}
+	
+	final protected function createEmailInput
+	(
+		array|null $attributes = null
+	): string
+	{
+		$attributes['type']      = 'email';
+		$attributes['minlength'] = self::ACCOUNT_DATA_MIN_LENGTH;
+		$attributes['maxlength'] = self::ACCOUNT_DATA_MAX_LENGTH;
+		
+		return '<input '.$this->buildAttributes($attributes).' />';
+	}
+	
+	final protected function createUrlInput
+	(
+		array|null $attributes = null
+	): string
+	{
+		$attributes['type'] = 'url';
+		
+		return '<input '.$this->buildAttributes($attributes).' />';
+	}
+	
+	final protected function createFillerSection(): string
+	{
+		return '<section class="filler"></section>';
 	}
 	
 	final protected function createTooltipWindow(): string
@@ -1125,27 +1324,585 @@ abstract class View
 		';
 	}
 	
-	final protected function createTooltipHeadingDatalist(string ...$headings): string
+	final protected function createDatalist
+	(
+		array|null $options    = null,
+		array|null $attributes = null
+	): string
 	{
-		$html[] = '<datalist id="tooltip-headings">';
+		$html[] = '<datalist '.$this->buildAttributes($attributes).'>';
 		
-		foreach ($headings as $heading)
-			$html[] = '<option>'.$heading.'</option>';
-			
+		foreach ($options as $option)
+			$html[] = '<option>'.$option.'</option>';
+		
 		$html[] = '</datalist>';
 		
 		return implode($html);
 	}
 	
-	final protected function createTooltipContentDatalist(string ...$contents): string|array
+	//---------------------------------------//
+	//       Content Pages: Pagination       //
+	//---------------------------------------//
+	
+	final protected function createResultsLimitBlock(int|null $limit): string
 	{
-		$html[] = '<datalist id="tooltip-contents">';
+		$selectedOption = ['toShow' => $limit, 'toSend' => $limit];
 		
-		foreach ($contents as $content)
-			$html[] = '<option>'.$content.'</option>';
+		$options =
+		[
+			['toShow' => 10,  'toSend' => 10],
+			['toShow' => 25,  'toSend' => 25],
+			['toShow' => 50,  'toSend' => 50],
+			['toShow' => 100, 'toSend' => 100]
+		];
+		
+		if (!in_array($selectedOption, $options) && !is_null($limit))
+		{
+			$options[] = $selectedOption;
+			usort($options, function($a, $b) { return $a['toSend'] <=> $b['toSend']; });
+		}
+		
+		$options[] = ['toShow' => \Localization\Controls\NoLimit, 'toSend' => ''];
+		
+		$select = $this->createSelect
+		(
+			iteratedOptions: $options,
+			selectedOption:  $selectedOption,
+			addEmptyOption:  false,
+			keyToShownValue: 'toShow',
+			keyToSentValue:  'toSend',
+			attributes:      ['id' => 'limit-result-count-bar'],
+		);
+		
+		return
+		'
+			<section>'.\Localization\Controls\LimitHeading.'</section>
+			<section class="results-limit">
+				'.$select.'
+			</section>
+		';
+	}
+	
+	final protected function createPaginationButton
+	(
+		string      $text,
+		string|null $href,
+		string      $state
+	): string
+	{
+		$text = htmlspecialchars($text ?? '');
+		$href = htmlspecialchars($href ?? '');
+		
+		if ($state === 'disabled')
+			return '<a class="pagination-button disabled">'.$text.'</a>';
+		else if ($state === 'current')
+			return '<a class="pagination-button current">'.$text.'</a>';
+		else
+			return '<a href="'.$href.'" class="pagination-button">'.$text.'</a>';
+	}
+	
+	final protected function createPaginationBlock
+	(
+		int         $currentPageIndex,
+		int|null    $limit,
+		string|null $search,
+		int         $entityCount,
+		string      $pageLink
+	): string
+	{
+		if (is_null($limit))
+			$pageCount = 1;
+		else if ($entityCount > 0 && $entityCount % $limit === 0)
+			$pageCount = intdiv($entityCount, $limit);
+		else
+			$pageCount = intdiv($entityCount, $limit) + 1;
+		
+		// If you change it,
+		// then change the divisor of pagination.button in search-filter-section.css
+		$mostLeftPage       = 1;
+		$pageCountFromLeft  = 3;
+		$pageCountfromRight = 3;
+		$mostRightPage      = $pageCount;
+		
+		$fromLeft = $currentPageIndex - $pageCountFromLeft;
+		$fromLeft = $fromLeft > $mostLeftPage ? $fromLeft : $mostLeftPage;
+		
+		$fromRight = $currentPageIndex + $pageCountfromRight;
+		$fromRight = $fromRight < $mostRightPage ? $fromRight : $mostRightPage;
+		
+		$html[] =
+		'
+			<section>'.\Localization\Controls\PageHeading.'</section>
+			<section class="pagination">
+		';
+		
+		if ($fromLeft > $mostLeftPage)
+		{
+			$href = $pageLink.Http::buildPaginationParameters($limit, $mostLeftPage, $search);
+			$html[] = $this->createPaginationButton($mostLeftPage, $href, 'enabled');
+		}
+		
+		if ($fromLeft > $mostLeftPage + 1)
+			$html[] = $this->createPaginationButton('…', null, 'disabled');
+		
+		for ($i = $fromLeft; $i <= $fromRight; $i++)
+		{
+			$href  = $pageLink.Http::buildPaginationParameters($limit, $i, $search);
+			$state = ($i === $currentPageIndex) ? 'current' : 'enabled';
 			
-		$html[] = '</datalist>';
+			$html[] = $this->createPaginationButton($i, $href, $state);
+		}
+		
+		if ($fromRight < $mostRightPage - 1)
+			$html[] = $this->createPaginationButton('…', null, 'disabled');
+		
+		if ($fromRight < $mostRightPage)
+		{
+			$href = $pageLink.Http::buildPaginationParameters($limit, $mostRightPage, $search);
+			$html[] = $this->createPaginationButton($mostRightPage, $href, 'enabled');
+		}
+		
+		$html[] = 
+		'
+			</section>
+		';
 		
 		return implode($html);
+	}
+	
+	final protected function createSearchBarBlock
+	(
+		int|null    $limit,
+		int|null    $page,
+		string|null $search
+	): string
+	{
+		if (!is_null($limit))
+		{
+			$limitInput  = '<input name="limit" type="hidden" value="'.htmlspecialchars($limit).'" />';
+			$pageInput   = '<input name="page" type="hidden" value="1" />';
+			
+		}
+		else
+		{
+			$limitInput = '';
+			$pageInput  = '';
+		}
+		
+		$searchInput = '<input name="search" type="search" id="search-bar" value="'.htmlspecialchars($search ?? '').'" placeholder="'.\Localization\Controls\SearchPlaceholder.'" required />';
+		
+		return
+		'
+		<section>'.\Localization\Controls\SearchHeading.'</section>
+		<section class="search-elements">
+			'.$limitInput.'
+			'.$pageInput.'
+			'.$searchInput.'
+			<button id="search-bar-button">'.\Localization\Controls\SearchButton.'</button>
+		</section>
+		';
+	}
+	
+	//---------------------------------------//
+	//      Content Pages: Entity Lists      //
+	//---------------------------------------//
+	
+	final protected function createGameList
+	(
+		array       $games,
+		int         $headingLevel,
+		string      $entityClass,
+		string|null $relationKey         = null,
+		bool        $statusChangeAllowed = true
+	): array
+	{
+		$html = [];
+		
+		foreach ($games as $game)
+		{
+			$href = Http::buildInternalPath($this->language, 'game', $game['uri']);
+			
+			$image        = $this->createGameImage($game);
+			$textEntities = [];
+			
+			$textEntities[] = $this->createHeadingAsLink($game['transliterated_name'], $headingLevel, $href, ['class' => ['entity-name']]);
+			$textEntities[] = $this->createParagraph($game['original_name'], ['class' => ['entity-name']]);
+			$textEntities[] = $this->createParagraph($game['localized_name'], ['class' => ['entity-name']]);
+			
+			if ($relationKey)
+			{
+				if (Session::agentIsAdministrator() && $statusChangeAllowed)
+					$textEntities[] = $this->createStatusSelect($game, $relationKey, $href);
+				else
+					$textEntities[] = $this->createStatus($game[$relationKey], true);
+			}
+			
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+		}
+		
+		return $html;
+	}
+	
+	final protected function createAlbumList
+	(
+		array       $albums,
+		int         $headingLevel,
+		string      $entityClass,
+		string|null $relationKey         = null,
+		bool        $statusChangeAllowed = true
+	): array
+	{
+		$html = [];
+		
+		foreach ($albums as $album)
+		{
+			$href = Http::buildInternalPath($this->language, 'album', $album['uri']);
+			
+			$image        = $this->createAlbumImage($album);
+			$textEntities = [];
+			
+			$textEntities[] = $this->createHeadingAsLink($album['transliterated_name'], $headingLevel, $href, ['class' => ['entity-name']]);
+			$textEntities[] = $this->createParagraph($album['original_name'], ['class' => ['entity-name']]);
+			$textEntities[] = $this->createParagraph($album['localized_name'], ['class' => ['entity-name']]);
+			
+			if ($relationKey)
+			{
+				if (Session::agentIsAdministrator()&& $statusChangeAllowed)
+					$textEntities[] = $this->createStatusSelect($album, $relationKey, $href);
+				else
+					$textEntities[] = $this->createStatus($album[$relationKey], true);
+			}
+			
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+		}
+		
+		return $html;
+	}
+	
+	final protected function createArtistList
+	(
+		array       $artists,
+		int         $headingLevel,
+		string      $entityClass,
+		string|null $relationKey         = null,
+		bool        $statusChangeAllowed = true
+	): array
+	{
+		$html = [];
+		
+		foreach ($artists as $artist)
+		{
+			$href = Http::buildInternalPath($this->language, 'artist', $artist['uri']);
+			
+			$image        = $this->createArtistImage($artist);
+			$textEntities = [];
+			
+			$textEntities[] = $this->createHeadingAsLink($artist['transliterated_name'], $headingLevel, $href, ['class' => ['entity-name']]);
+			$textEntities[] = $this->createParagraph($artist['original_name'], ['class' => ['entity-name']]);
+			$textEntities[] = $this->createParagraph($artist['localized_name'], ['class' => ['entity-name']]);
+			
+			if ($relationKey)
+			{
+				if (Session::agentIsAdministrator())
+					$textEntities[] = $this->createStatusSelect($artist, $relationKey, $href);
+				else
+					$textEntities[] = $this->createStatus($artist[$relationKey], true);
+			}
+			
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+		}
+		
+		return $html;
+	}
+	
+	final protected function createCharacterList
+	(
+		array       $characters,
+		int         $headingLevel,
+		string      $entityClass,
+		string|null $relationKey         = null,
+		bool        $statusChangeAllowed = true
+	): array
+	{
+		$html = [];
+		
+		foreach ($characters as $character)
+		{
+			$href = Http::buildInternalPath($this->language, 'character', $character['uri']);
+			
+			$image        = $this->createCharacterImage($character);
+			$textEntities = [];
+			
+			$textEntities[] = $this->createHeadingAsLink($character['transliterated_name'], $headingLevel, $href, ['class' => ['entity-name']]);
+			$textEntities[] = $this->createParagraph($character['original_name'], ['class' => ['entity-name']]);
+			$textEntities[] = $this->createParagraph($character['localized_name'], ['class' => ['entity-name']]);
+			
+			if ($relationKey)
+			{
+				if (Session::agentIsAdministrator() && $statusChangeAllowed)
+					$textEntities[] = $this->createStatusSelect($character, $relationKey, $href);
+				else
+					$textEntities[] = $this->createStatus($character[$relationKey], true);
+			}
+			
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+		}
+		
+		return $html;
+	}
+	
+	final protected function createAlbumSongList
+	(
+		array $album,
+		array $songs,
+		int   $headingLevel
+	): array
+	{
+		$rows = [];
+		
+		for ($i = 0; $i < count($songs); $i++)
+		{
+			if ($songs[$i]['has_vocal'])
+			{
+				$href = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri']);
+				$transliteratedName = $this->createParagraphAsLink($songs[$i]['transliterated_name'], $href);
+			}
+			else
+				$transliteratedName = $this->createParagraph($songs[$i]['transliterated_name']);
+			
+			$editLabel  = \Localization\AlbumPage\EditSong;
+			$editAccess = Session::agentHasRightToEditAlbum($album);
+			$editHref   = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'edit');
+			$editButton = $this->createButtonAsRestrictedLink($editLabel, $editAccess, ['href' => $editHref]);
+			
+			$cells                        = [];
+			$cells['disc_number']         = htmlspecialchars($songs[$i]['disc_number']);
+			$cells['track_number']        = htmlspecialchars($songs[$i]['track_number']);
+			$cells['transliterated_name'] = $transliteratedName;
+			$cells['original_name']       = $this->createParagraph($songs[$i]['original_name']);
+			$cells['localized_name']      = $this->createParagraph($songs[$i]['localized_name']);
+			$cells['edit_button']         = $editButton;
+			
+			$rows[] = $cells;
+		}
+		
+		$html[] =
+		'
+		<section>
+			'.$this->createHeading(\Localization\AlbumPage\SongList, 2).'
+			<table>
+				<tbody>
+					<tr>
+						<th>'.\Localization\AlbumPage\DiscNumber.'</th>
+						<th>'.\Localization\AlbumPage\TrackNumber.'</th>
+						<th>'.\Localization\AlbumPage\SongName.'</th>
+						<th></th>
+		';
+		
+		foreach ($rows as $row)
+		{
+			$html[] =
+			'
+					<tr>
+						<td>'.$row['disc_number'].'</td>
+						<td>'.$row['track_number'].'</td>
+						<td>
+							'.$row['transliterated_name'].'
+							'.$row['original_name'].'
+							'.$row['localized_name'].'
+						</td>
+						<td>'.$row['edit_button'].'</td>
+					</tr>
+			';
+		}
+		
+		if (count($songs) < $album['song_count'])
+		{
+			$addLabel  = \Localization\AlbumPage\AddSong;
+			$addAccess = Session::agentHasRightToEditAlbum($album);
+			$addHref   = Http::buildInternalPath($this->language, 'album', $album['uri'], 'add-song');
+			$addButton = $this->createButtonAsRestrictedLink($addLabel, $addAccess, ['href' => $addHref]);
+			
+			$html[] =
+			'
+					<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td>'.$addButton.'</td>
+					</tr>
+			';
+		}
+		
+		if (count($songs) === 0 && Session::agentIsAdministrator())
+		{
+			$title = \Localization\AlbumPage\FillAlbum;
+			$href  = Http::buildInternalPath($this->language, 'album', $album['uri'], 'fill-album');
+			
+			$html[] =
+			'
+					<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td>'.$this->createButtonAsLink($title, ['href' => $href]).'</td>
+					</tr>
+			';
+		}
+		
+		$html[] =
+		'
+				</tbody>
+			</table>
+		</section>
+		';
+		
+		return $html;
+	}
+	
+	final protected function createSongList
+	(
+		array       $songs,
+		int         $headingLevel,
+		string      $entityClass,
+		string|null $relationKey = null
+	): array
+	{
+		$html = [];
+		
+		foreach ($songs as $song)
+		{
+			$album = [];
+			$album['transliterated_name'] = $song['album_transliterated_name'];
+			$album['uri']                 = $song['album_uri'];
+			$album['is_image_uploaded']   = $song['is_image_uploaded'];
+			
+			$image        = $this->createAlbumImage($album);
+			$textEntities = [];
+			
+			if ($song['has_vocal'])
+			{
+				$href = Http::buildInternalPath($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
+				$textEntities[] = $this->createHeadingAsLink($song['transliterated_name'], $headingLevel, $href, ['class' => ['entity-name']]);
+			}
+			else
+				$textEntities[] = $this->createHeading($song['transliterated_name'], $headingLevel, ['class' => ['entity-name']]);
+			
+			$textEntities[] = $this->createParagraph($song['original_name'], ['class' => ['entity-name']]);
+			$textEntities[] = $this->createParagraph($song['localized_name'], ['class' => ['entity-name']]);
+			
+			if ($relationKey)
+				$textEntities[] = $this->createStatus($song['song_artist_character_relation_status'], true);
+			else
+				$textEntities[] = '';
+			
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+		}
+		
+		return $html;
+	}
+	
+	final protected function createTranslationList
+	(
+		array  $translations,
+		int    $headingLevel,
+		string $entityClass
+	): array
+	{
+		$html = [];
+		
+		foreach ($translations as $translation)
+		{
+			$album = [];
+			$album['transliterated_name'] = $translation['album_transliterated_name'];
+			$album['uri']                 = $translation['album_uri'];
+			$album['is_image_uploaded']   = $translation['is_image_uploaded'];
+			
+			$image        = $this->createAlbumImage($album);
+			$textEntities = [];
+			
+			$href = Http::buildInternalPath
+			(
+				$this->language,
+				'album',
+				$translation['album_uri'],
+				'song',
+				$translation['song_uri'],
+				'translation',
+				$translation['uri']
+			);
+			
+			$textEntities[] = $this->createHeadingAsLink($translation['name'], $headingLevel, $href, ['class' => ['entity-name']]);
+			$textEntities[] = $this->createParagraph(\Localization\Functions\localizeLanguageName($translation));
+			
+			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
+		}
+		
+		return $html;
+	}
+	
+	//-------------------------//
+	//----- Single Entity -----//
+	//-------------------------//
+	
+	final protected function createGame(array $game, int $headingLevel): string
+	{
+		$image        = $this->createGameImage($game);
+		$textEntities = [];
+		
+		$textEntities[] = $this->createHeading($game['transliterated_name'], $headingLevel);
+		$textEntities[] = $this->createParagraph($game['original_name']);
+		$textEntities[] = $this->createParagraph($game['localized_name']);
+		$textEntities[] = $this->createVndbLinkParagraph(\Localization\GamePage\Details, $game, 'v');
+		
+		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
+	}
+	
+	final protected function createAlbum(array $album, int $headingLevel): string
+	{
+		$image        = $this->createAlbumImage($album);
+		$textEntities = [];
+		
+		$textEntities[] = $this->createHeading($album['transliterated_name'], $headingLevel);
+		$textEntities[] = $this->createParagraph($album['original_name']);
+		$textEntities[] = $this->createParagraph($album['localized_name']);
+		$textEntities[] = $this->createVgmdbLinkParagraph(\Localization\AlbumPage\Details, $album, 'album');
+		$textEntities[] = $this->createParagraph(\Localization\AlbumPage\SongCount.$album['song_count']);
+		
+		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
+	}
+	
+	final protected function createArtist(array $artist, int $headingLevel): string
+	{
+		$image        = $this->createArtistImage($artist);
+		$textEntities = [];
+		
+		$textEntities[] = $this->createHeading($artist['transliterated_name'], $headingLevel);
+		$textEntities[] = $this->createParagraph($artist['original_name']);
+		$textEntities[] = $this->createParagraph($artist['localized_name']);
+		$textEntities[] = $this->createVgmdbLinkParagraph(\Localization\ArtistPage\Details, $artist, 'artist');
+		
+		if ($artist['alias_of_transliterated_name'] && $artist['alias_of_uri'])
+		{
+			$href = Http::buildInternalPath($this->language, 'artist', $artist['alias_of_uri']);
+			$text = $artist['alias_of_transliterated_name'];
+			
+			$textEntities[] = '<p>'.\Localization\ArtistPage\AliasOf.$this->createLink($href, $text).'</p>';
+		}
+		
+		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
+	}
+	
+	final protected function createCharacter(array $character, int $headingLevel): string
+	{
+		$image        = $this->createCharacterImage($character);
+		$textEntities = [];
+		
+		$textEntities[] = $this->createHeading($character['transliterated_name'], $headingLevel);
+		$textEntities[] = $this->createParagraph($character['original_name']);
+		$textEntities[] = $this->createParagraph($character['localized_name']);
+		$textEntities[] = $this->createVndbLinkParagraph(\Localization\CharacterPage\Details, $character, 'c');
+		
+		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
 	}
 }

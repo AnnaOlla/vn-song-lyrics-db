@@ -23,28 +23,19 @@ class UserView extends ViolatorView
 	{
 		if ($game)
 		{
-			$originalName       = htmlspecialchars($game['original_name']);
-			$transliteratedName = htmlspecialchars($game['transliterated_name']);
-			$localizedName      = htmlspecialchars($game['localized_name'] ?? '');
+			$originalName       = $game['original_name'];
+			$transliteratedName = $game['transliterated_name'];
+			$localizedName      = $game['localized_name'];
 			$isImageUploaded    = $game['is_image_uploaded'];
-			
-			if ($game['vndb_id'])
-				$vndbLink       = 'https://vndb.org/v'.htmlspecialchars($game['vndb_id']);
-			else
-				$vndbLink       = '';
-			
-			$cancelLink = Http::buildInternalPath($this->language, 'game', $game['uri']);
+			$vndbLink           = $game['vndb_id'] ? 'https://vndb.org/v'.$game['vndb_id'] : null;
 		}
 		else
 		{
-			$originalName       = '';
-			$transliteratedName = '';
-			$localizedName      = '';
+			$originalName       = null;
+			$transliteratedName = null;
+			$localizedName      = null;
 			$isImageUploaded    = false;
-			$vndbLink           = '';
-			
-			$query = Http::getLastVisitedQuery(queryIfNull: self::ENTITY_LIST_DEFAULT_QUERY);
-			$cancelLink = Http::buildInternalPath($this->language, 'game-list').$query;
+			$vndbLink           = null;
 		}
 		
 		if (Validation::isNullOrEmpty($relatedAlbums))
@@ -71,6 +62,8 @@ class UserView extends ViolatorView
 			];
 		}
 		
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'game-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
+		
 		$html[] = $this->startRender
 		(
 			title:        $heading,
@@ -84,41 +77,30 @@ class UserView extends ViolatorView
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section class="has-tooltip" tooltip-id="1">
-						<h2>'.\Localization\GameEditorPage\OriginalName.'<span class="required-input"> *</span></h2>
-						<input type="text" name="original-name" placeholder="蒼の彼方のフォーリズム" value="'.$originalName.'" required/>
+						'.$this->createHeadingForInput(\Localization\GameEditorPage\OriginalName, 2, true).'
+						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => '蒼の彼方のフォーリズム', 'value' => $originalName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
-						<h2>'.\Localization\GameEditorPage\TransliteratedName.'<span class="required-input"> *</span></h2>
-						<input type="text" name="transliterated-name" placeholder="Ao no Kanata no Foo Rizumu" pattern="[ -~]+" value="'.$transliteratedName.'" required/>
+						'.$this->createHeadingForInput(\Localization\GameEditorPage\TransliteratedName, 2, true).'
+						'.$this->createTextInput(['name' => 'transliterated-name', 'placeholder' => 'Ao no Kanata no Foo Rizumu', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
-						<h2>'.\Localization\GameEditorPage\LocalizedName.'</h2>
-						<input type="text" name="localized-name" placeholder="Aokana - Four Rhythms Across the Blue" value="'.$localizedName.'"/>
+						'.$this->createHeadingForInput(\Localization\GameEditorPage\LocalizedName, 2, false).'
+						'.$this->createTextInput(['name' => 'localized-name', 'placeholder' => 'Aokana - Four Rhythms Across the Blue', 'value' => $localizedName]).'
 					</section>
 		';
-		
-		$fileupload = $this->createFileupload
-		(
-			'logo',
-			'logo-input',
-			null,
-			true,
-			false,
-			false,
-			self::ACCEPTED_IMAGE_TYPES
-		);
 		
 		if ($isImageUploaded)
 		{
 			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="4">
-						<h2>'.\Localization\GameEditorPage\OldLogo.'</h2>
+						'.$this->createHeadingForInput(\Localization\GameEditorPage\OldLogo, 2, false).'
 						'.$this->createGameImage($game).'
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
-						<h2>'.\Localization\GameEditorPage\NewLogo.'</h2>
-						'.$fileupload.'
+						'.$this->createHeadingForInput(\Localization\GameEditorPage\NewLogo, 2, false).'
+						'.$this->createFileupload(['name' => 'logo', 'accept' => self::ACCEPTED_IMAGE_TYPES]).'
 					</section>
 			';
 		}
@@ -127,8 +109,8 @@ class UserView extends ViolatorView
 			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="6">
-						<h2>'.\Localization\GameEditorPage\Logo.'</h2>
-						'.$fileupload.'
+						'.$this->createHeadingForInput(\Localization\GameEditorPage\Logo, 2, false).'
+						'.$this->createFileupload(['name' => 'logo', 'accept' => self::ACCEPTED_IMAGE_TYPES]).'
 					</section>
 			';
 		}
@@ -136,49 +118,38 @@ class UserView extends ViolatorView
 		$html[] = 
 		'
 					<section class="has-tooltip" tooltip-id="7">
-						<h2>'.\Localization\GameEditorPage\VndbLink.'</h2>
-						<input type="url" name="vndb-link" placeholder="https://vndb.org/v12849" value="'.$vndbLink.'"/>
+						'.$this->createHeadingForInput(\Localization\GameEditorPage\VndbLink, 2, false).'
+						'.$this->createUrlInput(['name' => 'vndb-link', 'placeholder' => 'https://vndb.org/v12849', 'pattern' => 'https:\/\/vndb\.org\/v\d+', 'value' => $vndbLink]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="8">
-						<h2>'.\Localization\GameEditorPage\RelatedAlbums.'</h2>
+						'.$this->createHeadingForInput(\Localization\GameEditorPage\RelatedAlbums, 2, false).'
 		';
 		
 		foreach ($relatedAlbums as $relatedAlbum)
 		{
-			$albumInput = $this->createSelect
-			(
-				'album-ids[]',
-				null,
-				null,
-				$relatedAlbum['game_album_relation_status'] === 'unchecked',
-				false,
-				false,
-				true,
-				$albums,
-				$relatedAlbum,
-				'transliterated_name',
-				'id'
-			);
-			
-			$addRowButton = $this->createAddRowButton
-			(
-				'album-select',
-				true
-			);
-			
-			$deleteRowButton = $this->createDeleteRowButton
-			(
-				'album-select',
-				$relatedAlbum['game_album_relation_status'] === 'unchecked'
-			);
+			$disabled = ($relatedAlbum['game_album_relation_status'] !== 'unchecked');
 			
 			$html[] = 
 			'
-					<section class="related-entity-controls">
-						'.$albumInput.'
-						'.$addRowButton.'
-						'.$deleteRowButton.'
-					</section>
+						<section class="related-entity-controls">
+							'.$this->createSelect
+							(
+								iteratedOptions: $albums,
+								selectedOption:  $relatedAlbum,
+								addEmptyOption:  true,
+								keyToShownValue: 'transliterated_name',
+								keyToSentValue:  'id',
+								attributes:      ['name' => 'album-ids[]', 'disabled' => $disabled]
+							).'
+							'.$this->createAddRowButton
+							(
+								attributes: ['class' => ['album-select']]
+							).'
+							'.$this->createDeleteRowButton
+							(
+								attributes: ['class' => ['album-select'], 'disabled' => $disabled]
+							).'
+						</section>
 			';
 		}
 		
@@ -186,45 +157,34 @@ class UserView extends ViolatorView
 		'
 					</section>
 					<section class="has-tooltip" tooltip-id="9">
-						<h2>'.\Localization\GameEditorPage\RelatedCharacters.'</h2>
+						'.$this->createHeadingForInput(\Localization\GameEditorPage\RelatedCharacters, 2, false).'
 		';
 		
 		foreach ($relatedCharacters as $relatedCharacter)
 		{
-			$characterInput = $this->createSelect
-			(
-				'character-ids[]',
-				null,
-				null,
-				$relatedCharacter['character_game_relation_status'] === 'unchecked',
-				false,
-				false,
-				true,
-				$characters,
-				$relatedCharacter,
-				'transliterated_name',
-				'id'
-			);
-			
-			$addRowButton = $this->createAddRowButton
-			(
-				'character-select',
-				true
-			);
-			
-			$deleteRowButton = $this->createDeleteRowButton
-			(
-				'character-select',
-				$relatedCharacter['character_game_relation_status'] === 'unchecked',
-			);
+			$disabled = ($relatedCharacter['character_game_relation_status'] !== 'unchecked');
 			
 			$html[] = 
 			'
-					<section class="related-entity-controls">
-						'.$characterInput.'
-						'.$addRowButton.'
-						'.$deleteRowButton.'
-					</section>
+						<section class="related-entity-controls">
+							'.$this->createSelect
+							(
+								iteratedOptions: $characters,
+								selectedOption:  $relatedCharacter,
+								addEmptyOption:  true,
+								keyToShownValue: 'transliterated_name',
+								keyToSentValue:  'id',
+								attributes:      ['name' => 'character-ids[]', 'disabled' => $disabled]
+							).'
+							'.$this->createAddRowButton
+							(
+								attributes: ['class' => ['character-select']]
+							).'
+							'.$this->createDeleteRowButton
+							(
+								attributes: ['class' => ['character-select'], 'disabled' => $disabled]
+							).'
+						</section>
 			';
 		}
 		
@@ -233,9 +193,9 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="10">
 						<section class="page-controls">
-							'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
-							<section></section>
-							<input type="submit" value="'.\Localization\Controls\Submit.'"/>
+							'.$this->createReturnButton($defaultReturnLink).'
+							'.$this->createFillerSection().'
+							'.$this->createSubmitButton().'
 						</section>
 					</section>
 				</form>
@@ -245,42 +205,43 @@ class UserView extends ViolatorView
 		</article>
 		';
 		
-		$tooltipWindow = $this->createTooltipWindow();
-		$tooltipHeadings = $this->createTooltipHeadingDatalist
+		$html[] = $this->createTooltipWindow();
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultHeading,
-			\Localization\GameEditorPage\TooltipHeading\OriginalName,
-			\Localization\GameEditorPage\TooltipHeading\TransliteratedName,
-			\Localization\GameEditorPage\TooltipHeading\LocalizedName,
-			\Localization\GameEditorPage\TooltipHeading\OldLogo,
-			\Localization\GameEditorPage\TooltipHeading\NewLogo,
-			\Localization\GameEditorPage\TooltipHeading\Logo,
-			\Localization\GameEditorPage\TooltipHeading\VndbLink,
-			\Localization\GameEditorPage\TooltipHeading\RelatedAlbums,
-			\Localization\GameEditorPage\TooltipHeading\RelatedCharacters,
-			\Localization\GameEditorPage\TooltipHeading\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultHeading,
+				\Localization\GameEditorPage\TooltipHeading\OriginalName,
+				\Localization\GameEditorPage\TooltipHeading\TransliteratedName,
+				\Localization\GameEditorPage\TooltipHeading\LocalizedName,
+				\Localization\GameEditorPage\TooltipHeading\OldLogo,
+				\Localization\GameEditorPage\TooltipHeading\NewLogo,
+				\Localization\GameEditorPage\TooltipHeading\Logo,
+				\Localization\GameEditorPage\TooltipHeading\VndbLink,
+				\Localization\GameEditorPage\TooltipHeading\RelatedAlbums,
+				\Localization\GameEditorPage\TooltipHeading\RelatedCharacters,
+				\Localization\GameEditorPage\TooltipHeading\Controls
+			],
+			attributes: ['id' => 'tooltip-headings']
 		);
-		$tooltipContents = $this->createTooltipContentDatalist
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultContent,
-			\Localization\GameEditorPage\TooltipContent\OriginalName,
-			\Localization\GameEditorPage\TooltipContent\TransliteratedName,
-			\Localization\GameEditorPage\TooltipContent\LocalizedName,
-			\Localization\GameEditorPage\TooltipContent\OldLogo,
-			\Localization\GameEditorPage\TooltipContent\NewLogo,
-			\Localization\GameEditorPage\TooltipContent\Logo,
-			\Localization\GameEditorPage\TooltipContent\VndbLink,
-			\Localization\GameEditorPage\TooltipContent\RelatedAlbums,
-			\Localization\GameEditorPage\TooltipContent\RelatedCharacters,
-			\Localization\GameEditorPage\TooltipContent\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultContent,
+				\Localization\GameEditorPage\TooltipContent\OriginalName,
+				\Localization\GameEditorPage\TooltipContent\TransliteratedName,
+				\Localization\GameEditorPage\TooltipContent\LocalizedName,
+				\Localization\GameEditorPage\TooltipContent\OldLogo,
+				\Localization\GameEditorPage\TooltipContent\NewLogo,
+				\Localization\GameEditorPage\TooltipContent\Logo,
+				\Localization\GameEditorPage\TooltipContent\VndbLink,
+				\Localization\GameEditorPage\TooltipContent\RelatedAlbums,
+				\Localization\GameEditorPage\TooltipContent\RelatedCharacters,
+				\Localization\GameEditorPage\TooltipContent\Controls
+			],
+			attributes: ['id' => 'tooltip-contents']
 		);
-		
-		$html[] = 
-		'
-		'.$tooltipWindow.'
-		'.$tooltipHeadings.'
-		'.$tooltipContents.'
-		';
 		
 		$html[] = $this->endRender
 		(
@@ -307,31 +268,21 @@ class UserView extends ViolatorView
 	{
 		if ($album)
 		{
-			$originalName       = htmlspecialchars($album['original_name']);
-			$transliteratedName = htmlspecialchars($album['transliterated_name']);
-			$localizedName      = htmlspecialchars($album['localized_name'] ?? '');
+			$originalName       = $album['original_name'];
+			$transliteratedName = $album['transliterated_name'];
+			$localizedName      = $album['localized_name'];
 			$isImageUploaded    = $album['is_image_uploaded'];
-			
-			if ($album['vgmdb_id'])
-				$vgmdbLink      = 'https://vgmdb.net/album/'.htmlspecialchars($album['vgmdb_id']);
-			else
-				$vgmdbLink      = '';
-			
-			$songCount          = htmlspecialchars($album['song_count']);
-			
-			$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
+			$vgmdbLink          = $album['vgmdb_id'] ? 'https://vgmdb.net/album/'.$album['vgmdb_id'] : null;
+			$songCount          = $album['song_count'];
 		}
 		else
 		{
-			$originalName       = '';
-			$transliteratedName = '';
-			$localizedName      = '';
+			$originalName       = null;
+			$transliteratedName = null;
+			$localizedName      = null;
 			$isImageUploaded    = false;
-			$vgmdbLink          = '';
-			$songCount          = '';
-			
-			$query = Http::getLastVisitedQuery(queryIfNull: self::ENTITY_LIST_DEFAULT_QUERY);
-			$cancelLink = Http::buildInternalPath($this->language, 'album-list').$query;
+			$vgmdbLink          = null;
+			$songCount          = null;
 		}
 		
 		if (Validation::isNullOrEmpty($relatedGames))
@@ -346,6 +297,8 @@ class UserView extends ViolatorView
 			];
 		}
 		
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'album-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
+		
 		$html[] = $this->startRender
 		(
 			title:        $heading,
@@ -359,41 +312,30 @@ class UserView extends ViolatorView
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section class="has-tooltip" tooltip-id="1">
-						<h2>'.\Localization\AlbumEditorPage\OriginalName.'<span class="required-input"> *</span></h2>
-						<input type="text" name="original-name" placeholder="蒼の彼方のフォーリズム サウンドトラックCD vol.1" value="'.$originalName.'" required/>
+						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\OriginalName, 2, true).'
+						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => '蒼の彼方のフォーリズム サウンドトラックCD vol.1', 'value' => $originalName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
-						<h2>'.\Localization\AlbumEditorPage\TransliteratedName.'<span class="required-input"> *</span></h2>
-						<input type="text" name="transliterated-name" placeholder="Ao no Kanata no Foo Rizumu Saundotorakku CD VOL.1" pattern="[ -~]+" value="'.$transliteratedName.'" required/>
+						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\TransliteratedName, 2, true).'
+						'.$this->createTextInput(['name' => 'transliterated-name', 'placeholder' => 'Ao no Kanata no Foo Rizumu Saundotorakku CD VOL.1', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
-						<h2>'.\Localization\AlbumEditorPage\LocalizedName.'</h2>
-						<input type="text" name="localized-name" placeholder="FOUR RHYTHM ACROSS THE BLUE SOUND TRACK CD VOL.01" value="'.$localizedName.'"/>
+						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\LocalizedName, 2, false).'
+						'.$this->createTextInput(['name' => 'localized-name', 'placeholder' => 'FOUR RHYTHM ACROSS THE BLUE SOUND TRACK CD VOL.01', 'value' => $localizedName]).'
 					</section>
 		';
-		
-		$fileupload = $this->createFileupload
-		(
-			'cover',
-			'cover-input',
-			null,
-			true,
-			false,
-			false,
-			self::ACCEPTED_IMAGE_TYPES
-		);
 		
 		if ($isImageUploaded)
 		{
 			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="4">
-						<h2>'.\Localization\AlbumEditorPage\OldCover.'</h2>
+						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\OldCover, 2, false).'
 						'.$this->createAlbumImage($album).'
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
-						<h2>'.\Localization\AlbumEditorPage\NewCover.'</h2>
-						'.$fileupload.'
+						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\NewCover, 2, false).'
+						'.$this->createFileupload(['name' => 'cover', 'accept' => self::ACCEPTED_IMAGE_TYPES]).'
 					</section>
 			';
 		}
@@ -402,8 +344,8 @@ class UserView extends ViolatorView
 			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="6">
-						<h2>'.\Localization\AlbumEditorPage\Cover.'</h2>
-						'.$fileupload.'
+						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\Cover, 2, false).'
+						'.$this->createFileupload(['name' => 'cover', 'accept' => self::ACCEPTED_IMAGE_TYPES]).'
 					</section>
 			';
 		}
@@ -411,49 +353,39 @@ class UserView extends ViolatorView
 		$html[] = 
 		'
 					<section class="has-tooltip" tooltip-id="7">
-						<h2>'.\Localization\AlbumEditorPage\VgmdbLink.'</h2>
-						<input type="url" name="vgmdb-link" placeholder="https://vgmdb.net/album/56642" value="'.$vgmdbLink.'"/>
+						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\VgmdbLink, 2, false).'
+						'.$this->createUrlInput(['name' => 'vgmdb-link', 'placeholder' => 'https://vgmdb.net/album/56642', 'pattern' => 'https:\/\/vgmdb\.net\/album\/\d+', 'value' => $vgmdbLink]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="8">
-						<h2>'.\Localization\AlbumEditorPage\RelatedGames.'</h2>
+						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\RelatedGames, 2, false).'
 		';
 		
 		foreach ($relatedGames as $relatedGame)
 		{
-			$gameInput = $this->createSelect
-			(
-				'game-ids[]',
-				null,
-				null,
-				$relatedGame['game_album_relation_status'] === 'unchecked',
-				false,
-				false,
-				true,
-				$games,
-				$relatedGame,
-				'transliterated_name',
-				'id'
-			);
-			
-			$addRowButton = $this->createAddRowButton
-			(
-				'game-select',
-				true
-			);
-			
-			$deleteRowButton = $this->createDeleteRowButton
-			(
-				'game-select',
-				$relatedGame['game_album_relation_status'] === 'unchecked'
-			);
+			$disabled = ($relatedGame['game_album_relation_status'] !== 'unchecked');
 			
 			$html[] = 
 			'
-					<section class="related-entity-controls">
-						'.$gameInput.'
-						'.$addRowButton.'
-						'.$deleteRowButton.'
-					</section>
+						<section class="related-entity-controls">
+							'.$this->createSelect
+							(
+								iteratedOptions: $games,
+								selectedOption:  $relatedGame,
+								addEmptyOption:  true,
+								keyToShownValue: 'transliterated_name',
+								keyToSentValue:  'id',
+								attributes:      ['name' => 'game-ids[]', 'disabled' => $disabled]
+							).'
+							'.$this->createAddRowButton
+							(
+								attributes: ['class' => ['game-select']]
+							)
+							.'
+							'.$this->createDeleteRowButton
+							(
+								attributes: ['class' => ['game-select'], 'disabled' => $disabled]
+							).'
+						</section>
 			';
 		}
 		
@@ -461,14 +393,14 @@ class UserView extends ViolatorView
 		'
 					</section>
 					<section class="has-tooltip" tooltip-id="9">
-						<h2>'.\Localization\AlbumEditorPage\SongCount.'<span class="required-input"> *</span></h2>
-						<input type="text" pattern="\d+" name="song-count" placeholder="28" value="'.$songCount.'" required/>
+						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\SongCount, 2, true).'
+						'.$this->createTextInput(['name' => 'song-count', 'placeholder' => '28', 'pattern' => '\d+', 'value' => $songCount, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="10">
 						<section class="page-controls">
-							'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
-							<section></section>
-							<input type="submit" value="'.\Localization\Controls\Submit.'"/>
+							'.$this->createReturnButton($defaultReturnLink).'
+							'.$this->createFillerSection().'
+							'.$this->createSubmitButton().'
 						</section>
 					</section>
 				</form>
@@ -478,42 +410,43 @@ class UserView extends ViolatorView
 		</article>
 		';
 		
-		$tooltipWindow = $this->createTooltipWindow();
-		$tooltipHeadings = $this->createTooltipHeadingDatalist
+		$html[] = $this->createTooltipWindow();
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultHeading,
-			\Localization\AlbumEditorPage\TooltipHeading\OriginalName,
-			\Localization\AlbumEditorPage\TooltipHeading\TransliteratedName,
-			\Localization\AlbumEditorPage\TooltipHeading\LocalizedName,
-			\Localization\AlbumEditorPage\TooltipHeading\OldCover,
-			\Localization\AlbumEditorPage\TooltipHeading\NewCover,
-			\Localization\AlbumEditorPage\TooltipHeading\Cover,
-			\Localization\AlbumEditorPage\TooltipHeading\VgmdbLink,
-			\Localization\AlbumEditorPage\TooltipHeading\RelatedGames,
-			\Localization\AlbumEditorPage\TooltipHeading\SongCount,
-			\Localization\AlbumEditorPage\TooltipHeading\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultHeading,
+				\Localization\AlbumEditorPage\TooltipHeading\OriginalName,
+				\Localization\AlbumEditorPage\TooltipHeading\TransliteratedName,
+				\Localization\AlbumEditorPage\TooltipHeading\LocalizedName,
+				\Localization\AlbumEditorPage\TooltipHeading\OldCover,
+				\Localization\AlbumEditorPage\TooltipHeading\NewCover,
+				\Localization\AlbumEditorPage\TooltipHeading\Cover,
+				\Localization\AlbumEditorPage\TooltipHeading\VgmdbLink,
+				\Localization\AlbumEditorPage\TooltipHeading\RelatedGames,
+				\Localization\AlbumEditorPage\TooltipHeading\SongCount,
+				\Localization\AlbumEditorPage\TooltipHeading\Controls
+			],
+			attributes: ['id' => 'tooltip-headings']
 		);
-		$tooltipContents = $this->createTooltipContentDatalist
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultContent,
-			\Localization\AlbumEditorPage\TooltipContent\OriginalName,
-			\Localization\AlbumEditorPage\TooltipContent\TransliteratedName,
-			\Localization\AlbumEditorPage\TooltipContent\LocalizedName,
-			\Localization\AlbumEditorPage\TooltipContent\OldCover,
-			\Localization\AlbumEditorPage\TooltipContent\NewCover,
-			\Localization\AlbumEditorPage\TooltipContent\Cover,
-			\Localization\AlbumEditorPage\TooltipContent\VgmdbLink,
-			\Localization\AlbumEditorPage\TooltipContent\RelatedGames,
-			\Localization\AlbumEditorPage\TooltipContent\SongCount,
-			\Localization\AlbumEditorPage\TooltipContent\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultContent,
+				\Localization\AlbumEditorPage\TooltipContent\OriginalName,
+				\Localization\AlbumEditorPage\TooltipContent\TransliteratedName,
+				\Localization\AlbumEditorPage\TooltipContent\LocalizedName,
+				\Localization\AlbumEditorPage\TooltipContent\OldCover,
+				\Localization\AlbumEditorPage\TooltipContent\NewCover,
+				\Localization\AlbumEditorPage\TooltipContent\Cover,
+				\Localization\AlbumEditorPage\TooltipContent\VgmdbLink,
+				\Localization\AlbumEditorPage\TooltipContent\RelatedGames,
+				\Localization\AlbumEditorPage\TooltipContent\SongCount,
+				\Localization\AlbumEditorPage\TooltipContent\Controls
+			],
+			attributes: ['id' => 'tooltip-contents']
 		);
-		
-		$html[] = 
-		'
-		'.$tooltipWindow.'
-		'.$tooltipHeadings.'
-		'.$tooltipContents.'
-		';
 		
 		$html[] = $this->endRender
 		(
@@ -537,32 +470,31 @@ class UserView extends ViolatorView
 	{
 		if ($artist)
 		{
-			$originalName       = htmlspecialchars($artist['original_name']);
-			$transliteratedName = htmlspecialchars($artist['transliterated_name']);
-			$localizedName      = htmlspecialchars($artist['localized_name'] ?? '');
+			$originalName       = $artist['original_name'];
+			$transliteratedName = $artist['transliterated_name'];
+			$localizedName      = $artist['localized_name'];
 			$isImageUploaded    = $artist['is_image_uploaded'];
-			
-			if ($artist['vgmdb_id'])
-				$vgmdbLink      = 'https://vgmdb.net/artist/'.htmlspecialchars($artist['vgmdb_id']);
-			else
-				$vgmdbLink      = '';
-			
-			$originalArtist     = array_find($originalArtists, function (array $original) use ($artist) { return $artist['alias_of_artist_id'] === $original['id']; });
-			
-			$cancelLink = Http::buildInternalPath($this->language, 'artist', $artist['uri']);
+			$vgmdbLink          = $artist['vgmdb_id'] ? 'https://vgmdb.net/artist/'.$artist['vgmdb_id'] : null;
+			$originalArtist     = array_find
+			(
+				$originalArtists,
+				function (array $original) use ($artist)
+				{
+					return $artist['alias_of_artist_id'] === $original['id'];
+				}
+			);
 		}
 		else
 		{
-			$originalName       = '';
-			$transliteratedName = '';
-			$localizedName      = '';
+			$originalName       = null;
+			$transliteratedName = null;
+			$localizedName      = null;
 			$isImageUploaded    = false;
-			$vgmdbLink          = '';
+			$vgmdbLink          = null;
 			$originalArtist     = null;
-			
-			$query = Http::getLastVisitedQuery(queryIfNull: self::ENTITY_LIST_DEFAULT_QUERY);
-			$cancelLink = Http::buildInternalPath($this->language, 'artist-list').$query;
 		}
+		
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'artist-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
 		
 		$html[] = $this->startRender
 		(
@@ -577,41 +509,30 @@ class UserView extends ViolatorView
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section class="has-tooltip" tooltip-id="1">
-						<h2>'.\Localization\ArtistEditorPage\OriginalName.'<span class="required-input"> *</span></h2>
-						<input type="text" name="original-name" placeholder="いとうかなこ" value="'.$originalName.'" required />
+						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\OriginalName, 2, true).'
+						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => 'いとうかなこ', 'value' => $originalName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
-						<h2>'.\Localization\ArtistEditorPage\TransliteratedName.'<span class="required-input"> *</span></h2>
-						<input type="text" name="transliterated-name" placeholder="Itou Kanako" pattern="[ -~]+" value="'.$transliteratedName.'" required />
+						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\TransliteratedName, 2, true).'
+						'.$this->createTextInput(['name' => 'transliterated-name', 'placeholder' => 'Itou Kanako', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
-						<h2>'.\Localization\ArtistEditorPage\LocalizedName.'</h2>
-						<input type="text" name="localized-name" placeholder="Kanako Ito" value="'.$localizedName.'" />
+						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\LocalizedName, 2, false).'
+						'.$this->createTextInput(['name' => 'localized-name', 'placeholder' => 'Kanako Ito', 'value' => $localizedName]).'
 					</section>
 		';
-		
-		$fileupload = $this->createFileupload
-		(
-			'photo',
-			'photo-input',
-			null,
-			true,
-			false,
-			false,
-			self::ACCEPTED_IMAGE_TYPES
-		);
 		
 		if ($isImageUploaded)
 		{
 			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="4">
-						<h2>'.\Localization\ArtistEditorPage\OldPhoto.'</h2>
+						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\OldPhoto, 2, false).'
 						'.$this->createArtistImage($artist).'
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
-						<h2>'.\Localization\ArtistEditorPage\NewPhoto.'</h2>
-						'.$fileupload.'
+						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\NewPhoto, 2, false).'
+						'.$this->createFileupload(['name' => 'photo', 'accept' => self::ACCEPTED_IMAGE_TYPES]).'
 					</section>
 			';
 		}
@@ -620,8 +541,8 @@ class UserView extends ViolatorView
 			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="6">
-						<h2>'.\Localization\ArtistEditorPage\Photo.'</h2>
-						'.$fileupload.'
+						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\Photo, 2, false).'
+						'.$this->createFileupload(['name' => 'photo', 'accept' => self::ACCEPTED_IMAGE_TYPES]).'
 					</section>
 			';
 		}
@@ -629,41 +550,27 @@ class UserView extends ViolatorView
 		$html[] = 
 		'
 					<section class="has-tooltip" tooltip-id="7">
-						<h2>'.\Localization\ArtistEditorPage\VgmdbLink.'</h2>
-						<input type="url" name="vgmdb-link" placeholder="https://vgmdb.net/artist/69" value="'.$vgmdbLink.'"/>
+						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\VgmdbLink, 2, false).'
+						'.$this->createUrlInput(['name' => 'vgmdb-link', 'placeholder' => 'https://vgmdb.net/artist/69', 'pattern' => 'https:\/\/vgmdb\.net\/artist\/\d+', 'value' => $vgmdbLink]).'
 					</section>
-		';
-		
-		$originalArtistSelect = $this->createSelect
-		(
-			'original-artist-id',
-			null,
-			null,
-			true,
-			false,
-			false,
-			true,
-			$originalArtists,
-			$originalArtist,
-			'transliterated_name',
-			'id'
-		);
-		
-		$html[] =
-		'
 					<section class="has-tooltip" tooltip-id="8">
-						<h2>'.\Localization\ArtistEditorPage\OriginalArtist.'</h2>
-						'.$originalArtistSelect.'
+						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\OriginalArtist, 2, false).'
+						'.$this->createSelect
+						(
+							iteratedOptions: $originalArtists,
+							disabledOptions: [$artist],
+							selectedOption:  $originalArtist,
+							addEmptyOption:  true,
+							keyToShownValue: 'transliterated_name',
+							keyToSentValue:  'id',
+							attributes:      ['name' => 'original-artist-id']
+						).'
 					</section>
-		';
-		
-		$html[] =
-		'
 					<section class="has-tooltip" tooltip-id="9">
 						<section class="page-controls">
-							'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
-							<section></section>
-							<input type="submit" value="'.\Localization\Controls\Submit.'"/>
+							'.$this->createReturnButton($defaultReturnLink).'
+							'.$this->createFillerSection().'
+							'.$this->createSubmitButton().'
 						</section>
 					</section>
 				</form>
@@ -673,40 +580,41 @@ class UserView extends ViolatorView
 		</article>
 		';
 		
-		$tooltipWindow = $this->createTooltipWindow();
-		$tooltipHeadings = $this->createTooltipHeadingDatalist
+		$html[] = $this->createTooltipWindow();
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultHeading,
-			\Localization\ArtistEditorPage\TooltipHeading\OriginalName,
-			\Localization\ArtistEditorPage\TooltipHeading\TransliteratedName,
-			\Localization\ArtistEditorPage\TooltipHeading\LocalizedName,
-			\Localization\ArtistEditorPage\TooltipHeading\OldPhoto,
-			\Localization\ArtistEditorPage\TooltipHeading\NewPhoto,
-			\Localization\ArtistEditorPage\TooltipHeading\Photo,
-			\Localization\ArtistEditorPage\TooltipHeading\VgmdbLink,
-			\Localization\ArtistEditorPage\TooltipHeading\OriginalArtist,
-			\Localization\ArtistEditorPage\TooltipHeading\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultHeading,
+				\Localization\ArtistEditorPage\TooltipHeading\OriginalName,
+				\Localization\ArtistEditorPage\TooltipHeading\TransliteratedName,
+				\Localization\ArtistEditorPage\TooltipHeading\LocalizedName,
+				\Localization\ArtistEditorPage\TooltipHeading\OldPhoto,
+				\Localization\ArtistEditorPage\TooltipHeading\NewPhoto,
+				\Localization\ArtistEditorPage\TooltipHeading\Photo,
+				\Localization\ArtistEditorPage\TooltipHeading\VgmdbLink,
+				\Localization\ArtistEditorPage\TooltipHeading\OriginalArtist,
+				\Localization\ArtistEditorPage\TooltipHeading\Controls
+			],
+			attributes: ['id' => 'tooltip-headings']
 		);
-		$tooltipContents = $this->createTooltipContentDatalist
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultContent,
-			\Localization\ArtistEditorPage\TooltipContent\OriginalName,
-			\Localization\ArtistEditorPage\TooltipContent\TransliteratedName,
-			\Localization\ArtistEditorPage\TooltipContent\LocalizedName,
-			\Localization\ArtistEditorPage\TooltipContent\OldPhoto,
-			\Localization\ArtistEditorPage\TooltipContent\NewPhoto,
-			\Localization\ArtistEditorPage\TooltipContent\Photo,
-			\Localization\ArtistEditorPage\TooltipContent\VgmdbLink,
-			\Localization\ArtistEditorPage\TooltipContent\OriginalArtist,
-			\Localization\ArtistEditorPage\TooltipContent\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultContent,
+				\Localization\ArtistEditorPage\TooltipContent\OriginalName,
+				\Localization\ArtistEditorPage\TooltipContent\TransliteratedName,
+				\Localization\ArtistEditorPage\TooltipContent\LocalizedName,
+				\Localization\ArtistEditorPage\TooltipContent\OldPhoto,
+				\Localization\ArtistEditorPage\TooltipContent\NewPhoto,
+				\Localization\ArtistEditorPage\TooltipContent\Photo,
+				\Localization\ArtistEditorPage\TooltipContent\VgmdbLink,
+				\Localization\ArtistEditorPage\TooltipContent\OriginalArtist,
+				\Localization\ArtistEditorPage\TooltipContent\Controls
+			],
+			attributes: ['id' => 'tooltip-contents']
 		);
-		
-		$html[] = 
-		'
-		'.$tooltipWindow.'
-		'.$tooltipHeadings.'
-		'.$tooltipContents.'
-		';
 		
 		$html[] = $this->endRender
 		(
@@ -731,28 +639,19 @@ class UserView extends ViolatorView
 	{
 		if ($character)
 		{
-			$originalName       = htmlspecialchars($character['original_name']);
-			$transliteratedName = htmlspecialchars($character['transliterated_name']);
-			$localizedName      = htmlspecialchars($character['localized_name'] ?? '');
+			$originalName       = $character['original_name'];
+			$transliteratedName = $character['transliterated_name'];
+			$localizedName      = $character['localized_name'];
 			$isImageUploaded    = $character['is_image_uploaded'];
-			
-			if ($character['vndb_id'])
-				$vndbLink       = 'https://vndb.org/c'.htmlspecialchars($character['vndb_id']);
-			else
-				$vndbLink       = '';
-			
-			$cancelLink = Http::buildInternalPath($this->language, 'character', $character['uri']);
+			$vndbLink           = $character['vndb_id'] ? 'https://vndb.org/c'.$character['vndb_id'] : null;
 		}
 		else
 		{
-			$originalName       = '';
-			$transliteratedName = '';
-			$localizedName      = '';
+			$originalName       = null;
+			$transliteratedName = null;
+			$localizedName      = null;
 			$isImageUploaded    = false;
-			$vndbLink           = '';
-			
-			$query = Http::getLastVisitedQuery(queryIfNull: self::ENTITY_LIST_DEFAULT_QUERY);
-			$cancelLink = Http::buildInternalPath($this->language, 'character-list').$query;
+			$vndbLink           = null;
 		}
 		
 		if (Validation::isNullOrEmpty($relatedGames))
@@ -760,12 +659,14 @@ class UserView extends ViolatorView
 			$relatedGames =
 			[
 				[
-					'id'                         => '',
-					'transliterated_name'        => '',
+					'id'                             => '',
+					'transliterated_name'            => '',
 					'character_game_relation_status' => 'unchecked'
 				]
 			];
 		}
+		
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'character-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
 		
 		$html[] = $this->startRender
 		(
@@ -780,41 +681,30 @@ class UserView extends ViolatorView
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section class="has-tooltip" tooltip-id="1">
-						<h2>'.\Localization\CharacterEditorPage\OriginalName.'<span class="required-input"> *</span></h2>
-						<input type="text" name="original-name" placeholder="桐生萌郁" value="'.$originalName.'" required/>
+						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\OriginalName, 2, true).'
+						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => '桐生萌郁', 'value' => $originalName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
-						<h2>'.\Localization\CharacterEditorPage\TransliteratedName.'<span class="required-input"> *</span></h2>
-						<input type="text" name="transliterated-name" placeholder="Kiryuu Moeka" pattern="[ -~]+" value="'.$transliteratedName.'" required/>
+						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\TransliteratedName, 2, true).'
+						'.$this->createTextInput(['name' => 'transliterated-name', 'placeholder' => 'Kiryuu Moeka', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
-						<h2>'.\Localization\CharacterEditorPage\LocalizedName.'</h2>
-						<input type="text" name="localized-name" placeholder="Moeka Kiryu" value="'.$localizedName.'"/>
+						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\LocalizedName, 2, false).'
+						'.$this->createTextInput(['name' => 'localized-name', 'placeholder' => 'Moeka Kiryu', 'value' => $localizedName]).'
 					</section>
 		';
-		
-		$fileupload = $this->createFileupload
-		(
-			'image',
-			'image-input',
-			null,
-			true,
-			false,
-			false,
-			self::ACCEPTED_IMAGE_TYPES
-		);
 		
 		if ($isImageUploaded)
 		{
 			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="4">
-						<h2>'.\Localization\CharacterEditorPage\OldImage.'</h2>
+						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\OldImage, 2, false).'
 						'.$this->createCharacterImage($character).'
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
-						<h2>'.\Localization\CharacterEditorPage\NewImage.'</h2>
-						'.$fileupload.'
+						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\NewImage, 2, false).'
+						'.$this->createFileupload(['name' => 'image', 'accept' => self::ACCEPTED_IMAGE_TYPES]).'
 					</section>
 			';
 		}
@@ -823,8 +713,8 @@ class UserView extends ViolatorView
 			$html[] = 
 			'
 					<section class="has-tooltip" tooltip-id="6">
-						<h2>'.\Localization\CharacterEditorPage\Image.'</h2>
-						'.$fileupload.'
+						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\Image, 2, false).'
+						'.$this->createFileupload(['name' => 'image', 'accept' => self::ACCEPTED_IMAGE_TYPES]).'
 					</section>
 			';
 		}
@@ -832,49 +722,39 @@ class UserView extends ViolatorView
 		$html[] = 
 		'
 					<section class="has-tooltip" tooltip-id="7">
-						<h2>'.\Localization\CharacterEditorPage\VndbLink.'</h2>
-						<input type="url" name="vndb-link" placeholder="https://vndb.org/c6496" value="'.$vndbLink.'"/>
+						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\VndbLink, 2, false).'
+						'.$this->createUrlInput(['name' => 'vndb-link', 'placeholder' => 'https://vndb.org/c6496', 'pattern' => 'https:\/\/vndb\.org\/c\d+', 'value' => $vndbLink]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="8">
-						<h2>'.\Localization\CharacterEditorPage\RelatedGames.'</h2>
+						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\RelatedGames, 2, false).'
 		';
 		
 		foreach ($relatedGames as $relatedGame)
 		{
-			$gameInput = $this->createSelect
-			(
-				'game-ids[]',
-				null,
-				null,
-				$relatedGame['character_game_relation_status'] === 'unchecked',
-				false,
-				false,
-				true,
-				$games,
-				$relatedGame,
-				'transliterated_name',
-				'id'
-			);
+			$disabled = ($relatedGame['character_game_relation_status'] !== 'unchecked');
 			
-			$addRowButton = $this->createAddRowButton
-			(
-				'game-select',
-				true
-			);
-
-			$deleteRowButton = $this->createDeleteRowButton
-			(
-				'game-select',
-				$relatedGame['character_game_relation_status'] === 'unchecked'
-			);
-
 			$html[] = 
 			'
-					<section class="related-entity-controls">
-						'.$gameInput.'
-						'.$addRowButton.'
-						'.$deleteRowButton.'
-					</section>
+						<section class="related-entity-controls">
+							'.$this->createSelect
+							(
+								iteratedOptions: $games,
+								selectedOption:  $relatedGame,
+								addEmptyOption:  true,
+								keyToShownValue: 'transliterated_name',
+								keyToSentValue:  'id',
+								attributes:      ['name' => 'game-ids[]', 'disabled' => $disabled]
+							).'
+							'.$this->createAddRowButton
+							(
+								attributes: ['class' => ['game-select']]
+							).'
+							'.$deleteRowButton = $this->createDeleteRowButton
+							(
+								attributes: ['class' => ['game-select'], 'disabled' => $disabled]
+							)
+							.'
+						</section>
 			';
 		}
 		
@@ -883,9 +763,9 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="9">
 						<section class="page-controls">
-							'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
-							<section></section>
-							<input type="submit" value="'.\Localization\Controls\Submit.'"/>
+							'.$this->createReturnButton($defaultReturnLink).'
+							'.$this->createFillerSection().'
+							'.$this->createSubmitButton().'
 						</section>
 					</section>
 				</form>
@@ -895,40 +775,41 @@ class UserView extends ViolatorView
 		</article>
 		';
 		
-		$tooltipWindow = $this->createTooltipWindow();
-		$tooltipHeadings = $this->createTooltipHeadingDatalist
+		$html[] = $this->createTooltipWindow();
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultHeading,
-			\Localization\CharacterEditorPage\TooltipHeading\OriginalName,
-			\Localization\CharacterEditorPage\TooltipHeading\TransliteratedName,
-			\Localization\CharacterEditorPage\TooltipHeading\LocalizedName,
-			\Localization\CharacterEditorPage\TooltipHeading\OldImage,
-			\Localization\CharacterEditorPage\TooltipHeading\NewImage,
-			\Localization\CharacterEditorPage\TooltipHeading\Image,
-			\Localization\CharacterEditorPage\TooltipHeading\VndbLink,
-			\Localization\CharacterEditorPage\TooltipHeading\RelatedGames,
-			\Localization\CharacterEditorPage\TooltipHeading\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultHeading,
+				\Localization\CharacterEditorPage\TooltipHeading\OriginalName,
+				\Localization\CharacterEditorPage\TooltipHeading\TransliteratedName,
+				\Localization\CharacterEditorPage\TooltipHeading\LocalizedName,
+				\Localization\CharacterEditorPage\TooltipHeading\OldImage,
+				\Localization\CharacterEditorPage\TooltipHeading\NewImage,
+				\Localization\CharacterEditorPage\TooltipHeading\Image,
+				\Localization\CharacterEditorPage\TooltipHeading\VndbLink,
+				\Localization\CharacterEditorPage\TooltipHeading\RelatedGames,
+				\Localization\CharacterEditorPage\TooltipHeading\Controls
+			],
+			attributes: ['id' => 'tooltip-headings']
 		);
-		$tooltipContents = $this->createTooltipContentDatalist
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultContent,
-			\Localization\CharacterEditorPage\TooltipContent\OriginalName,
-			\Localization\CharacterEditorPage\TooltipContent\TransliteratedName,
-			\Localization\CharacterEditorPage\TooltipContent\LocalizedName,
-			\Localization\CharacterEditorPage\TooltipContent\OldImage,
-			\Localization\CharacterEditorPage\TooltipContent\NewImage,
-			\Localization\CharacterEditorPage\TooltipContent\Image,
-			\Localization\CharacterEditorPage\TooltipContent\VndbLink,
-			\Localization\CharacterEditorPage\TooltipContent\RelatedGames,
-			\Localization\CharacterEditorPage\TooltipContent\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultContent,
+				\Localization\CharacterEditorPage\TooltipContent\OriginalName,
+				\Localization\CharacterEditorPage\TooltipContent\TransliteratedName,
+				\Localization\CharacterEditorPage\TooltipContent\LocalizedName,
+				\Localization\CharacterEditorPage\TooltipContent\OldImage,
+				\Localization\CharacterEditorPage\TooltipContent\NewImage,
+				\Localization\CharacterEditorPage\TooltipContent\Image,
+				\Localization\CharacterEditorPage\TooltipContent\VndbLink,
+				\Localization\CharacterEditorPage\TooltipContent\RelatedGames,
+				\Localization\CharacterEditorPage\TooltipContent\Controls
+			],
+			attributes: ['id' => 'tooltip-contents']
 		);
-		
-		$html[] = 
-		'
-		'.$tooltipWindow.'
-		'.$tooltipHeadings.'
-		'.$tooltipContents.'
-		';
 		
 		$html[] = $this->endRender
 		(
@@ -947,36 +828,34 @@ class UserView extends ViolatorView
 	(
 		array      $album,
 		array|null $song,
-		int  |null $discNumber,
-		int  |null $trackNumber,
-		bool |null $isLastSong,
+		int|null   $discNumber,
+		int|null   $trackNumber,
+		bool|null  $isLastSong,
 		string     $heading
 	): void
 	{
 		if ($song)
 		{
-			$discNumber         = htmlspecialchars($song['disc_number']);
-			$trackNumber        = htmlspecialchars($song['track_number']);
-			$originalName       = htmlspecialchars($song['original_name']);
-			$transliteratedName = htmlspecialchars($song['transliterated_name']);
-			$localizedName      = htmlspecialchars($song['localized_name'] ?? '');
-			$hasVocal           = $song['has_vocal'];
+			$discNumber           = $song['disc_number'];
+			$trackNumber          = $song['track_number'];
+			$originalName         = $song['original_name'];
+			$transliteratedName   = $song['transliterated_name'];
+			$localizedName        = $song['localized_name'];
+			$hasVocal             = $song['has_vocal'];
 			
-			$fieldFlag          = 'disabled';
-			$buttonFlag         = 'disabled';
+			$numberButtonDisabled = true;
 		}
 		else
 		{
-			$originalName       = '';
-			$transliteratedName = '';
-			$localizedName      = '';
-			$hasVocal           = null;
+			$originalName         = null;
+			$transliteratedName   = null;
+			$localizedName        = null;
+			$hasVocal             = null;
 			
-			$fieldFlag          = 'readonly';
-			$buttonFlag         = '';
+			$numberButtonDisabled = false;
 		}
 		
-		$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
 		
 		$vocalOptions =
 		[
@@ -984,27 +863,12 @@ class UserView extends ViolatorView
 			['id' => 1, 'value' => \Localization\SongEditorPage\HasVocalTrue],
 		];
 		
-		$select = $this->createSelect
-		(
-			'has-vocal',
-			null,
-			null,
-			true,
-			false,
-			true,
-			true,
-			$vocalOptions,
-			(is_null($hasVocal) ? null : $vocalOptions[$hasVocal]),
-			'value',
-			'id'
-		);
-		
 		if ($isLastSong === true)
-			$submitButtonValue = \Localization\SongEditorPage\SubmitLastSong;
+			$submitButtonLabel = \Localization\SongEditorPage\SubmitLastSong;
 		else if ($isLastSong === false)
-			$submitButtonValue = \Localization\SongEditorPage\SubmitNonLastSong;
+			$submitButtonLabel = \Localization\SongEditorPage\SubmitNonLastSong;
 		else
-			$submitButtonValue = \Localization\SongEditorPage\SubmitChanges;
+			$submitButtonLabel = \Localization\SongEditorPage\SubmitChanges;
 		
 		$html[] = $this->startRender
 		(
@@ -1019,35 +883,43 @@ class UserView extends ViolatorView
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section class="has-tooltip" tooltip-id="1">
-						<h2>'.\Localization\SongEditorPage\DiscAndTrack.'<span class="required-input"> *</span></h2>
+						'.$this->createHeadingForInput(\Localization\SongEditorPage\DiscAndTrack, 2, true).'
 						<section class="disc-track-controls">
-							<input type="text" name="disc-number" value="'.$discNumber.'" id="disc-number" '.$fieldFlag.' required/>
-							<input type="text" name="track-number" value="'.$trackNumber.'" id="track-number" '.$fieldFlag.' required/>
-							<button id="next-disc" type="button" '.$buttonFlag.'>'.\Localization\SongEditorPage\NextDisc.'</button>
-							<button id="previous-disc" type="button" '.$buttonFlag.'>'.\Localization\SongEditorPage\PreviousDisc.'</button>
+							'.$this->createTextInput(['name' => 'disc-number', 'id' => 'disc-number', 'value' => $discNumber, 'readonly' => true, 'required' => true]).'
+							'.$this->createTextInput(['name' => 'track-number', 'id' => 'track-number', 'value' => $trackNumber, 'readonly' => true, 'required' => true]).'
+							'.$this->createButton(\Localization\SongEditorPage\NextDisc, ['id' => 'next-disc', 'disabled' => $numberButtonDisabled]).'
+							'.$this->createButton(\Localization\SongEditorPage\PreviousDisc, ['id' => 'previous-disc', 'disabled' => $numberButtonDisabled]).'
 						</section>
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
-						<h2>'.\Localization\SongEditorPage\OriginalName.'<span class="required-input"> *</span></h2>
-						<input type="text" name="original-name" placeholder="星たちの歌" value="'.$originalName.'" required/>
+						'.$this->createHeadingForInput(\Localization\SongEditorPage\OriginalName, 2, true).'
+						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => '星たちの歌', 'value' => $originalName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
-						<h2>'.\Localization\SongEditorPage\TransliteratedName.'<span class="required-input"> *</span></h2>
-						<input type="text" name="transliterated-name" placeholder="Hoshitachi no Uta" pattern="[ -~]+" value="'.$transliteratedName.'" required />
+						'.$this->createHeadingForInput(\Localization\SongEditorPage\TransliteratedName, 2, true).'
+						'.$this->createTextInput(['name' => 'transliterated-name', 'placeholder' => 'Hoshitachi no Uta', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
 					</section>
 					<section class="has-tooltip" tooltip-id="4">
-						<h2>'.\Localization\SongEditorPage\LocalizedName.'</h2>
-						<input type="text" name="localized-name" placeholder="Song of the Stars" value="'.$localizedName.'"/>
+						'.$this->createHeadingForInput(\Localization\SongEditorPage\LocalizedName, 2, false).'
+						'.$this->createTextInput(['name' => 'localized-name', 'placeholder' => 'Song of the Stars', 'value' => $localizedName]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
-						<h2>'.\Localization\SongEditorPage\HasVocal.'<span class="required-input"> *</span></h2>
-						'.$select.'
+						'.$this->createHeadingForInput(\Localization\SongEditorPage\HasVocal, 2, true).'
+						'.$this->createSelect
+						(
+							iteratedOptions: $vocalOptions,
+							selectedOption:  is_null($hasVocal) ? ['id' => '', 'value' => ''] : $vocalOptions[$hasVocal],
+							addEmptyOption:  true,
+							keyToShownValue: 'value',
+							keyToSentValue:  'id',
+							attributes:      ['name' => 'has-vocal']
+						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="6">
 						<section class="page-controls">
-							'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
-							<section></section>
-							<input type="submit" value="'.$submitButtonValue.'" />
+							'.$this->createReturnButton($defaultReturnLink).'
+							'.$this->createFillerSection().'
+							'.$this->createSubmitButton($submitButtonLabel).'
 						</section>
 					</section>
 				</form>
@@ -1057,34 +929,35 @@ class UserView extends ViolatorView
 		</article>
 		';
 		
-		$tooltipWindow = $this->createTooltipWindow();
-		$tooltipHeadings = $this->createTooltipHeadingDatalist
+		$html[] = $this->createTooltipWindow();
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultHeading,
-			\Localization\SongEditorPage\TooltipHeading\DiscAndTrack,
-			\Localization\SongEditorPage\TooltipHeading\OriginalName,
-			\Localization\SongEditorPage\TooltipHeading\TransliteratedName,
-			\Localization\SongEditorPage\TooltipHeading\LocalizedName,
-			\Localization\SongEditorPage\TooltipHeading\HasVocal,
-			\Localization\SongEditorPage\TooltipHeading\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultHeading,
+				\Localization\SongEditorPage\TooltipHeading\DiscAndTrack,
+				\Localization\SongEditorPage\TooltipHeading\OriginalName,
+				\Localization\SongEditorPage\TooltipHeading\TransliteratedName,
+				\Localization\SongEditorPage\TooltipHeading\LocalizedName,
+				\Localization\SongEditorPage\TooltipHeading\HasVocal,
+				\Localization\SongEditorPage\TooltipHeading\Controls
+			], 
+			attributes: ['id' => 'tooltip-headings']
 		);
-		$tooltipContents = $this->createTooltipContentDatalist
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultContent,
-			\Localization\SongEditorPage\TooltipContent\DiscAndTrack,
-			\Localization\SongEditorPage\TooltipContent\OriginalName,
-			\Localization\SongEditorPage\TooltipContent\TransliteratedName,
-			\Localization\SongEditorPage\TooltipContent\LocalizedName,
-			\Localization\SongEditorPage\TooltipContent\HasVocal,
-			\Localization\SongEditorPage\TooltipContent\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultContent,
+				\Localization\SongEditorPage\TooltipContent\DiscAndTrack,
+				\Localization\SongEditorPage\TooltipContent\OriginalName,
+				\Localization\SongEditorPage\TooltipContent\TransliteratedName,
+				\Localization\SongEditorPage\TooltipContent\LocalizedName,
+				\Localization\SongEditorPage\TooltipContent\HasVocal,
+				\Localization\SongEditorPage\TooltipContent\Controls
+			], 
+			attributes: ['id' => 'tooltip-contents']
 		);
-		
-		$html[] = 
-		'
-		'.$tooltipWindow.'
-		'.$tooltipHeadings.'
-		'.$tooltipContents.'
-		';
 		
 		$html[] = $this->endRender
 		(
@@ -1113,7 +986,6 @@ class UserView extends ViolatorView
 	{
 		if (!$relatedPerformers)
 		{
-			// Create a fake to avoid duplicating code when creating <selects>
 			$relatedPerformers =
 			[
 				[
@@ -1125,6 +997,44 @@ class UserView extends ViolatorView
 				]
 			];
 		}
+		
+		// Renaming keys to use them in $this->createSelect
+		
+		for ($i = 0; $i < count($artists); $i++)
+		{
+			$artists[$i]['artist_id']                  = $artists[$i]['id'];
+			$artists[$i]['artist_transliterated_name'] = $artists[$i]['transliterated_name'];
+			
+			unset($artists[$i]['id']);
+			unset($artists[$i]['transliterated_name']);
+		}
+		
+		for ($i = 0; $i < count($characters); $i++)
+		{
+			$characters[$i]['character_id']                  = $characters[$i]['id'];
+			$characters[$i]['character_transliterated_name'] = $characters[$i]['transliterated_name'];
+			
+			unset($characters[$i]['id']);
+			unset($characters[$i]['transliterated_name']);
+		}
+		
+		for ($i = 0; $i < count($languages); $i++)
+		{
+			$languages[$i]['language_id'] = $languages[$i]['id'];
+			
+			unset($languages[$i]['id']);
+		}
+		
+		$originalSong = array_find
+		(
+			$originalSongs,
+			function (array $original) use ($song)
+			{
+				return $song['original_song_id'] === $original['id'];
+			}
+		);
+		
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		
 		$html[] = $this->startRender
 		(
@@ -1139,156 +1049,95 @@ class UserView extends ViolatorView
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section class="has-tooltip" tooltip-id="1">
-						<h2>'.\Localization\LyricsEditorPage\ArtistAndCharacter.'<span class="required-input"> *</span></h2>
+						'.$this->createHeadingForInput(\Localization\LyricsEditorPage\ArtistAndCharacter, 2, true).'
 		';
-		
-		// Unfortunately, I can not find another way to push these arrays into $this->createSelect
-		// Performers and these two have different keys
-		
-		for ($i = 0; $i < count($artists); $i++)
-		{
-			$artists[$i]['artist_id'] = $artists[$i]['id'];
-			$artists[$i]['artist_transliterated_name'] = $artists[$i]['transliterated_name'];
-		}
-		
-		for ($i = 0; $i < count($characters); $i++)
-		{
-			$characters[$i]['character_id'] = $characters[$i]['id'];
-			$characters[$i]['character_transliterated_name'] = $characters[$i]['transliterated_name'];
-		}
 		
 		foreach ($relatedPerformers as $relatedPerformer)
 		{
-			$artistInput = $this->createSelect
-			(
-				'artist-ids[]',
-				null,
-				null,
-				$relatedPerformer['song_artist_character_relation_status'] === 'unchecked',
-				false,
-				true,
-				true,
-				$artists,
-				$relatedPerformer,
-				'artist_transliterated_name',
-				'artist_id'
-			);
-			
-			$characterInput = $this->createSelect
-			(
-				'character-ids[]',
-				null,
-				null,
-				$relatedPerformer['song_artist_character_relation_status'] === 'unchecked',
-				false,
-				false,
-				true,
-				$characters,
-				$relatedPerformer,
-				'character_transliterated_name',
-				'character_id'
-			);
-			
-			$addRowButton = $this->createAddRowButton
-			(
-				'artist-select character-select',
-				true
-			);
-			
-			$deleteRowButton = $this->createDeleteRowButton
-			(
-				'artist-select character-select',
-				$relatedPerformer['song_artist_character_relation_status'] === 'unchecked'
-			);
+			$disabled = $relatedPerformer['song_artist_character_relation_status'] !== 'unchecked';
 			
 			$html[] = 
 			'
-					<section class="related-entity-controls">
-						'.$artistInput.'
-						<span>'.\Localization\LyricsEditorPage\PerformsAs.'</span>
-						'.$characterInput.'
-						'.$addRowButton.'
-						'.$deleteRowButton.'
-					</section>
+						<section class="related-entity-controls">
+							'.$this->createSelect
+							(
+								iteratedOptions: $artists,
+								selectedOption:  $relatedPerformer,
+								addEmptyOption:  true,
+								keyToShownValue: 'artist_transliterated_name',
+								keyToSentValue:  'artist_id',
+								attributes:      ['name' => 'artist-ids[]', 'disabled' => $disabled]
+							).'
+							<span>'.\Localization\LyricsEditorPage\PerformsAs.'</span>
+							'.$this->createSelect
+							(
+								iteratedOptions: $characters,
+								selectedOption:  $relatedPerformer,
+								addEmptyOption:  true,
+								keyToShownValue: 'character_transliterated_name',
+								keyToSentValue:  'character_id',
+								attributes:      ['name' => 'character-ids[]', 'disabled' => $disabled]
+							).'
+							'.$addRowButton = $this->createAddRowButton
+							(
+								attributes: ['class' => ['artist-select', 'character-select']]
+							).'
+							'.$deleteRowButton = $this->createDeleteRowButton
+							(
+								attributes: ['class' => ['artist-select', 'character-select'], 'disabled' => $disabled]
+							).'
+						</section>
 			';
 		}
 		
 		$html[] = 
 		'
 					</section>
-		';
-		
-		$originalSong = array_find
-		(
-			$originalSongs,
-			function(array $original) use ($song)
-			{
-				return $song['original_song_id'] === $original['id'];
-			}
-		);
-		
-		$originalSongSelect = $this->createSelect
-		(
-			'original-song-id',
-			'original-song-select',
-			null,
-			true,
-			false,
-			false,
-			true,
-			$originalSongs,
-			$originalSong,
-			'transliterated_name',
-			'id'
-		);
-		
-		$html[] = 
-		'
 					<section class="has-tooltip" tooltip-id="2">
-						<h2>'.Localization\LyricsEditorPage\OriginalSong.'</h2>
-						'.$originalSongSelect.'
+						'.$this->createHeadingForInput(\Localization\LyricsEditorPage\OriginalSong, 2, false).'
+						'.$this->createSelect
+						(
+							iteratedOptions: $originalSongs,
+							selectedOption:  $originalSong,
+							addEmptyOption:  true,
+							keyToShownValue: 'transliterated_name',
+							keyToSentValue:  'id',
+							attributes:      ['name' => 'original-song-id', 'id' => 'original-song-select']
+						).'
 					</section>
-		';
-		
-		for ($i = 0; $i < count($languages); $i++)
-			$languages[$i]['language_id'] = $languages[$i]['id'];
-		
-		$languageSelect = $this->createSelect
-		(
-			'language-id',
-			'language-select',
-			null,
-			true,
-			false,
-			true,
-			true,
-			$languages,
-			$song,
-			\Localization\Functions\localizeLanguageKey(),
-			'language_id'
-		);
-		
-		$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
-		
-		$html[] = 
-		'
 					<section class="has-tooltip" tooltip-id="3">
-						<h2>'.\Localization\LyricsEditorPage\Language.'<span class="required-input"> *</h2>
-						'.$languageSelect.'
+						'.$this->createHeadingForInput(\Localization\LyricsEditorPage\Language, 2, true).'
+						'.$this->createSelect
+						(
+							iteratedOptions: $languages,
+							selectedOption:  $song,
+							addEmptyOption:  true,
+							keyToShownValue: \Localization\Functions\localizeLanguageKey(),
+							keyToSentValue:  'language_id',
+							attributes:      ['name' => 'language-id', 'required' => true]
+						).'
 					</section>
 					<section class="has-tooltip lyrics-textarea" tooltip-id="4">
-						<h2>'.\Localization\LyricsEditorPage\Lyrics.'<span class="required-input"> *</span></h2>
-						<textarea name="lyrics" placeholder="'.\Localization\Controls\Textarea.'" id="lyrics-area" required>'.htmlspecialchars($song['lyrics'] ?? '').'</textarea>
+						'.$this->createHeadingForInput(\Localization\LyricsEditorPage\Lyrics, 2, true).'
+						'.$this->createTextarea
+						(
+							value:      $song['lyrics'],
+							attributes: ['name' => 'lyrics', 'placeholder' => \Localization\Controls\Textarea, 'required' => true]
+						).'
 					</section>
 					<section class="has-tooltip notes-textarea" tooltip-id="5">
-						<h2>'.\Localization\LyricsEditorPage\Notes.'</h2>
-						<textarea name="notes" placeholder="'.\Localization\Controls\Textarea.'" id="notes-area">'.htmlspecialchars($song['notes'] ?? '').'</textarea>
+						'.$this->createHeadingForInput(\Localization\LyricsEditorPage\Notes, 2, false).'
+						'.$this->createTextarea
+						(
+							value:      $song['notes'],
+							attributes: ['name' => 'notes', 'placeholder' => \Localization\Controls\Textarea, 'required' => true]
+						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="6">
 						<section class="page-controls">
-							'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
-							<section></section>
-							<input type="submit" value="'.\Localization\Controls\Submit.'"/>
+							'.$this->createReturnButton($defaultReturnLink).'
+							'.$this->createFillerSection().'
+							'.$this->createSubmitButton().'
 						</section>
 					</section>
 				</form>
@@ -1298,34 +1147,35 @@ class UserView extends ViolatorView
 		</article>
 		';
 		
-		$tooltipWindow = $this->createTooltipWindow();
-		$tooltipHeadings = $this->createTooltipHeadingDatalist
+		$html[] = $this->createTooltipWindow();
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultHeading,
-			\Localization\LyricsEditorPage\TooltipHeading\ArtistAndCharacter,
-			\Localization\LyricsEditorPage\TooltipHeading\OriginalSong,
-			\Localization\LyricsEditorPage\TooltipHeading\Language,
-			\Localization\LyricsEditorPage\TooltipHeading\Lyrics,
-			\Localization\LyricsEditorPage\TooltipHeading\Notes,
-			\Localization\LyricsEditorPage\TooltipHeading\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultHeading,
+				\Localization\LyricsEditorPage\TooltipHeading\ArtistAndCharacter,
+				\Localization\LyricsEditorPage\TooltipHeading\OriginalSong,
+				\Localization\LyricsEditorPage\TooltipHeading\Language,
+				\Localization\LyricsEditorPage\TooltipHeading\Lyrics,
+				\Localization\LyricsEditorPage\TooltipHeading\Notes,
+				\Localization\LyricsEditorPage\TooltipHeading\Controls
+			],
+			attributes: ['id' => 'tooltip-headings']
 		);
-		$tooltipContents = $this->createTooltipContentDatalist
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultContent,
-			\Localization\LyricsEditorPage\TooltipContent\ArtistAndCharacter,
-			\Localization\LyricsEditorPage\TooltipContent\OriginalSong,
-			\Localization\LyricsEditorPage\TooltipContent\Language,
-			\Localization\LyricsEditorPage\TooltipContent\Lyrics,
-			\Localization\LyricsEditorPage\TooltipContent\Notes,
-			\Localization\LyricsEditorPage\TooltipContent\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultContent,
+				\Localization\LyricsEditorPage\TooltipContent\ArtistAndCharacter,
+				\Localization\LyricsEditorPage\TooltipContent\OriginalSong,
+				\Localization\LyricsEditorPage\TooltipContent\Language,
+				\Localization\LyricsEditorPage\TooltipContent\Lyrics,
+				\Localization\LyricsEditorPage\TooltipContent\Notes,
+				\Localization\LyricsEditorPage\TooltipContent\Controls
+			],
+			attributes: ['id' => 'tooltip-contents']
 		);
-		
-		$html[] = 
-		'
-		'.$tooltipWindow.'
-		'.$tooltipHeadings.'
-		'.$tooltipContents.'
-		';
 		
 		$html[] = $this->endRender
 		(
@@ -1352,37 +1202,60 @@ class UserView extends ViolatorView
 	{
 		if ($translation)
 		{
-			$languageInput = '<input type="text" value="'.\Localization\Functions\localizeLanguageName($translation).'"disabled/>';
+			$translationLanguage = $translation['language_id'];
+			$translationName     = $translation['name'];
+			$translationLyrics   = $translation['lyrics'];
+			$translationNotes    = $translation['notes'];
 			
-			$translationName   = htmlspecialchars($translation['name']);
-			$translationLyrics = htmlspecialchars($translation['lyrics']);
-			$translationNotes  = htmlspecialchars($translation['notes'] ?? '');
+			$languageSelect = $this->createTextInput(['value' => \Localization\Functions\localizeLanguageName($translation), 'disabled' => true]);
 			
-			$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+			$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		}
 		else
 		{
-			$forbiddenLanguages = array_column($translationsByCurrentUser, 'language_id');
+			$translationLanguage = null;
+			$translationName     = null;
+			$translationLyrics   = null;
+			$translationNotes    = null;
 			
-			$languageInput = '<select name="translation-language-id" required><option value=""></option>';
+			// Forbidden languages:
+			// - language of the song
+			// - translations made by the user
 			
-			foreach ($languages as $language)
+			$forbiddenLanguages = [];
+			
+			$forbiddenLanguages[] = array_find
+			(
+				$languages,
+				function (array $language) use ($song)
+				{
+					return $language['id'] === $song['language_id'];
+				}
+			);
+			
+			foreach ($translationsByCurrentUser as $translationByCurrentUser)
 			{
-				if (in_array($language['id'], $forbiddenLanguages, true))
-					$languageInput .= '<option value="'.$language['id'].'" disabled>'.htmlspecialchars(\Localization\Functions\localizeLanguageName($language)).'</option>';
-				else if ($song['language_id'] === $language['id'])
-					$languageInput .= '<option value="'.$language['id'].'" disabled>'.htmlspecialchars(\Localization\Functions\localizeLanguageName($language)).'</option>';
-				else
-					$languageInput .= '<option value="'.$language['id'].'">'.htmlspecialchars(\Localization\Functions\localizeLanguageName($language)).'</option>';
+				$forbiddenLanguages[] = array_find
+				(
+					$languages,
+					function (array $language) use ($translationByCurrentUser)
+					{
+						return $language['id'] === $translationByCurrentUser['language_id'];
+					}
+				);
 			}
 			
-			$languageInput .= '</select><section class="select-fake-filler"></section>';
+			$languageSelect = $this->createSelect
+			(
+				iteratedOptions: $languages,
+				disabledOptions: $forbiddenLanguages,
+				addEmptyOption:  true,
+				keyToShownValue: \Localization\Functions\localizeLanguageKey(),
+				keyToSentValue:  'id',
+				attributes:      ['name' => 'language-id', 'required' => true, 'disabled' => !is_null($translation)]
+			);
 			
-			$translationName   = '';
-			$translationLyrics = '';
-			$translationNotes  = '';
-			
-			$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
+			$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		}
 		
 		$html[] = $this->startRender
@@ -1398,26 +1271,26 @@ class UserView extends ViolatorView
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section class="has-tooltip" tooltip-id="1">
-						<h2>'.\Localization\TranslationEditorPage\TargetLanguage.'<span class="required-input"> *</span></h2>
-						'.$languageInput.'
+						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\TargetLanguage, 2, true).'
+						'.$languageSelect.'
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
-						<h2>'.\Localization\TranslationEditorPage\TranslationName.'<span class="required-input"> *</span></h2>
-						<input type="text" name="translation-name" value="'.$translationName.'" required/>
+						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\TranslationName, 2, true).'
+						'.$this->createTextInput(['name' => 'translation-name', 'value' => $translationName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
-						<h2>'.\Localization\TranslationEditorPage\TranslationLyrics.'<span class="required-input"> *</span></h2>
-						<textarea name="translation-lyrics" placeholder="'.\Localization\Controls\Textarea.'" required>'.$translationLyrics.'</textarea>
+						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\TranslationLyrics, 2, true).'
+						'.$this->createTextarea($translationLyrics, ['name' => 'translation-lyrics', 'placeholder' => \Localization\Controls\Textarea, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="4">
-						<h2>'.\Localization\TranslationEditorPage\TranslationNotes.'</h2>
-						<textarea name="translation-notes" placeholder="'.\Localization\Controls\Textarea.'">'.$translationNotes.'</textarea>
+						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\TranslationNotes, 2, false).'
+						'.$this->createTextarea($translationLyrics, ['name' => 'translation-lyrics', 'placeholder' => \Localization\Controls\Textarea, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
 						<section class="page-controls">
-							'.$this->createButton(\Localization\Controls\Cancel, $cancelLink).'
-							<section></section>
-							<input type="submit" value="'.\Localization\Controls\Submit.'"/>
+							'.$this->createReturnButton($defaultReturnLink).'
+							'.$this->createFillerSection().'
+							'.$this->createSubmitButton().'
 						</section>
 					</section>
 				</form>
@@ -1426,52 +1299,53 @@ class UserView extends ViolatorView
 				'.$this->createHeading($song['transliterated_name'], 1).'
 				<section class="form-replacement">
 					<section>
-						<h2>'.\Localization\TranslationEditorPage\SourceLanguage.'</h2>
-						<input type="text" value="'.\Localization\Functions\localizeLanguageName($song).'" disabled/>
+						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\SourceLanguage, 2, false).'
+						'.$this->createTextInput(['value' => \Localization\Functions\localizeLanguageName($song), 'disabled' => true]).'
 					</section>
 					<section>
-						<h2>'.\Localization\TranslationEditorPage\SongName.'</h2>
-						<input type="text" value="'.$song['original_name'].'" disabled/>
+						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\SongName, 2, false).'
+						'.$this->createTextInput(['value' => $song['original_name'], 'disabled' => true]).'
 					</section>
 					<section>
-						<h2>'.\Localization\TranslationEditorPage\SongLyrics.'</h2>
-						<textarea readonly>'.htmlspecialchars($song['lyrics']).'</textarea>
+						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\SongLyrics, 2, false).'
+						'.$this->createTextarea($song['lyrics'], ['disabled' => true]).'
 					</section>
 					<section>
-						<h2>'.\Localization\TranslationEditorPage\SongNotes.'</h2>
-						<textarea readonly>'.htmlspecialchars($song['notes'] ?? '').'</textarea>
+						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\SongNotes, 2, false).'
+						'.$this->createTextarea($song['notes'], ['disabled' => true]).'
 					</section>
 				</section>
 			</section>
 		</article>
 		';
 		
-		$tooltipWindow = $this->createTooltipWindow();
-		$tooltipHeadings = $this->createTooltipHeadingDatalist
+		$html[] = $this->createTooltipWindow();
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultHeading,
-			\Localization\TranslationEditorPage\TooltipHeading\TranslationLanguage,
-			\Localization\TranslationEditorPage\TooltipHeading\TranslationName,
-			\Localization\TranslationEditorPage\TooltipHeading\TranslationLyrics,
-			\Localization\TranslationEditorPage\TooltipHeading\TranslationNotes,
-			\Localization\TranslationEditorPage\TooltipHeading\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultHeading,
+				\Localization\TranslationEditorPage\TooltipHeading\TranslationLanguage,
+				\Localization\TranslationEditorPage\TooltipHeading\TranslationName,
+				\Localization\TranslationEditorPage\TooltipHeading\TranslationLyrics,
+				\Localization\TranslationEditorPage\TooltipHeading\TranslationNotes,
+				\Localization\TranslationEditorPage\TooltipHeading\Controls
+			],
+			attributes: ['id' => 'tooltip-headings']
 		);
-		$tooltipContents = $this->createTooltipContentDatalist
+		$html[] = $this->createDatalist
 		(
-			\Localization\TooltipWindow\DefaultContent,
-			\Localization\TranslationEditorPage\TooltipContent\TranslationLanguage,
-			\Localization\TranslationEditorPage\TooltipContent\TranslationName,
-			\Localization\TranslationEditorPage\TooltipContent\TranslationLyrics,
-			\Localization\TranslationEditorPage\TooltipContent\TranslationNotes,
-			\Localization\TranslationEditorPage\TooltipContent\Controls
+			options:
+			[
+				\Localization\TooltipWindow\DefaultContent,
+				\Localization\TranslationEditorPage\TooltipContent\TranslationLanguage,
+				\Localization\TranslationEditorPage\TooltipContent\TranslationName,
+				\Localization\TranslationEditorPage\TooltipContent\TranslationLyrics,
+				\Localization\TranslationEditorPage\TooltipContent\TranslationNotes,
+				\Localization\TranslationEditorPage\TooltipContent\Controls
+			],
+			attributes: ['id' => 'tooltip-contents']
 		);
-		
-		$html[] = 
-		'
-		'.$tooltipWindow.'
-		'.$tooltipHeadings.'
-		'.$tooltipContents.'
-		';
 		
 		$html[] = $this->endRender
 		(
@@ -1480,6 +1354,45 @@ class UserView extends ViolatorView
 				'/js/shared/add-delete-row-buttons.js',
 				'/js/shared/tooltip-window.js',
 				'/js/translation-editor-page.js'
+			]
+		);
+		
+		$this->echoHtml($html);
+	}
+	
+	private function renderDeleteEntityPage(string $heading, string $defaultReturnLink)
+	{
+		$html[] = $this->startRender
+		(
+			title:        $heading,
+			cssSheetUris: ['/css/window-in-center-page.css']
+		);
+		
+		$html[] = 
+		'
+		<article>
+			<section>
+				'.$this->createHeading($heading, 1).'
+				'.$this->createParagraph(\Localization\DeleteEntityPage\Introduction).'
+				'.$this->createParagraph(\Localization\DeleteEntityPage\Warning).'
+				<form method="POST" enctype="multipart/form-data" autocomplete="off">
+					<section>
+						'.$this->createReturnButton($defaultReturnLink).'
+						'.$this->createFillerSection().'
+						'.$this->createCheckbox(\Localization\Controls\Confirmation, true, ['id' => 'confirmation-button', 'value' => 1, 'required' => true]).'
+						'.$this->createSubmitButton(attributes: ['id' => 'submission-button', 'disabled' => true]).'
+					</section>
+				</form>
+			</section>
+		</article>
+		';
+		
+		$html[] = $this->endRender
+		(
+			jsScriptUris:
+			[
+				'/js/shared/switch-element-availability.js',
+				'/js/entity-deletion-page.js'
 			]
 		);
 		
@@ -1735,131 +1648,65 @@ class UserView extends ViolatorView
 		);
 	}
 	
-	final public function renderDeletePage(string $heading, string $cancelLink)
+	final public function renderDeleteGamePage(array $game): void
 	{
+		$heading = \Localization\DeleteEntityPage\DeleteGame.$game['transliterated_name'];
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'game', $game['uri']);
+		
+		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+}
+	
+	final public function renderDeleteAlbumPage(array $album): void
+	{
+		$heading           = \Localization\DeleteEntityPage\DeleteAlbum.$album['transliterated_name'];
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
+		
+		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+	}
+	
+	final public function renderDeleteArtistPage(array $artist): void
+	{
+		$heading           = \Localization\DeleteEntityPage\DeleteArtist.$artist['transliterated_name'];
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'artist', $artist['uri']);
+		
+		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+	}
+	
+	final public function renderDeleteCharacterPage(array $character): void
+	{
+		$heading           = \Localization\DeleteEntityPage\DeleteCharacter.$character['transliterated_name'];
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'character', $character['uri']);
+		
+		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+	}
+	
+	final public function renderDeleteLyricsPage(array $album, array $song): void
+	{
+		$heading           = \Localization\DeleteEntityPage\DeleteLyrics.$song['transliterated_name'];
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
+		
+		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+	}
+	
+	final public function renderDeleteTranslationPage(array $album, array $song, array $translation): void
+	{
+		$heading           = \Localization\DeleteEntityPage\DeleteTranslation.$song['transliterated_name'];
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+		
+		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+	}
+	
+	final public function renderChangeAccountDataPage(array $user, InputError $error = InputError::None)
+	{
+		$heading           = $user['user_username'].\Localization\UserAccountDataPage\Edit;
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['user_username']);
+		
 		$html[] = $this->startRender
 		(
 			title:        $heading,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
-		$cancelButton = $this->createButton
-		(
-			\Localization\Controls\Cancel,
-			$cancelLink
-		);
-		
-		$checkbox = $this->createCheckbox
-		(
-			'confirmation',
-			'confirmation-button',
-			null,
-			true,
-			false,
-			true,
-			1,
-			\Localization\Controls\Confirmation
-		);
-		
-		$html[] = 
-		'
-		<article>
-			<section>
-				'.$this->createHeading($heading, 1).'
-				'.$this->createParagraph(\Localization\DeleteEntityPage\Introduction).'
-		';
-		
-		$html[] = 
-		'
-				'.$this->createParagraph(\Localization\DeleteEntityPage\Warning).'
-				<form method="POST" enctype="multipart/form-data" autocomplete="off">
-					<section>
-						'.$cancelButton.'
-						<section class="filler"></section>
-						'.$checkbox.'
-						<input type="submit" id="submission-button" value="'.\Localization\Controls\Submit.'" disabled/>
-					</section>
-				</form>
-			</section>
-		</article>
-		';
-		
-		$html[] = $this->endRender
-		(
-			jsScriptUris:
-			[
-				'/js/shared/switch-element-availability.js',
-				'/js/entity-deletion-page.js'
-			]
-		);
-		
-		$this->echoHtml($html);
-	}
-	
-	final public function renderDeleteGamePage(array $game): void
-	{
-		$heading = \Localization\DeleteEntityPage\DeleteGame.$game['transliterated_name'];
-		$entityInfo =
-		[
-			\Localization\DeleteEntityPage\Game  => $game['transliterated_name']
-		];
-		$cancelLink = Http::buildInternalPath($this->language, 'game', $game['uri']);
-		
-		$this->renderDeletePage($heading, $cancelLink);
-}
-	
-	final public function renderDeleteAlbumPage(array $album): void
-	{
-		$heading = \Localization\DeleteEntityPage\DeleteAlbum.$album['transliterated_name'];
-		$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
-		
-		$this->renderDeletePage($heading, $cancelLink);
-	}
-	
-	final public function renderDeleteArtistPage(array $artist): void
-	{
-		$heading = \Localization\DeleteEntityPage\DeleteArtist.$artist['transliterated_name'];
-		$cancelLink = Http::buildInternalPath($this->language, 'artist', $artist['uri']);
-		
-		$this->renderDeletePage($heading, $cancelLink);
-	}
-	
-	final public function renderDeleteCharacterPage(array $character): void
-	{
-		$heading = \Localization\DeleteEntityPage\DeleteCharacter.$character['transliterated_name'];
-		$cancelLink = Http::buildInternalPath($this->language, 'character', $character['uri']);
-		
-		$this->renderDeletePage($heading, $cancelLink);
-	}
-	
-	final public function renderDeleteLyricsPage(array $album, array $song): void
-	{
-		$heading = \Localization\DeleteEntityPage\DeleteLyrics.$song['transliterated_name'];
-		$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
-		
-		$this->renderDeletePage($heading, $cancelLink);
-	}
-	
-	final public function renderDeleteTranslationPage(array $album, array $song, array $translation): void
-	{
-		$heading = \Localization\DeleteEntityPage\DeleteTranslation.$song['transliterated_name'];
-		$cancelLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
-		
-		$this->renderDeletePage($heading, $cancelLink);
-	}
-	
-	final public function renderChangeAccountDataPage(array $user, InputError $error = InputError::None)
-	{
-		$heading      = $user['user_username'].\Localization\UserAccountDataPage\Edit;
-		$cancelLink   = Http::buildInternalPath($this->language, 'user', $user['user_username']);
-		$errorMessage = \Localization\Functions\localizeInputError($error);
-		
-		$html[] = $this->startRender
-		(
-			title: $heading,
-			cssSheetUris: ['/css/window-in-center-page.css']
-		);
-		
 		$html[] = 
 		'
 		<article>
@@ -1867,29 +1714,29 @@ class UserView extends ViolatorView
 				'.$this->createHeading($heading, 1).'
 			</section>
 			<section>
-				<h2>'.\Localization\UserAccountDataPage\AccountData.'</h2>
-				<p>'.$errorMessage.'</p>
+				'.$this->createHeading(\Localization\UserAccountDataPage\AccountData, 2).'
+				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
 					<section>
-						<h3>'.\Localization\UserAccountDataPage\Username.'<span class="required-input"> *</span></h3>
-						<input type="text" name="username" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" value="'.$user['user_username'].'" placeholder="'.\Localization\SignUpPage\HintUsername.'" required/>
+						'.$this->createHeadingForInput(\Localization\UserAccountDataPage\Username, 3, true).'
+						'.$this->createTextInput(['name' => 'username', 'value' => $user['user_username'], 'placeholder' => \Localization\SignUpPage\HintUsername, 'required' => true, 'pattern' => '[a-zA-Z0-9]+']).'
 					</section>
 					<section>
-						<h3>'.\Localization\SignUpPage\Email.'<span class="required-input"> *</span></h3>
-						<input type="email" name="email" minlength="4" maxlength="32" value="'.$user['user_email'].'" placeholder="'.\Localization\SignUpPage\HintEmail.'" required/>
+						'.$this->createHeadingForInput(\Localization\UserAccountDataPage\Email, 3, true).'
+						'.$this->createEmailInput(['name' => 'email', 'value' => Cryptography::decryptData($user['user_email']), 'placeholder' => 'name@mailserver.domain', 'required' => true]).'
 					</section>
 					<section>
-						<h3>'.\Localization\UserAccountDataPage\NewPassword.'</h3>
-						<input type="password" name="new-password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\UserAccountDataPage\NewPasswordNote.'"/>
+						'.$this->createHeadingForInput(\Localization\UserAccountDataPage\NewPassword, 3, false).'
+						'.$this->createPasswordInput(['name' => 'new-password', 'placeholder' => \Localization\SignUpPage\HintPassword]).'
 					</section>
 					<section>
-						<h3>'.\Localization\UserAccountDataPage\OldPassword.'<span class="required-input"> *</span></h3>
-						<input type="password" name="old-password" pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" placeholder="'.\Localization\SignUpPage\HintPassword.'" required/>
+						'.$this->createHeadingForInput(\Localization\UserAccountDataPage\OldPassword, 3, true).'
+						'.$this->createPasswordInput(['name' => 'old-password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
 					</section>
 					<section>
-						'.$this->createButton(\Localization\Controls\Cancel, $cancelLink, true, '').'
-						<section class="filler"></section>
-						<input type="submit" value="'.\Localization\Controls\Submit.'"/>
+						'.$this->createReturnButton($defaultReturnLink).'
+						'.$this->createFillerSection().'
+						'.$this->createSubmitButton().'
 					</section>
 				</form>
 			</section>
@@ -1903,19 +1750,8 @@ class UserView extends ViolatorView
 	
 	final public function renderDeleteAccountPage(array $user, InputError $error = InputError::None)
 	{
-		$heading = $user['user_username'].\Localization\UserAccountDeletePage\Delete;
-		$cancelLink = Http::buildInternalPath($this->language, 'user', $user['user_username']);
-		
-		switch ($error)
-		{
-			case InputError::IncorrectPassword:
-				$errorMessage = \Localization\InputError\IncorrectPassword;
-				break;
-			
-			default:
-				$errorMessage = '';
-				break;
-		}
+		$heading           = $user['user_username'].\Localization\UserAccountDeletePage\Delete;
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['user_username']);
 		
 		$html[] = $this->startRender
 		(
@@ -1930,22 +1766,20 @@ class UserView extends ViolatorView
 				'.$this->createHeading($heading, 1).'
 			</section>
 			<section>
-				<h2>'.\Localization\UserAccountDeletePage\AccountData.'</h2>
-				<p>'.\Localization\UserAccountDeletePage\Warning1.'</p>
-				<p>'.\Localization\UserAccountDeletePage\Warning2.'</p>
-				<p>'.\Localization\UserAccountDeletePage\Warning3.'</p>
-				<p>'.\Localization\UserAccountDeletePage\Warning4.'</p>
-				<p>'.\Localization\UserAccountDeletePage\Confirmation.'</p>
-				<p>'.$errorMessage.'</p>
+				'.$this->createHeading(\Localization\UserAccountDeletePage\AccountData, 2).'
+				'.$this->createParagraph(\Localization\UserAccountDeletePage\Warning2).'
+				'.$this->createParagraph(\Localization\UserAccountDeletePage\Warning3).'
+				'.$this->createParagraph(\Localization\UserAccountDeletePage\Warning4).'
+				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
 					<section>
-						<h3>'.\Localization\UserAccountDeletePage\Password.'<span class="required-input"> *</span></h3>
-						<input type="password" name="password"  pattern="[a-zA-Z0-9]+" minlength="4" maxlength="32" required/>
+						'.$this->createHeadingForInput(\Localization\UserAccountDeletePage\Password, 3, true).'
+						'.$this->createPasswordInput(['name' => 'password', 'required' => true]).'
 					</section>
 					<section>
-						'.$this->createButton(\Localization\Controls\Cancel, $cancelLink, true, '').'
-						<section class="filler"></section>
-						<input type="submit" value="'.\Localization\Controls\Submit.'"/>
+						'.$this->createReturnButton($defaultReturnLink).'
+						'.$this->createFillerSection().'
+						'.$this->createSubmitButton().'
 					</section>
 				</form>
 			</section>
