@@ -10,7 +10,7 @@ abstract class CustomException extends Exception
 		           ' when requested '.$_SERVER['REQUEST_URI'].
 		           ' with '.$_SERVER['REQUEST_METHOD'].
 		           ' and parameters ('.$this->stringifyParameters($parameters).'): '.
-				   $message;
+				   ($message !== '' ? $message : '[no details provided]');
 		
 		parent::__construct($message, $code, $previous);
 	}
@@ -110,7 +110,7 @@ final class HttpUnprocessableEntity422 extends HttpException
 {
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
 	{
-		parent::__construct($message, $parameters, 415, $previous);
+		parent::__construct($message, $parameters, 422, $previous);
 	}
 }
 
