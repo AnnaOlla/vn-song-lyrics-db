@@ -1130,7 +1130,7 @@ class UserView extends ViolatorView
 						'.$this->createTextarea
 						(
 							value:      $song['notes'],
-							attributes: ['name' => 'notes', 'placeholder' => \Localization\Controls\Textarea, 'required' => true]
+							attributes: ['name' => 'notes', 'placeholder' => \Localization\Controls\Textarea, 'required' => false]
 						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="6">
