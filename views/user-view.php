@@ -4,7 +4,7 @@ require_once 'views/violator-view.php';
 
 class UserView extends ViolatorView
 {
-	protected const ACCEPTED_IMAGE_TYPES = ['.jpg', '.jpeg', '.png', '.webp'];
+	protected const ACCEPTED_IMAGE_TYPES = '.jpg, .jpeg, .png, .webp';
 	
 	public function __construct(string $language)
 	{
