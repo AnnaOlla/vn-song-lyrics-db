@@ -1092,6 +1092,9 @@ class UserController extends ViolatorController
 		if ($aliasOfId && !in_array($aliasOfId, $originalArtists))
 			throw new HttpUnprocessableEntity422('aliasOfId was invalid', get_defined_vars());
 		
+		if ($aliasOfId === $artist['id'])
+			throw new HttpUnprocessableEntity422('aliasOfId caused self-reference', get_defined_vars());
+		
 		[$artistId, $artistUri] = $this->model->updateArtist
 		(
 			$artist['uri'],
@@ -2146,7 +2149,7 @@ class UserController extends ViolatorController
 		if (!$password)
 			throw new HttpUnprocessableEntity422();
 		
-		if (!$this->model->isPasswordCorrect($user['id'], $password))
+		if (!$this->model->isPasswordCorrect($user['user_id'], $password))
 		{
 			$this->handleDeleteAccountPageGet($user, InputError::IncorrectPassword);
 			return;
