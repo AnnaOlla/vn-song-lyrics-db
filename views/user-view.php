@@ -1252,7 +1252,7 @@ class UserView extends ViolatorView
 				addEmptyOption:  true,
 				keyToShownValue: \Localization\Functions\localizeLanguageKey(),
 				keyToSentValue:  'id',
-				attributes:      ['name' => 'language-id', 'required' => true, 'disabled' => !is_null($translation)]
+				attributes:      ['name' => 'translation-language-id', 'required' => true, 'disabled' => !is_null($translation)]
 			);
 			
 			$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
@@ -1284,7 +1284,7 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="4">
 						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\TranslationNotes, 2, false).'
-						'.$this->createTextarea($translationLyrics, ['name' => 'translation-lyrics', 'placeholder' => \Localization\Controls\Textarea, 'required' => true]).'
+						'.$this->createTextarea($translationLyrics, ['name' => 'translation-notes', 'placeholder' => \Localization\Controls\Textarea, 'required' => false]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
 						<section class="page-controls">
