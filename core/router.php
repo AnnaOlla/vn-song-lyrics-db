@@ -49,7 +49,7 @@ final class Router
 	private static function banUnknownViolator(): void
 	{
 		$bannedIps = new SplFileObject(self::VIOLATOR_IPS_FILENAME, 'a');
-		$bannedIps->write($_SERVER['REMOTE_ADDR'].PHP_EOL);
+		$bannedIps->fwrite($_SERVER['REMOTE_ADDR'].PHP_EOL);
 	}
 	
 	private static function isRateLimitExceeded(): bool
