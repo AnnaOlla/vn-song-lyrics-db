@@ -4,7 +4,7 @@ final class Router
 {
 	private const VIOLATOR_IPS_FILENAME          = '.violator-ip-list.txt';
 	private const VIOLATOR_REQUESTS_FILENAME     = '.violator-requests.txt';
-	private const VIOLATOR_PAGE_FILENAME         = '.violator-page.php';
+	private const VIOLATOR_PAGE_FILENAME         = 'include/violator-page.php';
 	
 	private const MAINTENANCE_MODE_FILENAME      = '.maintenance-mode-on';
 	
@@ -14,9 +14,9 @@ final class Router
 	private const ERROR_LOG_DIRNAME              = '.custom-logs';
 	private const ERROR_LOG_FILENAME             = '-error.log';
 	
-	private const RATE_LIMIT_WINDOW              = 30;
-	private const RATE_LIMIT_COUNT               = 30;
-	private const RATE_LIMIT_BANNABLE_COUNT      = 60;
+	private const RATE_LIMIT_WINDOW              = 20;
+	private const RATE_LIMIT_COUNT               = 20;
+	private const RATE_LIMIT_BANNABLE_COUNT      = 40;
 	
 	private static function isAgentKnownViolator(): bool
 	{

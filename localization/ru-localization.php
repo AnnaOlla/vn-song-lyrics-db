@@ -1191,7 +1191,7 @@ namespace Localization\ErrorPage\UnprocessableEntity422
 namespace Localization\ErrorPage\TooManyRequests429
 {
 	const Reason = 'Вами превышен предел количества запросов.';
-	const Hint   = 'Попробуйте ещё раз через минуту. Не переходите по ссылкам так быстро';
+	const Hint   = 'Попробуйте ещё раз через минуту. Не открывайте новые страницы так часто.';
 }
 
 namespace Localization\ErrorPage\UnavailableForLegalReasons451

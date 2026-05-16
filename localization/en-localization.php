@@ -1191,7 +1191,7 @@ namespace Localization\ErrorPage\UnprocessableEntity422
 namespace Localization\ErrorPage\TooManyRequests429
 {
 	const Reason = 'Your rate limit has been exceeded.';
-	const Hint   = 'Please, try again in a minute. Do not click links too fast.';
+	const Hint   = 'Please, try again in a minute. Do not open new pages so often.';
 }
 
 namespace Localization\ErrorPage\UnavailableForLegalReasons451
