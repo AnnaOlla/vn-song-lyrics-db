@@ -2,52 +2,72 @@
 
 final class Router
 {
-	private const VIOLATOR_BOT_IPS_FILENAME      = '.violator-bot-ip-list.txt';
-	private const VIOLATOR_BOT_REQUESTS_FILENAME = '.violator-bot-requests.txt';
-	
-	private const VIOLATOR_HUMAN_IPS_FILENAME    = '.violator-human-ip-list.txt';
-	private const VIOLATOR_HUMAN_PAGE_FILENAME   = '.violator-human-page.php';
-	
-	private const FILE_FLAGS                     = FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES;
+	private const VIOLATOR_IPS_FILENAME          = '.violator-ip-list.txt';
+	private const VIOLATOR_REQUESTS_FILENAME     = '.violator-requests.txt';
+	private const VIOLATOR_PAGE_FILENAME         = '.violator-page.php';
 	
 	private const MAINTENANCE_MODE_FILENAME      = '.maintenance-mode-on';
 	
-	private const ACCEPTED_LANGUAGES = ['en', 'ru', 'ja'];
-	private const DEFAULT_LANGUAGE   = 'en';
+	private const ACCEPTED_LANGUAGES             = ['en', 'ru', 'ja'];
+	private const DEFAULT_LANGUAGE               = 'en';
 	
-	private const ERROR_LOG_DIRNAME  = '.custom-logs';
-	private const ERROR_LOG_FILENAME = '-error.log';
+	private const ERROR_LOG_DIRNAME              = '.custom-logs';
+	private const ERROR_LOG_FILENAME             = '-error.log';
 	
-	private static function isUserKnownViolatorBot(): bool
+	private const RATE_LIMIT_WINDOW              = 30;
+	private const RATE_LIMIT_COUNT               = 30;
+	private const RATE_LIMIT_BANNABLE_COUNT      = 60;
+	
+	private static function isAgentKnownViolator(): bool
 	{
-		$bannedIps = file(self::VIOLATOR_BOT_IPS_FILENAME, self::FILE_FLAGS);
-		return in_array($_SERVER['REMOTE_ADDR'], $bannedIps);
-	}
-	
-	private static function isUserUnknownViolatorBot(): bool
-	{
-		$bannedStrings = file(self::VIOLATOR_BOT_REQUESTS_FILENAME, self::FILE_FLAGS);
+		$bannedIps = new SplFileObject(self::VIOLATOR_IPS_FILENAME);
+		$bannedIps->setFlags(SplFileObject::DROP_NEW_LINE);
 		
-		foreach ($bannedStrings as $bannedString)
+		foreach ($bannedIps as $bannedIp)
 		{
-			if (mb_strstr($_SERVER['REQUEST_URI'], $bannedString))
+			if ($_SERVER['REMOTE_ADDR'] === $bannedIp)
 				return true;
 		}
 		
 		return false;
 	}
 	
-	private static function banUnknownViolatorBot(): void
+	private static function isBannedRequest(): bool
 	{
-		$file = fopen(self::VIOLATOR_BOT_IPS_FILENAME, 'a');
-		fwrite($file, $_SERVER['REMOTE_ADDR'].PHP_EOL);
-		fclose($file);
+		$bannedRequests = new SplFileObject(self::VIOLATOR_REQUESTS_FILENAME);
+		$bannedRequests->setFlags(SplFileObject::DROP_NEW_LINE);
+		
+		foreach ($bannedRequests as $bannedRequest)
+		{
+			if (mb_strstr($_SERVER['REQUEST_URI'], $bannedRequest))
+				return true;
+		}
+		
+		return false;
 	}
 	
-	private static function isUserKnownViolatorHuman(): bool
+	private static function banUnknownViolator(): void
 	{
-		$bannedIps = file(self::VIOLATOR_HUMAN_IPS_FILENAME, self::FILE_FLAGS);
-		return in_array($_SERVER['REMOTE_ADDR'], $bannedIps);
+		$bannedIps = new SplFileObject(self::VIOLATOR_IPS_FILENAME, 'a');
+		$bannedIps->write($_SERVER['REMOTE_ADDR'].PHP_EOL);
+	}
+	
+	private static function isRateLimitExceeded(): bool
+	{
+		$now = time();
+		
+		while (!$_SESSION['rateLimit']->isEmpty() && $now - $_SESSION['rateLimit']->bottom() >= self::RATE_LIMIT_WINDOW)
+			$_SESSION['rateLimit']->shift();
+		
+		if (!Session::agentIsAdministrator())
+			$_SESSION['rateLimit']->push(time());
+		
+		return $_SESSION['rateLimit']->count() > self::RATE_LIMIT_COUNT;
+	}
+	
+	private static function isRateLimitExceededTooMuch(): bool
+	{
+		return $_SESSION['rateLimit']->count() > self::RATE_LIMIT_BANNABLE_COUNT;
 	}
 	
 	private static function detectUserLanguages(): array
@@ -145,26 +165,26 @@ final class Router
 	
 	public static function run()
 	{
-		if (self::isUserKnownViolatorBot())
+		if (self::isAgentKnownViolator())
 		{
+			session_destroy();
+			
 			http_response_code(403);
 			header("Connection: close");
+			require_once self::VIOLATOR_PAGE_FILENAME;
+			
 			exit;
 		}
 		
-		if (self::isUserUnknownViolatorBot())
+		if (self::isBannedRequest() || self::isRateLimitExceededTooMuch())
 		{
-			self::banUnknownViolatorBot();
+			self::banUnknownViolator();
+			session_destroy();
+			
 			http_response_code(403);
 			header("Connection: close");
-			exit;
-		}
-		
-		if (self::isUserKnownViolatorHuman())
-		{
-			http_response_code(403);
-			require_once self::VIOLATOR_HUMAN_PAGE_FILENAME;
-			header("Connection: close");
+			require_once self::VIOLATOR_PAGE_FILENAME;
+			
 			exit;
 		}
 		
@@ -684,6 +704,12 @@ final class Router
 			$parameters = [];
 		}
 		
+		else if ($routeCount == 3 && $routes[2] === 'font-test')
+		{
+			echo file_get_contents('font-tests/font-test-page.html');
+			exit;
+		}
+		
 		else
 		{
 			$method = '';
@@ -710,6 +736,9 @@ final class Router
 			
 			if (file_exists(self::MAINTENANCE_MODE_FILENAME) && !Session::agentIsAdministrator())
 				throw new HttpServiceUnavailable503();
+			
+			if (self::isRateLimitExceeded())
+				throw new HttpTooManyRequests429();
 			
 			if (!in_array($language, self::ACCEPTED_LANGUAGES))
 				throw new HttpNotAcceptable406();
@@ -776,6 +805,11 @@ final class Router
 		{
 			self::logError($e);
 			$controller->handleUnprocessableEntity422();
+		}
+		catch (HttpTooManyRequests429 $e)
+		{
+			self::logError($e);
+			$controller->handleTooManyRequests429();
 		}
 		catch (HttpUnavailableForLegalReasons451 $e)
 		{

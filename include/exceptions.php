@@ -114,6 +114,14 @@ final class HttpUnprocessableEntity422 extends HttpException
 	}
 }
 
+final class HttpTooManyRequests429 extends HttpException
+{
+	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)
+	{
+		parent::__construct($message, $parameters, 429, $previous);
+	}
+}
+
 final class HttpUnavailableForLegalReasons451 extends HttpException
 {
 	public function __construct(string $message = '', array $parameters = [], ?Throwable $previous = null)

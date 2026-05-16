@@ -144,7 +144,7 @@ namespace Localization\LogInPage
 {
 	const Heading                = 'ログイン';
 	
-	const HintPassword           = 'なくしたなら、「support@vn-song-lyrics-db.ru」へメールを送ってください。';
+	const HintPassword           = 'なくしたら、「support@vn-song-lyrics-db.ru」へメールを送ってください';
 	
 	const Email                  = 'メール';
 	const Password               = 'パスワード';
@@ -161,7 +161,7 @@ namespace Localization\SignUpPage
 	const Submit   = 'サインアップ';
 	
 	const HintUsername = '使われる文字：A-Z、a-z、0-9。長さ：4-32。';
-	const HintEmail    = '確認するためだけです。メールを送りません。';
+	const HintEmail    = '確認するためだけです。';
 	const HintPassword = '使われる文字：A-Z、a-z、0-9。長さ：4-32。';
 	
 	const Confirmation = '「サインアップ」を押して、あなたは以下のルールを受け入れます：';
@@ -1186,6 +1186,12 @@ namespace Localization\ErrorPage\UnprocessableEntity422
 {
 	const Reason = '入力はサーバーのチェックに落ちました。';
 	const Hint   = 'support@vn-song-lyrics-db.ruへメールを送ってください。';
+}
+
+namespace Localization\ErrorPage\TooManyRequests429
+{
+	const Reason = '訪れる制限は大きすぎます。';
+	const Hint   = '一分あとでもう一度みてください。リンクを押すのは遅くてください。';
 }
 
 namespace Localization\ErrorPage\UnavailableForLegalReasons451

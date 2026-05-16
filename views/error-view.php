@@ -143,6 +143,16 @@ class ErrorView extends View
 		);
 	}
 	
+	final public function renderTooManyRequests429(): void
+	{
+		$this->renderError
+		(
+			'429 Too Many Requests',
+			\Localization\ErrorPage\TooManyRequests429\Reason,
+			\Localization\ErrorPage\TooManyRequests429\Hint
+		);
+	}
+	
 	final public function renderUnavailableForLegalReasons451(): void
 	{
 		$this->renderError

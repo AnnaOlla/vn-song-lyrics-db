@@ -87,6 +87,12 @@ class ErrorController extends Controller
 		$this->view->renderUnprocessableEntity422();
 	}
 	
+	final public function handleTooManyRequests429(): void
+	{
+		http_response_code(429);
+		$this->view->renderTooManyRequests429();
+	}
+	
 	final public function handleUnavailableForLegalReasons451(): void
 	{
 		http_response_code(451);

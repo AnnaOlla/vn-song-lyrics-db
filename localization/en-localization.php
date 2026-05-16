@@ -107,7 +107,7 @@ namespace Localization\HomePage
 {
 	const Heading          = 'Visual Novel Song Lyrics Database';
 	const DescriptionOne   = 'vn-song-lyrics-db.ru is a free library for songs that sound in visual novels.';
-	const DescriptionTwo   = 'Most of these songs are not mainstream and it is often a challenge to find lyrics for them.';
+	const DescriptionTwo   = 'Most of these songs are not mainstream and often it is a challenge to find lyrics for them.';
 	const DescriptionThree = 'Translations are a unique knowledge and fine artwork that is welcome here always and forever.';
 	const DescriptionFour  = 'The website reminds of a wiki and every registered user may contribute to it.';
 	const LastAlbums       = 'Recently Added Albums';
@@ -565,7 +565,7 @@ namespace Localization\ModerationStatus
 
 namespace Localization\Controls
 {
-	const Report       = 'Report Issue';
+	const Report       = 'Report Data';
 	const Edit         = 'Edit Data';
 	const Delete       = 'Delete Data';
 	
@@ -1186,6 +1186,12 @@ namespace Localization\ErrorPage\UnprocessableEntity422
 {
 	const Reason = 'Your input failed to pass validation rules on the server.';
 	const Hint   = 'Please, send a mail to support@vn-song-lyrics-db.ru with details.';
+}
+
+namespace Localization\ErrorPage\TooManyRequests429
+{
+	const Reason = 'Your rate limit has been exceeded.';
+	const Hint   = 'Please, try again in a minute. Do not click links too fast.';
 }
 
 namespace Localization\ErrorPage\UnavailableForLegalReasons451

@@ -1188,6 +1188,12 @@ namespace Localization\ErrorPage\UnprocessableEntity422
 	const Hint   = 'Пожалуйста, напишите подробности нам на почту support@vn-song-lyrics-db.ru.';
 }
 
+namespace Localization\ErrorPage\TooManyRequests429
+{
+	const Reason = 'Вами превышен предел количества запросов.';
+	const Hint   = 'Попробуйте ещё раз через минуту. Не переходите по ссылкам так быстро';
+}
+
 namespace Localization\ErrorPage\UnavailableForLegalReasons451
 {
 	const Reason = 'Доступ к этой странице ограничен по официальному требованию.';

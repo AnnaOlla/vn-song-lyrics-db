@@ -1114,7 +1114,7 @@ class UserView extends ViolatorView
 							addEmptyOption:  true,
 							keyToShownValue: \Localization\Functions\localizeLanguageKey(),
 							keyToSentValue:  'language_id',
-							attributes:      ['name' => 'language-id', 'required' => true]
+							attributes:      ['name' => 'language-id', 'id' => 'language-select', 'required' => true]
 						).'
 					</section>
 					<section class="has-tooltip lyrics-textarea" tooltip-id="4">
@@ -1122,7 +1122,7 @@ class UserView extends ViolatorView
 						'.$this->createTextarea
 						(
 							value:      $song['lyrics'],
-							attributes: ['name' => 'lyrics', 'placeholder' => \Localization\Controls\Textarea, 'required' => true]
+							attributes: ['name' => 'lyrics', 'id' => 'lyrics-area', 'placeholder' => \Localization\Controls\Textarea, 'required' => true]
 						).'
 					</section>
 					<section class="has-tooltip notes-textarea" tooltip-id="5">
@@ -1130,7 +1130,7 @@ class UserView extends ViolatorView
 						'.$this->createTextarea
 						(
 							value:      $song['notes'],
-							attributes: ['name' => 'notes', 'placeholder' => \Localization\Controls\Textarea, 'required' => false]
+							attributes: ['name' => 'notes', 'id' => 'notes-area', 'placeholder' => \Localization\Controls\Textarea, 'required' => false]
 						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="6">
