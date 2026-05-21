@@ -1379,7 +1379,7 @@ class UserView extends ViolatorView
 					<section>
 						'.$this->createReturnButton($defaultReturnLink).'
 						'.$this->createFillerSection().'
-						'.$this->createCheckbox(\Localization\Controls\Confirmation, true, ['id' => 'confirmation-button', 'value' => 1, 'required' => true]).'
+						'.$this->createCheckbox(\Localization\Controls\Confirmation, true, ['name' => 'confirmation', 'id' => 'confirmation-button', 'value' => 1, 'required' => true]).'
 						'.$this->createSubmitButton(attributes: ['id' => 'submission-button', 'disabled' => true]).'
 					</section>
 				</form>
