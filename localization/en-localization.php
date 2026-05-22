@@ -108,8 +108,8 @@ namespace Localization\HomePage
 	const Heading          = 'Visual Novel Song Lyrics Database';
 	const DescriptionOne   = 'vn-song-lyrics-db.ru is a free library for songs that sound in visual novels.';
 	const DescriptionTwo   = 'Most of these songs are not mainstream and often it is a challenge to find lyrics for them.';
-	const DescriptionThree = 'Translations are a unique knowledge and fine artwork that is welcome here always and forever.';
-	const DescriptionFour  = 'The website reminds of a wiki and every registered user may contribute to it.';
+	const DescriptionThree = 'Translations are unique knowledge and fine artwork that is welcome here always and forever.';
+	const DescriptionFour  = 'This website serves as a wiki and every registered user may contribute to it.';
 	const LastAlbums       = 'Recently Added Albums';
 	const LastLyrics       = 'Recently Added Lyrics';
 	const LastTranslations = 'Recently Added Translations';
