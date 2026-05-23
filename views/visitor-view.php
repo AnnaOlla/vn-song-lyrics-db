@@ -28,7 +28,6 @@ class VisitorView extends ErrorView
 				<img class="website-mascot" src="/assets/static-images/wee-hagana.png" alt="Hagana of World End Economica"/>
 				<section class="home-page-text">
 					<h1 class="home-page-text">'.\Localization\HomePage\Heading.'</h1>
-					<br/>
 					<p class="home-page-text">'.\Localization\HomePage\DescriptionOne.'</p>
 					<p class="home-page-text">'.\Localization\HomePage\DescriptionTwo.'</p>
 					<p class="home-page-text">'.\Localization\HomePage\DescriptionThree.'</p>
