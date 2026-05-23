@@ -5,6 +5,10 @@ section.home-page-heading {
 	align-items: center;
 }
 
+h1.home-page-text {
+	margin-bottom: 30.4px;
+}
+
 img {
 	border: 2px solid var(--color-clickable-item-primary);
 	border-radius: var(--image-border-radius);
