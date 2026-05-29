@@ -96,79 +96,84 @@ abstract class View
 		$ogUrl          = htmlspecialchars($currentUrl);
 		$ogImageUrl     = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].($ogImageUri ?? '/assets/static-images/wee-hagana-og.webp'));
 		
-		$html[] = <<<HTML
-		<head>
-			<meta charset="UTF-8" />
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-			<meta name="viewport" content="width=device-width, initial-scale=1" />
-			
-			<title>{$title}</title>
-			<meta name="description" content="{$description}" />
-			<meta name="keywords" content="Visual Novels, Music, Soundtrack, Song, OST, Lyrics, Translations" />
-			
-			<meta property="og:title"            content="{$title}" />
-			<meta property="og:description"      content="{$description}" />
-			<meta property="og:site_name"        content="vn-song-lyrics-db" />
-			<meta property="og:type"             content="website" />
-			<meta property="og:url"              content="{$ogUrl}" />
-			<meta property="og:image"            content="{$ogImageUrl}" />
-			<meta property="og:image:width"      content="1200" />
-			<meta property="og:image:height"     content="630" />
-			<meta property="og:image:alt"        content="Hagana from World End Economica" />
-			<meta property="og:locale"           content="en_US" />
-			<meta property="og:locale:alternate" content="ru_RU" />
-			<meta property="og:locale:alternate" content="ja_JP" />
-			
-			<meta name="robots"          content="noai, noimageai" />
-			<meta name="CCBot"           content="nofollow" />
-			<meta name="tdm-reservation" content="1" />
-			
-			<link rel="canonical"                      href="{$canonicalUrl}" />
-			
-			<link rel="alternate" hreflang="en"        href="{$alternateRefEn}" />
-			<link rel="alternate" hreflang="ru"        href="{$alternateRefRu}" />
-			<link rel="alternate" hreflang="ja"        href="{$alternateRefJa}" />
-			<link rel="alternate" hreflang="x-default" href="{$alternateRefEn}" />
-			
-			<link rel="icon"             sizes="96x96"   type="image/png"     href="/favicon-96x96.png"  />
-			<link rel="icon"                             type="image/svg+xml" href="/favicon.svg" />
-			<link rel="shortcut icon"                                         href="/favicon.ico" />
-			<link rel="apple-touch-icon" sizes="180x180"                      href="/apple-touch-icon.png" />
-			<link rel="manifest"                                              href="/site.webmanifest" />
-			
-			<link type="text/css" rel="stylesheet" href="/css/core/font-hanazono-mincho-type-a.css?v={$this->cssVersion}" />
-			<link type="text/css" rel="stylesheet" href="/css/core/font-juliamo-ampleksa.css?v={$this->cssVersion}" />
-			<link type="text/css" rel="stylesheet" href="/css/core/sizes.css?v={$this->cssVersion}" />
-			<link type="text/css" rel="stylesheet" href="/css/core/dark-theme.css?v={$this->cssVersion}" />
-			<link type="text/css" rel="stylesheet" href="/css/core/general.css?v={$this->cssVersion}" />
-			
-			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/button.css?v={$this->cssVersion}" />
-			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/checkbox.css?v={$this->cssVersion}" />
-			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/fileupload.css?v={$this->cssVersion}" />
-			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/select.css?v={$this->cssVersion}" />
-			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textarea.css?v={$this->cssVersion}" />
-			<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textinput.css?v={$this->cssVersion}" />
+		$html[] =
+<<<HTML
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	
+	<title>{$title}</title>
+	<meta name="description" content="{$description}" />
+	<meta name="keywords" content="Visual Novels, Music, Soundtrack, Song, OST, Lyrics, Translations" />
+	
+	<meta property="og:title"            content="{$title}" />
+	<meta property="og:description"      content="{$description}" />
+	<meta property="og:site_name"        content="vn-song-lyrics-db" />
+	<meta property="og:type"             content="website" />
+	<meta property="og:url"              content="{$ogUrl}" />
+	<meta property="og:image"            content="{$ogImageUrl}" />
+	<meta property="og:image:width"      content="1200" />
+	<meta property="og:image:height"     content="630" />
+	<meta property="og:image:alt"        content="Hagana from World End Economica" />
+	<meta property="og:locale"           content="en_US" />
+	<meta property="og:locale:alternate" content="ru_RU" />
+	<meta property="og:locale:alternate" content="ja_JP" />
+	
+	<meta name="robots"          content="noai, noimageai" />
+	<meta name="CCBot"           content="nofollow" />
+	<meta name="tdm-reservation" content="1" />
+	
+	<link rel="canonical"                      href="{$canonicalUrl}" />
+	
+	<link rel="alternate" hreflang="en"        href="{$alternateRefEn}" />
+	<link rel="alternate" hreflang="ru"        href="{$alternateRefRu}" />
+	<link rel="alternate" hreflang="ja"        href="{$alternateRefJa}" />
+	<link rel="alternate" hreflang="x-default" href="{$alternateRefEn}" />
+	
+	<link rel="icon"             sizes="96x96"   type="image/png"     href="/favicon-96x96.png"  />
+	<link rel="icon"                             type="image/svg+xml" href="/favicon.svg" />
+	<link rel="shortcut icon"                                         href="/favicon.ico" />
+	<link rel="apple-touch-icon" sizes="180x180"                      href="/apple-touch-icon.png" />
+	<link rel="manifest"                                              href="/site.webmanifest" />
+	
+	<link type="text/css" rel="stylesheet" href="/css/core/font-hanazono-mincho-type-a.css?v={$this->cssVersion}" />
+	<link type="text/css" rel="stylesheet" href="/css/core/font-juliamo-ampleksa.css?v={$this->cssVersion}" />
+	<link type="text/css" rel="stylesheet" href="/css/core/sizes.css?v={$this->cssVersion}" />
+	<link type="text/css" rel="stylesheet" href="/css/core/dark-theme.css?v={$this->cssVersion}" />
+	<link type="text/css" rel="stylesheet" href="/css/core/general.css?v={$this->cssVersion}" />
+	
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/button.css?v={$this->cssVersion}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/checkbox.css?v={$this->cssVersion}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/fileupload.css?v={$this->cssVersion}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/select.css?v={$this->cssVersion}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textarea.css?v={$this->cssVersion}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textinput.css?v={$this->cssVersion}" />
 
 HTML;
 		
 		foreach ($cssSheetUris as $cssSheetUri)
 		{
-			$html[] = <<<HTML
-			<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={$this->cssVersion}"/>
+			$html[] =
+<<<HTML
+	<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={$this->cssVersion}"/>
 
 HTML;
 		}
 		
         foreach ($jsScriptUris as $jsScriptUri)
 		{
-			$html[] = <<<HTML
-			<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
+			$html[] =
+<<<HTML
+	<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
 
 HTML;
 		}
 		
-        $html[] = <<<HTML
-		</head>
+        $html[] =
+<<<HTML
+</head>
+
 HTML;
 		
 		return implode($html);
@@ -238,13 +243,14 @@ HTML;
 		array       $jsScriptUris = []
 	): string
 	{
-		return <<<HTML
-		<!DOCTYPE html>
-		<html lang="{$this->language}">
-		{$this->createHead($title, $description, $canonicalUri, $ogImageUri, $cssSheetUris, $jsScriptUris)}
-		<body>
-			{$this->createHeader()}
-			<main>
+		return
+<<<HTML
+<!DOCTYPE html>
+<html lang="{$this->language}">
+{$this->createHead($title, $description, $canonicalUri, $ogImageUri, $cssSheetUris, $jsScriptUris)}
+<body>
+	{$this->createHeader()}
+	<main>
 
 HTML;
 	}
@@ -276,29 +282,32 @@ HTML;
 	
 	final protected function endRender(array $jsScriptUris = []): string
 	{
-		$html[] = <<<HTML
+		$html[] =
+<<<HTML
 
-			</main>
-			{$this->createFooter()}
-			<script src="/js/core/emulate-event.js?v={$this->jsVersion}"/></script>
-			<script src="/js/custom-inputs/captcha-input.js?v={$this->jsVersion}"/></script>
-			<script src="/js/custom-inputs/fileupload.js?v={$this->jsVersion}"/></script>
-			<script src="/js/custom-inputs/select.js?v={$this->jsVersion}"/></script>
-			<script src="/js/custom-inputs/textarea.js?v={$this->jsVersion}"/></script>
+	</main>
+	{$this->createFooter()}
+	<script src="/js/core/emulate-event.js?v={$this->jsVersion}"/></script>
+	<script src="/js/custom-inputs/captcha-input.js?v={$this->jsVersion}"/></script>
+	<script src="/js/custom-inputs/fileupload.js?v={$this->jsVersion}"/></script>
+	<script src="/js/custom-inputs/select.js?v={$this->jsVersion}"/></script>
+	<script src="/js/custom-inputs/textarea.js?v={$this->jsVersion}"/></script>
+
 HTML;
 		
         foreach ($jsScriptUris as $jsScriptUri)
 		{
-			$html[] = <<<HTML
-			<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
+			$html[] =
+<<<HTML
+	<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
 
 HTML;
 		}
 		
-		$html[] = <<<HTML
-
-		</body>
-		</html>
+		$html[] =
+<<<HTML
+</body>
+</html>
 HTML;
 		
 		return implode($html);
