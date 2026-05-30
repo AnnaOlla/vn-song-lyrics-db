@@ -319,7 +319,7 @@ class VisitorModel extends Model
 		string|null $albumUri     = null,
 		string|null $characterUri = null,
 		string|null $userAddedUri = null,
-		array       $orderBy      = ['g.transliterated_name ASC'],
+		array       $orderBy      = ['g.transliterated_name ASC', 'g.id ASC'],
 		int|null    $page         = null,
 		int|null    $limit        = null,
 		string|null $search       = null
@@ -441,7 +441,7 @@ class VisitorModel extends Model
 		bool        $fetchMinInfo = false,
 		string|null $gameUri      = null,
 		string|null $userAddedUri = null,
-		array       $orderBy      = ['a.transliterated_name ASC'],
+		array       $orderBy      = ['a.transliterated_name ASC', 'a.id ASC'],
 		int|null    $page         = null,
 		int|null    $limit        = null,
 		string|null $search       = null
@@ -547,7 +547,7 @@ class VisitorModel extends Model
 		string|null $userAddedUri = null,
 		int|null    $aliasesOfId  = null,
 		bool|null   $mayBeAlias   = null,
-		array       $orderBy      = ['a.transliterated_name ASC'],
+		array       $orderBy      = ['a.transliterated_name ASC', 'a.id ASC'],
 		int|null    $page         = null,
 		int|null    $limit        = null,
 		string|null $search       = null
@@ -645,7 +645,7 @@ class VisitorModel extends Model
 		string|null $gameUri      = null,
 		string|null $artistUri    = null,
 		string|null $userAddedUri = null,
-		array       $orderBy      = ['c.transliterated_name ASC'],
+		array       $orderBy      = ['c.transliterated_name ASC', 'c.id ASC'],
 		int|null    $page         = null,
 		int|null    $limit        = null,
 		string|null $search       = null
@@ -853,7 +853,7 @@ class VisitorModel extends Model
 		bool  |null $isOriginal   = null,
 		int   |null $excludeId    = null,
 		string|null $userAddedUri = null,
-		array       $orderBy      = ['sn.transliterated_name ASC'],
+		array       $orderBy      = ['sn.transliterated_name ASC', 'sn.id ASC'],
 		int|null    $page         = null,
 		int|null    $limit        = null,
 		string|null $search       = null
@@ -1579,7 +1579,7 @@ class VisitorModel extends Model
 				u2.username              AS user_username_updated,
 				u2.uri                   AS user_uri_updated,
 				u3.username              AS user_username_reviewed,
-				u3.uri                   AS user_uri_reviewed
+				u3.uri                   AS user_uri_reviewed,
 				al.transliterated_name   AS alias_of_transliterated_name,
 				al.uri                   AS alias_of_uri
 			FROM
