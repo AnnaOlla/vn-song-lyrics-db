@@ -145,6 +145,7 @@ namespace Localization\LogInPage
 	const Heading                = 'Log In';
 	
 	const HintPassword           = 'If you lost it, contact us at support@vn-song-lyrics-db.ru';
+	const HintEmail              = 'name@mailserver.domain';
 	
 	const Email                  = 'Email';
 	const Password               = 'Password';
@@ -474,7 +475,7 @@ namespace Localization\ReportPage
 	const AboutReportContent = 'It seems that you found incomplete, incorrect or inappropriate information. Please, share the details.';
 	const NoActionWarning    = 'You are kindly asked to note that submitting a report does not imply an immediate action or any action at all.';
 	const ReplyOpportunity   = 'If you expect a reply, please, send a mail to support@vn-song-lyrics-db.ru instead.';
-	const SymbolLimitWarning = 'The message is limited with 250 symbols.';
+	const SymbolLimitWarning = 'The message is limited with 500 symbols.';
 	const Redirect           = 'After you submit the report, you will be redirected to the page of the reported subject.';
 	
 	const Game               = ' (Game)';
@@ -492,8 +493,13 @@ namespace Localization\UserPage
 	const Role                 = 'Role: ';
 	
 	const AccountControl       = 'Account Control Panel';
-	const ChangeAccountData    = 'Change Account Data';
+	const ChangeAboutMe        = 'Change “About Me”';
+	const ChangeUsername       = 'Change Username';
+	const ChangeEmail          = 'Change Email';
+	const ChangePassword       = 'Change Password';
 	const DeleteAccount        = 'Delete Account';
+	
+	const AboutMe              = 'About Me';
 	
 	const Contributions        = 'Contributions';
 	const RelatedGames         = 'Games: ';
@@ -504,19 +510,34 @@ namespace Localization\UserPage
 	const RelatedTranslations  = 'Translations: ';
 }
 
-namespace Localization\UserAccountDataPage
+namespace Localization\ChangeEmailPage
 {
-	const Edit            = ': Change';
-	const AccountData     = 'Account Data';
-	
-	const Username        = 'Username';
-	const Email           = 'Email';
-	const NewPassword     = 'New Password';
-	const NewPasswordNote = 'Only if needed';
-	const OldPassword     = 'Current Password';
+	const Edit        = ': Change Email';
+	const Email       = 'Email';
+	const Password    = 'Current Password';
 }
 
-namespace Localization\UserAccountDeletePage
+namespace Localization\ChangeUsernamePage
+{
+	const Edit        = ': Change Username';
+	const Username    = 'Username';
+	const Password    = 'Current Password';
+}
+
+namespace Localization\ChangePasswordPage
+{
+	const Edit        = ': Change Password';
+	const NewPassword = 'New Password';
+	const Password    = 'Current Password';
+}
+
+namespace Localization\ChangeAboutMePage
+{
+	const Edit        = ': Change “About Me”';
+	const AboutMe     = 'Self-Introduction (up to 500 symbols)';
+}
+
+namespace Localization\DeleteAccountPage
 {
 	const Delete       = ': Delete';
 	const AccountData  = 'Warning';

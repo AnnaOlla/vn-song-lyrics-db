@@ -277,13 +277,6 @@ CREATE TABLE reports
 	FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX index_uri ON games(uri);
-CREATE INDEX index_uri ON albums(uri);
-CREATE INDEX index_uri ON characters(uri);
-CREATE INDEX index_uri ON artists(uri);
-CREATE INDEX index_uri ON songs(uri);
-CREATE INDEX index_uri ON translations(uri);
-
 INSERT INTO
 	roles(id, technical_name, ru_name, en_name, ja_name)
 VALUES
@@ -304,8 +297,6 @@ VALUES
 	('日本語', 'Японский', 'Japanese', '日本語'),
 	('Romanization', 'Транслитерация', 'Romanization', 'ローマ字');
 
--- Changes
-
 CREATE TABLE fingerprints
 (
 	user_id    INT UNSIGNED   NOT NULL,
@@ -315,13 +306,24 @@ CREATE TABLE fingerprints
 	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION
 );
 
-ALTER TABLE `users` DROP `verification_token`;
-ALTER TABLE `users` DROP `is_verified`;
-ALTER TABLE `users` DROP `ip_address`;
+CREATE INDEX index_uri ON games(uri);
+CREATE INDEX index_uri ON albums(uri);
+CREATE INDEX index_uri ON characters(uri);
+CREATE INDEX index_uri ON artists(uri);
+CREATE INDEX index_uri ON songs(uri);
+CREATE INDEX index_uri ON translations(uri);
+CREATE INDEX index_uri ON users(uri);
 
+ALTER TABLE `users`     DROP   `verification_token`;
+ALTER TABLE `users`     DROP   `is_verified`;
+ALTER TABLE `users`     DROP   `ip_address`;
 ALTER TABLE `users`     CHANGE `email`         `email`      VARBINARY(128) NOT NULL;
 ALTER TABLE `users`     CHANGE `password_hash` `password`   VARBINARY(255) NOT NULL;
 ALTER TABLE `feedbacks` CHANGE `ip_address`    `ip_address` VARBINARY(190) NOT NULL;
 ALTER TABLE `reports`   ADD    `ip_address`                 VARBINARY(190) NOT NULL;
 ALTER TABLE `feedbacks` CHANGE `reply`         `reply`      VARCHAR(500)   CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;
 ALTER TABLE `reports`   CHANGE `message`       `message`    VARCHAR(500)   CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
+ALTER TABLE `users`     ADD    `uri`                        VARBINARY(32)  NOT NULL AFTER username;
+ALTER TABLE `users`     MODIFY `uri`                        VARCHAR(32)    UNIQUE;
+ALTER TABLE `users`     CHANGE `uri`           `uri`        VARCHAR(32)    CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
+ALTER TABLE `users`     ADD    `about_me`                   VARCHAR(500);

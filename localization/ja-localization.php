@@ -145,6 +145,7 @@ namespace Localization\LogInPage
 	const Heading                = 'ログイン';
 	
 	const HintPassword           = 'なくしたら、「support@vn-song-lyrics-db.ru」へメールを送ってください';
+	const HintEmail              = 'name@mailserver.domain';
 	
 	const Email                  = 'メール';
 	const Password               = 'パスワード';
@@ -474,7 +475,7 @@ namespace Localization\ReportPage
 	const AboutReportContent = '未完成なとか、不正解なとか、不適切なとか、情報が見つかったそうです。詳しくください。';
 	const NoActionWarning    = '訴え出を診ることに時間がかかる。行動が足りないことだと可能性があります。';
 	const ReplyOpportunity   = '返事をもらいたいなら、support@vn-song-lyrics-db.ruに訴えのメールを送ってください。';
-	const SymbolLimitWarning = 'ここでメッセージの長さは２５０文字以下です。';
+	const SymbolLimitWarning = 'ここでメッセージの長さは５００文字以下です。';
 	const Redirect           = '訴えを出すあと、以前のページに帰ります。';
 	
 	const Game               = '（ゲーム）';
@@ -492,8 +493,13 @@ namespace Localization\UserPage
 	const Role                 = '役：';
 	
 	const AccountControl       = 'アカウントコントロール';
-	const ChangeAccountData    = 'データを編集';
+	const ChangeAboutMe        = '自己紹介を編集';
+	const ChangeUsername       = 'ユーザネームを編集';
+	const ChangeEmail          = 'メールを編集';
+	const ChangePassword       = 'パスワードを編集';
 	const DeleteAccount        = 'アカウントを削除';
+	
+	const AboutMe              = '自己紹介';
 	
 	const Contributions        = '貢献';
 	const RelatedGames         = 'ゲーム：';
@@ -504,16 +510,31 @@ namespace Localization\UserPage
 	const RelatedTranslations  = 'ホンヤク：';
 }
 
-namespace Localization\UserAccountDataPage
+namespace Localization\ChangeEmailPage
 {
-	const Edit            = '：編集';
-	const AccountData     = 'アカウントデータ';
-	
-	const Username        = 'ユーザーネーム';
-	const Email           = 'メール';
-	const NewPassword     = 'パスワード';
-	const NewPasswordNote = 'パスワードを編集の場合だけ満たしてください';
-	const OldPassword     = '今のパスワード';
+	const Edit        = '：メールを編集';
+	const Email       = 'メール';
+	const Password    = '今のパスワード';
+}
+
+namespace Localization\ChangeUsernamePage
+{
+	const Edit        = '：ユーザネームを編集';
+	const Username    = 'ユーザネーム';
+	const Password    = '今のパスワード';
+}
+
+namespace Localization\ChangePasswordPage
+{
+	const Edit        = '：パスワードを編集';
+	const NewPassword = '新しいパスワード';
+	const Password    = '今のパスワード';
+}
+
+namespace Localization\ChangeAboutMePage
+{
+	const Edit        = '：自己紹介を編集';
+	const AboutMe     = '自己紹介（５００文字以下）';
 }
 
 namespace Localization\UserAccountDeletePage

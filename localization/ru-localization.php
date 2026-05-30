@@ -145,6 +145,7 @@ namespace Localization\LogInPage
 	const Heading                = 'Вход';
 	
 	const HintPassword           = 'При потере обратитесь к нам по почте: support@vn-song-lyrics-db.ru';
+	const HintEmail              = 'name@mailserver.domain';
 	
 	const Email                  = 'Электронная почта';
 	const Password               = 'Пароль';
@@ -474,7 +475,7 @@ namespace Localization\ReportPage
 	const AboutReportContent = 'По всей видимости, вы нашли неполную, неверную или неприемлемую информацию. Пожалуйста, расскажите подробно о проблеме.';
 	const NoActionWarning    = 'Просим заметить, что реакция администрации не мгновенная, более того, ваша жалоба может быть отклонена.';
 	const ReplyOpportunity   = 'Если вы хотите получить ответ от администрации, то подайте жалобу нам на почту support@vn-song-lyrics-db.ru.';
-	const SymbolLimitWarning = 'Сообщение ограничено 250 символами.';
+	const SymbolLimitWarning = 'Сообщение ограничено 500 символами.';
 	const Redirect           = 'После оформления вы будете перенаправлены на предыдущую страницу.';
 	
 	const Game               = ' (игра)';
@@ -492,8 +493,13 @@ namespace Localization\UserPage
 	const Role                 = 'Роль: ';
 	
 	const AccountControl       = 'Управление аккаунтом';
-	const ChangeAccountData    = 'Изменить данные';
+	const ChangeAboutMe        = 'Изменить «О себе»';
+	const ChangeUsername       = 'Изменить имя';
+	const ChangeEmail          = 'Изменить почту';
+	const ChangePassword       = 'Изменить пароль';
 	const DeleteAccount        = 'Удалить аккаунт';
+	
+	const AboutMe              = 'О себе';
 	
 	const Contributions        = 'Внесённый вклад';
 	const RelatedGames         = 'Игры: ';
@@ -504,16 +510,31 @@ namespace Localization\UserPage
 	const RelatedTranslations  = 'Переводы: ';
 }
 
-namespace Localization\UserAccountDataPage
+namespace Localization\ChangeEmailPage
 {
-	const Edit            = ': изменение';
-	const AccountData     = 'Данные аккаунта';
-	
-	const Username        = 'Имя пользователя';
-	const Email           = 'Электронная почта';
-	const NewPassword     = 'Новый пароль';
-	const NewPasswordNote = 'Заполнить только при необходимости смены';
-	const OldPassword     = 'Текущий пароль';
+	const Edit        = ': изменить почту';
+	const Email       = 'Электронная почта';
+	const Password    = 'Текущий пароль';
+}
+
+namespace Localization\ChangeUsernamePage
+{
+	const Edit        = ': изменить имя';
+	const Username    = 'Имя пользователя';
+	const Password    = 'Текущий пароль';
+}
+
+namespace Localization\ChangePasswordPage
+{
+	const Edit        = ': изменить пароль';
+	const NewPassword = 'New Password';
+	const Password    = 'Текущий пароль';
+}
+
+namespace Localization\ChangeAboutMePage
+{
+	const Edit        = ': изменить «О себе»';
+	const AboutMe     = 'Описание (не более 500 символов)';
 }
 
 namespace Localization\UserAccountDeletePage

@@ -1698,8 +1698,8 @@ class UserView extends ViolatorView
 	
 	final public function renderChangeAccountDataPage(array $user, InputError $error = InputError::None)
 	{
-		$heading           = $user['user_username'].\Localization\UserAccountDataPage\Edit;
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['user_username']);
+		$heading           = $user['username'].\Localization\UserAccountDataPage\Edit;
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['username']);
 		
 		$html[] = $this->startRender
 		(
@@ -1719,11 +1719,11 @@ class UserView extends ViolatorView
 				<form method="POST">
 					<section>
 						'.$this->createHeadingForInput(\Localization\UserAccountDataPage\Username, 3, true).'
-						'.$this->createTextInput(['name' => 'username', 'value' => $user['user_username'], 'placeholder' => \Localization\SignUpPage\HintUsername, 'required' => true, 'pattern' => '[a-zA-Z0-9]+']).'
+						'.$this->createTextInput(['name' => 'username', 'value' => $user['username'], 'placeholder' => \Localization\SignUpPage\HintUsername, 'required' => true, 'pattern' => '[a-zA-Z0-9]+']).'
 					</section>
 					<section>
 						'.$this->createHeadingForInput(\Localization\UserAccountDataPage\Email, 3, true).'
-						'.$this->createEmailInput(['name' => 'email', 'value' => Cryptography::decryptData($user['user_email']), 'placeholder' => 'name@mailserver.domain', 'required' => true]).'
+						'.$this->createEmailInput(['name' => 'email', 'value' => Cryptography::decryptData($user['email']), 'placeholder' => 'name@mailserver.domain', 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createHeadingForInput(\Localization\UserAccountDataPage\NewPassword, 3, false).'
@@ -1748,14 +1748,14 @@ class UserView extends ViolatorView
 		$this->echoHtml($html);
 	}
 	
-	final public function renderDeleteAccountPage(array $user, InputError $error = InputError::None)
+	final public function renderChangeEmailPage(array $user, InputError $error = InputError::None)
 	{
-		$heading           = $user['user_username'].\Localization\UserAccountDeletePage\Delete;
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['user_username']);
+		$heading2          = $user['username'].\Localization\ChangeEmailPage\Edit;
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
 		
 		$html[] = $this->startRender
 		(
-			title:        $heading,
+			title:        $heading2,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
@@ -1763,18 +1763,198 @@ class UserView extends ViolatorView
 		'
 		<article>
 			<section>
-				'.$this->createHeading($heading, 1).'
+				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
 			</section>
 			<section>
-				'.$this->createHeading(\Localization\UserAccountDeletePage\AccountData, 2).'
-				'.$this->createParagraph(\Localization\UserAccountDeletePage\Warning2).'
-				'.$this->createParagraph(\Localization\UserAccountDeletePage\Warning3).'
-				'.$this->createParagraph(\Localization\UserAccountDeletePage\Warning4).'
+				'.$this->createHeading($heading2, 2).'
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
 					<section>
-						'.$this->createHeadingForInput(\Localization\UserAccountDeletePage\Password, 3, true).'
-						'.$this->createPasswordInput(['name' => 'password', 'required' => true]).'
+						'.$this->createHeadingForInput(\Localization\ChangeEmailPage\Email, 3, true).'
+						'.$this->createEmailInput(['name' => 'email', 'value' => Cryptography::decryptData($user['email']), 'placeholder' => \Localization\SignUpPage\HintEmail, 'required' => true]).'
+					</section>
+					<section>
+						'.$this->createHeadingForInput(\Localization\ChangeEmailPage\Password, 3, true).'
+						'.$this->createPasswordInput(['name' => 'current-password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
+					</section>
+					<section>
+						'.$this->createReturnButton($defaultReturnLink).'
+						'.$this->createFillerSection().'
+						'.$this->createSubmitButton().'
+					</section>
+				</form>
+			</section>
+		</article>
+		';
+		
+		$html[] = $this->endRender();
+		
+		$this->echoHtml($html);
+	}
+	
+	final public function renderChangeUsernamePage(array $user, InputError $error = InputError::None)
+	{
+		$heading2          = $user['username'].\Localization\ChangeUsernamePage\Edit;
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
+		
+		$html[] = $this->startRender
+		(
+			title:        $heading2,
+			cssSheetUris: ['/css/window-in-center-page.css']
+		);
+		
+		$html[] = 
+		'
+		<article>
+			<section>
+				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
+			</section>
+			<section>
+				'.$this->createHeading($heading2, 2).'
+				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
+				<form method="POST">
+					<section>
+						'.$this->createHeadingForInput(\Localization\ChangeUsernamePage\Username, 3, true).'
+						'.$this->createUsernameInput(['name' => 'username', 'value' => $user['username'], 'placeholder' => \Localization\SignUpPage\HintUsername, 'required' => true]).'
+					</section>
+					<section>
+						'.$this->createHeadingForInput(\Localization\ChangeUsernamePage\Password, 3, true).'
+						'.$this->createPasswordInput(['name' => 'current-password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
+					</section>
+					<section>
+						'.$this->createReturnButton($defaultReturnLink).'
+						'.$this->createFillerSection().'
+						'.$this->createSubmitButton().'
+					</section>
+				</form>
+			</section>
+		</article>
+		';
+		
+		$html[] = $this->endRender();
+		
+		$this->echoHtml($html);
+	}
+	
+	final public function renderChangePasswordPage(array $user, InputError $error = InputError::None)
+	{
+		$heading2          = $user['username'].\Localization\ChangePasswordPage\Edit;
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
+		
+		$html[] = $this->startRender
+		(
+			title:        $heading2,
+			cssSheetUris: ['/css/window-in-center-page.css']
+		);
+		
+		$html[] = 
+		'
+		<article>
+			<section>
+				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
+			</section>
+			<section>
+				'.$this->createHeading($heading2, 2).'
+				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
+				<form method="POST">
+					<section>
+						'.$this->createHeadingForInput(\Localization\ChangePasswordPage\NewPassword, 3, true).'
+						'.$this->createPasswordInput(['name' => 'password', 'placeholder' => \Localization\SignUpPage\HintPassword, 'required' => true]).'
+					</section>
+					<section>
+						'.$this->createHeadingForInput(\Localization\ChangePasswordPage\Password, 3, true).'
+						'.$this->createPasswordInput(['name' => 'current-password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
+					</section>
+					<section>
+						'.$this->createReturnButton($defaultReturnLink).'
+						'.$this->createFillerSection().'
+						'.$this->createSubmitButton().'
+					</section>
+				</form>
+			</section>
+		</article>
+		';
+		
+		$html[] = $this->endRender();
+		
+		$this->echoHtml($html);
+	}
+	
+	final public function renderChangeAboutMePage(array $user, InputError $error = InputError::None)
+	{
+		$heading2          = $user['username'].\Localization\ChangeAboutMePage\Edit;
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
+		
+		$html[] = $this->startRender
+		(
+			title:        $heading2,
+			cssSheetUris: ['/css/window-in-center-page.css']
+		);
+		
+		$html[] = 
+		'
+		<article>
+			<section>
+				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
+			</section>
+			<section>
+				'.$this->createHeading($heading2, 2).'
+				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
+				<form method="POST">
+					<section>
+						'.$this->createHeadingForInput(\Localization\ChangeAboutMePage\AboutMe, 3, false).'
+						'.$this->createTextarea
+						(
+							value: htmlspecialchars($user['about_me'] ?? ''),
+							attributes:
+							[
+								'name' => 'about-me',
+								'placeholder' => \Localization\Controls\Textarea
+							]
+						).'
+					</section>
+					<section>
+						'.$this->createReturnButton($defaultReturnLink).'
+						'.$this->createFillerSection().'
+						'.$this->createSubmitButton().'
+					</section>
+				</form>
+			</section>
+		</article>
+		';
+		
+		$html[] = $this->endRender();
+		
+		$this->echoHtml($html);
+	}
+	
+	final public function renderDeleteAccountPage(array $user, InputError $error = InputError::None)
+	{
+		$heading2          = $user['username'].\Localization\DeleteAccountPage\Delete;
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['username']);
+		
+		$html[] = $this->startRender
+		(
+			title:        $heading2,
+			cssSheetUris: ['/css/window-in-center-page.css']
+		);
+		
+		$html[] = 
+		'
+		<article>
+			<section>
+				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
+			</section>
+			<section>
+				'.$this->createHeading($heading2, 2).'
+				'.$this->createParagraph(\Localization\DeleteAccountPage\Warning2).'
+				'.$this->createParagraph(\Localization\DeleteAccountPage\Warning3).'
+				'.$this->createParagraph(\Localization\DeleteAccountPage\Warning4).'
+				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
+				<form method="POST">
+					<section>
+						'.$this->createHeadingForInput(\Localization\DeleteAccountPage\Password, 3, true).'
+						'.$this->createPasswordInput(['name' => 'password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createReturnButton($defaultReturnLink).'

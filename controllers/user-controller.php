@@ -1977,11 +1977,11 @@ class UserController extends ViolatorController
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']));
 	}
 	
-	final public function handleChangeAccountDataPage(string $userUri): void
+	final public function handleChangeEmailPage(string $userUri): void
 	{
-		$user = $this->model->getUserData(username: $userUri);
+		$user = $this->model->getUserData(uri: $userUri);
 		
-		if (!Session::agentIs($user['user_id']) && !Session::agentIsAdministrator())
+		if (!Session::agentIs($user['id']) && !Session::agentIsAdministrator())
 			throw new HttpNotFound404();
 		
 		if (Session::agentIsViolator())
@@ -1990,11 +1990,11 @@ class UserController extends ViolatorController
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
-				$this->handleChangeAccountDataPageGet($user);
+				$this->handleChangeEmailPageGet($user);
 				break;
 			
 			case 'POST':
-				$this->handleChangeAccountDataPagePost($user);
+				$this->handleChangeEmailPagePost($user);
 				break;
 			
 			case 'CONNECT':
@@ -2011,90 +2011,285 @@ class UserController extends ViolatorController
 		}
 	}
 	
-	private function handleChangeAccountDataPageGet(array $user, InputError $error = InputError::None): void
+	private function handleChangeEmailPageGet(array $user, InputError $error = InputError::None): void
 	{
-		$this->view->renderChangeAccountDataPage($user, $error);
+		$this->view->renderChangeEmailPage($user, $error);
 	}
 	
-	private function handleChangeAccountDataPagePost(array $user): void
+	private function handleChangeEmailPagePost(array $user): void
 	{	
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$newUsername = $_POST['username']     ?? null;
-		$oldPassword = $_POST['old-password'] ?? null;
-		$newPassword = $_POST['new-password'] ?? null;
-		$newEmail    = $_POST['email']        ?? null;
+		$newEmail        = $_POST['email']            ?? null;
+		$currentPassword = $_POST['current-password'] ?? null;
 		
-		if (Validation::haveNullOrEmpty($newUsername, $oldPassword, $newEmail))
+		if (Validation::haveNullOrEmpty($newEmail, $currentPassword))
 			throw new HttpUnprocessableEntity422();
 		
-		if (!$this->model->isPasswordCorrect($user['user_id'], $oldPassword))
+		if (!Session::agentIsAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
 		{
-			$this->handleChangeAccountDataPageGet($user, InputError::IncorrectPassword);
-			return;
-		}
-		
-		if (!Validation::isLatinAlphabetAndNumbers($newUsername))
-		{
-			$this->handleChangeAccountDataPageGet($user, InputError::UsernameForbiddenSymbols);
-			return;
-		}
-		
-		if (mb_strlen($newUsername) < self::ACCOUNT_DATA_MIN_LENGTH)
-		{
-			$this->handleChangeAccountDataPageGet($user, InputError::UsernameLengthIncorrect);
-			return;
-		}
-		
-		if (mb_strlen($newUsername) > self::ACCOUNT_DATA_MAX_LENGTH)
-		{
-			$this->handleChangeAccountDataPageGet($user, InputError::UsernameLengthIncorrect);
-			return;
-		}
-		
-		if ($user['user_username'] !== $newUsername && $this->model->isUsernameRegistered($newUsername))
-		{
-			$this->handleChangeAccountDataPageGet($user, InputError::UsernameTaken);
+			$this->handleChangeEmailPageGet($user, InputError::IncorrectPassword);
 			return;
 		}
 		
 		if (!Validation::isEmailValid($newEmail))
 		{
-			$this->handleChangeAccountDataPageGet($user, InputError::EmailInvalid);
+			$this->handleChangeEmailPageGet($user, InputError::EmailInvalid);
 			return;
 		}
 		
-		if ($user['user_email'] !== $newEmail && $this->model->isEmailRegistered($newEmail))
+		if ($this->model->isEmailRegistered($newEmail))
 		{
-			$this->handleChangeAccountDataPageGet($user, InputError::EmailTaken);
+			$this->handleChangeEmailPageGet($user, InputError::EmailTaken);
 			return;
 		}
 		
-		if ($newPassword && !Validation::isLatinAlphabetAndNumbers($newPassword))
+		$this->model->updateUserData($user['id'], newEmail: $newEmail);
+		
+		if (!Session::agentIsAdministrator())
 		{
-			$this->handleChangeAccountDataPageGet($user, InputError::PasswordForbiddenSymbols);
-			return;
+			$user = $this->model->getUserData(id: $user['id']);
+			$this->createUserSession($user);
 		}
 		
-		if ($newPassword && mb_strlen($newPassword) < self::ACCOUNT_DATA_MIN_LENGTH)
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'user', $user['uri']));
+	}
+	
+	final public function handleChangeUsernamePage(string $userUri): void
+	{
+		$user = $this->model->getUserData(uri: $userUri);
+		
+		if (!Session::agentIs($user['id']) && !Session::agentIsAdministrator())
+			throw new HttpNotFound404();
+		
+		if (Session::agentIsViolator())
+			throw new HttpForbidden403();
+		
+		switch ($_SERVER['REQUEST_METHOD'])
 		{
-			$this->handleChangeAccountDataPageGet($user, InputError::PasswordLengthIncorrect);
-			return;
+			case 'GET':
+				$this->handleChangeUsernamePageGet($user);
+				break;
+			
+			case 'POST':
+				$this->handleChangeUsernamePagePost($user);
+				break;
+			
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
+				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
 		}
+	}
+	
+	private function handleChangeUsernamePageGet(array $user, InputError $error = InputError::None): void
+	{
+		$this->view->renderChangeUsernamePage($user, $error);
+	}
+	
+	private function handleChangeUsernamePagePost(array $user): void
+	{	
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		if ($newPassword && mb_strlen($newPassword) > self::ACCOUNT_DATA_MAX_LENGTH)
+		$newUsername     = $_POST['username']         ?? null;
+		$currentPassword = $_POST['current-password'] ?? null;
+		
+		if (Validation::haveNullOrEmpty($newUsername, $currentPassword))
+			throw new HttpUnprocessableEntity422();
+		
+		if (!Session::agentIsAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
 		{
-			$this->handleChangeAccountDataPageGet($user, InputError::PasswordLengthIncorrect);
+			$this->handleChangeUsernamePageGet($user, InputError::IncorrectPassword);
 			return;
 		}
 		
-		$this->model->updateUserData($user['user_id'], $newUsername, $newEmail, $newPassword);
+		if (!Validation::isLatinAlphabetAndNumbers($newUsername))
+		{
+			$this->handleChangeUsernamePageGet($user, InputError::UsernameForbiddenSymbols);
+			return;
+		}
 		
-		$this->model->getUserData($user['user_id']);
-		$this->createUserSession($user);
+		if (mb_strlen($newUsername) < self::ACCOUNT_DATA_MIN_LENGTH)
+		{
+			$this->handleChangeUsernamePageGet($user, InputError::UsernameLengthIncorrect);
+			return;
+		}
 		
-		$this->handleRedirect(Http::buildInternalPath($this->language, 'user', $newUsername));
+		if (mb_strlen($newUsername) > self::ACCOUNT_DATA_MAX_LENGTH)
+		{
+			$this->handleChangeUsernamePageGet($user, InputError::UsernameLengthIncorrect);
+			return;
+		}
+		
+		if ($this->model->isUsernameRegistered($newUsername))
+		{
+			$this->handleChangeUsernamePageGet($user, InputError::UsernameTaken);
+			return;
+		}
+		
+		$this->model->updateUserData($user['id'], newUsername: $newUsername);
+		
+		if (!Session::agentIsAdministrator())
+		{
+			$user = $this->model->getUserData(id: $user['id']);
+			$this->createUserSession($user);
+		}
+		
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'user', $user['uri']));
+	}
+	
+	final public function handleChangePasswordPage(string $userUri): void
+	{
+		$user = $this->model->getUserData(uri: $userUri);
+		
+		if (!Session::agentIs($user['id']) && !Session::agentIsAdministrator())
+			throw new HttpNotFound404();
+		
+		if (Session::agentIsViolator())
+			throw new HttpForbidden403();
+		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleChangePasswordPageGet($user);
+				break;
+			
+			case 'POST':
+				$this->handleChangePasswordPagePost($user);
+				break;
+			
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
+				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
+		}
+	}
+	
+	private function handleChangePasswordPageGet(array $user, InputError $error = InputError::None): void
+	{
+		$this->view->renderChangePasswordPage($user, $error);
+	}
+	
+	private function handleChangePasswordPagePost(array $user): void
+	{	
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
+		$newPassword     = $_POST['password']         ?? null;
+		$currentPassword = $_POST['current-password'] ?? null;
+		
+		if (Validation::haveNullOrEmpty($newPassword, $currentPassword))
+			throw new HttpUnprocessableEntity422();
+		
+		if (!Session::agentIsAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
+		{
+			$this->handleChangeUsernamePageGet($user, InputError::IncorrectPassword);
+			return;
+		}
+		
+		if (!Validation::isLatinAlphabetAndNumbers($newPassword))
+		{
+			$this->handleChangePasswordPageGet($user, InputError::PasswordForbiddenSymbols);
+			return;
+		}
+		
+		if (mb_strlen($newPassword) < self::ACCOUNT_DATA_MIN_LENGTH)
+		{
+			$this->handleChangePasswordPageGet($user, InputError::PasswordLengthIncorrect);
+			return;
+		}
+		
+		if (mb_strlen($newPassword) > self::ACCOUNT_DATA_MAX_LENGTH)
+		{
+			$this->handleChangePasswordPageGet($user, InputError::PasswordLengthIncorrect);
+			return;
+		}
+		
+		$this->model->updateUserData($user['id'], newPassword: $newPassword);
+		
+		if (!Session::agentIsAdministrator())
+		{
+			$user = $this->model->getUserData(id: $user['id']);
+			$this->createUserSession($user);
+		}
+		
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'user', $user['uri']));
+	}
+	
+	final public function handleChangeAboutMePage(string $userUri): void
+	{
+		$user = $this->model->getUserData(uri: $userUri, fetchMinInfo: false);
+		
+		if (!Session::agentIs($user['id']) && !Session::agentIsAdministrator())
+			throw new HttpNotFound404();
+		
+		if (Session::agentIsViolator())
+			throw new HttpForbidden403();
+		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleChangeAboutMePageGet($user);
+				break;
+			
+			case 'POST':
+				$this->handleChangeAboutMePagePost($user);
+				break;
+			
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
+				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
+		}
+	}
+	
+	private function handleChangeAboutMePageGet(array $user, InputError $error = InputError::None): void
+	{
+		$this->view->renderChangeAboutMePage($user, $error);
+	}
+	
+	private function handleChangeAboutMePagePost(array $user): void
+	{	
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
+		$newAboutMe = $_POST['about-me'] ?? null;
+		
+		if (is_null($newAboutMe))
+			throw new HttpUnprocessableEntity422();
+		
+		$this->model->updateUserData($user['id'], newAboutMe: $newAboutMe);
+		
+		if (!Session::agentIsAdministrator())
+		{
+			$user = $this->model->getUserData(id: $user['id']);
+			$this->createUserSession($user);
+		}
+		
+		$this->handleRedirect(Http::buildInternalPath($this->language, 'user', $user['uri']));
 	}
 	
 	final public function handleDeleteAccountPage(string $userUri): void
@@ -2104,7 +2299,7 @@ class UserController extends ViolatorController
 		if (!$user)
 			throw new HttpNotFound404();
 		
-		if (!Session::agentIs($user['user_id']) && !Session::agentIsAdministrator())
+		if (!Session::agentIs($user['id']) && !Session::agentIsAdministrator())
 			throw new HttpNotFound404();
 		
 		if (Session::agentIsViolator())
@@ -2149,7 +2344,7 @@ class UserController extends ViolatorController
 		if (!$password)
 			throw new HttpUnprocessableEntity422();
 		
-		if (!$this->model->isPasswordCorrect($user['user_id'], $password))
+		if (!$this->model->isPasswordCorrect($user['id'], $password))
 		{
 			$this->handleDeleteAccountPageGet($user, InputError::IncorrectPassword);
 			return;

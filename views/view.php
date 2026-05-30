@@ -197,7 +197,7 @@ HTML;
 			$logIn    = '';
 			$signUp   = '';
 			$logOut   = '<a href="/'.$this->language.'/log-out">'.\Localization\Header\LogOut.'</a>';
-			$username = '<a href="/'.$this->language.'/user/'.htmlspecialchars($_SESSION['user']['username']).'">'.htmlspecialchars($_SESSION['user']['username']).'</a>';
+			$username = '<a href="/'.$this->language.'/user/'.htmlspecialchars($_SESSION['user']['uri']).'">'.htmlspecialchars($_SESSION['user']['username']).'</a>';
 		}
 		
 		return
@@ -419,6 +419,7 @@ HTML;
 	(
 		string|null $timestamp,
 		string|null $username,
+		string|null $uri,
 		string      $status
 	): string
 	{
@@ -428,7 +429,7 @@ HTML;
 		if (is_null($username))
 			$username = \Localization\TimestampString\DeletedUser;
 		else
-			$username = $this->createLink(Http::buildInternalPath($this->language, 'user', $username), $username);
+			$username = $this->createLink(Http::buildInternalPath($this->language, 'user', $uri), $username);
 		
 		return '<p>'.htmlspecialchars($status.\Localization\TimestampString\Delimeter.$timestamp.\Localization\TimestampString\By).$username.'</p>';
 	}
@@ -436,28 +437,31 @@ HTML;
 	final protected function createTimestampAdded
 	(
 		string|null $timestamp,
-		string|null $username
+		string|null $username,
+		string|null $uri
 	): string
 	{
-		return $this->createTimestamp($timestamp, $username, \Localization\TimestampString\Added);
+		return $this->createTimestamp($timestamp, $username, $uri, \Localization\TimestampString\Added);
 	}
 	
 	final protected function createTimestampUpdated
 	(
 		string|null $timestamp,
-		string|null $username
+		string|null $username,
+		string|null $uri
 	): string
 	{
-		return $this->createTimestamp($timestamp, $username, \Localization\TimestampString\Updated);
+		return $this->createTimestamp($timestamp, $username, $uri, \Localization\TimestampString\Updated);
 	}
 	
 	final protected function createTimestampReviewed
 	(
 		string|null $timestamp,
-		string|null $username
+		string|null $username,
+		string|null $uri
 	): string
 	{
-		return $this->createTimestamp($timestamp, $username, \Localization\TimestampString\Reviewed);
+		return $this->createTimestamp($timestamp, $username, $uri, \Localization\TimestampString\Reviewed);
 	}
 	
 	final protected function createStatus
@@ -1054,9 +1058,9 @@ HTML;
 		return
 		'
 		<section>
-			'.$this->createTimestampAdded($entity['timestamp_added'], $entity['user_added']).'
-			'.$this->createTimestampUpdated($entity['timestamp_updated'], $entity['user_updated']).'
-			'.$this->createTimestampReviewed($entity['timestamp_reviewed'], $entity['user_reviewed']).'
+			'.$this->createTimestampAdded($entity['timestamp_added'], $entity['user_username_added'], $entity['user_uri_added']).'
+			'.$this->createTimestampUpdated($entity['timestamp_updated'], $entity['user_username_updated'], $entity['user_uri_updated']).'
+			'.$this->createTimestampReviewed($entity['timestamp_reviewed'], $entity['user_username_reviewed'], $entity['user_uri_reviewed']).'
 			'.$statusRow.'
 		</section>
 		';

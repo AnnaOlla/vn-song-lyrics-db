@@ -28,8 +28,9 @@ class VisitorController extends ErrorController
 		
 		$_SESSION['user'] = 
 		[
-			'id'         => $userData['user_id'],
-			'username'   => $userData['user_username'],
+			'id'         => $userData['id'],
+			'username'   => $userData['username'],
+			'uri'        => $userData['uri'],
 			'role'       => $userData['role_technical_name'],
 			'roleId'     => $userData['role_id'],
 			'userRole' =>
@@ -107,7 +108,7 @@ class VisitorController extends ErrorController
 			return;
 		}
 		
-		$userData = $this->model->getUserData($userId);
+		$userData = $this->model->getUserData(id: $userId);
 		$this->createUserSession($userData);
 		
 		$this->model->updateLastLogInTimestamp($userId);
@@ -239,7 +240,7 @@ class VisitorController extends ErrorController
 		}
 		
 		$userId   = $this->model->createUser($username, $password, $email);
-		$userData = $this->model->getUserData($userId);
+		$userData = $this->model->getUserData(id: $userId);
 		
 		$this->createUserSession($userData);
 		$this->model->addUserFingerprint($userId, $ipAddress);
@@ -1531,7 +1532,7 @@ class VisitorController extends ErrorController
 	
 	final public function handleUserPage(string $userUri): void
 	{
-		$user = $this->model->getUserData(username: $userUri);
+		$user = $this->model->getUserData(uri: $userUri, fetchMinInfo: false);
 		
 		if (!$user)
 			throw new HttpNotFound404();
@@ -1559,12 +1560,12 @@ class VisitorController extends ErrorController
 	
 	private function handleUserPageGet(array $user): void
 	{
-		$games        = $this->model->getGameList(userAddedUri: $user['user_username']);
-		$albums       = $this->model->getAlbumList(userAddedUri: $user['user_username']);
-		$artists      = $this->model->getArtistList(userAddedUri: $user['user_username']);
-		$characters   = $this->model->getCharacterList(userAddedUri: $user['user_username']);
-		$songs        = $this->model->getSongList(userAddedUri: $user['user_username'], hasVocal: true, isOriginal: true);
-		$translations = $this->model->getTranslationList(userAddedUri: $user['user_username']);
+		$games        = $this->model->getGameList(userAddedUri: $user['username']);
+		$albums       = $this->model->getAlbumList(userAddedUri: $user['username']);
+		$artists      = $this->model->getArtistList(userAddedUri: $user['username']);
+		$characters   = $this->model->getCharacterList(userAddedUri: $user['username']);
+		$songs        = $this->model->getSongList(userAddedUri: $user['username'], hasVocal: true, isOriginal: true);
+		$translations = $this->model->getTranslationList(userAddedUri: $user['username']);
 		
 		$this->view->renderUserPage
 		(

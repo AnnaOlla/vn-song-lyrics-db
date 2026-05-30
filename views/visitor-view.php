@@ -148,7 +148,7 @@ class VisitorView extends ErrorView
 				<form method="POST">
 					<section>
 						'.$this->createHeadingForInput(\Localization\LogInPage\Email, 3, true).'
-						'.$this->createEmailInput(['name' => 'email', 'value' => $email, 'placeholder' => 'name@mailserver.domain', 'required' => true]).'
+						'.$this->createEmailInput(['name' => 'email', 'value' => $email, 'placeholder' => \Localization\LogInPage\HintEmail, 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createHeadingForInput(\Localization\LogInPage\Password, 3, true).'
@@ -1338,7 +1338,7 @@ class VisitorView extends ErrorView
 		array $relatedTranslations
 	): void
 	{
-		$heading = \Localization\UserPage\User.htmlspecialchars($userData['user_username']);
+		$heading = \Localization\UserPage\User.htmlspecialchars($userData['username']);
 		$role    = \Localization\Functions\localizeLanguageName($userData);
 		
 		$html[] = $this->startRender
@@ -1359,27 +1359,42 @@ class VisitorView extends ErrorView
 				'.$this->createParagraph(\Localization\UserPage\Role.$role).'
 		';
 		
-		if (Session::agentIs($userData['user_id']) || Session::agentIsAdministrator())
+		if (Session::agentIs($userData['id']) || Session::agentIsAdministrator())
 		{
-			$label1 = \Localization\UserPage\ChangeAccountData;
-			$label4 = \Localization\UserPage\DeleteAccount;
+			$label1 = \Localization\UserPage\ChangeAboutMe;
+			$label2 = \Localization\UserPage\ChangeUsername;
+			$label3 = \Localization\UserPage\ChangeEmail;
+			$label4 = \Localization\UserPage\ChangePassword;
+			$label5 = \Localization\UserPage\DeleteAccount;
 			
-			$href1 = Http::buildInternalPath($this->language, 'user', $userData['user_username'], 'change-account-data');
-			$href4 = Http::buildInternalPath($this->language, 'user', $userData['user_username'], 'delete-account');
+			$href1 = Http::buildInternalPath($this->language, 'user', $userData['uri'], 'change-about-me');
+			$href2 = Http::buildInternalPath($this->language, 'user', $userData['uri'], 'change-username');
+			$href3 = Http::buildInternalPath($this->language, 'user', $userData['uri'], 'change-email');
+			$href4 = Http::buildInternalPath($this->language, 'user', $userData['uri'], 'change-password');
+			$href5 = Http::buildInternalPath($this->language, 'user', $userData['uri'], 'delete-account');
 			
 			$attributes1 = ['href' => $href1];
+			$attributes2 = ['href' => $href2];
+			$attributes3 = ['href' => $href3];
 			$attributes4 = ['href' => $href4];
+			$attributes5 = ['href' => $href5];
 			
 			$access1 = (Session::agentIsViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
+			$access2 = (Session::agentIsViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
+			$access3 = (Session::agentIsViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
 			$access4 = (Session::agentIsViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
+			$access5 = (Session::agentIsViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
 			
 			$html[] = 
 			'
 				<section class="account-control">
 					'.$this->createButtonAsRestrictedLink($label1, $access1, $attributes1).'
 					<section class="filler"></section>
-					<section class="filler"></section>
+					'.$this->createButtonAsRestrictedLink($label2, $access2, $attributes2).'
+					'.$this->createButtonAsRestrictedLink($label3, $access3, $attributes3).'
 					'.$this->createButtonAsRestrictedLink($label4, $access4, $attributes4).'
+					<section class="filler"></section>
+					'.$this->createButtonAsRestrictedLink($label5, $access5, $attributes5).'
 				</section>
 			';
 		}
@@ -1387,6 +1402,34 @@ class VisitorView extends ErrorView
 		$html[] = 
 		'
 			</section>
+		';
+		
+		if (!Validation::isNullOrEmpty($userData['about_me']))
+		{
+			$html[] =
+			'
+			<section>
+				'.$this->createHeading(\Localization\UserPage\AboutMe, 2).'
+			';
+			
+			$aboutMe = explode("\n", $userData['about_me']);
+			
+			foreach ($aboutMe as $line)
+			{
+				$html[] =
+				'
+				'.$this->createParagraph($line).'
+				';
+			}
+			
+			$html[] = 
+			'
+			</section>
+			';
+		}
+		
+		$html[] = 
+		'
 			<section>
 				'.$this->createHeading(\Localization\UserPage\Contributions, 2).'
 			</section>

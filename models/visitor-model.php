@@ -11,6 +11,14 @@ class VisitorModel extends Model
 		$this->pdo = getPdo('visitor');
 	}
 	
+	final protected function buildUri(string $value): string
+	{
+		$uri = mb_strtolower($value);
+		$uri = preg_replace('/\s+/u', '-', $uri);
+		$uri = preg_replace('/[^a-z0-9\-]*/u', '', $uri);
+		return $uri;
+	}
+	
 	final public function getEmailWithUserId(int $id): string|null
 	{
 		$stmt = $this->pdo->prepare('SELECT email FROM users WHERE id = :id');
@@ -68,6 +76,7 @@ class VisitorModel extends Model
 	{
 		$emailHash    = Cryptography::encryptData(mb_strtolower($email));
 		$passwordHash = Cryptography::generatePasswordHash($password);
+		$uri          = $this->buildUri($username);
 		
 		$stmt = $this->pdo->prepare
 		(
@@ -77,6 +86,7 @@ class VisitorModel extends Model
 				username,
 				password,
 				email,
+				uri,
 				role_id,
 				timestamp_created,
 				timestamp_last_log_in
@@ -86,6 +96,7 @@ class VisitorModel extends Model
 				:username,
 				:password,
 				:email,
+				:uri,
 				(SELECT id FROM roles WHERE technical_name = "user"),
 				NOW(),
 				NOW()
@@ -96,6 +107,7 @@ class VisitorModel extends Model
 		$stmt->bindParam(':username', $username,     PDO::PARAM_STR);
 		$stmt->bindParam(':password', $passwordHash, PDO::PARAM_STR);
 		$stmt->bindParam(':email',    $emailHash,    PDO::PARAM_STR);
+		$stmt->bindParam(':uri',      $uri,          PDO::PARAM_STR);
 		$stmt->execute();
 		
 		return $this->pdo->lastInsertId();
@@ -148,15 +160,34 @@ class VisitorModel extends Model
 	
 	final public function getUserData
 	(
-		int|null    $id       = null,
-		string|null $username = null
-	): array
+		bool        $fetchMinInfo = true,
+		int|null    $id           = null,
+		string|null $username     = null,
+		string|null $uri          = null
+	): array|null
 	{
-		if (is_null($id) && is_null($username))
+		if (is_null($id) && is_null($username) && is_null($uri))
 			throw HttpInternalServerError500(__METHOD__.' was called without arguments');
 		
-		$where = ['TRUE'];
-		$binds = [];
+		$select =
+		[
+			'u.username       AS username',
+			'u.id             AS id',
+			'u.email          AS email',
+			'u.uri            AS uri',
+			'r.id             AS role_id',
+			'r.technical_name AS role_technical_name',
+			'r.ru_name        AS language_ru_name',
+			'r.en_name        AS language_en_name',
+			'r.ja_name        AS language_ja_name'
+		];
+		$where  = ['TRUE'];
+		$binds  = [];
+		
+		if (!$fetchMinInfo)
+		{
+			$select[] = 'u.about_me       AS about_me';
+		}
 		
 		if (!is_null($id))
 		{
@@ -170,18 +201,17 @@ class VisitorModel extends Model
 			$binds[] = [':username', $username, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($uri))
+		{
+			$where[] = 'u.uri = :uri';
+			$binds[] = [':uri', $uri, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
 			SELECT
-				u.username       AS user_username,
-				u.id             AS user_id,
-				u.email          AS user_email,
-				r.id             AS role_id,
-				r.technical_name AS role_technical_name,
-				r.ru_name        AS language_ru_name,
-				r.en_name        AS language_en_name,
-				r.ja_name        AS language_ja_name
+				'.implode(', ', $select).'
 			FROM
 				users AS u
 			JOIN
@@ -198,7 +228,7 @@ class VisitorModel extends Model
 		$stmt->execute();
 		
 		$userData = $stmt->fetch(PDO::FETCH_ASSOC);
-		return $userData;
+		return ($userData ? $userData : null);
 	}
 	
 	final public function getRandomCaptcha(int $length, int $strength): array
@@ -355,7 +385,7 @@ class VisitorModel extends Model
 			ON
 				g.user_added_id = u.id
 			';
-			$where[]  = 'u.username = :user_added_uri';
+			$where[]  = 'u.uri = :user_added_uri';
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
@@ -460,7 +490,7 @@ class VisitorModel extends Model
 			ON
 				a.user_added_id = u.id
 			';
-			$where[]  = 'u.username = :user_added_uri';
+			$where[]  = 'u.uri = :user_added_uri';
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
@@ -547,7 +577,7 @@ class VisitorModel extends Model
 			ON
 				a.user_added_id = u.id
 			';
-			$where[]  = 'u.username = :user_added_uri';
+			$where[]  = 'u.uri = :user_added_uri';
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
@@ -683,7 +713,7 @@ class VisitorModel extends Model
 			ON
 				c.user_added_id = u.id
 			';
-			$where[]  = 'u.username = :user_added_uri';
+			$where[]  = 'u.uri = :user_added_uri';
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
@@ -936,7 +966,7 @@ class VisitorModel extends Model
 			ON
 				sn.user_added_id = us.id
 			';
-			$where[]  = 'us.username = :user_added_uri';
+			$where[]  = 'us.uri = :user_added_uri';
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
@@ -1087,7 +1117,7 @@ class VisitorModel extends Model
 			ON
 				tr.user_added_id = us.id
 			';
-			$where[] = 'us.username = :user_added_uri';
+			$where[] = 'us.uri = :user_added_uri';
 			$binds[] = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
@@ -1430,9 +1460,12 @@ class VisitorModel extends Model
 				gm.user_added_id,
 				gm.user_updated_id,
 				gm.user_reviewed_id,
-				u1.username              AS user_added,
-				u2.username              AS user_updated,
-				u3.username              AS user_reviewed
+				u1.username              AS user_username_added,
+				u1.uri                   AS user_uri_added,
+				u2.username              AS user_username_updated,
+				u2.uri                   AS user_uri_updated,
+				u3.username              AS user_username_reviewed,
+				u3.uri                   AS user_uri_reviewed
 			FROM
 				games AS gm
 			LEFT JOIN
@@ -1480,9 +1513,12 @@ class VisitorModel extends Model
 				al.user_added_id,
 				al.user_updated_id,
 				al.user_reviewed_id,
-				u1.username              AS user_added,
-				u2.username              AS user_updated,
-				u3.username              AS user_reviewed
+				u1.username              AS user_username_added,
+				u1.uri                   AS user_uri_added,
+				u2.username              AS user_username_updated,
+				u2.uri                   AS user_uri_updated,
+				u3.username              AS user_username_reviewed,
+				u3.uri                   AS user_uri_reviewed
 			FROM
 				albums AS al
 			LEFT JOIN
@@ -1538,9 +1574,12 @@ class VisitorModel extends Model
 				ar.user_added_id,
 				ar.user_updated_id,
 				ar.user_reviewed_id,
-				u1.username              AS user_added,
-				u2.username              AS user_updated,
-				u3.username              AS user_reviewed,
+				u1.username              AS user_username_added,
+				u1.uri                   AS user_uri_added,
+				u2.username              AS user_username_updated,
+				u2.uri                   AS user_uri_updated,
+				u3.username              AS user_username_reviewed,
+				u3.uri                   AS user_uri_reviewed
 				al.transliterated_name   AS alias_of_transliterated_name,
 				al.uri                   AS alias_of_uri
 			FROM
@@ -1593,9 +1632,12 @@ class VisitorModel extends Model
 				ch.user_added_id,
 				ch.user_updated_id,
 				ch.user_reviewed_id,
-				u1.username              AS user_added,
-				u2.username              AS user_updated,
-				u3.username              AS user_reviewed
+				u1.username              AS user_username_added,
+				u1.uri                   AS user_uri_added,
+				u2.username              AS user_username_updated,
+				u2.uri                   AS user_uri_updated,
+				u3.username              AS user_username_reviewed,
+				u3.uri                   AS user_uri_reviewed
 			FROM
 				characters AS ch
 			LEFT JOIN
@@ -1678,9 +1720,12 @@ class VisitorModel extends Model
 				lg.ru_name               AS language_ru_name,
 				lg.en_name               AS language_en_name,
 				lg.ja_name               AS language_ja_name,
-				u1.username              AS user_added,
-				u2.username              AS user_updated,
-				u3.username              AS user_reviewed,
+				u1.username              AS user_username_added,
+				u1.uri                   AS user_uri_added,
+				u2.username              AS user_username_updated,
+				u2.uri                   AS user_uri_updated,
+				u3.username              AS user_username_reviewed,
+				u3.uri                   AS user_uri_reviewed,
 				al.uri                   AS album_uri,
 				al.transliterated_name   AS album_transliterated_name
 			FROM
@@ -1743,9 +1788,12 @@ class VisitorModel extends Model
 				tr.user_added_id,
 				tr.user_updated_id,
 				tr.user_reviewed_id,
-				u1.username            AS user_added,
-				u2.username            AS user_updated,
-				u3.username            AS user_reviewed,
+				u1.username            AS user_username_added,
+				u1.uri                 AS user_uri_added,
+				u2.username            AS user_username_updated,
+				u2.uri                 AS user_uri_updated,
+				u3.username            AS user_username_reviewed,
+				u3.uri                 AS user_uri_reviewed,
 				lg.ru_name             AS language_ru_name,
 				lg.en_name             AS language_en_name,
 				lg.ja_name             AS language_ja_name,

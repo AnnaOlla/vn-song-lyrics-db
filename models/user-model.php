@@ -23,14 +23,6 @@ class UserModel extends ViolatorModel
 		return implode('/', $values);
 	}
 	
-	final protected function buildUri(string $value): string
-	{
-		$uri = mb_strtolower($value);
-		$uri = preg_replace('/\s+/u', '-', $uri);
-		$uri = preg_replace('/[^a-z0-9\-]*/u', '', $uri);
-		return $uri;
-	}
-	
 	//----------------------------------//
 	//      Methods Handling Files      //
 	//----------------------------------//
@@ -1832,18 +1824,42 @@ class UserModel extends ViolatorModel
 	
 	final public function updateUserData
 	(
-		int         $userId,
-		string      $newUsername,
-		string      $newEmail,
-		string|null $newPassword
+		int         $id,
+		string|null $newUsername = null,
+		string|null $newEmail    = null,
+		string|null $newPassword = null,
+		string|null $newAboutMe  = null
 	)
 	{
-		$email = Cryptography::encryptData(mb_strtolower($newEmail));
+		$set  = [];
+		$binds = [[':id', $id, PDO::PARAM_INT]];
 		
-		$setPassword = '';
+		if (!is_null($newUsername))
+		{
+			$set[]   = 'username = :username';
+			$binds[] = [':username', $newUsername, PDO::PARAM_STR];
+			
+			$set[]   = 'uri = :uri';
+			$binds[] = [':uri', $this->buildUri($newUsername), PDO::PARAM_STR];
+		}
 		
-		if ($newPassword)
-			$setPassword = ', password = "'.Cryptography::generatePasswordHash($password).'"';
+		if (!is_null($newEmail))
+		{
+			$set[]   = 'email = :email';
+			$binds[] = [':email', Cryptography::encryptData(mb_strtolower($newEmail)), PDO::PARAM_STR];
+		}
+		
+		if (!is_null($newPassword))
+		{
+			$set[]   = 'password = :password';
+			$binds[] = [':password', Cryptography::generatePasswordHash($newPassword), PDO::PARAM_STR];
+		}
+		
+		if (!is_null($newAboutMe))
+		{
+			$set[]   = 'about_me = :about_me';
+			$binds[] = [':about_me', $newAboutMe, PDO::PARAM_STR];
+		}
 		
 		$stmt = $this->pdo->prepare
 		(
@@ -1851,17 +1867,14 @@ class UserModel extends ViolatorModel
 			UPDATE
 				users
 			SET
-				username = :username,
-				email    = :email'.
-				$setPassword.'
+				'.implode(", ", $set).'
 			WHERE
 				id = :id
 			'
 		);
 		
-		$stmt->bindParam(':id',       $userId,      PDO::PARAM_INT);
-		$stmt->bindParam(':username', $newUsername, PDO::PARAM_STR);
-		$stmt->bindParam(':email',    $newEmail,    PDO::PARAM_STR);
+		foreach ($binds as $bind)
+			$stmt->bindParam($bind[0], $bind[1], $bind[2]);
 		$stmt->execute();
 	}
 	
@@ -1877,7 +1890,7 @@ class UserModel extends ViolatorModel
 			'
 		);
 		
-		$stmt->bindParam(':id', $user['user_id'], PDO::PARAM_INT);
+		$stmt->bindParam(':id', $user['id'], PDO::PARAM_INT);
 		$stmt->execute();
 	}
 }
