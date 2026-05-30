@@ -252,9 +252,27 @@ final class Router
 			$parameters = ['userUri' => $routes[3]];
 		}
 		
-		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'change-account-data')
+		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'change-email')
 		{
-			$method = 'handleChangeAccountDataPage';
+			$method = 'handleChangeEmailPage';
+			$parameters = ['userUri' => $routes[3]];
+		}
+		
+		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'change-password')
+		{
+			$method = 'handleChangePasswordPage';
+			$parameters = ['userUri' => $routes[3]];
+		}
+		
+		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'change-username')
+		{
+			$method = 'handleChangeUsernamePage';
+			$parameters = ['userUri' => $routes[3]];
+		}
+		
+		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'change-about-me')
+		{
+			$method = 'handleChangeAboutMePage';
 			$parameters = ['userUri' => $routes[3]];
 		}
 		
