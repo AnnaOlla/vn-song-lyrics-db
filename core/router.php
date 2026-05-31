@@ -494,13 +494,11 @@ final class Router
 			$parameters = ['characterUri' => $routes[3]];
 		}
 		
-		/*
-		else if ($routeCount === 6 && $routes[1] === 'album' && $routes[3] === 'song' && $routes[5] === 'delete')
+		else if ($routeCount === 7 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'delete')
 		{
 			$method = 'handleDeleteSongPage';
-			$parameters = ['albumUri' => $routes[2], 'songUri' => $routes[4]];
+			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5]];
 		}
-		*/
 		
 		else if ($routeCount === 7 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'delete-lyrics')
 		{
