@@ -306,14 +306,6 @@ CREATE TABLE fingerprints
 	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION
 );
 
-CREATE INDEX index_uri ON games(uri);
-CREATE INDEX index_uri ON albums(uri);
-CREATE INDEX index_uri ON characters(uri);
-CREATE INDEX index_uri ON artists(uri);
-CREATE INDEX index_uri ON songs(uri);
-CREATE INDEX index_uri ON translations(uri);
-CREATE INDEX index_uri ON users(uri);
-
 ALTER TABLE `users`     DROP   `verification_token`;
 ALTER TABLE `users`     DROP   `is_verified`;
 ALTER TABLE `users`     DROP   `ip_address`;
@@ -327,3 +319,11 @@ ALTER TABLE `users`     ADD    `uri`                        VARBINARY(32)  NOT N
 ALTER TABLE `users`     MODIFY `uri`                        VARCHAR(32)    UNIQUE;
 ALTER TABLE `users`     CHANGE `uri`           `uri`        VARCHAR(32)    CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
 ALTER TABLE `users`     ADD    `about_me`                   VARCHAR(500);
+
+CREATE INDEX index_uri ON games(uri);
+CREATE INDEX index_uri ON albums(uri);
+CREATE INDEX index_uri ON characters(uri);
+CREATE INDEX index_uri ON artists(uri);
+CREATE INDEX index_uri ON songs(uri);
+CREATE INDEX index_uri ON translations(uri);
+CREATE INDEX index_uri ON users(uri);
