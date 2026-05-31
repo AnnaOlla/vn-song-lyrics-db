@@ -668,17 +668,45 @@ final class Router
 			$parameters = [];
 		}
 		
-		/*
-		else if ($routeCount === 5 && $routes[2] === 'control-panel' && $routes[3] === 'edit-language')
-		{
-			$method = 'handleEditLanguagePage';
-			$parameters = ['enName' => $routes[4]];
-		}
-		*/
-		
 		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'user-list')
 		{
 			$method = 'handleUserListPage';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-game-list')
+		{
+			$method = 'handleUncheckedGameListPage';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-album-list')
+		{
+			$method = 'handleUncheckedAlbumListPage';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-artist-list')
+		{
+			$method = 'handleUncheckedArtistListPage';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-character-list')
+		{
+			$method = 'handleUncheckedCharacterListPage';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-song-list')
+		{
+			$method = 'handleUncheckedSongListPage';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-translation-list')
+		{
+			$method = 'handleUncheckedTranslationListPage';
 			$parameters = [];
 		}
 		
