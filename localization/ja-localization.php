@@ -313,6 +313,26 @@ namespace Localization\LyricsPage
 	const ListElementSeparator        = '、';
 	const CvOpeningBracket            = '（ＣＶ．';
 	const CvClosingBracket            = '）';
+	
+	const PageSettingsNotes           = '注釈';
+	const PageSettingsFurigana        = 'ふりがな';
+	const PageSettingsColors          = '色';
+	const PageSettingsFontSize        = 'フォントサイズ';
+	
+	const PageSettingsFontSize1       = 'とても小さい';
+	const PageSettingsFontSize2       = '小さい';
+	const PageSettingsFontSize3       = '普通';
+	const PageSettingsFontSize4       = '大きい';
+	const PageSettingsFontSize5       = 'とても大きい';
+	
+	const PageSettingsShowFurigana    = '見せる';
+	const PageSettingsHideFurigana    = '隠す';
+	
+	const PageSettingsShowNotes       = '見せる';
+	const PageSettingsHideNotes       = '隠す';
+	
+	const PageSettingsShowColors      = 'つける';
+	const PageSettingsHideColors      = 'きる';
 }
 
 namespace Localization\GameEditorPage

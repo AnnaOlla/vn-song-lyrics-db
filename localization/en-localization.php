@@ -313,6 +313,26 @@ namespace Localization\LyricsPage
 	const ListElementSeparator        = ', ';
 	const CvOpeningBracket            = ' (CV. ';
 	const CvClosingBracket            = ')';
+	
+	const PageSettingsNotes           = 'Notes';
+	const PageSettingsFurigana        = 'Furigana';
+	const PageSettingsColors          = 'Colors';
+	const PageSettingsFontSize        = 'Font Size';
+	
+	const PageSettingsFontSize1       = 'Very Small';
+	const PageSettingsFontSize2       = 'Small';
+	const PageSettingsFontSize3       = 'Medium';
+	const PageSettingsFontSize4       = 'Big';
+	const PageSettingsFontSize5       = 'Very Big';
+	
+	const PageSettingsShowFurigana    = 'Show';
+	const PageSettingsHideFurigana    = 'Hide';
+	
+	const PageSettingsShowNotes       = 'Show';
+	const PageSettingsHideNotes       = 'Hide';
+	
+	const PageSettingsShowColors      = 'Enabled';
+	const PageSettingsHideColors      = 'Disabled';
 }
 
 namespace Localization\GameEditorPage
@@ -933,7 +953,7 @@ namespace Localization\AboutPage
 				'Here comes this service trying to fill the niche: songs here are related to games, artists and even game characters (usually accompanied by words “seiyuu” or “character voice”).';
 	
 	const HeadingHow = 'How are lyrics transcribed?';
-	const How = 'Visual Novel soundtracks being sold officially usually have a dedicated book having comments of creators, lyrics, notes, and other stuff. '.
+	const How = 'Visual Novel soundtracks being sold officially usually have a dedicated booklet having comments of creators, lyrics, notes, and other stuff. '.
 	            'It may come both in the paper form or in the digital copy. '.
 	            'So, instead of transcribing by listening, it is easier to buy an edition of the soundtrack or simply look for such a book in the internet and write the lyrics using photos or screenshots.';
 	
@@ -1027,7 +1047,7 @@ namespace Localization\WritingGuidePage
 	const HeadingLyrics       = 'How To Write Lyrics';
 	const LyricsIntroduction1 = 'These are the ways to write the lyrics:';
 	const LyricsIntroduction2 = '- If you have the original lyrics in the form of an image (a photo, screenshot, scan, etc), then just write them using it.';
-	const LyricsIntroduction3 = '- Perhaps, you found a website having the lyrics. Yes, you may copy them. Find out if the website asks to reference it.';
+	const LyricsIntroduction3 = '- Perhaps, you found a website having the lyrics. Find out if the website asks to reference it.';
 	const LyricsIntroduction4 = '- If you have not found the lyrics and you are sure in your skills, then do it by listening.';
 	const LyricsHeadsUp       = 'Keep in mind the following rules:';
 	const LyricsRule1         = '1. Write lyrics in full. Do not use ※repeat or something alike.';

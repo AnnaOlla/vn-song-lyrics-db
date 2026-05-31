@@ -313,6 +313,26 @@ namespace Localization\LyricsPage
 	const ListElementSeparator        = ', ';
 	const CvOpeningBracket            = ' (CV. ';
 	const CvClosingBracket            = ')';
+	
+	const PageSettingsNotes           = 'Заметки';
+	const PageSettingsFurigana        = 'Фуригана';
+	const PageSettingsColors          = 'Цвета';
+	const PageSettingsFontSize        = 'Размер шрифта';
+	
+	const PageSettingsFontSize1       = 'Очень маленький';
+	const PageSettingsFontSize2       = 'Маленький';
+	const PageSettingsFontSize3       = 'Средний';
+	const PageSettingsFontSize4       = 'Большой';
+	const PageSettingsFontSize5       = 'Очень большой';
+	
+	const PageSettingsShowFurigana    = 'Показывать';
+	const PageSettingsHideFurigana    = 'Скрыть';
+	
+	const PageSettingsShowNotes       = 'Показывать';
+	const PageSettingsHideNotes       = 'Скрыть';
+	
+	const PageSettingsShowColors      = 'Включить';
+	const PageSettingsHideColors      = 'Выключить';
 }
 
 namespace Localization\GameEditorPage

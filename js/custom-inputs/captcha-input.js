@@ -1,6 +1,6 @@
 function insertUppercaseIntoCaptchaInput(event) {
 	// Supported codes by the Juliamo font:
-	// [\x0020-\x007F]
+	// [\x0021-\x007F]
 	// [\x0108-\x0109]
 	// [\x011C-\x011D]
 	// [\x0124-\x0125]

@@ -7,8 +7,8 @@
 		parallelElement.classList.remove('hovered-simultaneously')
 	}
 	
-	const leftRows  = document.querySelectorAll('article > section:last-child > section:nth-child(1) > span');
-	const rightRows = document.querySelectorAll('article > section:last-child > section:nth-child(2) > span');
+	const leftRows  = document.querySelectorAll('.lyrics-section > section:nth-child(1) > span.text-line');
+	const rightRows = document.querySelectorAll('.lyrics-section > section:nth-child(2) > span.text-line');
 	
 	for (let i = 0; i < leftRows.length; i++) {
 		if (i >= rightRows.length)

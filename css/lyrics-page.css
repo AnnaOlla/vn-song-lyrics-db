@@ -1,20 +1,41 @@
-article span {
+.lyrics-controls {
+	display: flex;
+}
+
+.lyrics-controls > section {
+	flex: 1 1 0;
+	text-align: center;
+}
+
+.lyrics-controls select {
+	text-align: center;
+	text-align-last: center;
+	
+	/* Must be equal to the value of padding-right in select.css */
+	padding-left: calc(var(--section-padding) + 36px);
+}
+
+.lyrics-controls select[multiple] {
+	padding-left: var(--section-padding); /* use arrow space */
+}
+
+.lyrics-section span {
 	line-height: 2.25;
 	border-radius: var(--border-radius);
 	margin: 0;
 }
 
-article span.text-line {
+.lyrics-section span.text-line {
 	display: block;
 	overflow-wrap: break-word;
 	white-space: break-spaces;
 }
 
-article > section:last-child > section:nth-child(1) > span:hover {
+.lyrics-section > section:nth-child(1) > span:hover {
 	background-color: var(--color-input-secondary);
 }
 
-article > section:last-child {
+.lyrics-section {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: var(--section-margin);
@@ -22,24 +43,24 @@ article > section:last-child {
 	padding: 0px;
 }
 
-article > section:last-child > section {
+.lyrics-section > section {
 	background-color: var(--color-background-section);
 	border-radius: var(--border-radius);
 	margin: 0px;
 	padding: calc(var(--section-padding) * 2);
 }
 
-article > section:last-child > section:nth-child(3) p {
+.lyrics-section > section:nth-child(3) p {
 	margin-top: var(--section-padding);
 	margin-bottom: var(--section-padding);
 }
 
-article > section:last-child > section:nth-child(4) {
+.lyrics-section > section:nth-child(4) {
 	display: flex;
 	gap: calc(var(--section-padding) * 2);
 }
 
-article > section:last-child > section:nth-child(4) > * {
+.lyrics-section > section:nth-child(4) > * {
 	flex: 1 1 0;
 }
 
@@ -55,16 +76,12 @@ a.note-small {
 /* Mobile Devices */
 
 @media (max-width: 1023px) {
-	article > section:last-child > section:nth-child(1) > span:hover {
+	.lyrics-section > section:nth-child(1) > span:hover {
 		background-color: initial;
 	}
 	
-	article > section:last-child > section:nth-child(4) > a:nth-child(1),
-	article > section:last-child > section:nth-child(4) > a:nth-child(2) {
+	.lyrics-section > section:nth-child(4) > a:nth-child(1),
+	.lyrics-section > section:nth-child(4) > a:nth-child(2) {
 		display: none;
-	}
-	
-	article > section:last-child > section:nth-child(1) > span:hover {
-		background-color: initial;
 	}
 }

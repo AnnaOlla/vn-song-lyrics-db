@@ -23,8 +23,8 @@ abstract class View
 		require_once $localizationFilePath;
 		
 		$this->language   = $language;
-		$this->cssVersion = '2.0';
-		$this->jsVersion  = '2.0';
+		$this->cssVersion = '2.1';
+		$this->jsVersion  = '2.1';
 	}
 	
 	final protected function echoHtml(string|array $html): void
@@ -922,6 +922,94 @@ HTML;
 		return implode($html);
 	}
 	
+	final protected function createLyricsControls(): string
+	{
+		return
+		'
+		<section class="lyrics-controls">
+			<section>
+				<section>
+					<span>'.\Localization\LyricsPage\PageSettingsFontSize.'</span>
+				</section>
+					<section>
+					'.$this->createSelect
+					(
+						iteratedOptions: [
+											[0 => \Localization\LyricsPage\PageSettingsFontSize1, 1 => -4],
+											[0 => \Localization\LyricsPage\PageSettingsFontSize2, 1 => -2],
+											[0 => \Localization\LyricsPage\PageSettingsFontSize3, 1 => 0],
+											[0 => \Localization\LyricsPage\PageSettingsFontSize4, 1 => +2],
+											[0 => \Localization\LyricsPage\PageSettingsFontSize5, 1 => +4]
+										 ],
+						selectedOption:  [0 => \Localization\LyricsPage\PageSettingsFontSize3, 1 => 0],
+						addEmptyOption:  false,
+						keyToShownValue: 0,
+						keyToSentValue:  1,
+						attributes:      ['id' => 'font-size-select']
+					).'
+				</section>
+			</section>
+			<section>
+				<section>
+					<span>'.\Localization\LyricsPage\PageSettingsFurigana.'</span>
+				</section>
+				<section>
+					'.$this->createSelect
+					(
+						iteratedOptions: [
+											[0 => \Localization\LyricsPage\PageSettingsShowFurigana, 1 => 1],
+											[0 => \Localization\LyricsPage\PageSettingsHideFurigana, 1 => 0]
+										 ],
+						selectedOption:  [0 => \Localization\LyricsPage\PageSettingsShowFurigana, 1 => 1],
+						addEmptyOption:  false,
+						keyToShownValue: 0,
+						keyToSentValue:  1,
+						attributes:      ['id' => 'show-furigana-select']
+					).'
+				</section>
+			</section>
+			<section>
+				<section>
+					<span>'.\Localization\LyricsPage\PageSettingsNotes.'</span>
+				</section>
+				<section>
+					'.$this->createSelect
+					(
+						iteratedOptions: [
+											[0 => \Localization\LyricsPage\PageSettingsShowNotes, 1 => 1],
+											[0 => \Localization\LyricsPage\PageSettingsHideNotes, 1 => 0]
+										 ],
+						selectedOption:  [0 => \Localization\LyricsPage\PageSettingsShowNotes, 1 => 1],
+						addEmptyOption:  false,
+						keyToShownValue: 0,
+						keyToSentValue:  1,
+						attributes:      ['id' => 'show-notes-select']
+					).'
+				</section>
+			</section>
+			<section>
+				<section>
+					<span>'.\Localization\LyricsPage\PageSettingsColors.'</span>
+				</section>
+				<section>
+					'.$this->createSelect
+					(
+						iteratedOptions: [
+											[0 => \Localization\LyricsPage\PageSettingsShowColors, 1 => 1],
+											[0 => \Localization\LyricsPage\PageSettingsHideColors, 1 => 0]
+										 ],
+						selectedOption:  [0 => \Localization\LyricsPage\PageSettingsShowColors, 1 => 1],
+						addEmptyOption:  false,
+						keyToShownValue: 0,
+						keyToSentValue:  1,
+						attributes:      ['id' => 'show-colors-select']
+					).'
+				</section>
+			</section>
+		</section>
+		';
+	}
+	
 	final protected function createMarkupLine
 	(
 		string $line,
@@ -1075,8 +1163,12 @@ HTML;
 	{
 		$attributes['type'] = 'checkbox';
 		
-		$span  = '<span>'.htmlspecialchars($label ?? '').'</span>';
-		$input = '<input '.$this->buildAttributes($attributes).' />';
+		if (!Validation::isNullOrEmpty($label))
+			$span = '<span class="custom-checkbox-label">'.htmlspecialchars($label ?? '').'</span>';
+		else
+			$span = '';
+		
+		$input = '<span class="custom-checkbox-button">　</span><input '.$this->buildAttributes($attributes).' />';
 		
 		if ($isLabelBefore)
 			return '<label class="custom-checkbox">'.$span.$input.'</label>';

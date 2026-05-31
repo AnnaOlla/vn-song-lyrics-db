@@ -982,17 +982,6 @@ class VisitorView extends ErrorView
 		               $song['transliterated_name'].
 					   \Localization\LyricsPage\LyricsHeadingEnd;
 		
-		$heading = $this->createLyricsPageHeading
-		(
-			$headingText,
-			$album,
-			$song,
-			null,
-			$performers,
-			$translations,
-			$originalSong
-		);
-		
 		if ($originalAlbum && $originalSong)
 		{
 			$albumToShow = $originalAlbum;
@@ -1025,8 +1014,18 @@ class VisitorView extends ErrorView
 		$html[] = 
 		'
 		<article>
-			'.$heading.'
-			<section>
+			'.$this->createLyricsPageHeading
+			(
+				$headingText,
+				$album,
+				$song,
+				null,
+				$performers,
+				$translations,
+				$originalSong
+			).'
+			'.$this->createLyricsControls().'
+			<section class="lyrics-section">
 				'.$this->createSongLyrics($songToShow).'
 				'.$this->createSongNotes($songToShow).'
 				'.$this->createTimestampBlock($song).'
@@ -1035,7 +1034,12 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$js = [];
+		$js =
+		[
+			'/js/shared/lyrics-controls.js',
+			'/js/lyrics-page.js'
+		];
+		
 		if (Session::agentIsAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
@@ -1066,17 +1070,6 @@ class VisitorView extends ErrorView
 			\Localization\LyricsPage\TranslationHeadingMiddle.
 			\Localization\Functions\localizeLanguageName($translation).
 			\Localization\LyricsPage\TranslationHeadingEnd;
-		
-		$heading = $this->createLyricsPageHeading
-		(
-			$headingText,
-			$album,
-			$song,
-			$translation,
-			$performers,
-			$translations,
-			$originalSong
-		);
 		
 		if ($originalAlbum && $originalSong)
 		{
@@ -1110,8 +1103,18 @@ class VisitorView extends ErrorView
 		$html[] = 
 		'
 		<article>
-			'.$heading.'
-			<section>
+			'.$heading = $this->createLyricsPageHeading
+			(
+				$headingText,
+				$album,
+				$song,
+				$translation,
+				$performers,
+				$translations,
+				$originalSong
+			).'
+			'.$this->createLyricsControls().'
+			<section class="lyrics-section">
 				'.$this->createTranslationLyrics($translation).'
 				'.$this->createSongLyrics($songToShow).'
 				'.$this->createTranslationNotes($translation).'
@@ -1124,7 +1127,12 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$js = ['/js/translation-page.js'];
+		$js =
+		[
+			'/js/shared/lyrics-controls.js',
+			'/js/lyrics-page.js',
+			'/js/translation-page.js'
+		];
 		if (Session::agentIsAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
