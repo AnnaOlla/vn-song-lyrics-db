@@ -1680,6 +1680,14 @@ class UserView extends ViolatorView
 		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
 	}
 	
+	final public function renderDeleteSongPage(array $album, array $song): void
+	{
+		$heading           = \Localization\DeleteEntityPage\DeleteSong.$song['transliterated_name'];
+		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
+		
+		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+	}
+	
 	final public function renderDeleteLyricsPage(array $album, array $song): void
 	{
 		$heading           = \Localization\DeleteEntityPage\DeleteLyrics.$song['transliterated_name'];

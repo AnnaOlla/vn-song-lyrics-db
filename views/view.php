@@ -1782,10 +1782,17 @@ HTML;
 			else
 				$transliteratedName = $this->createParagraph($songs[$i]['transliterated_name']);
 			
-			$editLabel  = \Localization\AlbumPage\EditSong;
-			$editAccess = Session::agentHasRightToEditAlbum($album);
-			$editHref   = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'edit');
-			$editButton = $this->createButtonAsRestrictedLink($editLabel, $editAccess, ['href' => $editHref]);
+			$editLabel    = \Localization\AlbumPage\EditSong;
+			$editAccess   = Session::agentHasRightToEditAlbum($album);
+			$editAccess   = ($editAccess === AccessState::Ok) ? Session::agentHasRightToEditSong($songs[$i]) : $editAccess;
+			$editHref     = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'edit');
+			$editButton   = $this->createButtonAsRestrictedLink($editLabel, $editAccess, ['href' => $editHref]);
+			
+			$deleteLabel  = \Localization\AlbumPage\DeleteSong;
+			$deleteAccess = Session::agentHasRightToEditAlbum($album);
+			$deleteAccess = ($deleteAccess === AccessState::Ok) ? Session::agentHasRightToDeleteSong($songs[$i]) : $deleteAccess;
+			$deleteHref   = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'delete');
+			$deleteButton = $this->createButtonAsRestrictedLink($deleteLabel, $deleteAccess, ['href' => $deleteHref]);
 			
 			$cells                        = [];
 			$cells['disc_number']         = htmlspecialchars($songs[$i]['disc_number']);
@@ -1794,6 +1801,7 @@ HTML;
 			$cells['original_name']       = $this->createParagraph($songs[$i]['original_name']);
 			$cells['localized_name']      = $this->createParagraph($songs[$i]['localized_name']);
 			$cells['edit_button']         = $editButton;
+			$cells['delete_button']       = $deleteButton;
 			
 			$rows[] = $cells;
 		}
@@ -1808,6 +1816,7 @@ HTML;
 						<th>'.\Localization\AlbumPage\DiscNumber.'</th>
 						<th>'.\Localization\AlbumPage\TrackNumber.'</th>
 						<th>'.\Localization\AlbumPage\SongName.'</th>
+						<th></th>
 						<th></th>
 		';
 		
@@ -1824,6 +1833,7 @@ HTML;
 							'.$row['localized_name'].'
 						</td>
 						<td>'.$row['edit_button'].'</td>
+						<td>'.$row['delete_button'].'</td>
 					</tr>
 			';
 		}
@@ -1841,7 +1851,7 @@ HTML;
 						<td></td>
 						<td></td>
 						<td></td>
-						<td>'.$addButton.'</td>
+						<td colspan="2">'.$addButton.'</td>
 					</tr>
 			';
 		}
@@ -1857,7 +1867,7 @@ HTML;
 						<td></td>
 						<td></td>
 						<td></td>
-						<td>'.$this->createButtonAsLink($title, ['href' => $href]).'</td>
+						<td colspan="2">'.$this->createButtonAsLink($title, ['href' => $href]).'</td>
 					</tr>
 			';
 		}

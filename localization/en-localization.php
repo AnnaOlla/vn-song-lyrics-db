@@ -245,10 +245,11 @@ namespace Localization\AlbumPage
 	
 	const DiscNumber   = 'Disc';
 	const TrackNumber  = 'Track';
-	const SongName     = 'Track Title';
+	const SongName     = 'Title';
 	
 	const AddSong      = 'Add Track';
 	const EditSong     = 'Edit Track';
+	const DeleteSong   = 'Delete Track';
 	const FillAlbum    = 'Fill Album with vgmdb.net';
 }
 

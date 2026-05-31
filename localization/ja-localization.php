@@ -249,6 +249,7 @@ namespace Localization\AlbumPage
 	
 	const AddSong      = 'トラックを加える';
 	const EditSong     = 'トラックを編集';
+	const DeleteSong   = 'トラックを削除';
 	const FillAlbum    = 'vgmdb.netを使ってトラックで満たす';
 }
 

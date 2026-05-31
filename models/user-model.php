@@ -1395,7 +1395,7 @@ class UserModel extends ViolatorModel
 		string|null $lyrics,
 		string|null $notes,
 		int|null    $userUpdatedId
-	): void
+	): array
 	{
 		$stmt = $this->pdo->prepare
 		(
@@ -1438,6 +1438,10 @@ class UserModel extends ViolatorModel
 		
 		if ($stmt->rowCount() === 0)
 			throw new HttpInternalServerError500('Failed to update lyrics', get_defined_vars());
+		
+		$id = $this->pdo->lastInsertId();
+		
+		return [$id, $songUri];
 	}
 	
 	final public function updateTranslation
@@ -1449,7 +1453,7 @@ class UserModel extends ViolatorModel
 		string      $lyrics,
 		string|null $notes,
 		int         $userUpdatedId
-	): void
+	): array
 	{
 		$stmt = $this->pdo->prepare
 		(
@@ -1501,13 +1505,17 @@ class UserModel extends ViolatorModel
 		
 		if ($stmt->rowCount() === 0)
 			throw new HttpInternalServerError500('Failed to update translation', get_defined_vars());
+		
+		$id = $this->pdo->lastInsertId();
+		
+		return [$id, $translationUri];
 	}
 	
 	//-----------------------------------------------//
 	//      Methods Deleting Info from Database      //
 	//-----------------------------------------------//
 	
-	public function deleteGame(array $game): void
+	final public function deleteGame(array $game): void
 	{
 		$this->pdo->beginTransaction();
 		
@@ -1536,7 +1544,7 @@ class UserModel extends ViolatorModel
 		$this->pdo->commit();
 	}
 	
-	public function deleteAlbum(array $album): void
+	final public function deleteAlbum(array $album): void
 	{
 		$this->pdo->beginTransaction();
 		
@@ -1565,7 +1573,7 @@ class UserModel extends ViolatorModel
 		$this->pdo->commit();
 	}
 	
-	public function deleteArtist(array $artist): void
+	final public function deleteArtist(array $artist): void
 	{
 		$this->pdo->beginTransaction();
 		
@@ -1594,7 +1602,7 @@ class UserModel extends ViolatorModel
 		$this->pdo->commit();
 	}
 	
-	public function deleteCharacter(array $character): void
+	final public function deleteCharacter(array $character): void
 	{
 		$this->pdo->beginTransaction();
 		
@@ -1623,7 +1631,25 @@ class UserModel extends ViolatorModel
 		$this->pdo->commit();
 	}
 	
-	public function deleteLyrics(array $song): void
+	final public function deleteSong(array $song): void
+	{
+		$stmt = $this->pdo->prepare
+		(
+			'
+			DELETE FROM
+				songs
+			WHERE
+				id = :id
+			'
+		);
+		$stmt->bindParam(':id', $song['id'], PDO::PARAM_INT);
+		$stmt->execute();
+		
+		if ($stmt->rowCount() === 0)
+			throw new HttpInternalServerError500('Failed to delete song', get_defined_vars());
+	}
+	
+	final public function deleteLyrics(array $song): void
 	{
 		$stmt = $this->pdo->prepare
 		(
@@ -1650,7 +1676,7 @@ class UserModel extends ViolatorModel
 			throw new HttpInternalServerError500('Failed to delete lyrics', get_defined_vars());
 	}
 	
-	public function deleteTranslation(array $translation): void
+	final public function deleteTranslation(array $translation): void
 	{
 		$stmt = $this->pdo->prepare
 		(

@@ -1823,6 +1823,80 @@ class UserController extends ViolatorController
 		$this->handleRedirect($path.$query);
 	}
 	
+	final public function handleDeleteSongPage(string $albumUri, string $songUri): void
+	{
+		$album = $this->model->getAlbum($albumUri);
+		$song  = $this->model->getSong($albumUri, $songUri);
+		
+		if (!$album)
+			throw new HttpNotFound404();
+		
+		if (!$song)
+			throw new HttpNotFound404();
+		
+		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToEditAlbum($album) !== AccessState::Ok)
+			throw new HttpForbidden403();
+		
+		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToViewLyrics($song) !== AccessState::Ok)
+			throw new HttpUnavailableForLegalReasons451();
+		
+		if (Session::agentHasRightToDeleteSong($song) !== AccessState::Ok)
+			throw new HttpForbidden403();
+		
+		if (Session::agentHasRightToDeleteLyrics($song) !== AccessState::Ok)
+			throw new HttpForbidden403();
+		
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleDeleteSongPageGet($album, $song);
+				break;
+			
+			case 'POST':
+				$this->handleDeleteSongPagePost($album, $song);
+				break;
+			
+			case 'CONNECT':
+			case 'DELETE':
+			case 'HEAD':
+			case 'OPTIONS':
+			case 'PATCH':
+			case 'PUT':
+			case 'TRACE':
+				throw new HttpMethodNotAllowed405();
+			
+			default:
+				throw new HttpNotImplemented501();
+		}
+	}
+	
+	private function handleDeleteSongPageGet(array $album, array $song): void
+	{
+		$this->view->renderDeleteSongPage($album, $song);
+	}
+	
+	private function handleDeleteSongPagePost(array $album, array $song): void
+	{
+		if (!Validation::isDataEncodedInUTF8($_POST))
+			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+		
+		$requestConfirmed = $_POST['confirmation'] ?? null;
+		
+		if (!$requestConfirmed)
+			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
+		
+		$this->model->deleteSong($song);
+		
+		$path = Http::buildInternalPath($this->language, 'album', $album['uri']);
+		$this->handleRedirect($path);
+	}
+	
 	final public function handleDeleteLyricsPage(string $albumUri, string $songUri): void
 	{
 		$album        = $this->model->getAlbum($albumUri);

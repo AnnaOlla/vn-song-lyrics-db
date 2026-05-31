@@ -249,6 +249,7 @@ namespace Localization\AlbumPage
 	
 	const AddSong      = 'Добавить трек';
 	const EditSong     = 'Редактировать';
+	const DeleteSong   = 'Удалить';
 	const FillAlbum    = 'Заполнить с vgmdb.net';
 }
 
