@@ -4,14 +4,12 @@ abstract class View
 {
 	protected const ENTITY_LIST_DEFAULT_QUERY = 'limit=10&page=1';
 	
-	protected $language;
-	private $cssVersion;
-	private $jsVersion;
-	
 	protected const ACCOUNT_DATA_MIN_LENGTH = 4;
 	protected const ACCOUNT_DATA_MAX_LENGTH = 32;
 	protected const FEEDBACK_MAX_LENGTH     = 500;
 	protected const REPORT_MAX_LENGTH       = 500;
+	
+	protected $language;
 	
 	public function __construct(string $language)
 	{
@@ -22,9 +20,18 @@ abstract class View
 		
 		require_once $localizationFilePath;
 		
-		$this->language   = $language;
-		$this->cssVersion = '2.1';
-		$this->jsVersion  = '2.1';
+		$this->language = $language;
+	}
+	
+	final protected function getTimestamp(string $path)
+	{
+		/* The file should be delivered with the forwarding slash
+		   to tell the browser that the path to the file starts at the root
+		   
+		   PHP fails to find the folder in this case,
+		   so the slash must be stripped */
+		
+		return filemtime(mb_ltrim($path, '/'));
 	}
 	
 	final protected function echoHtml(string|array $html): void
@@ -137,18 +144,18 @@ abstract class View
 	<link rel="apple-touch-icon" sizes="180x180"                      href="/apple-touch-icon.png" />
 	<link rel="manifest"                                              href="/site.webmanifest" />
 	
-	<link type="text/css" rel="stylesheet" href="/css/core/font-hanazono-mincho-type-a.css?v={$this->cssVersion}" />
-	<link type="text/css" rel="stylesheet" href="/css/core/font-juliamo-ampleksa.css?v={$this->cssVersion}" />
-	<link type="text/css" rel="stylesheet" href="/css/core/sizes.css?v={$this->cssVersion}" />
-	<link type="text/css" rel="stylesheet" href="/css/core/dark-theme.css?v={$this->cssVersion}" />
-	<link type="text/css" rel="stylesheet" href="/css/core/general.css?v={$this->cssVersion}" />
+	<link type="text/css" rel="stylesheet" href="/css/core/font-hanazono-mincho-type-a.css?v={$this->getTimestamp('/css/core/font-hanazono-mincho-type-a.css')}" />
+	<link type="text/css" rel="stylesheet" href="/css/core/font-juliamo-ampleksa.css?v={$this->getTimestamp('/css/core/font-juliamo-ampleksa.css')}" />
+	<link type="text/css" rel="stylesheet" href="/css/core/sizes.css?v={$this->getTimestamp('/css/core/sizes.css')}" />
+	<link type="text/css" rel="stylesheet" href="/css/core/dark-theme.css?v={$this->getTimestamp('/css/core/dark-theme.css')}" />
+	<link type="text/css" rel="stylesheet" href="/css/core/general.css?v={$this->getTimestamp('/css/core/general.css')}" />
 	
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/button.css?v={$this->cssVersion}" />
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/checkbox.css?v={$this->cssVersion}" />
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/fileupload.css?v={$this->cssVersion}" />
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/select.css?v={$this->cssVersion}" />
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textarea.css?v={$this->cssVersion}" />
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textinput.css?v={$this->cssVersion}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/button.css?v={$this->getTimestamp('/css/custom-inputs/button.css')}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/checkbox.css?v={$this->getTimestamp('/css/custom-inputs/checkbox.css')}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/fileupload.css?v={$this->getTimestamp('/css/custom-inputs/fileupload.css')}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/select.css?v={$this->getTimestamp('/css/custom-inputs/select.css')}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textarea.css?v={$this->getTimestamp('/css/custom-inputs/textarea.css')}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textinput.css?v={$this->getTimestamp('/css/custom-inputs/textinput.css')}" />
 
 HTML;
 		
@@ -156,7 +163,7 @@ HTML;
 		{
 			$html[] =
 <<<HTML
-	<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={$this->cssVersion}"/>
+	<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={$this->getTimestamp($cssSheetUri)}"/>
 
 HTML;
 		}
@@ -165,7 +172,7 @@ HTML;
 		{
 			$html[] =
 <<<HTML
-	<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
+	<script src="{$jsScriptUri}?v={$this->getTimestamp($jsScriptUri)}"/></script>
 
 HTML;
 		}
@@ -287,11 +294,11 @@ HTML;
 
 	</main>
 	{$this->createFooter()}
-	<script src="/js/core/emulate-event.js?v={$this->jsVersion}"/></script>
-	<script src="/js/custom-inputs/captcha-input.js?v={$this->jsVersion}"/></script>
-	<script src="/js/custom-inputs/fileupload.js?v={$this->jsVersion}"/></script>
-	<script src="/js/custom-inputs/select.js?v={$this->jsVersion}"/></script>
-	<script src="/js/custom-inputs/textarea.js?v={$this->jsVersion}"/></script>
+	<script src="/js/core/emulate-event.js?v={$this->getTimestamp('/js/core/emulate-event.js')}"/></script>
+	<script src="/js/custom-inputs/captcha-input.js?v={$this->getTimestamp('/js/custom-inputs/captcha-input.js')}"/></script>
+	<script src="/js/custom-inputs/fileupload.js?v={$this->getTimestamp('/js/custom-inputs/select.js')}"/></script>
+	<script src="/js/custom-inputs/select.js?v={$this->getTimestamp('/js/core/emulate-event.js')}"/></script>
+	<script src="/js/custom-inputs/textarea.js?v={$this->getTimestamp('/js/custom-inputs/textarea.js')}"/></script>
 
 HTML;
 		
@@ -299,7 +306,7 @@ HTML;
 		{
 			$html[] =
 <<<HTML
-	<script src="{$jsScriptUri}?v={$this->jsVersion}"/></script>
+	<script src="{$jsScriptUri}?v={$this->getTimestamp($jsScriptUri)}"/></script>
 
 HTML;
 		}
@@ -582,7 +589,7 @@ HTML;
 		string $alt = ""
 	): string
 	{
-		return '<img src="'.htmlspecialchars($src).'" alt="'.htmlspecialchars($alt).'"/>';
+		return '<img src="'.htmlspecialchars($src).'?v='.$this->getTimestamp($src).'" alt="'.htmlspecialchars($alt).'"/>';
 	}
 	
 	private function createEntityImage
