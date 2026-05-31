@@ -319,6 +319,7 @@ class VisitorModel extends Model
 		string|null $albumUri     = null,
 		string|null $characterUri = null,
 		string|null $userAddedUri = null,
+		string|null $status       = null,
 		array       $orderBy      = ['g.transliterated_name ASC', 'g.id ASC'],
 		int|null    $page         = null,
 		int|null    $limit        = null,
@@ -389,6 +390,12 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($status))
+		{
+			$where[]  = 'g.status = :status';
+			$binds[]  = [':status', $status, PDO::PARAM_STR];
+		}
+		
 		if (!is_null($page) && !is_null($limit))
 		{
 			$offset = ($page - 1) * $limit;
@@ -441,6 +448,7 @@ class VisitorModel extends Model
 		bool        $fetchMinInfo = false,
 		string|null $gameUri      = null,
 		string|null $userAddedUri = null,
+		string|null $status       = null,
 		array       $orderBy      = ['a.transliterated_name ASC', 'a.id ASC'],
 		int|null    $page         = null,
 		int|null    $limit        = null,
@@ -494,6 +502,12 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($status))
+		{
+			$where[]  = 'a.status = :status';
+			$binds[]  = [':status', $status, PDO::PARAM_STR];
+		}
+		
 		if (!is_null($page) && !is_null($limit))
 		{
 			$offset = ($page - 1) * $limit;
@@ -545,6 +559,7 @@ class VisitorModel extends Model
 	(
 		bool        $fetchMinInfo = false,
 		string|null $userAddedUri = null,
+		string|null $status       = null,
 		int|null    $aliasesOfId  = null,
 		bool|null   $mayBeAlias   = null,
 		array       $orderBy      = ['a.transliterated_name ASC', 'a.id ASC'],
@@ -579,6 +594,12 @@ class VisitorModel extends Model
 			';
 			$where[]  = 'u.uri = :user_added_uri';
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
+		}
+		
+		if (!is_null($status))
+		{
+			$where[]  = 'a.status = :status';
+			$binds[]  = [':status', $status, PDO::PARAM_STR];
 		}
 		
 		if (!is_null($aliasesOfId))
@@ -645,6 +666,7 @@ class VisitorModel extends Model
 		string|null $gameUri      = null,
 		string|null $artistUri    = null,
 		string|null $userAddedUri = null,
+		string|null $status       = null,
 		array       $orderBy      = ['c.transliterated_name ASC', 'c.id ASC'],
 		int|null    $page         = null,
 		int|null    $limit        = null,
@@ -715,6 +737,12 @@ class VisitorModel extends Model
 			';
 			$where[]  = 'u.uri = :user_added_uri';
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
+		}
+		
+		if (!is_null($status))
+		{
+			$where[]  = 'c.status = :status';
+			$binds[]  = [':status', $status, PDO::PARAM_STR];
 		}
 		
 		if (!is_null($page) && !is_null($limit))
@@ -845,18 +873,20 @@ class VisitorModel extends Model
 	
 	final public function getSongList
 	(
-		bool        $fetchMinInfo = false,
-		string|null $albumUri     = null,
-		string|null $artistUri    = null,
-		string|null $characterUri = null,
-		bool  |null $hasVocal     = null,
-		bool  |null $isOriginal   = null,
-		int   |null $excludeId    = null,
-		string|null $userAddedUri = null,
-		array       $orderBy      = ['sn.transliterated_name ASC', 'sn.id ASC'],
-		int|null    $page         = null,
-		int|null    $limit        = null,
-		string|null $search       = null
+		bool        $fetchMinInfo   = false,
+		string|null $albumUri       = null,
+		string|null $artistUri      = null,
+		string|null $characterUri   = null,
+		bool|null   $hasVocal       = null,
+		bool|null   $isOriginal     = null,
+		int|null    $excludeId      = null,
+		string|null $userAddedUri   = null,
+		string|null $status         = null,
+		bool|null   $lyricsAreAdded = null,
+		array       $orderBy        = ['sn.transliterated_name ASC', 'sn.id ASC'],
+		int|null    $page           = null,
+		int|null    $limit          = null,
+		string|null $search         = null
 	): array
 	{
 		$select = ['sn.id', 'sn.transliterated_name'];
@@ -970,6 +1000,22 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($status))
+		{
+			$where[]  = 'sn.status = :status';
+			$binds[]  = [':status', $status, PDO::PARAM_STR];
+		}
+		
+		if ($lyricsAreAdded === true)
+		{
+			$where[]  = 'sn.lyrics IS NOT NULL';
+		}
+		
+		if ($lyricsAreAdded === false)
+		{
+			$where[]  = 'sn.lyrics IS NULL';
+		}
+		
 		if (!is_null($page) && !is_null($limit))
 		{
 			$offset = ($page - 1) * $limit;
@@ -1027,6 +1073,7 @@ class VisitorModel extends Model
 		string|null $albumUri     = null,
 		string|null $songUri      = null,
 		string|null $userAddedUri = null,
+		string|null $status       = null,
 		array       $orderBy      = ['tr.id'],
 		int|null    $page         = null,
 		int|null    $limit        = null,
@@ -1119,6 +1166,12 @@ class VisitorModel extends Model
 			';
 			$where[] = 'us.uri = :user_added_uri';
 			$binds[] = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
+		}
+		
+		if (!is_null($status))
+		{
+			$where[]  = 'tr.status = :status';
+			$binds[]  = [':status', $status, PDO::PARAM_STR];
 		}
 		
 		if (!is_null($page) && !is_null($limit))

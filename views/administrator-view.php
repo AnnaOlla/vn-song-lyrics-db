@@ -20,10 +20,23 @@ class AdministratorView extends UserView
 		<article>
 			<section>
 				<h1>Control Panel</h1>
-				<h2><a href="/en/control-panel/add-language">Add Language</a></h2>
-				<!-- <h2><a href="/en/control-panel/edit-language">Edit Language</a></h2> -->
-				<h2><a href="/en/control-panel/report-list">Report List</a></h2>
-				<h2><a href="/en/control-panel/user-list">User List</a></h2>
+				
+				<h2>Add Data</h2>
+				<p><a href="/en/control-panel/add-language">Add Language</a></p>
+				<br/>
+				
+				<h2>View Data</h2>
+				<p><a href="/en/control-panel/report-list">Report List</a></p>
+				<p><a href="/en/control-panel/user-list">User List</a></p>
+				<br/>
+				
+				<h2>Check Data</h2>
+				<p><a href="/en/control-panel/unchecked-game-list">Unchecked Game List</a></p>
+				<p><a href="/en/control-panel/unchecked-album-list">Unchecked Album List</a></p>
+				<p><a href="/en/control-panel/unchecked-artist-list">Unchecked Artist List</a></p>
+				<p><a href="/en/control-panel/unchecked-character-list">Unchecked Character List</a></p>
+				<p><a href="/en/control-panel/unchecked-song-list">Unchecked Song List</a></p>
+				<p><a href="/en/control-panel/unchecked-translation-list">Unchecked Translation List</a></p>
 			</section>
 		</article>
 		';
@@ -116,7 +129,8 @@ class AdministratorView extends UserView
 		
 		$html[] = $this->startRender
 		(
-			title: $heading
+			title: $heading,
+			cssSheetUris: ['/css/moderation/table-page.css']
 		);
 		
 		$html[] = 
@@ -124,19 +138,19 @@ class AdministratorView extends UserView
 		<article>
 			<section>
 				'.$this->createHeading($heading, 1).'
-				<table>
-					<tbody>
-						<tr>
-							<th>Id</th>
-							<th>Sender Id</th>
-							<th>Sender Ip</th>
-							<th>Sender Username</th>
-							<th>Message</th>
-							<th>Request Uri</th>
-							<th>User Agent</th>
-							<th>Timestamp Sent</th>
-							<th>Status</th>
-						</tr>
+				<section class="table-wrapper">
+					<table>
+						<tbody>
+							<tr>
+								<th>Id</th>
+								<th>Sender Ip</th>
+								<th>Sender Username</th>
+								<th>Message</th>
+								<th>Request Uri</th>
+								<th>User Agent</th>
+								<th>Timestamp Sent</th>
+								<th>Status</th>
+							</tr>
 		';
 		
 		foreach ($reports as $report)
@@ -145,24 +159,50 @@ class AdministratorView extends UserView
 			
 			$html[] = 
 			'
-						<tr>
-							<td>'.htmlspecialchars($report['id']).'</td>
-							<td>'.htmlspecialchars($report['sender_id'] ?? 'null').'</td>
-							<td>'.htmlspecialchars($ipAddress).'</td>
-							<td>'.htmlspecialchars($report['username'] ?? 'null').'</td>
-							<td>'.htmlspecialchars($report['message']).'</td>
-							<td>'.htmlspecialchars($report['request_uri']).'</td>
-							<td>'.htmlspecialchars($report['user_agent']).'</td>
-							<td>'.htmlspecialchars($report['timestamp_sent']).'</td>
-							<td>'.$this->createStatusSelect($report).'</td>
-						</tr>
+							<tr>
+								<td>'.htmlspecialchars($report['id']).'</td>
+								<td>'.htmlspecialchars($ipAddress).'</td>
+			';
+			
+			if (!is_null($report['username']))
+			{
+				$link = Http::buildInternalPath($this->language, 'user', $report['user_uri']);
+				
+				$html[] =
+				'
+								<td><a href="'.$link.'">'.htmlspecialchars($report['username']).'</a></td>
+								<td>
+				';
+			}
+			else
+			{
+				$html[] =
+				'
+								<td>[Anonymous]</td>
+								<td>
+				';
+			}
+			
+			$lines = explode("\n", $report['message']);
+			foreach ($lines as $line)
+				$html[] = htmlspecialchars($line).'<br/>';
+			
+			$html[] =
+			'
+								</td>
+								<td><a href="'.htmlspecialchars($report['request_uri']).'">'.htmlspecialchars($report['request_uri']).'</a></td>
+								<td>'.htmlspecialchars($report['user_agent']).'</td>
+								<td>'.htmlspecialchars($report['timestamp_sent']).'</td>
+								<td>'.$this->createStatusSelect($report).'</td>
+							</tr>
 			';
 		}
 		
 		$html[] = 
 		'
-					</tbody>
-				</table>
+						</tbody>
+					</table>
+				</section>
 				<section>
 					'.$this->createReturnButton($defaultReturnLink).'
 				</section>
@@ -188,7 +228,8 @@ class AdministratorView extends UserView
 		
 		$html[] = $this->startRender
 		(
-			title: $heading
+			title: $heading,
+			cssSheetUris: ['/css/moderation/table-page.css']
 		);
 		
 		$html[] = 
@@ -196,46 +237,50 @@ class AdministratorView extends UserView
 		<article>
 			<section>
 				'.$this->createHeading($heading, 1).'
-				<table>
-					<tbody>
-						<tr>
-							<th>Id</th>
-							<th>Role</th>
-							<th>Username</th>
-							<th>Email</th>
-							<th>Created</th>
-							<th>Last Log-In</th>
-							<th>Fingerprints</th>
-						</tr>
+				<section class="table-wrapper">
+					<table>
+						<tbody>
+							<tr>
+								<th>Id</th>
+								<th>Role</th>
+								<th>Username</th>
+								<th>Email</th>
+								<th>Created</th>
+								<th>Last Log-In</th>
+								<th>Fingerprints</th>
+							</tr>
 		';
 		
 		foreach ($users as $user)
 		{
 			$separator    = str_repeat(chr(0xFF), 8);
-			$fingerprints = explode($separator, $user['fingerprints']);
+			$fingerprints = explode($separator, $user['fingerprints'] ?? '');
 			
 			for ($i = 0; $i < count($fingerprints); $i++)
 				$fingerprints[$i] = Cryptography::decryptData($fingerprints[$i]);
 			$fingerprints = implode(', ', $fingerprints);
 			
+			$link = Http::buildInternalPath($this->language, 'user', $user['uri']);
+			
 			$html[] = 
 			'
-						<tr>
-							<td>'.htmlspecialchars($user['id']).'</td>
-							<td>'.htmlspecialchars($user['en_name']).'</td>
-							<td>'.htmlspecialchars($user['username']).'</td>
-							<td>'.htmlspecialchars(Cryptography::decryptData($user['email'])).'</td>
-							<td>'.htmlspecialchars($user['timestamp_created']).'</td>
-							<td>'.htmlspecialchars($user['timestamp_last_log_in']).'</td>
-							<td>'.htmlspecialchars($fingerprints).'</td>
-						</tr>
+							<tr>
+								<td>'.htmlspecialchars($user['id']).'</td>
+								<td>'.htmlspecialchars($user['en_name']).'</td>
+								<td><a href="'.$link.'">'.htmlspecialchars($user['username']).'</a></td>
+								<td>'.htmlspecialchars(Cryptography::decryptData($user['email'])).'</td>
+								<td>'.htmlspecialchars($user['timestamp_created']).'</td>
+								<td>'.htmlspecialchars($user['timestamp_last_log_in']).'</td>
+								<td>'.htmlspecialchars($fingerprints).'</td>
+							</tr>
 			';
 		}
 		
 		$html[] = 
 		'
-					</tbody>
-				</table>
+						</tbody>
+					</table>
+				</section>
 				<section>
 					'.$this->createReturnButton($defaultReturnLink).'
 				</section>

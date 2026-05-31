@@ -98,12 +98,14 @@ class AdministratorController extends UserController
 		
 		$isSuccess = $this->model->updateNonVocalSongStatus($albumUri, $status, $userId);
 		
+		/*
 		if (!$isSuccess)
 		{
 			http_response_code(500);
 			echo self::SERVER_ERROR;
 			return;
 		}
+		*/
 	}
 	
 	final public function handleChangeArtistStatus(string $artistUri): void
@@ -225,13 +227,6 @@ class AdministratorController extends UserController
 			$songUri,
 			$status
 		);
-		
-		if (!$isSuccess)
-		{
-			http_response_code(500);
-			echo self::SERVER_ERROR;
-			return;
-		}
 	}
 	
 	final public function handleChangeTranslationStatus
@@ -696,5 +691,119 @@ class AdministratorController extends UserController
 		);
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri']));
+	}
+	
+	final public function handleUncheckedGameListPage(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUncheckedGameListPageGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUncheckedGameListPageGet(): void
+	{
+		$list = $this->model->getGameList(status: 'unchecked');
+		$this->view->renderGameListPage($list, 0, null, null, null);
+	}
+	
+	final public function handleUncheckedAlbumListPage(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUncheckedAlbumListPageGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUncheckedAlbumListPageGet(): void
+	{
+		$list = $this->model->getAlbumList(status: 'unchecked');
+		$this->view->renderAlbumListPage($list, 0, null, null, null);
+	}
+	
+	final public function handleUncheckedArtistListPage(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUncheckedArtistListPageGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUncheckedArtistListPageGet(): void
+	{
+		$list = $this->model->getArtistList(status: 'unchecked');
+		$this->view->renderArtistListPage($list, 0, null, null, null);
+	}
+	
+	final public function handleUncheckedCharacterListPage(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUncheckedCharacterListPageGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUncheckedCharacterListPageGet(): void
+	{
+		$list = $this->model->getCharacterList(status: 'unchecked');
+		$this->view->renderCharacterListPage($list, 0, null, null, null);
+	}
+	
+	final public function handleUncheckedSongListPage(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUncheckedSongListPageGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUncheckedSongListPageGet(): void
+	{
+		$list = $this->model->getSongList(hasVocal: true, lyricsAreAdded: true, status: 'unchecked');
+		$this->view->renderSongListPage($list, 0, null, null, null);
+	}
+	
+	final public function handleUncheckedTranslationListPage(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUncheckedTranslationListPageGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUncheckedTranslationListPageGet(): void
+	{
+		$list = $this->model->getTranslationList(status: 'unchecked');
+		$this->view->renderTranslationListPage($list, 0, null, null, null);
 	}
 }

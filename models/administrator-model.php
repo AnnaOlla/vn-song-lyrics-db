@@ -371,6 +371,7 @@ class AdministratorModel extends UserModel
 				r.sender_id,
 				r.ip_address,
 				u.username,
+				u.uri         AS user_uri,
 				r.message,
 				r.request_uri,
 				r.user_agent,
@@ -458,17 +459,18 @@ class AdministratorModel extends UserModel
 				u.id,
 				r.en_name,
 				u.username,
+				u.uri,
 				u.email,
 				u.timestamp_created,
 				u.timestamp_last_log_in,
 				GROUP_CONCAT(f.ip_address SEPARATOR 0xFFFFFFFFFFFFFFFF) AS "fingerprints"
 			FROM
 				users AS u
-			JOIN
+			LEFT JOIN
 				roles AS r
 			ON
 				u.role_id = r.id
-			JOIN
+			LEFT JOIN
 				fingerprints AS f
 			ON
 				u.id = f.user_id
