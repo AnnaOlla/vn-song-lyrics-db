@@ -792,7 +792,8 @@ class VisitorController extends ErrorController
 			$translationList = $this->model->getTranslationList
 			(
 				albumUri: $originalAlbum['uri'],
-				songUri:  $originalSong['uri']
+				songUri:  $originalSong['uri'],
+				orderBy:  ['lg.'.$this->language.'_name ASC', 'tr.id ASC']
 			);
 		}
 		else
@@ -802,7 +803,8 @@ class VisitorController extends ErrorController
 			$translationList = $this->model->getTranslationList
 			(
 				albumUri: $album['uri'],
-				songUri:  $song['uri']
+				songUri:  $song['uri'],
+				orderBy:  ['lg.'.$this->language.'_name ASC', 'tr.id ASC']
 			);
 		}
 		
@@ -897,7 +899,8 @@ class VisitorController extends ErrorController
 			$translationList = $this->model->getTranslationList
 			(
 				albumUri: $originalSong['album_uri'],
-				songUri:  $originalSong['uri']
+				songUri:  $originalSong['uri'],
+				orderBy:  ['lg.'.$this->language.'_name ASC', 'tr.id ASC']
 			);
 		}
 		else
@@ -913,7 +916,8 @@ class VisitorController extends ErrorController
 			$translationList = $this->model->getTranslationList
 			(
 				albumUri: $albumUri,
-				songUri:  $songUri
+				songUri:  $songUri,
+				orderBy:  ['lg.'.$this->language.'_name ASC', 'tr.id ASC']
 			);
 		}
 		
@@ -1565,7 +1569,7 @@ class VisitorController extends ErrorController
 		$artists      = $this->model->getArtistList(userAddedUri: $user['username']);
 		$characters   = $this->model->getCharacterList(userAddedUri: $user['username']);
 		$songs        = $this->model->getSongList(userAddedUri: $user['username'], hasVocal: true, isOriginal: true);
-		$translations = $this->model->getTranslationList(userAddedUri: $user['username']);
+		$translations = $this->model->getTranslationList(userAddedUri: $user['username'], orderBy: ['tr.name ASC', 'tr.id ASC']);
 		
 		$this->view->renderUserPage
 		(
