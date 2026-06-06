@@ -490,31 +490,10 @@ class AdministratorModel extends UserModel
 		return $userList;
 	}
 	
-	final public function fetchDataFromVgmdbPage(string $albumUri): array|false
+	final public function fetchDataFromVgmdbPage(array $album): array|null
 	{
-		$stmt = $this->pdo->prepare
-		(
-			'
-			SELECT
-				vgmdb_id
-			FROM
-				albums
-			WHERE
-				uri = :uri
-			'
-		);
-		$stmt->bindParam(':uri', $albumUri, PDO::PARAM_STR);
-		$stmt->execute();
-		
-		$album = $stmt->fetch(PDO::FETCH_ASSOC);
-		
-		if (!$album)
-			return false;
-		
-		if (is_null($album['vgmdb_id']))
-			return false;
-		
 		$html = file_get_contents('.administering/.vgmdb-album-local-page.html');
+		
 		if (!$html)
 			throw new Exception(__METHOD__.': failed to fetch the vgmdb page for '.$album);
 		
@@ -529,7 +508,7 @@ class AdministratorModel extends UserModel
 		$trackList = $dom->getElementById('tracklist');
 		
 		if (!$trackList)
-			throw new Exception('Tracklist for '.$albumUri.' was not found');
+			throw new Exception('Tracklist for '.$album['uri'].' was not found');
 		
 		$localizations = [];
 		
@@ -582,7 +561,7 @@ class AdministratorModel extends UserModel
 		// The id='tracklist' has only plain text inside: "No tracklist found."
 		// This case works correctly, $discography is empty, no warnings/errors are raised
 		if (!$discography)
-			return false;
+			return null;
 		
 		// The problem now is that I need to rearrange the array
 		//

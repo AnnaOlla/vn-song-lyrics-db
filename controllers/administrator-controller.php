@@ -593,7 +593,7 @@ class AdministratorController extends UserController
 	
 	private function handleFillAlbumPageGet(array $album): void
 	{
-		$discography = $this->model->fetchDataFromVgmdbPage($album['uri']);
+		$discography = $this->model->fetchDataFromVgmdbPage($album);
 		
 		if (!$discography)
 			throw new HttpBadRequest400();

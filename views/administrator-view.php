@@ -315,7 +315,7 @@ class AdministratorView extends UserView
 		$html[] = $this->startRender
 		(
 			title:        $heading,
-			cssSheetUris: ['/css/editor-page.css', '/css/fill-album-page.css']
+			cssSheetUris: ['/css/moderation/fill-album-page.css']
 		);
 		
 		// My site supports 3 names: original, transliteration, localization
