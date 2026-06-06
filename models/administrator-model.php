@@ -514,26 +514,7 @@ class AdministratorModel extends UserModel
 		if (is_null($album['vgmdb_id']))
 			return false;
 		
-		/* The feature has been disabled for users, though stays available through link if known
-		
-		// Reason: vgmdb.net started to use the Cloudflare protection
-		//         It blocks all automated requests, so I have no opportunity to bypass it now
-		
-		$url = 'https://vgmdb.net/album/'.$album['vgmdb_id'];
-		$fakeHeaders =
-		[
-			'https' =>
-			[
-				'method' => "GET",
-				'header' => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
-			]
-		];
-		
-		$context = stream_context_create($fakeHeaders);
-		$html = file_get_contents($url, false, $context);
-		*/
-		
-		$html = file_get_contents('vgmdb-album-local-page.html');
+		$html = file_get_contents('.administering/.vgmdb-album-local-page.html');
 		if (!$html)
 			throw new Exception(__METHOD__.': failed to fetch the vgmdb page for '.$album);
 		
