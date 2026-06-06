@@ -2,8 +2,8 @@
 
 final class Router
 {
-	private const VIOLATOR_IPS_FILENAME          = '.violator-ip-list.txt';
-	private const VIOLATOR_REQUESTS_FILENAME     = '.violator-requests.txt';
+	private const VIOLATOR_IPS_FILENAME          = '.administering/.violations/.blocked-ips.txt';
+	private const VIOLATOR_REQUESTS_FILENAME     = '.administering/.violations/.prohibited-requests.txt';
 	private const VIOLATOR_PAGE_FILENAME         = 'include/violator-page.php';
 	
 	private const MAINTENANCE_MODE_FILENAME      = '.maintenance-mode-on';
@@ -11,7 +11,7 @@ final class Router
 	private const ACCEPTED_LANGUAGES             = ['en', 'ru', 'ja'];
 	private const DEFAULT_LANGUAGE               = 'en';
 	
-	private const ERROR_LOG_DIRNAME              = '.custom-logs';
+	private const ERROR_LOG_DIRNAME              = '.administering/.error-logs';
 	private const ERROR_LOG_FILENAME             = '-error.log';
 	
 	private const RATE_LIMIT_WINDOW              = 20;
@@ -750,7 +750,7 @@ final class Router
 		
 		else if ($routeCount == 3 && $routes[2] === 'font-test')
 		{
-			echo file_get_contents('font-tests/font-test-page.html');
+			echo file_get_contents('.administering/.font-tests/font-test-page.html');
 			exit;
 		}
 		
