@@ -2015,6 +2015,7 @@ class VisitorView extends ErrorView
 				<p>---- 日本語だけ　→　nihongo dake</p>
 				<p>---- 晴れのち　→　hare nochi</p>
 				<p>---- 来るまで　→　kuru made</p>
+				<p>---- 後悔せずに　→　koukaisezu ni</p>
 				<p>---- 使ってもいけない　→　tsukatte mo ikenai</p>
 				<p>---- 幸福なのに　→　koufuku na no ni</p>
 				<p>---- ように　→　you ni</p>
@@ -2024,9 +2025,9 @@ class VisitorView extends ErrorView
 				<p>---- そうだよね　→　sou da yo ne</p>
 				<p>---- あるわ　→　aru wa</p>
 				<p>4. <span class="highlight">〇＋な</span>： '.\Localization\WritingGuidePage\Together.'</p>
-				<p>---- すてきな　→　sutekina</p>
-				<p>---- 自由な　→　jiyuuna</p>
-				<p>---- ような　→　youna</p>
+				<p>---- すてきな［キミ］　→　sutekina [kimi]</p>
+				<p>---- 自由な［世界］　→　jiyuuna [sekai]</p>
+				<p>---- ような［私］　→　youna [watashi]</p>
 				<p>5. <span class="highlight">〇＋たち、ら、ちゃん、くん、さん、だらけ、らしい、…</span>： '.\Localization\WritingGuidePage\Together.'</p>
 				<p>---- 私達　→　watashitachi</p>
 				<p>---- 僕ら　→　bokura</p>
@@ -2034,9 +2035,12 @@ class VisitorView extends ErrorView
 				<p>---- 自分らしい　→　jibunrashii</p>
 				<p>---- 花子ちゃん　→　Hanakochan</p>
 				<p>---- 体中　→　karadajuu</p>
-				<p>6. <span class="highlight">だい、…＋〇</span>： '.\Localization\WritingGuidePage\Together.'</p>
+				<p>6. <span class="highlight">だい、お、ご、…＋〇</span>： '.\Localization\WritingGuidePage\Together.'</p>
 				<p>---- 大嫌い　→　daikirai</p>
-				<p>7. <span class="highlight">〇＋時、分、秒、センチ、ミリ…</span>： '.\Localization\WritingGuidePage\Together.'</p>
+				<p>---- お電話　→　odenwa</p>
+				<p>---- ご家族　→　gokazoku</p>
+				<p>---- ご主人様　→　goshujinsama</p>
+				<p>7. <span class="highlight">〇＋時、分、秒、センチ、ミリ、…</span>： '.\Localization\WritingGuidePage\Together.'</p>
 				<p>---- １０時１７分　→　juuji juunanafun</p>
 				<p>---- １５センチ　→　juugosenchi</p>
 				<p>---- ゼロ秒　→　zerobyou</p>
@@ -2050,23 +2054,19 @@ class VisitorView extends ErrorView
 				<p>---- キラキラ　→　kirakira</p>
 				<p>---- 懐中時計　→　kaichuudokei</p>
 				<p>---- 無限軌道　→　mugenkidou</p>
-				<p>9. <span class="highlight">お、ご＋〇</span>： '.\Localization\WritingGuidePage\Together.'</p>
-				<p>---- お電話　→　odenwa</p>
-				<p>---- ご家族　→　gokazoku</p>
-				<p>---- ご主人様　→　goshujinsama</p>
-				<p>10. <span class="highlight">〇＋する</span>： '.\Localization\WritingGuidePage\Together.'</p>
+				<p>9. <span class="highlight">〇＋する</span>： '.\Localization\WritingGuidePage\Together.'</p>
 				<p>---- 電話する　→　denwasuru</p>
 				<p>---- お電話できます　→　odenwadekimasu</p>
-				<p>11. <span class="highlight">〇ながら、〇て、〇たら、〇たり、〇ちゃう、〇べき…</span>： '.\Localization\WritingGuidePage\Together.'</p>
+				<p>10. <span class="highlight">〇ながら、〇て、〇たら、〇たり、〇ちゃう、〇べき、…</span>： '.\Localization\WritingGuidePage\Together.'</p>
 				<p>---- 働きながら　→　hatarakinagara</p>
 				<p>---- 飲んで　→　nonde</p>
 				<p>---- したら　→　shitara</p>
 				<p>---- 来たり　→　kitari</p>
 				<p>---- 笑っちゃった　→　waracchatta</p>
 				<p>---- あるべき　→　arubeki</p>
-				<p>12. <span class="highlight">〇たり＋する</span>： '.\Localization\WritingGuidePage\Apart.'</p>
-				<p>---- 来たりする　→　kitari suru</p>
-				<p>13. <span class="highlight">〇い＋〇う、〇え＋〇う</span>： '.\Localization\WritingGuidePage\Together.'</p>
+				<p>11. <span class="highlight">〇たり＋する</span>： '.\Localization\WritingGuidePage\Apart.'</p>
+				<p>---- 来たり出たりする　→　kitari detari suru</p>
+				<p>12. <span class="highlight">〇い＋〇う、〇え＋〇う</span>： '.\Localization\WritingGuidePage\Together.'</p>
 				<p>---- 歩き出す　→　arukidasu</p>
 				<p>---- 語り始める　→　katarihajimeru</p>
 				<p>---- 信じ続く　→　shinjitsuzuku</p>
@@ -2074,7 +2074,7 @@ class VisitorView extends ErrorView
 				<p>---- 舞い降り出す　→　maioridasu</p>
 				<p>---- 燃え立つ　→　moetatsu</p>
 				<p>---- 寝過ごす　→　nesugosu</p>
-				<p>14. <span class="highlight">〇て＋〇う</span>： '.\Localization\WritingGuidePage\Apart.'</p>
+				<p>13. <span class="highlight">〇て＋〇う</span>： '.\Localization\WritingGuidePage\Apart.'</p>
 				<p>---- 働いて疲れる　→　hataraite tsukareru</p>
 				<p>---- 教えてあげる　→　oshiete ageru</p>
 				<p>---- 教えてくれた　→　oshiete kureta</p>
@@ -2083,21 +2083,13 @@ class VisitorView extends ErrorView
 				<p>---- 書いてある　→　kaite aru</p>
 				<p>---- 見ている　→　mite iru</p>
 				<p>---- 見ていた　→　mite ita</p>
-				<p>15. <span class="highlight">〇て＋る、〇て＋く</span>： '.\Localization\WritingGuidePage\Together.'</p>
+				<p>14. <span class="highlight">〇て＋る、〇て＋く</span>： '.\Localization\WritingGuidePage\Together.'</p>
 				<p>---- 歩いてく　→　aruiteku</p>
 				<p>---- 見てる　→　miteru</p>
 				<p>---- 見てた　→　miteta</p>
-				<p>16. <span class="highlight">〇ず＋に</span>： '.\Localization\WritingGuidePage\Apart.'</p>
-				<p>---- 後悔せずに　→　koukaisezu ni</p>
-				<p>---- 思わずに　→　omowazu ni</p>
-				<p>17. <span class="highlight">'.\Localization\WritingGuidePage\DifferenceInMeaning.'</span></p>
-				<p>---- まるで　→　marude</p>
-				<p>---- 丸で　→　maru de</p>
-				<p>18. <span class="highlight">'.\Localization\WritingGuidePage\SpecialReadings.'</span></p>
+				<p>15. <span class="highlight">'.\Localization\WritingGuidePage\SpecialReadings.'</span></p>
 				<p>---- 未来　→　mirai</p>
 				<p>---- <ruby>未来<rt>あした</rt></ruby>　→　ashita</p>
-				<p>19. <span class="highlight">'.\Localization\WritingGuidePage\DivisionBySyllables.'</span></p>
-				<p>---- セ・ツ・ナ・イ　→　se-tsu-na-i</p>
 				<br/>
 				
 				<h2 id="formatting">'.\Localization\WritingGuidePage\HeadingFormatting.'</h2>
@@ -2156,7 +2148,7 @@ class VisitorView extends ErrorView
 			<section>
 				<h1>'.\Localization\LyricsExamplePage\Heading.'</h1>
 			</section>
-			<section>
+			<section class="lyrics-section">
 				<section>
 					<h2>'.\Localization\LyricsExamplePage\Formatting.'</h2>
 					<h3>'.\Localization\LyricsExamplePage\Markup.'</h3>
@@ -2181,7 +2173,7 @@ class VisitorView extends ErrorView
 					<br/>
 					
 					<span class="text-line">あらら、歌のテキストに漢字がない！</span>
-					<span class="text-line">どうすればいいかなぁ？</span>
+					<span class="text-line">どうすればいいかなあ？</span>
 					<span class="text-line">あ、いい考えがあるわ。</span>
 					<br/>
 					
@@ -2217,7 +2209,7 @@ class VisitorView extends ErrorView
 					<br/>
 					
 					<span class="text-line">あらら、歌のテキストに漢字がない！</span>
-					<span class="text-line">どうすればいいかなぁ？</span>
+					<span class="text-line">どうすればいいかなあ？</span>
 					<span class="text-line">あ、いい考えがあるわ。</span>
 					<br/>
 					
