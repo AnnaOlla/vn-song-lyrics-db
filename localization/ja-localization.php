@@ -326,13 +326,13 @@ namespace Localization\LyricsPage
 	const PageSettingsFontSize4       = '大きい';
 	const PageSettingsFontSize5       = 'とても大きい';
 	
-	const PageSettingsShowFurigana    = '見せる';
+	const PageSettingsShowFurigana    = '見せる（あると）';
 	const PageSettingsHideFurigana    = '隠す';
 	
-	const PageSettingsShowNotes       = '見せる';
+	const PageSettingsShowNotes       = '見せる（あると）';
 	const PageSettingsHideNotes       = '隠す';
 	
-	const PageSettingsShowColors      = 'つける';
+	const PageSettingsShowColors      = 'つける（あると）';
 	const PageSettingsHideColors      = 'きる';
 }
 

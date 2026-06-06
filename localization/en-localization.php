@@ -326,13 +326,13 @@ namespace Localization\LyricsPage
 	const PageSettingsFontSize4       = 'Big';
 	const PageSettingsFontSize5       = 'Very Big';
 	
-	const PageSettingsShowFurigana    = 'Show';
+	const PageSettingsShowFurigana    = 'Show (If Present)';
 	const PageSettingsHideFurigana    = 'Hide';
 	
-	const PageSettingsShowNotes       = 'Show';
+	const PageSettingsShowNotes       = 'Show (If Present)';
 	const PageSettingsHideNotes       = 'Hide';
 	
-	const PageSettingsShowColors      = 'Enabled';
+	const PageSettingsShowColors      = 'Enabled (If Present)';
 	const PageSettingsHideColors      = 'Disabled';
 }
 

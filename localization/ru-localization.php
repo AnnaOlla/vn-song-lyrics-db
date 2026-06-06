@@ -326,13 +326,13 @@ namespace Localization\LyricsPage
 	const PageSettingsFontSize4       = 'Большой';
 	const PageSettingsFontSize5       = 'Очень большой';
 	
-	const PageSettingsShowFurigana    = 'Показывать';
+	const PageSettingsShowFurigana    = 'Показывать (если есть)';
 	const PageSettingsHideFurigana    = 'Скрыть';
 	
-	const PageSettingsShowNotes       = 'Показывать';
+	const PageSettingsShowNotes       = 'Показывать (если есть)';
 	const PageSettingsHideNotes       = 'Скрыть';
 	
-	const PageSettingsShowColors      = 'Включить';
+	const PageSettingsShowColors      = 'Включить (если есть)';
 	const PageSettingsHideColors      = 'Выключить';
 }
 
