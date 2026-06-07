@@ -36,6 +36,10 @@
 	padding-left: calc(var(--section-padding) + 36px);
 }
 
+.results-limit > select[multiple] {
+	padding-left: var(--section-padding);
+}
+
 /* Pagination */
 
 .search-section > section:nth-child(2) {
