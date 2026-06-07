@@ -1287,6 +1287,8 @@ class UserController extends ViolatorController
 			$originalName,
 			$transliteratedName,
 			$localizedName,
+			$song['disc_number'],
+			$song['track_number'],
 			$hasVocal,
 			$userUpdatedId
 		);

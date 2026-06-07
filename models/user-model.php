@@ -671,7 +671,7 @@ class UserModel extends ViolatorModel
 		int         $userAddedId
 	): array
 	{
-		$uri  = $this->buildUri($transliteratedName);
+		$uri  = $discNumber.'-'.$trackNumber.'-'.$this->buildUri($transliteratedName);
 		
 		$stmt = $this->pdo->prepare
 		(
@@ -1339,11 +1339,13 @@ class UserModel extends ViolatorModel
 		string      $originalName,
 		string      $transliteratedName,
 		string|null $localizedName,
+		int         $discNumber,
+		int         $trackNumber,
 		bool        $hasLyrics,
 		int         $userUpdatedId
 	): array
 	{
-		$newUri = $this->buildUri($transliteratedName);
+		$newUri = $discNumber.'-'.$trackNumber.'-'.$this->buildUri($transliteratedName);
 		
 		$stmt = $this->pdo->prepare
 		(

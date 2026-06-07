@@ -678,7 +678,7 @@ class AdministratorModel extends UserModel
 			$values[] = $originalNames[$i];
 			$values[] = $transliteratedNames[$i];
 			$values[] = $localizedNames[$i];
-			$values[] = $this->buildUri($transliteratedNames[$i]);
+			$values[] = $discNumber.'-'.$trackNumber.'-'.$this->buildUri($transliteratedNames[$i]);
 			$values[] = $haveVocal[$i];
 			$values[] = $albumId;
 			$values[] = $discNumbers[$i];
