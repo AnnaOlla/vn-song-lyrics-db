@@ -32,7 +32,7 @@ final class Router
 		return false;
 	}
 	
-	private static function isBannedRequest(): bool
+	private static function isForbiddenRequest(): bool
 	{
 		$bannedRequests = new SplFileObject(self::VIOLATOR_REQUESTS_FILENAME);
 		$bannedRequests->setFlags(SplFileObject::DROP_NEW_LINE);
@@ -52,7 +52,7 @@ final class Router
 		$bannedIps->fwrite($_SERVER['REMOTE_ADDR'].PHP_EOL);
 	}
 	
-	private static function isRateLimitExceeded(): bool
+	private static function updateRateLimit(): void
 	{
 		$now = time();
 		
@@ -60,8 +60,11 @@ final class Router
 			$_SESSION['rateLimit']->shift();
 		
 		if (!Session::agentIsAdministrator())
-			$_SESSION['rateLimit']->push(time());
-		
+			$_SESSION['rateLimit']->push($now);
+	}
+	
+	private static function isRateLimitExceeded(): bool
+	{
 		return $_SESSION['rateLimit']->count() > self::RATE_LIMIT_COUNT;
 	}
 	
@@ -163,11 +166,32 @@ final class Router
 		error_log($exception);
 	}
 	
-	public static function run()
+	private static function startSession(): void
 	{
+		session_start();
+
+		if (!isset($_SESSION['user']))
+			$_SESSION['user']['role'] = 'visitor';
+
+		if (!isset($_SESSION['rateLimit']))
+			$_SESSION['rateLimit'] = new SplDoublyLinkedList();
+	}
+	
+	private static function endSession(): void
+	{
+		session_unset();
+		setcookie(session_name(), session_id(), time() - 60 * 60 * 60 * 24);
+		session_destroy();
+	}
+	
+	public static function run(): void
+	{
+		self::startSession();
+		self::updateRateLimit();
+		
 		if (self::isAgentKnownViolator())
 		{
-			session_destroy();
+			self::endSession();
 			
 			http_response_code(403);
 			header("Connection: close");
@@ -176,10 +200,10 @@ final class Router
 			exit;
 		}
 		
-		if (self::isBannedRequest() || self::isRateLimitExceededTooMuch())
+		if (self::isForbiddenRequest() || self::isRateLimitExceededTooMuch())
 		{
 			self::banUnknownViolator();
-			session_destroy();
+			self::endSession();
 			
 			http_response_code(403);
 			header("Connection: close");
