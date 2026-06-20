@@ -110,7 +110,7 @@ class UserController extends ViolatorController
 			$this->model->addGameAlbumRelation($gameId, $albumId, 'unchecked');
 		
 		foreach ($characterIds as $characterId)
-			$this->model->addCharacterGameRelation($gameId, $characterId, 'unchecked');
+			$this->model->addCharacterGameRelation($characterId, $gameId, 'unchecked');
 		
 		$link = Http::buildInternalPath($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
