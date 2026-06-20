@@ -624,6 +624,9 @@ namespace Localization\Controls
 	const ChooseFile   = 'ファイルを選ぶ（ｍａｘ：５１２ＫｉＢ）…';
 	const FileTooBig   = 'ファイルは大きすぎています…';
 	
+	const SelectOption = '選ぶ…';
+	const SelectFilter = '探すように入力を…';
+	
 	const Cancel       = '戻る';
 	const Confirmation = '確認します';
 	const Submit       = '出す';
@@ -656,7 +659,7 @@ namespace Localization\GameEditorPage\TooltipContent
 	                           'まずは、ゲームがあるかどうか、チェックしてください。<br/><br/>'.
 							   '* = 必要';
 	const TransliteratedName = 'ローマ字で書いた原名です。<br/><br/>'.
-	                           'まずは、ローマ字に変換し方を文章作法に見てください。リンクはページの下であります。<br/><br/>'.
+	                           'まずは、ローマ字に変換し方を<a href="/ja/writing-guide#romanization" target="_blank">文章作法</a>に見てください。<br/><br/>'.
 							   'ローマ字はＡＳＣＩＩだけを使っています。<br/><br/>'.
 							   '* = 必要';
 	const LocalizedName      = '外国で使った名前です。逆もまた然り：ゲームを作った国の言語に変換した名前もです。<br/><br/>'.
@@ -705,7 +708,7 @@ namespace Localization\AlbumEditorPage\TooltipContent
 	                           'まずは、アルバムがあるかどうか、チェックしてください。<br/><br/>'.
 							   '* = 必要';
 	const TransliteratedName = 'ローマ字で書いた原名です。<br/><br/>'.
-	                           'まずは、ローマ字に変換し方を文章作法に見てください。リンクはページの下であります。<br/><br/>'.
+	                           'まずは、ローマ字に変換し方を<a href="/ja/writing-guide#romanization" target="_blank">文章作法</a>に見てください。<br/><br/>'.
 							   'ローマ字はＡＳＣＩＩだけを使っています。<br/><br/>'.
 							   '* = 必要';
 	const LocalizedName      = '外国で使った名前です。逆もまた然り：アルバムを作った国の言語に変換した名前もです。<br/><br/>'.
@@ -751,7 +754,7 @@ namespace Localization\ArtistEditorPage\TooltipContent
 	                           'まずは、歌手があるかどうか、チェックしてください。<br/><br/>'.
 							   '* = 必要';
 	const TransliteratedName = 'ローマ字で書いた名前です。<br/><br/>'.
-	                           'まずは、ローマ字に変換し方を文章作法に見てください。リンクはページの下であります。<br/><br/>'.
+	                           'まずは、ローマ字に変換し方を<a href="/ja/writing-guide#romanization" target="_blank">文章作法</a>に見てください。<br/><br/>'.
 							   'ローマ字はＡＳＣＩＩだけを使っています。<br/><br/>'.
 							   '* = 必要';
 	const LocalizedName      = '外国で使った名前です。逆もまた然り：歌手の国の言語に変換した名前もです。<br/><br/>'.
@@ -790,7 +793,7 @@ namespace Localization\CharacterEditorPage\TooltipContent
 	                           'まずは、キャラがあるかどうか、チェックしてください。<br/><br/>'.
 							   '* = 必要';
 	const TransliteratedName = 'ローマ字で書いた名前です。<br/><br/>'.
-	                           'まずは、ローマ字に変換し方を文章作法に見てください。リンクはページの下であります。<br/><br/>'.
+	                           'まずは、ローマ字に変換し方を文章作法に見てください。<br/><br/>'.
 							   'ローマ字はＡＳＣＩＩだけを使っています。<br/><br/>'.
 							   '* = 必要';
 	const LocalizedName      = '外国で使った名前です。逆もまた然り：キャラの国の言語に変換した名前もです。<br/><br/>'.
@@ -832,7 +835,7 @@ namespace Localization\SongEditorPage\TooltipContent
 	const OriginalName       = '歌の原名です。<br/><br/>'.
 	                           '* = 必要';
 	const TransliteratedName = 'ローマ字で書いた原名です。<br/><br/>'.
-	                           'まずは、ローマ字に変換し方を文章作法に見てください。リンクはページの下であります。<br/><br/>'.
+	                           'まずは、ローマ字に変換し方を<a href="/ja/writing-guide#romanization" target="_blank">文章作法</a>に見てください。<br/><br/>'.
 							   'ローマ字はＡＳＣＩＩだけを使っています。<br/><br/>'.
 							   '* = 必要';
 	const LocalizedName      = '外国で使った名前です。逆もまた然り：アルバムを作った国の言語に変換した名前もです。<br/><br/>'.
@@ -853,7 +856,7 @@ namespace Localization\FillAlbumPage\TooltipContent
 {
 	const TrackTable = 'vgmdb.netからもらったテーブルです。<br/></br>'.
 	                   'サイトは原名とローマ字と翻訳がわかりません。そして、一の行に名前のタイプを選んでください。<br/><br/>'.
-					   'ローマ字で書いた名前はあったら、文章作法のルールを守るかどうかチェックしてください。'.
+					   'ローマ字で書いた名前はあったら、<a href="/ja/writing-guide#romanization" target="_blank">文章作法</a>のルールを守るかどうかチェックしてください。'.
 					   'ローマ字で書いた名前はなかったら、自分で書いてください。<br/><br/>'.
 					   '列は３つより大きく、必要がない列に選らないでください。<br/><br/>'.
 					   '翻訳した名前はなき、列の名前選んでください。でも、列の下にある細胞に何も書かないで。<br/><br/>'.
@@ -885,19 +888,19 @@ namespace Localization\LyricsEditorPage\TooltipContent
 	const Language           = '歌詞の言語を選んでください。<br/><br/>'.
 	                           'いろいろな言語があるなら、主要な言語を選んでください。<br/><br/>'.
 							   '* = 必要';
-	const Lyrics             = '歌詞を書いてください。<br/><br/>'.
+	const Lyrics             = '歌詞を書いてください。<a href="/ja/writing-guide#lyrics" target="_blank">文章作法</a>でルールを見てください。<br/><br/>'.
 	                           '特別な書き方が使われます。<br/><br/>'.
 	                           '{kj}漢字{fg}かんじ{/fg}　→　<ruby>漢字<rt>かんじ</rt></ruby><br/><br/>'.
 	                           '{cl #FF0000}色づいた{/cl}言葉　→　<span style="color: #FF0000">色づいた</span>言葉<br/><br/>'.
 	                           '{nt}1{/nt}　→　歌詞とコメントに使ったら、リンクを作ります。<br/><br/>'.
-							   '文章作法にもう詳しく教えます。リンクはページの下にあります。<br/><br/>'.
+							   '<a href="/ja/writing-guide#formatting" target="_blank">文章作法</a>にもう詳しく教えます。<br/><br/>'.
 							   '* = 必要';
 	const Notes              = '歌詞の作者とあなたのコメントがあれば、ここに書いてもいいです。<br/><br/>'.
 	                           '特別な書き方が使われます。<br/><br/>'.
 	                           '{kj}漢字{fg}かんじ{/fg}　→　<ruby>漢字<rt>かんじ</rt></ruby><br/><br/>'.
 	                           '{cl #FF0000}色づいた{/cl}言葉　→　<span style="color: #FF0000">色づいた</span>言葉<br/><br/>'.
 	                           '{nt}1{/nt}　→　歌詞とコメントに使ったら、リンクを作ります。<br/><br/>'.
-							   '文章作法にもう詳しく教えます。リンクはページの下にあります。<br/><br/>';
+							   '<a href="/ja/writing-guide#formatting" target="_blank">文章作法</a>にもう詳しく教えます。<br/><br/>';
 	const Controls           = '「戻る」というボタンを押して、キャンセルして前のページに戻ります。<br/><br/>「出す」というボタンを押して、情報を出します。';
 }
 
@@ -918,19 +921,19 @@ namespace Localization\TranslationEditorPage\TooltipContent
 	const TranslationName     = 'タイトルを翻訳してください。<br/><br/>'.
 	                            '* = 必要';
 	const TranslationLyrics   = '歌詞を翻訳してください。<br/><br/>'.
-	                            '文章作法のおすすめを読まなければなりません。<br/><br/>'.
+	                            '<a href="/ja/writing-guide#translation" target="_blank">文章作法</a>のおすすめを読まなければなりません。<br/><br/>'.
 								'特別な書き方が使われます。<br/><br/>'.
 								'{kj}漢字{fg}かんじ{/fg}　→　<ruby>漢字<rt>かんじ</rt></ruby><br/><br/>'.
 								'{cl #FF0000}色づいた{/cl}言葉　→　<span style="color: #FF0000">色づいた</span>言葉<br/><br/>'.
 								'{nt}1{/nt}　→　歌詞とコメントに使ったら、リンクを作ります。<br/><br/>'.
-								'文章作法にもう詳しく教えます。リンクはページの下にあります。<br/><br/>'.
+								'<a href="/ja/writing-guide#formatting" target="_blank">文章作法</a>にもう詳しく教えます。<br/><br/>'.
 							    '* = 必要';
 	const TranslationNotes    = '難しい言の葉を教えることと自分のコメント書くことのように使ってもいいです。<br/><br/>'.
 	                            '特別な書き方が使われます。<br/><br/>'.
 	                            '{kj}漢字{fg}かんじ{/fg}　→　<ruby>漢字<rt>かんじ</rt></ruby><br/><br/>'.
 	                            '{cl #FF0000}色づいた{/cl}言葉　→　<span style="color: #FF0000">色づいた</span>言葉<br/><br/>'.
 	                            '{nt}1{/nt}　→　歌詞とコメントに使ったら、リンクを作ります。<br/><br/>'.
-							    '文章作法にもう詳しく教えます。リンクはページの下にあります。<br/><br/>';
+							    '<a href="/ja/writing-guide#formatting" target="_blank">文章作法</a>にもう詳しく教えます。<br/><br/>';
 	const Controls            = '「戻る」というボタンを押して、キャンセルして前のページに戻ります。<br/><br/>「出す」というボタンを押して、情報を出します。';
 }
 

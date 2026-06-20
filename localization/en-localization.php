@@ -624,6 +624,9 @@ namespace Localization\Controls
 	const ChooseFile   = 'Choose file (max. size: 512 KiB) …';
 	const FileTooBig   = 'File is too big. Try another file …';
 	
+	const SelectOption = 'Select …';
+	const SelectFilter = 'Input to filter out …';
+	
 	const Cancel       = 'Return';
 	const Confirmation = 'I confirm';
 	const Submit       = 'Submit';
@@ -656,8 +659,8 @@ namespace Localization\GameEditorPage\TooltipContent
 	                           'Please, check if the game is already present in the database before adding a new entry.<br/><br/>'.
 							   '* = mandatory';
 	const TransliteratedName = 'The original name of the game written in romaji.<br/><br/>'.
-	                           'Please, check the writing guide on how to romanize names. You can find it in the footer.<br/><br/>'.
-							   'Remember that the romanized name is not allowed have symbols other than printable ASCII.<br/><br/>'.
+	                           'Please, check the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a> on how to romanize names.<br/><br/>'.
+							   'Remember that the romanized name is not allowed to have symbols other than printable ASCII.<br/><br/>'.
 							   '* = mandatory';
 	const LocalizedName      = 'The name used in international stores or vica versa: localized exclusively for its own market.<br/><br/>'.
 	                           'If the game was never released for international community, leave this field empty.';
@@ -705,8 +708,8 @@ namespace Localization\AlbumEditorPage\TooltipContent
 	                           'Please, check if the album is already present in the database before adding a new entry.<br/><br/>'.
 							   '* = mandatory';
 	const TransliteratedName = 'The original name of the album written in romaji.<br/><br/>'.
-	                           'Please, check the writing guide on how to romanize names. You can find it in the footer.<br/><br/>'.
-							   'Remember that the romanized name is not allowed have symbols other than printable ASCII.<br/><br/>'.
+	                           'Please, check the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a> on how to romanize names.<br/><br/>'.
+							   'Remember that the romanized name is not allowed to have symbols other than printable ASCII.<br/><br/>'.
 							   '* = mandatory';
 	const LocalizedName      = 'The name used in international stores or vice versa: localized exclusively for its own market.<br/><br/>'.
 	                           'If the album was never released for international community, leave this field empty.';
@@ -751,8 +754,8 @@ namespace Localization\ArtistEditorPage\TooltipContent
 	                           'Please, check if the artist is already present in the database before adding a new entry.<br/><br/>'.
 							   '* = mandatory';
 	const TransliteratedName = 'The original name of the artist written in romaji.<br/><br/>'.
-	                           'Please, check the writing guide on how to romanize names. You can find it in the footer.<br/><br/>'.
-							   'Remember that the romanized name is not allowed have symbols other than printable ASCII.<br/><br/>'.
+	                           'Please, check the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a> on how to romanize names.<br/><br/>'.
+							   'Remember that the romanized name is not allowed to have symbols other than printable ASCII.<br/><br/>'.
 							   '* = mandatory';
 	const LocalizedName      = 'The name used in international stores or vice versa: localized exclusively for its own market.<br/><br/>'.
 	                           'If the artist was never advertized for international community, leave this field empty.';
@@ -790,8 +793,8 @@ namespace Localization\CharacterEditorPage\TooltipContent
 	                           'Please, check if the character is already present in the database before adding a new entry.<br/><br/>'.
 							   '* = mandatory';
 	const TransliteratedName = 'The original name of the character written in romaji.<br/><br/>'.
-	                           'Please, check the writing guide on how to romanize names. You can find it in the footer.<br/><br/>'.
-							   'Remember that the romanized name is not allowed have symbols other than printable ASCII.<br/><br/>'.
+	                           'Please, check the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a> on how to romanize names.<br/><br/>'.
+							   'Remember that the romanized name is not allowed to have symbols other than printable ASCII.<br/><br/>'.
 							   '* = mandatory';
 	const LocalizedName      = 'The name used in most of localized versions of the game or vice versa: localized exclusively for its own region.<br/><br/>'.
 	                           'If the game was never released for international community, leave this field empty.';
@@ -832,8 +835,8 @@ namespace Localization\SongEditorPage\TooltipContent
 	const OriginalName       = 'The title of the song in its original language.<br/><br/>'.
 	                           '* = mandatory';
 	const TransliteratedName = 'The original title of the song written in romaji.<br/><br/>'.
-	                           'Please, check the writing guide on how to romanize names. You can find it in the footer.<br/><br/>'.
-	                           'Remember that the romanized name is not allowed have symbols other than printable ASCII.<br/><br/>'.
+	                           'Please, check the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a> on how to romanize names.<br/><br/>'.
+	                           'Remember that the romanized name is not allowed to have symbols other than printable ASCII.<br/><br/>'.
 							   '* = mandatory';
 	const LocalizedName      = 'The title of the song used in most of localized versions of the album or vice versa: localized exclusively for its own region.<br/><br/>'.
 	                           'If the album was never released for international community, leave this field empty.';
@@ -853,8 +856,8 @@ namespace Localization\FillAlbumPage\TooltipContent
 {
 	const TrackTable = 'The table was obtained from vgmdb.net.<br/></br>'.
 	                   'The website does not know what titles are original, transliterated or localized. Please, select the appropriate titles in the first row.<br/><br/>'.
-					   'If the table has transliterated names, then if they follow the style of the writing guide you can find in the footer.'.
-					   'If the table does not have transliterated names, then convert it by yourself. We remind you of the writing guide you can find in the footer.<br/><br/>'.
+					   'If the table has transliterated names and if they follow the style of the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a>, then use them.'.
+					   'If the table does not have transliterated names, then convert it by yourself. We remind you of the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a>.<br/><br/>'.
 					   'If the table has more columns than the required number (3), then do not select a header to them.<br/><br/>'.
 					   'If the names of the songs were never localized, then select the header for an empty column and leave cells of this column empty.<br/><br/>'.
 					   'Mark each song whether it has lyrics or it is instrumental.<br/><br/>'.
@@ -878,26 +881,26 @@ namespace Localization\LyricsEditorPage\TooltipContent
 	const ArtistAndCharacter = 'Select singers of the song.<br></br>'.
 	                           'If the song is performed by a game character (also known as Character Voice), then select the character too.<br/><br/>'.
 	                           'Use the plus button to add one artist more.<br/><br/>'.
-							   'Use the minus button to remove the artist<br/><br/>'.
+							   'Use the minus button to remove the artist.<br/><br/>'.
 							   '* = mandatory to select artists.';
 	const OriginalSong       = 'If the song is a rearrangement, remix or a short version of another song, then use this option.<br/><br/>'.
 	                           'Lyrics and translations of the original song will be automatically assigned to this song.';
 	const Language           = 'Select the main language of the song.<br/><br/>'.
 	                           'Some songs may have phrases of a different language in their lyrics. Select the prevailing language.<br/><br/>'.
 							   '* = mandatory';
-	const Lyrics             = 'Write the lyrics of the song.<br/><br/>'.
+	const Lyrics             = 'Write the lyrics of the song. Make sure you have read rules in the <a href="/en/writing-guide#lyrics" target="_blank">Writing Guide</a><br/><br/>'.
 	                           'Here you can use special syntax to make the text more meaningful.<br/><br/>'.
 	                           '{kj}漢字{fg}かんじ{/fg}　→　<ruby>漢字<rt>かんじ</rt></ruby><br/><br/>'.
 	                           '{cl #FF0000}色づいた{/cl}言葉　→　<span style="color: #FF0000">色づいた</span>言葉<br/><br/>'.
 	                           '{nt}1{/nt}　→　If used both in notes and lyrics, creates a clickable link between them.<br/><br/>'.
-							   'More details on how to use these features are in the writing guide located in the footer of the page.<br/><br/>'.
+							   'More details on how to use these features are in the <a href="/en/writing-guide#formatting" target="_blank">Writing Guide</a>.<br/><br/>'.
 							   '* = mandatory';
 	const Notes              = 'Write any comments on the song if necessary.<br/><br/>'.
 	                           'Here you can use special syntax to make the text more meaningful.<br/><br/>'.
 	                           '{kj}漢字{fg}かんじ{/fg}　→　<ruby>漢字<rt>かんじ</rt></ruby><br/><br/>'.
 	                           '{cl #FF0000}色づいた{/cl}言葉　→　<span style="color: #FF0000">色づいた</span>言葉<br/><br/>'.
 	                           '{nt}1{/nt}　→　If used both in notes and lyrics, creates a clickable link between them.<br/><br/>'.
-							   'More details on how to use these features are in the writing guide located in the footer of the page.';
+							   'More details on how to use these features are in the <a href="/en/writing-guide#formatting" target="_blank">Writing Guide</a>.';
 	const Controls           = 'Click the cancel button to go back.<br/><br/>Click the submit button to send the entry.';
 }
 
@@ -918,19 +921,19 @@ namespace Localization\TranslationEditorPage\TooltipContent
 	const TranslationName     = 'Translate the title of the song.<br/><br/>'.
 	                            '* = mandatory';
 	const TranslationLyrics   = 'Translate the lyrics of the song.<br/><br/>'.
-	                            'Make sure you read recommendations in the writing guide.<br/><br/>'.
+	                            'Make sure you have read recommendations in the <a href="/en/writing-guide#translation" target="_blank">Writing Guide</a>.<br/><br/>'.
 								'Here you can use special syntax to make lyrics more meaningful.<br/><br/>'.
 	                            '{kj}漢字{fg}かんじ{/fg}　→　<ruby>漢字<rt>かんじ</rt></ruby><br/><br/>'.
 	                            '{cl #FF0000}色づいた{/cl}言葉　→　<span style="color: #FF0000">色づいた</span>言葉<br/><br/>'.
 	                            '{nt}1{/nt}　→　If used both in notes and lyrics, creates a clickable link between them.<br/><br/>'.
-							    'More details on how to use these features are in the writing guide located in the footer of the page.<br/><br/>'.
+							    'More details on how to use these features are in the <a href="/en/writing-guide#formatting" target="_blank">Writing Guide</a>.<br/><br/>'.
 								'* = mandatory';
 	const TranslationNotes    = 'If you think that you should explain some phrases or make a comment in general, use this section.<br/><br/>'.
 	                            'Here you can use special syntax to make lyrics more meaningful.<br/><br/>'.
 	                            '{kj}漢字{fg}かんじ{/fg}　→　<ruby>漢字<rt>かんじ</rt></ruby><br/><br/>'.
 	                            '{cl #FF0000}色づいた{/cl}言葉　→　<span style="color: #FF0000">色づいた</span>言葉<br/><br/>'.
 	                            '{nt}1{/nt}　→　If used both in notes and lyrics, creates a clickable link between them.<br/><br/>'.
-							    'More details on how to use these features are in the writing guide located in the footer of the page.<br/><br/>';
+							    'More details on how to use these features are in the <a href="/en/writing-guide#formatting" target="_blank">Writing Guide</a>.<br/><br/>';
 	const Controls            = 'Click the cancel button to go back.<br/><br/>Click the submit button to send the entry.';
 }
 
