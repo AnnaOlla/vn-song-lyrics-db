@@ -326,7 +326,7 @@ class VisitorModel extends Model
 		string|null $search       = null
 	): array
 	{
-		$select = ['g.id', 'g.transliterated_name'];
+		$select = ['g.id', 'g.original_name', 'g.transliterated_name', 'g.localized_name'];
 		$from   = ['games AS g'];
 		$join   = [];
 		$where  = ['TRUE'];
@@ -335,8 +335,6 @@ class VisitorModel extends Model
 		
 		if (!$fetchMinInfo)
 		{
-			$select[] = 'g.original_name';
-			$select[] = 'g.localized_name';
 			$select[] = 'g.is_image_uploaded';
 			$select[] = 'g.uri';
 		}
@@ -455,7 +453,7 @@ class VisitorModel extends Model
 		string|null $search       = null
 	): array
 	{
-		$select = ['a.id', 'a.transliterated_name'];
+		$select = ['a.id', 'a.original_name', 'a.transliterated_name', 'a.localized_name'];
 		$from   = ['albums AS a'];
 		$join   = [];
 		$where  = ['TRUE'];
@@ -464,8 +462,6 @@ class VisitorModel extends Model
 		
 		if (!$fetchMinInfo)
 		{
-			$select[] = 'a.original_name';
-			$select[] = 'a.localized_name';
 			$select[] = 'a.is_image_uploaded';
 			$select[] = 'a.uri';
 			$select[] = 'a.song_count';
@@ -568,7 +564,7 @@ class VisitorModel extends Model
 		string|null $search       = null
 	): array
 	{
-		$select = ['a.id', 'a.transliterated_name'];
+		$select = ['a.id', 'a.original_name', 'a.transliterated_name', 'a.localized_name'];
 		$from   = ['artists AS a'];
 		$join   = [];
 		$where  = ['TRUE'];
@@ -577,8 +573,6 @@ class VisitorModel extends Model
 		
 		if (!$fetchMinInfo)
 		{
-			$select[] = 'a.original_name';
-			$select[] = 'a.localized_name';
 			$select[] = 'a.is_image_uploaded';
 			$select[] = 'a.uri';
 		}
@@ -673,7 +667,7 @@ class VisitorModel extends Model
 		string|null $search       = null
 	): array
 	{
-		$select   = ['c.id', 'c.transliterated_name'];
+		$select   = ['c.id', 'c.original_name', 'c.transliterated_name', 'c.localized_name'];
 		$distinct = '';
 		$from     = ['characters AS c'];
 		$join     = [];
@@ -683,8 +677,6 @@ class VisitorModel extends Model
 		
 		if (!$fetchMinInfo)
 		{
-			$select[] = 'c.original_name';
-			$select[] = 'c.localized_name';
 			$select[] = 'c.is_image_uploaded';
 			$select[] = 'c.uri';
 		}
@@ -803,9 +795,15 @@ class VisitorModel extends Model
 		$select =
 		[
 			'ar.id                  AS artist_id',
+			'ar.original_name       AS artist_original_name',
 			'ar.transliterated_name AS artist_transliterated_name',
+			'ar.localized_name      AS artist_localized_name',
+			
 			'ch.id                  AS character_id',
+			'ch.original_name       AS character_original_name',
 			'ch.transliterated_name AS character_transliterated_name',
+			'ch.localized_name      AS character_localized_name',
+			
 			'sacr.status            AS song_artist_character_relation_status'
 		];
 		$where  = ['TRUE'];
@@ -813,11 +811,7 @@ class VisitorModel extends Model
 		
 		if (!$fetchMinInfo)
 		{
-			$select[] = 'ar.original_name       AS artist_original_name';
-			$select[] = 'ar.localized_name      AS artist_localized_name';
 			$select[] = 'ar.uri                 AS artist_uri';
-			$select[] = 'ch.original_name       AS character_original_name';
-			$select[] = 'ch.localized_name      AS character_localized_name';
 			$select[] = 'ch.uri                 AS character_uri';
 		}
 		
@@ -889,7 +883,7 @@ class VisitorModel extends Model
 		string|null $search         = null
 	): array
 	{
-		$select = ['sn.id', 'sn.transliterated_name'];
+		$select = ['sn.id', 'sn.original_name', 'sn.transliterated_name', 'sn.localized_name'];
 		$from   = ['songs AS sn'];
 		$join   = [];
 		$where  = ['TRUE'];
@@ -898,8 +892,6 @@ class VisitorModel extends Model
 		
 		if (!$fetchMinInfo)
 		{
-			$select[] = 'sn.original_name';
-			$select[] = 'sn.localized_name';
 			$select[] = 'sn.uri';
 			$select[] = 'sn.has_vocal';
 			$select[] = 'sn.disc_number';
