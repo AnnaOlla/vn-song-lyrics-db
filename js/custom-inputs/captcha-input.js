@@ -12,7 +12,7 @@ function insertUppercaseIntoCaptchaInput(event) {
 }
 
 /* function main() */ {
-	const captchaInputs = document.querySelectorAll('input[type="text"].captcha-input');
+	const captchaInputs = document.querySelectorAll('.captcha-input');
 	
 	for (const captchaInput of captchaInputs) {
 		captchaInput.addEventListener('input', insertUppercaseIntoCaptchaInput);

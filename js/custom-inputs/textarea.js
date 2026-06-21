@@ -13,7 +13,7 @@ function addEventListenersToCustomTextarea(textarea) {
 }
 
 /* function main() */ {
-	const textareas = document.querySelectorAll('textarea');
+	const textareas = document.querySelectorAll('.custom-textarea');
 	
 	for (const textarea of textareas) {
 		textarea.addEventListener('input', autoresizeTextarea);

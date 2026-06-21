@@ -9,11 +9,13 @@ main > article {
 
 article > section:first-child {
 	flex: 1 1 0;
+	min-width: 0;
 	margin-right: calc(var(--section-margin) / 2);
 }
 
 article > section:last-child {
 	flex: 1 1 0;
+	min-width: 0;
 	margin-left: calc(var(--section-margin) / 2);
 	margin-right: calc(var(--section-margin) / 2);
 }
@@ -29,12 +31,15 @@ main > aside {
 	margin-left: calc(var(--section-margin) / 2);
 }
 
-form > section, section.form-replacement > section {
+form > section,
+section.form-replacement > section {
 	display: flex;
 	flex-direction: column;
 }
 
-.related-entity-controls, .page-controls, .disc-track-controls {
+.related-entity-controls,
+.page-controls,
+.disc-track-controls {
 	display: flex;
 	gap: var(--section-padding);
 	align-items: center;
@@ -42,6 +47,7 @@ form > section, section.form-replacement > section {
 
 .related-entity-controls > select,
 .related-entity-controls > section.select-fake-filler,
+.related-entity-controls > .custom-searchable-select,
 .related-entity-controls > option
 .related-entity-controls > button {
 	flex: 1 1 0;

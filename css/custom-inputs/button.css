@@ -1,6 +1,5 @@
-button,
-a.custom-button,
-input[type="submit"] {
+.custom-button,
+.custom-submit {
 	margin-top: var(--text-margin);
 	margin-bottom: var(--text-margin);
 	padding: var(--section-padding);
@@ -22,16 +21,15 @@ input[type="submit"] {
 	border: 0;
 }
 
-button:hover,
-a.custom-button:hover,
-input[type="submit"]:hover {
+.custom-button:hover,
+.custom-submit:hover {
 	background-color: var(--color-clickable-item-secondary);
 	color: var(--color-clickable-item-primary);
 }
 
-button:disabled,
-a.custom-button.disabled,
-input[type="submit"]:disabled {
+.custom-button:disabled,
+.custom-button.disabled,
+.custom-submit:disabled {
 	background-color: var(--color-clickable-item-disabled);
 	color: var(--color-text-placeholder);
 	text-decoration: line-through;

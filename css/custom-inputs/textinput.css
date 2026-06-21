@@ -1,10 +1,10 @@
-input[type="text"],
-input[type="number"],
-input[type="password"],
-input[type="email"],
-input[type="tel"],
-input[type="url"],
-input[type="search"] {
+.custom-input[type="text"],
+.custom-input[type="number"],
+.custom-input[type="password"],
+.custom-input[type="email"],
+.custom-input[type="tel"],
+.custom-input[type="url"],
+.custom-input[type="search"] {
 	display: inline-block;
 	
 	background-color: var(--color-input-primary);
@@ -30,42 +30,42 @@ input[type="search"] {
 	cursor: text;
 }
 
-input[type="text"]:read-only,
-input[type="text"]:disabled,
-input[type="password"]:read-only,
-input[type="password"]:disabled,
-input[type="email"]:read-only,
-input[type="email"]:disabled,
-input[type="tel"]:read-only,
-input[type="tel"]:disabled,
-input[type="url"]:read-only,
-input[type="url"]:disabled,
-input[type="search"]:read-only,
-input[type="search"]:disabled {
+.custom-input[type="text"]:read-only,
+.custom-input[type="text"]:disabled,
+.custom-input[type="password"]:read-only,
+.custom-input[type="password"]:disabled,
+.custom-input[type="email"]:read-only,
+.custom-input[type="email"]:disabled,
+.custom-input[type="tel"]:read-only,
+.custom-input[type="tel"]:disabled,
+.custom-input[type="url"]:read-only,
+.custom-input[type="url"]:disabled,
+.custom-input[type="search"]:read-only,
+.custom-input[type="search"]:disabled {
 	cursor: not-allowed;
 }
 
-input[type="text"]:hover:not([disabled]):not([readonly]),
-input[type="text"]:focus:not([disabled]):not([readonly]),
-input[type="password"]:hover:not([disabled]):not([readonly]),
-input[type="password"]:focus:not([disabled]):not([readonly]),
-input[type="email"]:hover:not([disabled]):not([readonly]),
-input[type="email"]:focus:not([disabled]):not([readonly]),
-input[type="tel"]:hover:not([disabled]):not([readonly]),
-input[type="tel"]:focus:not([disabled]):not([readonly]),
-input[type="url"]:hover:not([disabled]):not([readonly]),
-input[type="url"]:focus:not([disabled]):not([readonly]),
-input[type="search"]:hover:not([disabled]):not([readonly]),
-input[type="search"]:focus:not([disabled]):not([readonly]) {
+.custom-input[type="text"]:hover:not([disabled]):not([readonly]),
+.custom-input[type="text"]:focus:not([disabled]):not([readonly]),
+.custom-input[type="password"]:hover:not([disabled]):not([readonly]),
+.custom-input[type="password"]:focus:not([disabled]):not([readonly]),
+.custom-input[type="email"]:hover:not([disabled]):not([readonly]),
+.custom-input[type="email"]:focus:not([disabled]):not([readonly]),
+.custom-input[type="tel"]:hover:not([disabled]):not([readonly]),
+.custom-input[type="tel"]:focus:not([disabled]):not([readonly]),
+.custom-input[type="url"]:hover:not([disabled]):not([readonly]),
+.custom-input[type="url"]:focus:not([disabled]):not([readonly]),
+.custom-input[type="search"]:hover:not([disabled]):not([readonly]),
+.custom-input[type="search"]:focus:not([disabled]):not([readonly]) {
 	background-color: var(--color-input-secondary);
 	outline: none;
 }
 
-input[type="text"]::placeholder,
-input[type="password"]::placeholder,
-input[type="email"]::placeholder,
-input[type="tel"]::placeholder,
-input[type="url"]::placeholder,
-input[type="search"]::placeholder {
+.custom-input[type="text"]::placeholder,
+.custom-input[type="password"]::placeholder,
+.custom-input[type="email"]::placeholder,
+.custom-input[type="tel"]::placeholder,
+.custom-input[type="url"]::placeholder,
+.custom-input[type="search"]::placeholder {
 	color: var(--color-text-placeholder);
 }

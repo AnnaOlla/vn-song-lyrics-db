@@ -23,7 +23,7 @@ function selectFileWithCustomInput(e) {
 }
 
 /* function main() */ {
-	const fileInputs = document.querySelectorAll('input[type="file"]');
+	const fileInputs = document.querySelectorAll('.custom-fileupload-input');
 	
 	for (const fileInput of fileInputs) {
 		fileInput.addEventListener('change', selectFileWithCustomInput);

@@ -10,14 +10,20 @@ function addInputRow(e, entityClass) {
 	
 	section.insertBefore(newRow, nextRow);
 	
-	const selects = newRow.getElementsByTagName('select');
+	const selects = newRow.querySelectorAll('.custom-searchable-select');
 	for (select of selects) {
-		select.selectedIndex = 0;
-		select.disabled = '';
+		const hiddenInput = select.children[0];
+		const actualInput = select.children[1];
 		
-		select.addEventListener('focus',  customSelectOnFocus);
-		select.addEventListener('blur',   customSelectOnBlur);
-		select.addEventListener('change', customSelectOnChange);
+		hiddenInput.value = '';
+		actualInput.value = '';
+		
+		hiddenInput.disabled = false;
+		actualInput.disabled = false;
+		
+		actualInput.addEventListener('focus', customSearchableSelectOnFocus);
+		actualInput.addEventListener('blur',  customSearchableSelectOnBlur);
+		actualInput.addEventListener('input', customSearchableSelectOnInput);
 	}
 	
 	const buttons = newRow.getElementsByTagName('button');
@@ -38,8 +44,12 @@ function deleteInputRow(e, entityClass) {
 	if (buttons.length / 2 > 1) {
 		thisRow.remove();
 	} else {
-		const select = section.querySelector('select');
-		select.selectedIndex = 0;
+		const select = section.querySelector('.custom-searchable-select');
+		const hiddenInput = select.children[0];
+		const actualInput = select.children[1];
+		
+		hiddenInput.value = '';
+		actualInput.value = '';
 	}
 }
 

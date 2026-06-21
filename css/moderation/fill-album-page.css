@@ -28,3 +28,13 @@ tr > * > * {
 tr > * > section.select-fake-filler {
 	margin: 0;
 }
+
+.page-controls {
+	display: flex;
+	gap: var(--section-padding);
+	align-items: center;
+}
+
+.page-controls > section {
+	flex-grow: 1;
+}

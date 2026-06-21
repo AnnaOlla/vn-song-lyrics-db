@@ -4,15 +4,15 @@ function switchElementsOnLyricsPage(e) {
 	const notesArea      = document.getElementById('notes-area');
 	
 	let currentElement = e.target;
-	let currentSection = currentElement.parentNode;
+	let currentSection = currentElement.parentNode.parentNode;
 	
 	// The loop disables/enables all rows
 	// and stops before the last row.
 	// The row with submit and cancel
 	// must be untouched
 	
-	const disabled = (currentElement.selectedIndex !== 0);
-	const display  = (currentElement.selectedIndex !== 0) ? 'none' : '';
+	const disabled = (currentElement.value !== '');
+	const display  = (currentElement.value !== '') ? 'none' : '';
 	
 	languageSelect.disabled = disabled;
 	lyricsArea.disabled     = disabled;

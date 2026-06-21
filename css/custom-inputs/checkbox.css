@@ -1,6 +1,8 @@
-/* The label containing the checkbox */
+.custom-checkbox-input {
+	display: none;
+}
 
-label.custom-checkbox:has(input[type="checkbox"]) {
+.custom-checkbox:has(.custom-checkbox-input) {
 	margin: var(--text-margin);
 	padding: 0px;
 	
@@ -13,7 +15,7 @@ label.custom-checkbox:has(input[type="checkbox"]) {
 	cursor: pointer;
 }
 
-label.custom-checkbox:has(input[type="checkbox"]) > span.custom-checkbox-label {
+.custom-checkbox:has(.custom-checkbox-input) > .custom-checkbox-label {
 	flex: 0 0 auto;
 	
 	margin: 0px;
@@ -26,21 +28,21 @@ label.custom-checkbox:has(input[type="checkbox"]) > span.custom-checkbox-label {
 	white-space: nowrap;
 }
 
-label.custom-checkbox:has(input[type="checkbox"]:checked) > span.custom-checkbox-label {
+.custom-checkbox:has(.custom-checkbox-input:checked) > .custom-checkbox-label {
 	color: var(--color-clickable-item-secondary);
 }
 
-label.custom-checkbox:has(input[type="checkbox"]:hover) > span.custom-checkbox-label {
+.custom-checkbox:has(.custom-checkbox-input:hover) > .custom-checkbox-label {
 	color: var(--color-clickable-item-secondary);
 }
 
-label.custom-checkbox:has(input[type="checkbox"]:disabled) > span.custom-checkbox-label {
+.custom-checkbox:has(.custom-checkbox-input:disabled) > .custom-checkbox-label {
 	color: var(--color-text-placeholder);
 	text-decoration: line-through;
 	cursor: not-allowed;
 }
 
-label.custom-checkbox:has(input[type="checkbox"]) > span.custom-checkbox-button {
+.custom-checkbox:has(.custom-checkbox-input) > .custom-checkbox-button {
 	flex: 0 0 auto;
 	
 	margin: 0px;
@@ -53,20 +55,20 @@ label.custom-checkbox:has(input[type="checkbox"]) > span.custom-checkbox-button 
 	position: relative;
 }
 
-label.custom-checkbox:has(input[type="checkbox"]:checked) > span.custom-checkbox-button {
+.custom-checkbox:has(.custom-checkbox-input:checked) > .custom-checkbox-button {
 	background-color: var(--color-clickable-item-primary);
 }
 
-label.custom-checkbox:has(input[type="checkbox"]:hover) > span.custom-checkbox-button {
+.custom-checkbox:has(.custom-checkbox-input:hover) > .custom-checkbox-button {
 	background-color: var(--color-clickable-item-secondary);
 }
 
-label.custom-checkbox:has(input[type="checkbox"]:disabled) > span.custom-checkbox-button {
+.custom-checkbox:has(.custom-checkbox-input:disabled) > .custom-checkbox-button {
 	background-color: var(--color-clickable-item-disabled);
 	cursor: not-allowed;
 }
 
-label.custom-checkbox:has(input[type="checkbox"]) > span.custom-checkbox-button::after {
+.custom-checkbox:has(input[type="checkbox"]) > .custom-checkbox-button::after {
 	position: absolute;
 	left: 50%;
 	top: 50%;
@@ -77,20 +79,16 @@ label.custom-checkbox:has(input[type="checkbox"]) > span.custom-checkbox-button:
 	content: "\2713";
 }
 
-label.custom-checkbox:has(input[type="checkbox"]:checked) > span.custom-checkbox-button::after {
+.custom-checkbox:has(.custom-checkbox-input:checked) > .custom-checkbox-button::after {
 	color: var(--color-clickable-item-secondary);
 }
 
-label.custom-checkbox:has(input[type="checkbox"]:hover) > span.custom-checkbox-button::after {
+.custom-checkbox:has(.custom-checkbox-input:hover) > .custom-checkbox-button::after {
 	color: var(--color-clickable-item-primary);
 }
 
-label.custom-checkbox:has(input[type="checkbox"]:disabled) > span.custom-checkbox-button::after {
+.custom-checkbox:has(.custom-checkbox-input:disabled) > .custom-checkbox-button::after {
 	font-size: var(--font-size-plain);
 	color: var(--color-text-placeholder);
 	content: "\2716";
-}
-
-input[type="checkbox"] {
-	display: none;
 }

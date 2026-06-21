@@ -153,6 +153,7 @@ abstract class View
 	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/button.css?v={$this->getTimestamp('/css/custom-inputs/button.css')}" />
 	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/checkbox.css?v={$this->getTimestamp('/css/custom-inputs/checkbox.css')}" />
 	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/fileupload.css?v={$this->getTimestamp('/css/custom-inputs/fileupload.css')}" />
+	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/searchable-select.css?v={$this->getTimestamp('/css/custom-inputs/searchable-select.css')}" />
 	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/select.css?v={$this->getTimestamp('/css/custom-inputs/select.css')}" />
 	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textarea.css?v={$this->getTimestamp('/css/custom-inputs/textarea.css')}" />
 	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textinput.css?v={$this->getTimestamp('/css/custom-inputs/textinput.css')}" />
@@ -294,10 +295,14 @@ HTML;
 
 	</main>
 	{$this->createFooter()}
+	
 	<script src="/js/core/emulate-event.js?v={$this->getTimestamp('/js/core/emulate-event.js')}"/></script>
+	<script src="/js/core/prepare-entity-name-for-filtering.js?v={$this->getTimestamp('/js/core/prepare-entity-name-for-filtering.js')}"/></script>
+	
 	<script src="/js/custom-inputs/captcha-input.js?v={$this->getTimestamp('/js/custom-inputs/captcha-input.js')}"/></script>
-	<script src="/js/custom-inputs/fileupload.js?v={$this->getTimestamp('/js/custom-inputs/select.js')}"/></script>
-	<script src="/js/custom-inputs/select.js?v={$this->getTimestamp('/js/core/emulate-event.js')}"/></script>
+	<script src="/js/custom-inputs/fileupload.js?v={$this->getTimestamp('/js/custom-inputs/fileupload.js')}"/></script>
+	<script src="/js/custom-inputs/searchable-select.js?v={$this->getTimestamp('/js/custom-inputs/searchable-select.js')}"/></script>
+	<script src="/js/custom-inputs/select.js?v={$this->getTimestamp('/js/custom-inputs/select.js')}"/></script>
 	<script src="/js/custom-inputs/textarea.js?v={$this->getTimestamp('/js/custom-inputs/textarea.js')}"/></script>
 
 HTML;
@@ -540,14 +545,15 @@ HTML;
 		'
 			<section>
 				<p>'.$prefix.'</p>
-				'.$select = $this->createSelect
+				'.$select = $this->createSearchableSelect
 				(
-					iteratedOptions: $statuses,
-					selectedOption:  $currentStatus,
-					addEmptyOption:  false,
-					keyToShownValue: 'toShow',
-					keyToSentValue:  'toSend',
-					attributes:      ['class' => ['status-select'], 'data-entity-uri' => $dataEntityUri]
+					iteratedOptions:         $statuses,
+					selectedOption:          $currentStatus,
+					addEmptyOption:          false,
+					keyToShownValue:         'toShow',
+					keyToSentValue:          'toSend',
+					attributesForSentInput:  ['class' => ['status-select'], 'data-entity-uri' => $dataEntityUri],
+					attributesForShownInput: ['readonly' => true]
 				).
 			'</section>
 		';
@@ -939,20 +945,24 @@ HTML;
 					<span>'.\Localization\LyricsPage\PageSettingsFontSize.'</span>
 				</section>
 					<section>
-					'.$this->createSelect
+					'.$this->createSearchableSelect
 					(
-						iteratedOptions: [
-											[0 => \Localization\LyricsPage\PageSettingsFontSize1, 1 => -4],
-											[0 => \Localization\LyricsPage\PageSettingsFontSize2, 1 => -2],
-											[0 => \Localization\LyricsPage\PageSettingsFontSize3, 1 => 0],
-											[0 => \Localization\LyricsPage\PageSettingsFontSize4, 1 => +2],
-											[0 => \Localization\LyricsPage\PageSettingsFontSize5, 1 => +4]
-										 ],
-						selectedOption:  [0 => \Localization\LyricsPage\PageSettingsFontSize3, 1 => 0],
-						addEmptyOption:  false,
-						keyToShownValue: 0,
-						keyToSentValue:  1,
-						attributes:      ['id' => 'font-size-select']
+						iteratedOptions:         [
+											          [0 => \Localization\LyricsPage\PageSettingsFontSize1, 1 => -4],
+											          [0 => \Localization\LyricsPage\PageSettingsFontSize2, 1 => -2],
+											          [0 => \Localization\LyricsPage\PageSettingsFontSize3, 1 =>  0],
+											          [0 => \Localization\LyricsPage\PageSettingsFontSize4, 1 => +2],
+											          [0 => \Localization\LyricsPage\PageSettingsFontSize5, 1 => +4]
+										         ],
+						selectedOption:          [0 => \Localization\LyricsPage\PageSettingsFontSize3, 1 => 0],
+						addEmptyOption:          false,
+						keyToShownValue:         0,
+						keyToSentValue:          1,
+						attributesForSentInput:  ['id' => 'font-size-select'],
+						attributesForShownInput: [
+						                             'readonly' => true,
+													 'data-placeholder-filter' => \Localization\Controls\SelectOption
+												 ]
 					).'
 				</section>
 			</section>
@@ -961,17 +971,21 @@ HTML;
 					<span>'.\Localization\LyricsPage\PageSettingsFurigana.'</span>
 				</section>
 				<section>
-					'.$this->createSelect
+					'.$this->createSearchableSelect
 					(
-						iteratedOptions: [
-											[0 => \Localization\LyricsPage\PageSettingsShowFurigana, 1 => 1],
-											[0 => \Localization\LyricsPage\PageSettingsHideFurigana, 1 => 0]
-										 ],
-						selectedOption:  [0 => \Localization\LyricsPage\PageSettingsShowFurigana, 1 => 1],
-						addEmptyOption:  false,
-						keyToShownValue: 0,
-						keyToSentValue:  1,
-						attributes:      ['id' => 'show-furigana-select']
+						iteratedOptions:         [
+											          [0 => \Localization\LyricsPage\PageSettingsShowFurigana, 1 => 1],
+											          [0 => \Localization\LyricsPage\PageSettingsHideFurigana, 1 => 0]
+										         ],
+						selectedOption:          [0 => \Localization\LyricsPage\PageSettingsShowFurigana, 1 => 1],
+						addEmptyOption:          false,
+						keyToShownValue:         0,
+						keyToSentValue:          1,
+						attributesForSentInput:  ['id' => 'show-furigana-select'],
+						attributesForShownInput: [
+						                              'readonly' => true,
+													  'data-placeholder-filter' => \Localization\Controls\SelectOption
+												 ]
 					).'
 				</section>
 			</section>
@@ -980,17 +994,21 @@ HTML;
 					<span>'.\Localization\LyricsPage\PageSettingsNotes.'</span>
 				</section>
 				<section>
-					'.$this->createSelect
+					'.$this->createSearchableSelect
 					(
-						iteratedOptions: [
-											[0 => \Localization\LyricsPage\PageSettingsShowNotes, 1 => 1],
-											[0 => \Localization\LyricsPage\PageSettingsHideNotes, 1 => 0]
-										 ],
-						selectedOption:  [0 => \Localization\LyricsPage\PageSettingsShowNotes, 1 => 1],
-						addEmptyOption:  false,
-						keyToShownValue: 0,
-						keyToSentValue:  1,
-						attributes:      ['id' => 'show-notes-select']
+						iteratedOptions:         [
+											          [0 => \Localization\LyricsPage\PageSettingsShowNotes, 1 => 1],
+											          [0 => \Localization\LyricsPage\PageSettingsHideNotes, 1 => 0]
+										         ],
+						selectedOption:          [0 => \Localization\LyricsPage\PageSettingsShowNotes, 1 => 1],
+						addEmptyOption:          false,
+						keyToShownValue:         0,
+						keyToSentValue:          1,
+						attributesForSentInput:  ['id' => 'show-notes-select'],
+						attributesForShownInput: [
+						                              'readonly' => true,
+													  'data-placeholder-filter' => \Localization\Controls\SelectOption
+												 ]
 					).'
 				</section>
 			</section>
@@ -999,17 +1017,21 @@ HTML;
 					<span>'.\Localization\LyricsPage\PageSettingsColors.'</span>
 				</section>
 				<section>
-					'.$this->createSelect
+					'.$this->createSearchableSelect
 					(
-						iteratedOptions: [
-											[0 => \Localization\LyricsPage\PageSettingsShowColors, 1 => 1],
-											[0 => \Localization\LyricsPage\PageSettingsHideColors, 1 => 0]
-										 ],
-						selectedOption:  [0 => \Localization\LyricsPage\PageSettingsShowColors, 1 => 1],
-						addEmptyOption:  false,
-						keyToShownValue: 0,
-						keyToSentValue:  1,
-						attributes:      ['id' => 'show-colors-select']
+						iteratedOptions:         [
+											         [0 => \Localization\LyricsPage\PageSettingsShowColors, 1 => 1],
+											         [0 => \Localization\LyricsPage\PageSettingsHideColors, 1 => 0]
+										         ],
+						selectedOption:          [0 => \Localization\LyricsPage\PageSettingsShowColors, 1 => 1],
+						addEmptyOption:          false,
+						keyToShownValue:         0,
+						keyToSentValue:          1,
+						attributesForSentInput:  ['id' => 'show-colors-select'],
+					    attributesForShownInput: [
+						                             'readonly' => true,
+													 'data-placeholder-filter' => \Localization\Controls\SelectOption
+												 ]
 					).'
 				</section>
 			</section>
@@ -1168,7 +1190,8 @@ HTML;
 		array|null  $attributes    = null,
 	): string
 	{
-		$attributes['type'] = 'checkbox';
+		$attributes['type']    = 'checkbox';
+		$attributes['class'][] = 'custom-checkbox-input';
 		
 		if (!Validation::isNullOrEmpty($label))
 			$span = '<span class="custom-checkbox-label">'.htmlspecialchars($label ?? '').'</span>';
@@ -1187,6 +1210,7 @@ HTML;
 	{
 		$attributes =
 		[
+			'class'       => 'custom-input',
 			'type'        => 'search',
 			'id'          => 'filter-bar',
 			'placeholder' => \Localization\Controls\FilterPage
@@ -1197,10 +1221,12 @@ HTML;
 	
 	final protected function createFileupload(array|null $attributes = null): string
 	{
-		$attributes['type'] = 'file';
+		$attributes['type']    = 'file';
+		$attributes['class'][] = 'custom-fileupload-input';
 		
 		$attributes2 =
 		[
+			'class'                  => 'custom-fileupload-button',
 			'text-file-not-selected' => \Localization\Controls\ChooseFile,
 			'text-file-too-big'      => \Localization\Controls\FileTooBig
 		];
@@ -1231,8 +1257,7 @@ HTML;
 		if (is_null($disabledOptions))
 			$disabledOptions = [];
 		
-		if (isset($attributes['class']))
-			$attributes['class'][] = 'custom-select';
+		$attributes['class'][] = 'custom-select';
 		
 		$html[] = '<select '.$this->buildAttributes($attributes).'>';
 		
@@ -1255,10 +1280,104 @@ HTML;
 			
 			$attributes['value'] = $sent;
 			
-			$html[] = '<option '.$this->buildAttributes($attributes).'>'.htmlspecialchars($shown ?? '').'</option>';
+			$html[] = '<option class="custom-select-option" '.$this->buildAttributes($attributes).'>'.htmlspecialchars($shown ?? '').'</option>';
 		}
 		
-		$html[] = '</select><section class="select-fake-filler"></section>';
+		$html[] = '</select><section class="custom-select-filler"></section>';
+		
+		return implode($html);
+	}
+	
+	final protected function createSearchableSelect
+	(
+		array|null  $iteratedOptions         = null,
+		array|null  $disabledOptions         = null,
+		array|null  $selectedOption          = null,
+		bool        $addEmptyOption          = true,
+		string      $keyToShownValue         = 'description',
+		array|null  $keysToShownHints        = null,
+		string      $keyToSentValue          = 'id',
+		array|null  $attributesForShownInput = [
+		                                           'placeholder'             => \Localization\Controls\SelectOption,
+												   'data-placeholder-select' => \Localization\Controls\SelectOption,
+												   'data-placeholder-filter' => \Localization\Controls\SelectFilter
+											   ],
+		array|null  $attributesForSentInput  = null
+	): string
+	{
+		if (is_null($iteratedOptions))
+			$iteratedOptions = [];
+		
+		if (is_null($disabledOptions))
+			$disabledOptions = [];
+		
+		if (is_null($selectedOption))
+		{
+			$selectedOption = [];
+			$selectedOption[$keyToShownValue] = '';
+			$selectedOption[$keyToSentValue] = '';
+		}
+		
+		if (is_null($keysToShownHints))
+			$keysToShownHints = [];
+		
+		if ($addEmptyOption)
+		{
+			$emptyOption = [];
+			$emptyOption[$keyToShownValue] = '';
+			$emptyOption[$keyToSentValue] = '';
+			
+			foreach ($keysToShownHints as $keyToShownHint)
+				$emptyOption[$keyToShownHint] = '';
+			
+			array_unshift($iteratedOptions, $emptyOption);
+		}
+		
+		$attributesForShownInput['class'][] = 'custom-searchable-select-shown-value';
+		$attributesForShownInput['type']    = 'text';
+		$attributesForShownInput['value']   = $selectedOption[$keyToShownValue];
+		
+		$attributesForSentInput['class'][]  = 'custom-searchable-select-sent-value';
+		$attributesForSentInput['type']     = 'text';
+		$attributesForSentInput['value']    = $selectedOption[$keyToSentValue];
+		
+		$html[] = 
+		'
+			<label class="custom-searchable-select">
+				<input '.$this->buildAttributes($attributesForSentInput).' />
+				<input '.$this->buildAttributes($attributesForShownInput).' />
+				<ul class="custom-searchable-select-option-container" tabindex="-1">
+		';
+		
+		foreach ($iteratedOptions as $iteratedOption)
+		{
+			$disabled = in_array($iteratedOption, $disabledOptions) ? 'disabled' : '';
+			
+			$html[] =
+			'
+					<li class="custom-searchable-select-option" value="'.htmlspecialchars($iteratedOption[$keyToSentValue] ?? '').'" '.$disabled.' tabindex="-1">
+						<section class="custom-searchable-select-option-shown-value">'.htmlspecialchars($iteratedOption[$keyToShownValue] ?? '').'</section>
+			';
+			
+			foreach ($keysToShownHints as $keyToShownHint)
+			{
+				$html[] =
+				'
+						<section class="custom-searchable-select-option-shown-hint">'.htmlspecialchars($iteratedOption[$keyToShownHint] ?? '').'</section>
+				';
+			}
+			
+			$html[] =
+			'
+					</li>
+			';
+		}
+		
+		$html[] = 
+		'
+				</ul>
+			</label>
+		';
 		
 		return implode($html);
 	}
@@ -1269,7 +1388,8 @@ HTML;
 		array|null  $attributes = null
 	): string
 	{
-		$attributes['type'] = 'button';
+		$attributes['type']    = 'button';
+		$attributes['class'][] = 'custom-button';
 		
 		return '<button '.$this->buildAttributes($attributes).'>'.htmlspecialchars($label).'</button>';
 	}
@@ -1280,6 +1400,7 @@ HTML;
 	): string
 	{
 		$attributes['class'][] = 'add-input-row';
+		
 		return $this->createButton('＋', $attributes);
 	}
 	
@@ -1289,6 +1410,7 @@ HTML;
 	): string
 	{
 		$attributes['class'][] = 'delete-input-row';
+		
 		return $this->createButton('ー', $attributes);
 	}
 	
@@ -1299,7 +1421,8 @@ HTML;
 		array|null  $attributes   = null
 	): string
 	{
-		$attributes['href'] = Http::getLastVisitedPage($fallbackHref);
+		$attributes['href']    = Http::getLastVisitedPage($fallbackHref);
+		$attributes['class'][] = 'custom-button';
 		
 		return $this->createButtonAsLink($label, $attributes);
 	}
@@ -1310,8 +1433,9 @@ HTML;
 		array|null $attributes = null
 	): string
 	{
-		$attributes['type']  = 'submit';
-		$attributes['value'] = $label;
+		$attributes['type']    = 'submit';
+		$attributes['value']   = $label;
+		$attributes['class'][] = 'custom-button';
 		
 		return '<input '.$this->buildAttributes($attributes).'/>';
 	}
@@ -1322,6 +1446,7 @@ HTML;
 	): string
 	{
 		$attributes['type'] = 'hidden';
+		
 		return '<input '.$this->buildAttributes($attributes).'/>';
 	}
 	
@@ -1331,6 +1456,8 @@ HTML;
 		array|null  $attributes = null
 	): string
 	{
+		$attributes['class'][] = 'custom-textarea';
+		
 		return '<textarea '.$this->buildAttributes($attributes).'>'.htmlspecialchars($value ?? '').'</textarea>';
 	}
 	
@@ -1341,6 +1468,7 @@ HTML;
 	{
 		$attributes['type']        = 'text';
 		$attributes['name'][]      = 'captcha-code';
+		$attributes['class'][]     = 'custom-input';
 		$attributes['class'][]     = 'captcha-input';
 		$attributes['placeholder'] = 'code:';
 		
@@ -1365,7 +1493,8 @@ HTML;
 		array|null $attributes = null
 	): string
 	{
-		$attributes['type'] = 'text';
+		$attributes['type']    = 'text';
+		$attributes['class'][] = 'custom-input';
 		
 		return '<input '.$this->buildAttributes($attributes).' />';
 	}
@@ -1379,6 +1508,7 @@ HTML;
 		$attributes['pattern']   = '[a-zA-Z0-9]+';
 		$attributes['minlength'] = self::ACCOUNT_DATA_MIN_LENGTH;
 		$attributes['maxlength'] = self::ACCOUNT_DATA_MAX_LENGTH;
+		$attributes['class'][]   = 'custom-input';
 		
 		return '<input '.$this->buildAttributes($attributes).' />';
 	}
@@ -1392,6 +1522,7 @@ HTML;
 		$attributes['pattern']   = '[a-zA-Z0-9]+';
 		$attributes['minlength'] = self::ACCOUNT_DATA_MIN_LENGTH;
 		$attributes['maxlength'] = self::ACCOUNT_DATA_MAX_LENGTH;
+		$attributes['class'][]   = 'custom-input';
 		
 		return '<input '.$this->buildAttributes($attributes).' />';
 	}
@@ -1404,6 +1535,7 @@ HTML;
 		$attributes['type']      = 'email';
 		$attributes['minlength'] = self::ACCOUNT_DATA_MIN_LENGTH;
 		$attributes['maxlength'] = self::ACCOUNT_DATA_MAX_LENGTH;
+		$attributes['class'][]   = 'custom-input';
 		
 		return '<input '.$this->buildAttributes($attributes).' />';
 	}
@@ -1413,7 +1545,8 @@ HTML;
 		array|null $attributes = null
 	): string
 	{
-		$attributes['type'] = 'url';
+		$attributes['type']    = 'url';
+		$attributes['class'][] = 'custom-input';
 		
 		return '<input '.$this->buildAttributes($attributes).' />';
 	}
@@ -1458,32 +1591,48 @@ HTML;
 	
 	final protected function createResultsLimitBlock(int|null $limit): string
 	{
-		$selectedOption = ['toShow' => $limit, 'toSend' => $limit];
+		if (is_null($limit))
+			$selectedOption = ['toShow' => \Localization\Controls\NoLimit, 'toSend' => null];
+		else
+			$selectedOption = ['toShow' => $limit, 'toSend' => $limit];
 		
 		$options =
 		[
 			['toShow' => 10,  'toSend' => 10],
 			['toShow' => 25,  'toSend' => 25],
 			['toShow' => 50,  'toSend' => 50],
-			['toShow' => 100, 'toSend' => 100]
+			['toShow' => 100, 'toSend' => 100],
+			['toShow' => \Localization\Controls\NoLimit, 'toSend' => null]
 		];
 		
+		// sort nulls last
 		if (!in_array($selectedOption, $options) && !is_null($limit))
 		{
 			$options[] = $selectedOption;
-			usort($options, function($a, $b) { return $a['toSend'] <=> $b['toSend']; });
+			usort
+			(
+				$options,
+				function($a, $b)
+				{
+					if ($a === null) return +1;
+					if ($b === null) return -1;
+					return $a <=> $b;
+				}
+			);
 		}
 		
-		$options[] = ['toShow' => \Localization\Controls\NoLimit, 'toSend' => ''];
-		
-		$select = $this->createSelect
+		$select = $this->createSearchableSelect
 		(
-			iteratedOptions: $options,
-			selectedOption:  $selectedOption,
-			addEmptyOption:  false,
-			keyToShownValue: 'toShow',
-			keyToSentValue:  'toSend',
-			attributes:      ['id' => 'limit-result-count-bar'],
+			iteratedOptions:         $options,
+			selectedOption:          $selectedOption,
+			addEmptyOption:          false,
+			keyToShownValue:         'toShow',
+			keyToSentValue:          'toSend',
+			attributesForSentInput:  ['id' => 'limit-result-count-bar'],
+			attributesForShownInput: [
+										 'data-placeholder-filter' => \Localization\Controls\SelectOption,
+										 'readonly' => true
+									 ]
 		);
 		
 		return
@@ -1601,7 +1750,7 @@ HTML;
 			$pageInput  = '';
 		}
 		
-		$searchInput = '<input name="search" type="search" id="search-bar" value="'.htmlspecialchars($search ?? '').'" placeholder="'.\Localization\Controls\SearchPlaceholder.'" required />';
+		$searchInput = '<input class="custom-input" name="search" type="search" id="search-bar" value="'.htmlspecialchars($search ?? '').'" placeholder="'.\Localization\Controls\SearchPlaceholder.'" required />';
 		
 		return
 		'
@@ -1610,7 +1759,7 @@ HTML;
 			'.$limitInput.'
 			'.$pageInput.'
 			'.$searchInput.'
-			<button id="search-bar-button">'.\Localization\Controls\SearchButton.'</button>
+			<button class="custom-button" id="search-bar-button">'.\Localization\Controls\SearchButton.'</button>
 		</section>
 		';
 	}

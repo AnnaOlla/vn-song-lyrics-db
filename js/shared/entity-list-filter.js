@@ -1,11 +1,9 @@
-// User may enter the name romanized differently, remove all whitespaces
-function prepareInputForFiltering(anyString) {
-	return anyString.replaceAll(/[^\p{L}\p{Nd}]/gu, '');
-}
+// Dependencies:
+// -- prepare-entity-name-for-filtering.js
 
 function filterSections(e) {
 	const filterBar   = e.target;
-	const filterValue = prepareInputForFiltering(filterBar.value);
+	const filterValue = prepareEntityNameForFiltering(filterBar.value);
 	const entities    = document.getElementsByClassName('list-entity');
 	
 	for (const entity of entities) {
@@ -13,7 +11,7 @@ function filterSections(e) {
 		let isMatch = false;
 		
 		for (const name of names) {
-			const content = prepareInputForFiltering(name.textContent);
+			const content = prepareEntityNameForFiltering(name.textContent);
 			const re      = new RegExp(filterValue, 'i');
 			
 			isMatch = isMatch || re.test(content);

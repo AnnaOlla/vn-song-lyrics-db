@@ -132,14 +132,15 @@ class UserView extends ViolatorView
 			$html[] = 
 			'
 						<section class="related-entity-controls">
-							'.$this->createSelect
+							'.$this->createSearchableSelect
 							(
-								iteratedOptions: $albums,
-								selectedOption:  $relatedAlbum,
-								addEmptyOption:  true,
-								keyToShownValue: 'transliterated_name',
-								keyToSentValue:  'id',
-								attributes:      ['name' => 'album-ids[]', 'disabled' => $disabled]
+								iteratedOptions:         $albums,
+								selectedOption:          $relatedAlbum,
+								addEmptyOption:          true,
+								keyToShownValue:         'transliterated_name',
+								keyToSentValue:          'id',
+								attributesForSentInput:  ['name' => 'album-ids[]', 'disabled' => $disabled],
+								attributesForShownInput: ['disabled' => $disabled]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -167,14 +168,15 @@ class UserView extends ViolatorView
 			$html[] = 
 			'
 						<section class="related-entity-controls">
-							'.$this->createSelect
+							'.$this->createSearchableSelect
 							(
-								iteratedOptions: $characters,
-								selectedOption:  $relatedCharacter,
-								addEmptyOption:  true,
-								keyToShownValue: 'transliterated_name',
-								keyToSentValue:  'id',
-								attributes:      ['name' => 'character-ids[]', 'disabled' => $disabled]
+								iteratedOptions:         $characters,
+								selectedOption:          $relatedCharacter,
+								addEmptyOption:          true,
+								keyToShownValue:         'transliterated_name',
+								keyToSentValue:          'id',
+								attributesForSentInput:  ['name' => 'character-ids[]', 'disabled' => $disabled],
+								attributesForShownInput: ['disabled' => $disabled]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -367,14 +369,15 @@ class UserView extends ViolatorView
 			$html[] = 
 			'
 						<section class="related-entity-controls">
-							'.$this->createSelect
+							'.$this->createSearchableSelect
 							(
-								iteratedOptions: $games,
-								selectedOption:  $relatedGame,
-								addEmptyOption:  true,
-								keyToShownValue: 'transliterated_name',
-								keyToSentValue:  'id',
-								attributes:      ['name' => 'game-ids[]', 'disabled' => $disabled]
+								iteratedOptions:         $games,
+								selectedOption:          $relatedGame,
+								addEmptyOption:          true,
+								keyToShownValue:         'transliterated_name',
+								keyToSentValue:          'id',
+								attributesForSentInput:  ['name' => 'game-ids[]', 'disabled' => $disabled],
+								attributesForShownInput: ['disabled' => $disabled]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -555,15 +558,15 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="8">
 						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\OriginalArtist, 2, false).'
-						'.$this->createSelect
+						'.$this->createSearchableSelect
 						(
-							iteratedOptions: $originalArtists,
-							disabledOptions: [$artist],
-							selectedOption:  $originalArtist,
-							addEmptyOption:  true,
-							keyToShownValue: 'transliterated_name',
-							keyToSentValue:  'id',
-							attributes:      ['name' => 'original-artist-id']
+							iteratedOptions:        $originalArtists,
+							disabledOptions:        [$artist],
+							selectedOption:         $originalArtist,
+							addEmptyOption:         true,
+							keyToShownValue:        'transliterated_name',
+							keyToSentValue:         'id',
+							attributesForSentInput: ['name' => 'original-artist-id']
 						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="9">
@@ -736,14 +739,15 @@ class UserView extends ViolatorView
 			$html[] = 
 			'
 						<section class="related-entity-controls">
-							'.$this->createSelect
+							'.$this->createSearchableSelect
 							(
-								iteratedOptions: $games,
-								selectedOption:  $relatedGame,
-								addEmptyOption:  true,
-								keyToShownValue: 'transliterated_name',
-								keyToSentValue:  'id',
-								attributes:      ['name' => 'game-ids[]', 'disabled' => $disabled]
+								iteratedOptions:         $games,
+								selectedOption:          $relatedGame,
+								addEmptyOption:          true,
+								keyToShownValue:         'transliterated_name',
+								keyToSentValue:          'id',
+								attributesForSentInput:  ['name' => 'game-ids[]', 'disabled' => $disabled],
+								attributesForShownInput: ['disabled' => $disabled]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -905,14 +909,14 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
 						'.$this->createHeadingForInput(\Localization\SongEditorPage\HasVocal, 2, true).'
-						'.$this->createSelect
+						'.$this->createSearchableSelect
 						(
-							iteratedOptions: $vocalOptions,
-							selectedOption:  is_null($hasVocal) ? ['id' => '', 'value' => ''] : $vocalOptions[$hasVocal],
-							addEmptyOption:  true,
-							keyToShownValue: 'value',
-							keyToSentValue:  'id',
-							attributes:      ['name' => 'has-vocal']
+							iteratedOptions:        $vocalOptions,
+							selectedOption:         is_null($hasVocal) ? null : $vocalOptions[$hasVocal],
+							addEmptyOption:         true,
+							keyToShownValue:        'value',
+							keyToSentValue:         'id',
+							attributesForSentInput: ['name' => 'has-vocal']
 						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="6">
@@ -1059,24 +1063,26 @@ class UserView extends ViolatorView
 			$html[] = 
 			'
 						<section class="related-entity-controls">
-							'.$this->createSelect
+							'.$this->createSearchableSelect
 							(
-								iteratedOptions: $artists,
-								selectedOption:  $relatedPerformer,
-								addEmptyOption:  true,
-								keyToShownValue: 'artist_transliterated_name',
-								keyToSentValue:  'artist_id',
-								attributes:      ['name' => 'artist-ids[]', 'disabled' => $disabled]
+								iteratedOptions:         $artists,
+								selectedOption:          $relatedPerformer,
+								addEmptyOption:          true,
+								keyToShownValue:         'artist_transliterated_name',
+								keyToSentValue:          'artist_id',
+								attributesForSentInput:  ['name' => 'artist-ids[]', 'disabled' => $disabled],
+								attributesForShownInput: ['disabled' => $disabled]
 							).'
 							<span>'.\Localization\LyricsEditorPage\PerformsAs.'</span>
-							'.$this->createSelect
+							'.$this->createSearchableSelect
 							(
-								iteratedOptions: $characters,
-								selectedOption:  $relatedPerformer,
-								addEmptyOption:  true,
-								keyToShownValue: 'character_transliterated_name',
-								keyToSentValue:  'character_id',
-								attributes:      ['name' => 'character-ids[]', 'disabled' => $disabled]
+								iteratedOptions:         $characters,
+								selectedOption:          $relatedPerformer,
+								addEmptyOption:          true,
+								keyToShownValue:         'character_transliterated_name',
+								keyToSentValue:          'character_id',
+								attributesForSentInput:  ['name' => 'character-ids[]', 'disabled' => $disabled],
+								attributesForShownInput: ['disabled' => $disabled]
 							).'
 							'.$addRowButton = $this->createAddRowButton
 							(
@@ -1095,26 +1101,26 @@ class UserView extends ViolatorView
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						'.$this->createHeadingForInput(\Localization\LyricsEditorPage\OriginalSong, 2, false).'
-						'.$this->createSelect
+						'.$this->createSearchableSelect
 						(
-							iteratedOptions: $originalSongs,
-							selectedOption:  $originalSong,
-							addEmptyOption:  true,
-							keyToShownValue: 'transliterated_name',
-							keyToSentValue:  'id',
-							attributes:      ['name' => 'original-song-id', 'id' => 'original-song-select']
+							iteratedOptions:        $originalSongs,
+							selectedOption:         $originalSong,
+							addEmptyOption:         true,
+							keyToShownValue:        'transliterated_name',
+							keyToSentValue:         'id',
+							attributesForSentInput: ['name' => 'original-song-id', 'id' => 'original-song-select']
 						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						'.$this->createHeadingForInput(\Localization\LyricsEditorPage\Language, 2, true).'
-						'.$this->createSelect
+						'.$this->createSearchableSelect
 						(
-							iteratedOptions: $languages,
-							selectedOption:  $song,
-							addEmptyOption:  true,
-							keyToShownValue: \Localization\Functions\localizeLanguageKey(),
-							keyToSentValue:  'language_id',
-							attributes:      ['name' => 'language-id', 'id' => 'language-select', 'required' => true]
+							iteratedOptions:        $languages,
+							selectedOption:         $song,
+							addEmptyOption:         true,
+							keyToShownValue:        \Localization\Functions\localizeLanguageKey(),
+							keyToSentValue:         'language_id',
+							attributesForSentInput: ['name' => 'language-id', 'id' => 'language-select', 'required' => true]
 						).'
 					</section>
 					<section class="has-tooltip lyrics-textarea" tooltip-id="4">
@@ -1245,14 +1251,14 @@ class UserView extends ViolatorView
 				);
 			}
 			
-			$languageSelect = $this->createSelect
+			$languageSelect = $this->createSearchableSelect
 			(
-				iteratedOptions: $languages,
-				disabledOptions: $forbiddenLanguages,
-				addEmptyOption:  true,
-				keyToShownValue: \Localization\Functions\localizeLanguageKey(),
-				keyToSentValue:  'id',
-				attributes:      ['name' => 'translation-language-id', 'required' => true, 'disabled' => !is_null($translation)]
+				iteratedOptions:        $languages,
+				disabledOptions:        $forbiddenLanguages,
+				addEmptyOption:         true,
+				keyToShownValue:        \Localization\Functions\localizeLanguageKey(),
+				keyToSentValue:         'id',
+				attributesForSentInput: ['name' => 'translation-language-id', 'required' => true, 'disabled' => !is_null($translation)]
 			);
 			
 			$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);

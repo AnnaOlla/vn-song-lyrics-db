@@ -1,4 +1,4 @@
-input[type="file"] {
+.custom-fileupload-input {
 	opacity: 0;
 	width: 0;
 	height: 0;
@@ -12,7 +12,7 @@ input[type="file"] {
 	cursor: pointer;
 }
 
-.custom-fileupload > section {
+.custom-fileupload-button {
 	display: inline-block;
 	
 	background-color: var(--color-input-primary);
@@ -38,12 +38,12 @@ input[type="file"] {
 	flex: 1;
 }
 
-.custom-fileupload > section.has-file {
+.custom-fileupload-button.has-file {
 	color: var(--color-text);
 }
 
-.custom-fileupload > section:hover,
-.custom-fileupload > section:focus {
+.custom-fileupload-button:hover,
+.custom-fileupload-button:focus {
 	background-color: var(--color-input-secondary);
 	outline: none;
 }

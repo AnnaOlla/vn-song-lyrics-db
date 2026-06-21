@@ -31,16 +31,16 @@ async function sendStatus(e) {
 	});
 	
 	if (response.ok) {
-		e.target.style.backgroundColor = '#7CBF5F';
+		e.target.nextElementSibling.style.backgroundColor = '#7CBF5F';
 	} else {
 		const echo = await response.text();
 		alert(response.status + ': ' + echo);
-		e.target.style.backgroundColor = '#BF5F5F';
+		e.target.nextElementSibling.style.backgroundColor = '#BF5F5F';
 	}
 }
 
 /* function main() */ {
-	const statusSelects = document.querySelectorAll('select.status-select');
+	const statusSelects = document.querySelectorAll('.status-select');
 	
 	for (statusSelect of statusSelects) {
 		statusSelect.addEventListener('change', sendStatus);

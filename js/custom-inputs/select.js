@@ -1,4 +1,4 @@
-function overflowsBodyVertically(element) {
+function selectOverflowsBodyVertically(element) {
 	const absoluteBottom = element.getBoundingClientRect().bottom + window.scrollY;
 	return absoluteBottom > document.body.scrollHeight;
 }
@@ -43,7 +43,7 @@ function customSelectOnFocus(e) {
 	select.style.marginLeft   = '0px';
 	select.style.marginRight  = '0px';
 	
-	while (overflowsBodyVertically(select) && select.size > 2) {
+	while (selectOverflowsBodyVertically(select) && select.size > 2) {
 		select.size--;
 	}
 }
@@ -76,7 +76,7 @@ function customSelectOnChange(e) {
 }
 
 /* function main() */ {
-	const selects = document.querySelectorAll('select');
+	const selects = document.querySelectorAll('.custom-select');
 	
 	for (const select of selects) {
 		select.addEventListener('focus',  customSelectOnFocus);

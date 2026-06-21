@@ -1,4 +1,4 @@
-textarea {
+.custom-textarea {
 	display: inline-block;
 	
 	background-color: var(--color-input-primary);
@@ -26,17 +26,17 @@ textarea {
 	overflow-y: hidden;
 }
 
-textarea[readonly],
-textarea[disabled] {
+.custom-textarea[readonly],
+.custom-textarea[disabled] {
 	cursor: not-allowed;
 }
 
-textarea:hover:not([disabled]):not([readonly]),
-textarea:focus:not([disabled]):not([readonly]) {
+.custom-textarea:hover:not([disabled]):not([readonly]),
+.custom-textarea:focus:not([disabled]):not([readonly]) {
 	background-color: var(--color-input-secondary);
 	outline: none;
 }
 
-textarea::placeholder {
+.custom-textarea::placeholder {
 	color: var(--color-text-placeholder);
 }

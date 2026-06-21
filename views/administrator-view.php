@@ -306,7 +306,7 @@ class AdministratorView extends UserView
 		$selectVocal = $this->createSelect
 		(
 			iteratedOptions: $vocalOptions,
-			selectedOption:  ['id' => 0, 'value' => \Localization\SongEditorPage\HasVocalFalse],
+			selectedOption:  $vocalOptions[0],
 			keyToShownValue: 'value',
 			keyToSentValue:  'id',
 			attributes:      ['name' => 'has-vocal[]', 'required' => true]
@@ -342,13 +342,13 @@ class AdministratorView extends UserView
 			$html[] = 
 			'
 								<th>
-									<select class="name-type-select" data-column="'.$i.'">
-										<option data-type="" data-required="false"></option>
-										<option data-type="original-name[]" data-required="true">'.\Localization\FillAlbumEditorPage\OriginalName.'</option>
-										<option data-type="transliterated-name[]" data-required="true">'.\Localization\FillAlbumEditorPage\TransliteratedName.'</option>
-										<option data-type="localized-name[]" data-required="false">'.\Localization\FillAlbumEditorPage\LocalizedName.'</option>
+									<select class="name-type-select custom-select" data-column="'.$i.'">
+										<option data-type=""                      class="custom-select-option" data-required="false"></option>
+										<option data-type="original-name[]"       class="custom-select-option" data-required="true" >'.\Localization\FillAlbumEditorPage\OriginalName.'</option>
+										<option data-type="transliterated-name[]" class="custom-select-option" data-required="true" >'.\Localization\FillAlbumEditorPage\TransliteratedName.'</option>
+										<option data-type="localized-name[]"      class="custom-select-option" data-required="false">'.\Localization\FillAlbumEditorPage\LocalizedName.'</option>
 									</select>
-									<section class="select-fake-filler"></section>
+									<section class="custom-select-filler"></section>
 								</th>
 			';
 		}
@@ -366,8 +366,8 @@ class AdministratorView extends UserView
 				$html[] = 
 				'
 							<tr>
-								<td><input type="text" name="disc-number[]" value="'.($i + 1).'" readonly/></td>
-								<td><input type="text" name="track-number[]" value="'.($j + 1).'" readonly/></td>
+								<td><input class="custom-input" type="text" name="disc-number[]" value="'.($i + 1).'" readonly/></td>
+								<td><input class="custom-input" type="text" name="track-number[]" value="'.($j + 1).'" readonly/></td>
 				';
 				
 				for ($k = 0; $k < count($discography[$i][$j]) || $k < $LOCALIZATION_MIN_COUNT; $k++)
@@ -375,7 +375,7 @@ class AdministratorView extends UserView
 					$value = htmlspecialchars($discography[$i][$j][$k] ?? '');
 					$html[] = 
 					'
-								<td><input type="text" data-column-id="'.$k.'" value="'.$value.'"/></td>
+								<td><input class="custom-input" type="text" data-column-id="'.$k.'" value="'.$value.'"/></td>
 					';
 				}
 				
@@ -431,7 +431,7 @@ class AdministratorView extends UserView
 		(
 			[
 				'/js/shared/tooltip-window.js',
-				'/js/fill-album-editor-page.js'
+				'/js/moderation/fill-album-editor-page.js'
 			]
 		);
 		
