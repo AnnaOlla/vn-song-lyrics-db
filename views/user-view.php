@@ -138,6 +138,7 @@ class UserView extends ViolatorView
 								selectedOption:          $relatedAlbum,
 								addEmptyOption:          true,
 								keyToShownValue:         'transliterated_name',
+								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'album-ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
@@ -179,6 +180,7 @@ class UserView extends ViolatorView
 								selectedOption:          $relatedCharacter,
 								addEmptyOption:          true,
 								keyToShownValue:         'transliterated_name',
+								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'character-ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
@@ -385,6 +387,7 @@ class UserView extends ViolatorView
 								selectedOption:          $relatedGame,
 								addEmptyOption:          true,
 								keyToShownValue:         'transliterated_name',
+								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'game-ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
@@ -580,6 +583,7 @@ class UserView extends ViolatorView
 							selectedOption:         $originalArtist,
 							addEmptyOption:         true,
 							keyToShownValue:        'transliterated_name',
+							keysToShownHints:       ['original_name', 'localized_name'],
 							keyToSentValue:         'id',
 							attributesForSentInput: ['name' => 'original-artist-id']
 						).'
@@ -760,6 +764,7 @@ class UserView extends ViolatorView
 								selectedOption:          $relatedGame,
 								addEmptyOption:          true,
 								keyToShownValue:         'transliterated_name',
+								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'game-ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
@@ -1089,6 +1094,7 @@ class UserView extends ViolatorView
 								selectedOption:          $relatedPerformer,
 								addEmptyOption:          true,
 								keyToShownValue:         'artist_transliterated_name',
+								keysToShownHints:        ['artist_original_name', 'artist_localized_name'],
 								keyToSentValue:          'artist_id',
 								attributesForSentInput:  ['name' => 'artist-ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
@@ -1105,6 +1111,7 @@ class UserView extends ViolatorView
 								selectedOption:          $relatedPerformer,
 								addEmptyOption:          true,
 								keyToShownValue:         'character_transliterated_name',
+								keysToShownHints:        ['character_original_name', 'character_localized_name'],
 								keyToSentValue:          'character_id',
 								attributesForSentInput:  ['name' => 'character-ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
@@ -1137,6 +1144,7 @@ class UserView extends ViolatorView
 							selectedOption:         $originalSong,
 							addEmptyOption:         true,
 							keyToShownValue:        'transliterated_name',
+							keysToShownHints:       ['original_name', 'localized_name'],
 							keyToSentValue:         'id',
 							attributesForSentInput: ['name' => 'original-song-id', 'id' => 'original-song-select']
 						).'
