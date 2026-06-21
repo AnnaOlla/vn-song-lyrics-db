@@ -2,9 +2,10 @@
 
 final class Router
 {
-	private const VIOLATOR_IPS_FILENAME          = '.administering/.violations/.blocked-ips.txt';
-	private const VIOLATOR_REQUESTS_FILENAME     = '.administering/.violations/.prohibited-requests.txt';
-	private const VIOLATOR_PAGE_FILENAME         = 'include/violator-page.php';
+	private const BLOCKED_IPS_FILENAME          = '.administering/.blockages/.blocked-ips.txt';
+	private const BLOCKED_USER_AGENTS_FILENAME  = '.administering/.blockages/.blocked-user-agents.txt';
+	private const BLOCKED_REQUESTS_FILENAME     = '.administering/.blockages/.blocked-requests.txt';
+	private const BLOCKED_USER_PAGE_FILENAME    = 'include/violator-page.php';
 	
 	private const MAINTENANCE_MODE_FILENAME      = '.administering/.maintenance-mode-on';
 	
@@ -18,38 +19,52 @@ final class Router
 	private const RATE_LIMIT_COUNT               = 20;
 	private const RATE_LIMIT_BANNABLE_COUNT      = 40;
 	
-	private static function isAgentKnownViolator(): bool
+	private static function isBlockedIp(): bool
 	{
-		$bannedIps = new SplFileObject(self::VIOLATOR_IPS_FILENAME);
-		$bannedIps->setFlags(SplFileObject::DROP_NEW_LINE);
+		$blockedIps = new SplFileObject(self::BLOCKED_IPS_FILENAME);
+		$blockedIps->setFlags(SplFileObject::DROP_NEW_LINE);
 		
-		foreach ($bannedIps as $bannedIp)
+		foreach ($blockedIps as $blockedIp)
 		{
-			if ($_SERVER['REMOTE_ADDR'] === $bannedIp)
+			if ($_SERVER['REMOTE_ADDR'] === $blockedIp)
 				return true;
 		}
 		
 		return false;
 	}
 	
-	private static function isForbiddenRequest(): bool
+	private static function isBlockedRequest(): bool
 	{
-		$bannedRequests = new SplFileObject(self::VIOLATOR_REQUESTS_FILENAME);
-		$bannedRequests->setFlags(SplFileObject::DROP_NEW_LINE);
+		$blockedRequests = new SplFileObject(self::BLOCKED_REQUESTS_FILENAME);
+		$blockedRequests->setFlags(SplFileObject::DROP_NEW_LINE);
 		
-		foreach ($bannedRequests as $bannedRequest)
+		foreach ($blockedRequests as $blockedRequest)
 		{
-			if (mb_strstr($_SERVER['REQUEST_URI'], $bannedRequest))
+			if (mb_strstr($_SERVER['REQUEST_URI'], $blockedRequest))
 				return true;
 		}
 		
 		return false;
 	}
 	
-	private static function banUnknownViolator(): void
+	private static function isBlockedUserAgent(): bool
 	{
-		$bannedIps = new SplFileObject(self::VIOLATOR_IPS_FILENAME, 'a');
-		$bannedIps->fwrite($_SERVER['REMOTE_ADDR'].PHP_EOL);
+		$blockedUserAgents = new SplFileObject(self::BLOCKED_REQUESTS_FILENAME);
+		$blockedUserAgents->setFlags(SplFileObject::DROP_NEW_LINE);
+		
+		foreach ($blockedUserAgents as $blockedUserAgent)
+		{
+			if (mb_strstr($_SERVER['HTTP_USER_AGENT'], $blockedUserAgent))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	private static function blockIp(): void
+	{
+		$blockedIps = new SplFileObject(self::BLOCKED_IPS_FILENAME, 'a');
+		$blockedIps->fwrite($_SERVER['REMOTE_ADDR'].PHP_EOL);
 	}
 	
 	private static function updateRateLimit(): void
@@ -189,25 +204,25 @@ final class Router
 		self::startSession();
 		self::updateRateLimit();
 		
-		if (self::isAgentKnownViolator())
+		if (self::isBlockedIp() || self::isBlockedUserAgent())
 		{
 			self::endSession();
 			
 			http_response_code(403);
 			header("Connection: close");
-			require_once self::VIOLATOR_PAGE_FILENAME;
+			require_once self::BLOCKED_USER_PAGE_FILENAME;
 			
 			exit;
 		}
 		
-		if (self::isForbiddenRequest() || self::isRateLimitExceededTooMuch())
+		if (self::isBlockedRequest() || self::isRateLimitExceededTooMuch())
 		{
-			self::banUnknownViolator();
+			self::blockIp();
 			self::endSession();
 			
 			http_response_code(403);
 			header("Connection: close");
-			require_once self::VIOLATOR_PAGE_FILENAME;
+			require_once self::BLOCKED_USER_PAGE_FILENAME;
 			
 			exit;
 		}
