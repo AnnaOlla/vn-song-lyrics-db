@@ -40,7 +40,7 @@ final class Router
 		
 		foreach ($blockedRequests as $blockedRequest)
 		{
-			if (mb_strstr($_SERVER['REQUEST_URI'], $blockedRequest))
+			if (str_contains($_SERVER['REQUEST_URI'], $blockedRequest))
 				return true;
 		}
 		
@@ -49,12 +49,12 @@ final class Router
 	
 	private static function isBlockedUserAgent(): bool
 	{
-		$blockedUserAgents = new SplFileObject(self::BLOCKED_REQUESTS_FILENAME);
+		$blockedUserAgents = new SplFileObject(self::BLOCKED_USER_AGENTS_FILENAME);
 		$blockedUserAgents->setFlags(SplFileObject::DROP_NEW_LINE);
 		
 		foreach ($blockedUserAgents as $blockedUserAgent)
 		{
-			if (mb_strstr($_SERVER['HTTP_USER_AGENT'], $blockedUserAgent))
+			if (str_contains($_SERVER['HTTP_USER_AGENT'], $blockedUserAgent))
 				return true;
 		}
 		
