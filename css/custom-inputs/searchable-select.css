@@ -129,7 +129,10 @@
 
 .custom-searchable-select-option {
 	cursor: pointer;
-	padding: var(--section-padding);
+	padding-top: var(--text-margin);
+	padding-left: var(--section-padding);
+	padding-right: var(--section-padding);
+	padding-bottom: var(--text-margin);
 }
 
 .custom-searchable-select-option[disabled] {
@@ -162,6 +165,7 @@
 
 .custom-searchable-select-option-shown-hint {
 	color: var(--color-text-placeholder);
+	font-size: 50%;
 }
 
 .custom-searchable-select-option[disabled] > .custom-searchable-select-option-shown-value,
