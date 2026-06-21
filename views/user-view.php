@@ -140,7 +140,12 @@ class UserView extends ViolatorView
 								keyToShownValue:         'transliterated_name',
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'album-ids[]', 'disabled' => $disabled],
-								attributesForShownInput: ['disabled' => $disabled]
+								attributesForShownInput: [
+								                              'placeholder'             => \Localization\Controls\SelectOption,
+															  'data-placeholder-select' => \Localization\Controls\SelectOption,
+															  'data-placeholder-filter' => \Localization\Controls\SelectFilter,
+															  'disabled'                => $disabled
+														 ]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -176,7 +181,12 @@ class UserView extends ViolatorView
 								keyToShownValue:         'transliterated_name',
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'character-ids[]', 'disabled' => $disabled],
-								attributesForShownInput: ['disabled' => $disabled]
+								attributesForShownInput: [
+								                              'placeholder'             => \Localization\Controls\SelectOption,
+															  'data-placeholder-select' => \Localization\Controls\SelectOption,
+															  'data-placeholder-filter' => \Localization\Controls\SelectFilter,
+															  'disabled'                => $disabled
+														 ]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -377,7 +387,12 @@ class UserView extends ViolatorView
 								keyToShownValue:         'transliterated_name',
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'game-ids[]', 'disabled' => $disabled],
-								attributesForShownInput: ['disabled' => $disabled]
+								attributesForShownInput: [
+								                              'placeholder'             => \Localization\Controls\SelectOption,
+															  'data-placeholder-select' => \Localization\Controls\SelectOption,
+															  'data-placeholder-filter' => \Localization\Controls\SelectFilter,
+															  'disabled'                => $disabled
+														 ]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -747,7 +762,12 @@ class UserView extends ViolatorView
 								keyToShownValue:         'transliterated_name',
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'game-ids[]', 'disabled' => $disabled],
-								attributesForShownInput: ['disabled' => $disabled]
+								attributesForShownInput: [
+								                              'placeholder'             => \Localization\Controls\SelectOption,
+															  'data-placeholder-select' => \Localization\Controls\SelectOption,
+															  'data-placeholder-filter' => \Localization\Controls\SelectFilter,
+															  'disabled'                => $disabled
+														 ]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -1071,7 +1091,12 @@ class UserView extends ViolatorView
 								keyToShownValue:         'artist_transliterated_name',
 								keyToSentValue:          'artist_id',
 								attributesForSentInput:  ['name' => 'artist-ids[]', 'disabled' => $disabled],
-								attributesForShownInput: ['disabled' => $disabled]
+								attributesForShownInput: [
+								                              'placeholder'             => \Localization\Controls\SelectOption,
+															  'data-placeholder-select' => \Localization\Controls\SelectOption,
+															  'data-placeholder-filter' => \Localization\Controls\SelectFilter,
+															  'disabled'                => $disabled
+														 ]
 							).'
 							<span>'.\Localization\LyricsEditorPage\PerformsAs.'</span>
 							'.$this->createSearchableSelect
@@ -1082,7 +1107,12 @@ class UserView extends ViolatorView
 								keyToShownValue:         'character_transliterated_name',
 								keyToSentValue:          'character_id',
 								attributesForSentInput:  ['name' => 'character-ids[]', 'disabled' => $disabled],
-								attributesForShownInput: ['disabled' => $disabled]
+								attributesForShownInput: [
+								                              'placeholder'             => \Localization\Controls\SelectOption,
+															  'data-placeholder-select' => \Localization\Controls\SelectOption,
+															  'data-placeholder-filter' => \Localization\Controls\SelectFilter,
+															  'disabled'                => $disabled
+														 ]
 							).'
 							'.$addRowButton = $this->createAddRowButton
 							(
