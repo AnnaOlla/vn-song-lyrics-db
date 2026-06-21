@@ -1032,19 +1032,27 @@ class UserView extends ViolatorView
 		for ($i = 0; $i < count($artists); $i++)
 		{
 			$artists[$i]['artist_id']                  = $artists[$i]['id'];
+			$artists[$i]['artist_original_name']       = $artists[$i]['original_name'];
 			$artists[$i]['artist_transliterated_name'] = $artists[$i]['transliterated_name'];
+			$artists[$i]['artist_localized_name']      = $artists[$i]['localized_name'];
 			
 			unset($artists[$i]['id']);
+			unset($artists[$i]['original_name']);
 			unset($artists[$i]['transliterated_name']);
+			unset($artists[$i]['localized_name']);
 		}
 		
 		for ($i = 0; $i < count($characters); $i++)
 		{
 			$characters[$i]['character_id']                  = $characters[$i]['id'];
+			$characters[$i]['character_original_name']       = $characters[$i]['original_name'];
 			$characters[$i]['character_transliterated_name'] = $characters[$i]['transliterated_name'];
+			$characters[$i]['character_localized_name']      = $characters[$i]['localized_name'];
 			
 			unset($characters[$i]['id']);
+			unset($characters[$i]['original_name']);
 			unset($characters[$i]['transliterated_name']);
+			unset($characters[$i]['localized_name']);
 		}
 		
 		for ($i = 0; $i < count($languages); $i++)
