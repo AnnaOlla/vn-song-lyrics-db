@@ -6,7 +6,7 @@ final class Router
 	private const VIOLATOR_REQUESTS_FILENAME     = '.administering/.violations/.prohibited-requests.txt';
 	private const VIOLATOR_PAGE_FILENAME         = 'include/violator-page.php';
 	
-	private const MAINTENANCE_MODE_FILENAME      = '.maintenance-mode-on';
+	private const MAINTENANCE_MODE_FILENAME      = '.administering/.maintenance-mode-on';
 	
 	private const ACCEPTED_LANGUAGES             = ['en', 'ru', 'ja'];
 	private const DEFAULT_LANGUAGE               = 'en';
