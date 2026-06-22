@@ -7,16 +7,12 @@
 	text-align: center;
 }
 
-.lyrics-controls select {
+.lyrics-controls .custom-searchable-select-shown-value {
 	text-align: center;
 	text-align-last: center;
 	
 	/* Must be equal to the value of padding-right in select.css */
 	padding-left: calc(var(--section-padding) + 36px);
-}
-
-.lyrics-controls select[multiple] {
-	padding-left: var(--section-padding); /* use arrow space */
 }
 
 .lyrics-section span {
