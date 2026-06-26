@@ -1979,7 +1979,7 @@ class VisitorView extends ErrorView
 				<p>3. <span class="highlight">っ</span>か　→　<span class="highlight">k</span>ka</p>
 				<p>---- <span class="highlight">っ</span>ち　→　<span class="highlight">c</span>chi, <span class="highlight">っ</span>し　→　<span class="highlight">s</span>shi, <span class="highlight">っ</span>つ　→　<span class="highlight">t</span>tsu</p>
 				<p>4. 私<span class="highlight">は</span>、私<span class="highlight">へ</span>　→　watashi <span class="highlight">wa</span>, watashi <span class="highlight">e</span></p>
-				<p>5. おう、えい　→　ou, ei</p>
+				<p>5. おお、おう、えい　→　oo, ou, ei</p>
 				<p>6. カタカナ ＝ ひらがな</p>
 				<br/>
 				
