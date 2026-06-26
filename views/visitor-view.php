@@ -1652,6 +1652,7 @@ class VisitorView extends ErrorView
 				<p>- <a href="#translation">'.\Localization\WritingGuidePage\TranslationLink.'</a></p>
 				<p>- <a href="#romanization">'.\Localization\WritingGuidePage\RomanizationLink.'</a></p>
 				<p>- <a href="#formatting">'.\Localization\WritingGuidePage\FormattingLink.'</a></p>
+				<p>- <a href="#useful-links">'.\Localization\WritingGuidePage\UsefulLinksLink.'</a></p>
 				<p>- <a href="#captcha">'.\Localization\WritingGuidePage\CaptchaLink.'</a></p>
 				<br/>
 				
@@ -2092,7 +2093,7 @@ class VisitorView extends ErrorView
 				<p>---- <ruby>未来<rt>あした</rt></ruby>　→　ashita</p>
 				<br/>
 				
-				<h2 id="formatting">'.\Localization\WritingGuidePage\HeadingFormatting.'</h2>
+				<h2 id="formatting">'.\Localization\WritingGuidePage\HeadingFormatting.'<a class="note" href="#formatting-note">[1]</a></h2>
 				<p>'.\Localization\WritingGuidePage\FormattingIntroduction.'</p>
 				<p>'.\Localization\WritingGuidePage\FormattingEntity1.'</p>
 				<p>'.\Localization\WritingGuidePage\FormattingEntity2.'</p>
@@ -2110,7 +2111,7 @@ class VisitorView extends ErrorView
 				
 				<p>'.\Localization\WritingGuidePage\FormattingNotes1.'</p>
 				<p>---- <span class="highlight">{nt}N{/nt}</span>'.\Localization\WritingGuidePage\FormattingNotes2.'</p>
-				<p>---- '.\Localization\WritingGuidePage\FormattingNotes3.' click me{nt}1{/nt}　→　click me<a class="note" href="#formatting">[1]</a></p>
+				<p>---- '.\Localization\WritingGuidePage\FormattingNotes3.' click me{nt}1{/nt}　→　click me<a id="formatting-note" class="note" href="#formatting">[1]</a></p>
 				<p>---- '.\Localization\WritingGuidePage\FormattingNotes4.'</p>
 				
 				<p>'.\Localization\WritingGuidePage\FormattingExample1.'<a href="lyrics-example" target="_blank">'.\Localization\WritingGuidePage\FormattingExample2.'</a>'.\Localization\WritingGuidePage\FormattingExample3.'</p>
@@ -2121,6 +2122,15 @@ class VisitorView extends ErrorView
 				<p>'.\Localization\WritingGuidePage\FormattingWarning3.'</p>
 				<p>'.\Localization\WritingGuidePage\FormattingWarning4.'</p>
 				<p>'.\Localization\WritingGuidePage\FormattingWarning5.'</p>
+				<br/>
+				
+				<h2 id="useful-links">'.\Localization\WritingGuidePage\HeadingUsefulLinks.'</h2>
+				<p>'.\Localization\WritingGuidePage\UsefulLinks1.'<a href="https://vndb.org" target="_blank">https://vndb.org</a></p>
+				<p>'.\Localization\WritingGuidePage\UsefulLinks2.'<a href="https://vgmdb.net" target="_blank">https://vgmdb.net</a></p>
+				<p>'.\Localization\WritingGuidePage\UsefulLinks3.'<a href="https://www.steamgriddb.com" target="_blank">https://www.steamgriddb.com</a></p>
+				<p>'.\Localization\WritingGuidePage\UsefulLinks4.'<a href="https://jisho.org" target="_blank">https://jisho.org</a></p>
+				<p>'.\Localization\WritingGuidePage\UsefulLinks5.'<a href="https://jpdb.io" target="_blank">https://jpdb.io</a></p>
+				<p>'.\Localization\WritingGuidePage\UsefulLinks6.'<a href="https://kotobank.jp" target="_blank">https://kotobank.jp</a></p>
 				<br/>
 				
 				<h2 id="captcha">'.\Localization\WritingGuidePage\HeadingCaptcha.'</h2>

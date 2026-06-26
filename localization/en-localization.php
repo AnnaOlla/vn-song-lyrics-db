@@ -625,7 +625,7 @@ namespace Localization\Controls
 	const FileTooBig   = 'File is too big. Try another file …';
 	
 	const SelectOption = 'Select …';
-	const SelectFilter = 'Input to filter out …';
+	const SelectFilter = 'Filter out …';
 	
 	const Cancel       = 'Return';
 	const Confirmation = 'I confirm';
@@ -1046,6 +1046,7 @@ namespace Localization\WritingGuidePage
 	const TranslationLink  = 'How To Translate Lyrics';
 	const RomanizationLink = 'How To Romanize Lyrics And Names';
 	const FormattingLink   = 'How To Apply Formatting';
+	const UsefulLinksLink  = 'Useful Links';
 	const CaptchaLink      = 'How To Solve Captcha';
 	
 	const HeadingLyrics       = 'How To Write Lyrics';
@@ -1152,7 +1153,15 @@ namespace Localization\WritingGuidePage
 	const FormattingWarning2 = '- “Notes”;';
 	const FormattingWarning3 = '- “Translation of Lyrics”;';
 	const FormattingWarning4 = '- “Translator’s Notes”.';
-	const FormattingWarning5 = 'We do not impose use of these features. Use them if you want to.';
+	const FormattingWarning5 = 'These features are not imposed on you. Use them if you want to.';
+	
+	const HeadingUsefulLinks = 'Useful Links';
+	const UsefulLinks1       = 'Visual novel database: ';
+	const UsefulLinks2       = 'Video game music database: ';
+	const UsefulLinks3       = 'Video game assets database: ';
+	const UsefulLinks4       = 'English-Japanese dictionary #1: ';
+	const UsefulLinks5       = 'English-Japanese dictionary #2: ';
+	const UsefulLinks6       = 'Japanese-Japanese dictionary: ';
 	
 	const HeadingCaptcha = 'How To Solve Captcha';
 }

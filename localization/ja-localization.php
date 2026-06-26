@@ -625,7 +625,7 @@ namespace Localization\Controls
 	const FileTooBig   = 'ファイルは大きすぎています…';
 	
 	const SelectOption = '選ぶ…';
-	const SelectFilter = '探すように入力を…';
+	const SelectFilter = '探す…';
 	
 	const Cancel       = '戻る';
 	const Confirmation = '確認します';
@@ -1046,6 +1046,7 @@ namespace Localization\WritingGuidePage
 	const TranslationLink  = '翻訳の書き方';
 	const RomanizationLink = 'ローマ字で書き方';
 	const FormattingLink   = 'マークアップの書き方';
+	const UsefulLinksLink  = '役に立つリンク';
 	const CaptchaLink      = 'キャプチャーの書き方';
 	
 	const HeadingLyrics       = '歌詞の書き方';
@@ -1153,6 +1154,14 @@ namespace Localization\WritingGuidePage
 	const FormattingWarning3 = '・「翻訳の歌詞」；';
 	const FormattingWarning4 = '・「翻訳のコメント」。';
 	const FormattingWarning5 = 'この機能を使うかどうか、あなたが選ぶことです。';
+	
+	const HeadingUsefulLinks = '役に立つリンク';
+	const UsefulLinks1       = 'ビジュアルノベルのデータベース：';
+	const UsefulLinks2       = 'ゲームミュージックのデータベース：';
+	const UsefulLinks3       = 'ゲームアセッツのデータベース：';
+	const UsefulLinks4       = '和英辞典＃１：';
+	const UsefulLinks5       = '和英辞典＃２：';
+	const UsefulLinks6       = '和和辞典：';
 	
 	const HeadingCaptcha = 'キャプチャーの書き方';
 }

@@ -1046,7 +1046,8 @@ namespace Localization\WritingGuidePage
 	const TranslationLink  = 'Как написать перевод текста песни?';
 	const RomanizationLink = 'Как написать романизацию текста, имени и названия?';
 	const FormattingLink   = 'Как применить форматирование текста?';
-	const CaptchaLink      = 'Как написать код captcha';
+	const UsefulLinksLink  = 'Полезные ссылки';
+	const CaptchaLink      = 'Как написать код captcha?';
 	
 	const HeadingLyrics       = 'Как написать слова к песне?';
 	const LyricsIntroduction1 = 'Написать слова к песне можно следующими способами:';
@@ -1153,6 +1154,14 @@ namespace Localization\WritingGuidePage
 	const FormattingWarning3 = '- «Перевод слов»;';
 	const FormattingWarning4 = '- «Заметки переводчика».';
 	const FormattingWarning5 = 'Мы не настаиваем на использовании этих функций. Используйте их по своему желанию.';
+	
+	const HeadingUsefulLinks = 'Полезные ссылки';
+	const UsefulLinks1       = 'База данных визуальных новелл: ';
+	const UsefulLinks2       = 'База данных музыки из видеоигр: ';
+	const UsefulLinks3       = 'База данных игровых ресурсов: ';
+	const UsefulLinks4       = 'Англо-японский словарь №1: ';
+	const UsefulLinks5       = 'Англо-японский словарь №2: ';
+	const UsefulLinks6       = 'Японо-японский словарь: ';
 	
 	const HeadingCaptcha = 'Как написать код captcha';
 }
