@@ -1190,8 +1190,9 @@ HTML;
 		array|null  $attributes    = null,
 	): string
 	{
-		$attributes['type']    = 'checkbox';
-		$attributes['class'][] = 'custom-checkbox-input';
+		$attributes['type']     = 'checkbox';
+		$attributes['class'][]  = 'custom-checkbox-input';
+		$attributes['tabindex'] = '-1';
 		
 		if (!Validation::isNullOrEmpty($label))
 			$span = '<span class="custom-checkbox-label">'.htmlspecialchars($label ?? '').'</span>';
@@ -1201,9 +1202,9 @@ HTML;
 		$input = '<span class="custom-checkbox-button">　</span><input '.$this->buildAttributes($attributes).' />';
 		
 		if ($isLabelBefore)
-			return '<label class="custom-checkbox">'.$span.$input.'</label>';
+			return '<label class="custom-checkbox" tabindex="0">'.$span.$input.'</label>';
 		else
-			return '<label class="custom-checkbox">'.$input.$span.'</label>';
+			return '<label class="custom-checkbox" tabindex="0">'.$input.$span.'</label>';
 	}
 	
 	final protected function createFilterBar(): string
@@ -1221,8 +1222,9 @@ HTML;
 	
 	final protected function createFileupload(array|null $attributes = null): string
 	{
-		$attributes['type']    = 'file';
-		$attributes['class'][] = 'custom-fileupload-input';
+		$attributes['type']     = 'file';
+		$attributes['class'][]  = 'custom-fileupload-input';
+		$attributes['tabindex'] = '-1';
 		
 		$attributes2 =
 		[
@@ -1233,7 +1235,7 @@ HTML;
 		
 		return
 		'
-		<label class="custom-fileupload">
+		<label class="custom-fileupload" tabindex="0">
 			<input '.$this->buildAttributes($attributes).' />
 			<section '.$this->buildAttributes($attributes2).' >'.\Localization\Controls\ChooseFile.'</section>
 		</label>
@@ -1333,9 +1335,10 @@ HTML;
 			array_unshift($iteratedOptions, $emptyOption);
 		}
 		
-		$attributesForShownInput['class'][] = 'custom-searchable-select-shown-value';
-		$attributesForShownInput['type']    = 'text';
-		$attributesForShownInput['value']   = $selectedOption[$keyToShownValue];
+		$attributesForShownInput['class'][]  = 'custom-searchable-select-shown-value';
+		$attributesForShownInput['type']     = 'text';
+		$attributesForShownInput['value']    = $selectedOption[$keyToShownValue];
+		$attributesForShownInput['tabindex'] = '-1';
 		
 		$attributesForSentInput['class'][]  = 'custom-searchable-select-sent-value';
 		$attributesForSentInput['type']     = 'text';
