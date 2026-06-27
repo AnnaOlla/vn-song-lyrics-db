@@ -320,6 +320,43 @@ ALTER TABLE `users`     MODIFY `uri`                        VARCHAR(32)    UNIQU
 ALTER TABLE `users`     CHANGE `uri`           `uri`        VARCHAR(32)    CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
 ALTER TABLE `users`     ADD    `about_me`                   VARCHAR(500);
 
+ALTER TABLE `character_game_relations` ADD `user_added_id`      INT UNSIGNED NOT NULL              AFTER `game_id`,
+                                       ADD `timestamp_added`    TIMESTAMP    NOT NULL              AFTER `user_added_id`,
+									   ADD `user_updated_id`    INT UNSIGNED NULL     DEFAULT NULL AFTER `timestamp_added`,
+									   ADD `timestamp_updated`  TIMESTAMP    NULL     DEFAULT NULL AFTER `user_updated_id`,
+									   ADD `user_reviewed_id`   INT UNSIGNED NULL     DEFAULT NULL AFTER `timestamp_updated`,
+									   ADD `timestamp_reviewed` TIMESTAMP    NULL     DEFAULT NULL AFTER `user_reviewed_id`;
+ALTER TABLE `character_game_relations` ADD `id` INT UNSIGNED NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+UPDATE `character_game_relations` SET `user_added_id` = 1, `timestamp_added` = NOW(), `user_reviewed_id` = 1, `timestamp_reviewed` = NOW();
+
+ALTER TABLE `game_album_relations` ADD `user_added_id`      INT UNSIGNED NOT NULL              AFTER `album_id`,
+                                   ADD `timestamp_added`    TIMESTAMP    NOT NULL              AFTER `user_added_id`,
+                                   ADD `user_updated_id`    INT UNSIGNED NULL     DEFAULT NULL AFTER `timestamp_added`,
+                                   ADD `timestamp_updated`  TIMESTAMP    NULL     DEFAULT NULL AFTER `user_updated_id`,
+                                   ADD `user_reviewed_id`   INT UNSIGNED NULL     DEFAULT NULL AFTER `timestamp_updated`,
+                                   ADD `timestamp_reviewed` TIMESTAMP    NULL     DEFAULT NULL AFTER `user_reviewed_id`;
+ALTER TABLE `game_album_relations` ADD `id` INT UNSIGNED NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+UPDATE `game_album_relations` SET `user_added_id` = 1, `timestamp_added` = NOW(), `user_reviewed_id` = 1, `timestamp_reviewed` = NOW();
+
+ALTER TABLE `song_artist_character_relations` ADD `user_added_id`      INT UNSIGNED NOT NULL              AFTER `character_id`,
+                                              ADD `timestamp_added`    TIMESTAMP    NOT NULL              AFTER `user_added_id`,
+                                              ADD `user_updated_id`    INT UNSIGNED NULL     DEFAULT NULL AFTER `timestamp_added`,
+                                              ADD `timestamp_updated`  TIMESTAMP    NULL     DEFAULT NULL AFTER `user_updated_id`,
+                                              ADD `user_reviewed_id`   INT UNSIGNED NULL     DEFAULT NULL AFTER `timestamp_updated`,
+                                              ADD `timestamp_reviewed` TIMESTAMP    NULL     DEFAULT NULL AFTER `user_reviewed_id`;
+ALTER TABLE `song_artist_character_relations` ADD `id` INT UNSIGNED NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+
+UPDATE `song_artist_character_relations` SET `user_added_id` = 1, `timestamp_added` = NOW(), `user_reviewed_id` = 1, `timestamp_reviewed` = NOW();
+
+ALTER TABLE `character_game_relations` CHANGE `user_added_id` `user_added_id` INT(10) UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `character_game_relations` CHANGE `timestamp_added` `timestamp_added` TIMESTAMP NULL DEFAULT NULL;
+
+ALTER TABLE `game_album_relations` CHANGE `user_added_id` `user_added_id` INT(10) UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `game_album_relations` CHANGE `timestamp_added` `timestamp_added` TIMESTAMP NULL DEFAULT NULL;
+
+ALTER TABLE `song_artist_character_relations` CHANGE `user_added_id` `user_added_id` INT(10) UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `song_artist_character_relations` CHANGE `timestamp_added` `timestamp_added` TIMESTAMP NULL DEFAULT NULL;
+
 CREATE INDEX index_uri ON games(uri);
 CREATE INDEX index_uri ON albums(uri);
 CREATE INDEX index_uri ON characters(uri);
