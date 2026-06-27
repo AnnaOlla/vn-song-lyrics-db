@@ -1157,6 +1157,7 @@ class VisitorView extends ErrorView
 		$html[] = $this->startRender
 		(
 			title: \Localization\FeedbackPage\Heading,
+			allowIndex:   false,
 			cssSheetUris:
 			[
 				'/css/feedback-page.css',
@@ -1298,6 +1299,8 @@ class VisitorView extends ErrorView
 		$html[] = $this->startRender
 		(
 			title:        $heading,
+			allowIndex:   false,
+			allowFollow:  false,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
@@ -1351,7 +1354,8 @@ class VisitorView extends ErrorView
 		
 		$html[] = $this->startRender
 		(
-			title: $heading,
+			title:        $heading,
+			allowIndex:   false,
 			cssSheetUris:
 			[
 				'/css/user-page.css',

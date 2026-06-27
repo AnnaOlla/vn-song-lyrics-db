@@ -86,6 +86,8 @@ abstract class View
 		string|null $description  = null,
 		string|null $canonicalUri = null,
 		string|null $ogImageUri   = null,
+		bool        $allowIndex   = true,
+		bool        $allowFollow  = true,
 		array       $cssSheetUris = [],
 		array       $jsScriptUris = []
 	): string
@@ -102,6 +104,9 @@ abstract class View
 		
 		$ogUrl          = htmlspecialchars($currentUrl);
 		$ogImageUrl     = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].($ogImageUri ?? '/assets/static-images/wee-hagana-og.webp'));
+		
+		$index          = htmlspecialchars($allowIndex ? 'index' : 'noindex');
+		$follow         = htmlspecialchars($allowFollow ? 'follow' : 'nofollow');
 		
 		$html[] =
 <<<HTML
@@ -122,17 +127,20 @@ abstract class View
 	<meta property="og:image"            content="{$ogImageUrl}" />
 	<meta property="og:image:width"      content="1200" />
 	<meta property="og:image:height"     content="630" />
-	<meta property="og:image:alt"        content="Hagana from World End Economica" />
+	<meta property="og:image:alt"        content="Hagana of World End Economica" />
 	<meta property="og:locale"           content="en_US" />
 	<meta property="og:locale:alternate" content="ru_RU" />
 	<meta property="og:locale:alternate" content="ja_JP" />
 	
-	<meta name="robots"          content="noai, noimageai" />
+	<meta name="robots"          content="{$index}" />
+	<meta name="robots"          content="{$follow}" />
+	<meta name="robots"          content="noai" />
+	<meta name="robots"          content="noimageai" />
 	<meta name="CCBot"           content="nofollow" />
 	<meta name="tdm-reservation" content="1" />
 	
 	<link rel="canonical"                      href="{$canonicalUrl}" />
-	
+
 	<link rel="alternate" hreflang="en"        href="{$alternateRefEn}" />
 	<link rel="alternate" hreflang="ru"        href="{$alternateRefRu}" />
 	<link rel="alternate" hreflang="ja"        href="{$alternateRefJa}" />
@@ -247,6 +255,8 @@ HTML;
 		string|null $description  = null,
 		string|null $canonicalUri = null,
 		string|null $ogImageUri   = null,
+		bool        $allowIndex   = true,
+		bool        $allowFollow  = true,
 		array       $cssSheetUris = [],
 		array       $jsScriptUris = []
 	): string
@@ -255,7 +265,7 @@ HTML;
 <<<HTML
 <!DOCTYPE html>
 <html lang="{$this->language}">
-{$this->createHead($title, $description, $canonicalUri, $ogImageUri, $cssSheetUris, $jsScriptUris)}
+{$this->createHead($title, $description, $canonicalUri, $ogImageUri, $allowIndex, $allowFollow, $cssSheetUris, $jsScriptUris)}
 <body>
 	{$this->createHeader()}
 	<main>
