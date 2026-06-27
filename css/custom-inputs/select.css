@@ -56,8 +56,6 @@
 
 .custom-select[multiple] {
 	padding-right: var(--element-gap-medium); /* use arrow space */
-	
-	outline: none;
 }
 
 .custom-select:not([multiple]):not([disabled]) {

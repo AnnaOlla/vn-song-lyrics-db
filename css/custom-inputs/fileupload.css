@@ -4,6 +4,8 @@
 	height:  0;
 	margin:  0;
 	padding: 0;
+	
+	outline: none;
 }
 
 .custom-fileupload {
@@ -12,6 +14,8 @@
 	align-items: center;
 	
 	cursor: pointer;
+	
+	outline: none;
 }
 
 .custom-fileupload-button {
@@ -44,8 +48,12 @@
 
 .custom-fileupload-button:hover {
 	background-color: var(--color-textinput-body-hover);
+	
+	outline: none;
 }
 
 .custom-fileupload-button:focus {
 	background-color: var(--color-textinput-body-focus);
+	
+	outline: none;
 }

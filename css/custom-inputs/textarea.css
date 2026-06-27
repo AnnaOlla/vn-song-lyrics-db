@@ -19,11 +19,11 @@
 	overflow-x:    hidden;
 	white-space:   nowrap;
 	
-	outline: none;
-	
 	resize: none;
 	overflow-x: scroll;
 	overflow-y: hidden;
+	
+	outline: none;
 }
 
 .custom-textarea[readonly] {

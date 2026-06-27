@@ -25,9 +25,9 @@
 	overflow-x:    hidden;
 	white-space:   nowrap;
 	
-	outline: none;
-	
 	cursor: text;
+	
+	outline: none;
 }
 
 .custom-input[type="text"]:read-only,

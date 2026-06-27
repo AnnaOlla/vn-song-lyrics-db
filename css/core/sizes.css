@@ -1,6 +1,7 @@
 :root {
 	--size-border-radius: 10px;
 	--size-border-width:  2px;
+	--size-outline-width: 1px;
 	
 	--font-size-h1:       32px;
 	--font-size-h2:       24px;

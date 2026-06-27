@@ -300,6 +300,7 @@ HTML;
 	<script src="/js/core/prepare-entity-name-for-filtering.js?v={$this->getTimestamp('/js/core/prepare-entity-name-for-filtering.js')}"/></script>
 	
 	<script src="/js/custom-inputs/captcha-input.js?v={$this->getTimestamp('/js/custom-inputs/captcha-input.js')}"/></script>
+	<script src="/js/custom-inputs/checkbox.js?v={$this->getTimestamp('/js/custom-inputs/checkbox.js')}"/></script>
 	<script src="/js/custom-inputs/fileupload.js?v={$this->getTimestamp('/js/custom-inputs/fileupload.js')}"/></script>
 	<script src="/js/custom-inputs/searchable-select.js?v={$this->getTimestamp('/js/custom-inputs/searchable-select.js')}"/></script>
 	<script src="/js/custom-inputs/select.js?v={$this->getTimestamp('/js/custom-inputs/select.js')}"/></script>
@@ -1192,7 +1193,6 @@ HTML;
 	{
 		$attributes['type']     = 'checkbox';
 		$attributes['class'][]  = 'custom-checkbox-input';
-		$attributes['tabindex'] = '-1';
 		
 		if (!Validation::isNullOrEmpty($label))
 			$span = '<span class="custom-checkbox-label">'.htmlspecialchars($label ?? '').'</span>';
@@ -1202,9 +1202,9 @@ HTML;
 		$input = '<span class="custom-checkbox-button">　</span><input '.$this->buildAttributes($attributes).' />';
 		
 		if ($isLabelBefore)
-			return '<label class="custom-checkbox" tabindex="0">'.$span.$input.'</label>';
+			return '<label class="custom-checkbox">'.$span.$input.'</label>';
 		else
-			return '<label class="custom-checkbox" tabindex="0">'.$input.$span.'</label>';
+			return '<label class="custom-checkbox">'.$input.$span.'</label>';
 	}
 	
 	final protected function createFilterBar(): string
@@ -1235,9 +1235,9 @@ HTML;
 		
 		return
 		'
-		<label class="custom-fileupload" tabindex="0">
+		<label class="custom-fileupload">
 			<input '.$this->buildAttributes($attributes).' />
-			<section '.$this->buildAttributes($attributes2).' >'.\Localization\Controls\ChooseFile.'</section>
+			<section '.$this->buildAttributes($attributes2).' tabindex="0">'.\Localization\Controls\ChooseFile.'</section>
 		</label>
 		';
 	}
@@ -1338,11 +1338,11 @@ HTML;
 		$attributesForShownInput['class'][]  = 'custom-searchable-select-shown-value';
 		$attributesForShownInput['type']     = 'text';
 		$attributesForShownInput['value']    = $selectedOption[$keyToShownValue];
-		$attributesForShownInput['tabindex'] = '-1';
 		
 		$attributesForSentInput['class'][]  = 'custom-searchable-select-sent-value';
 		$attributesForSentInput['type']     = 'text';
 		$attributesForSentInput['value']    = $selectedOption[$keyToSentValue];
+		$attributesForSentInput['tabindex'] = '-1';
 		
 		$html[] = 
 		'

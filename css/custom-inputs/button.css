@@ -1,7 +1,8 @@
 .custom-button,
 .custom-submit {
-	margin:  var(--element-gap-small);
-	padding: var(--element-gap-medium);
+	margin-top:     var(--element-gap-small);
+	margin-bottom:  var(--element-gap-small);
+	padding:        var(--element-gap-medium);
 	
 	background-color: var(--color-button-body);
 	color:            var(--color-button-text);
@@ -16,8 +17,9 @@
 	text-align:    center;
 	align-content: center;
 	
+	border: 0;
+	
 	outline: none;
-	border:  0;
 }
 
 .custom-button:hover,

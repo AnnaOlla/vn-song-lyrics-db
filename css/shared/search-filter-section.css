@@ -110,6 +110,11 @@
 	color:            var(--color-button-text-hover);
 }
 
+.pagination-button:focus {
+	background-color: var(--color-button-body-focus);
+	color:            var(--color-button-text-focus);
+}
+
 .pagination-button.disabled {
 	background-color: var(--color-button-body-disabled);
 	color:            var(--color-button-text-disabled);

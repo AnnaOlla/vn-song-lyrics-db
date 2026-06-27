@@ -42,16 +42,19 @@
 	
 	--color-checkbox-body:          #565656;
 	--color-checkbox-body-hover:    #FFFFFF;
+	--color-checkbox-body-focus:    #FFFFFF;
 	--color-checkbox-body-disabled: #565656;
 	--color-checkbox-body-checked:  #FF9800;
 	
 	--color-checkbox-mark:          #A0A0A0;
 	--color-checkbox-mark-hover:    #FF9800;
+	--color-checkbox-mark-focus:    #FF9800;
 	--color-checkbox-mark-disabled: #A0A0A0;
 	--color-checkbox-mark-checked:  #FFFFFF;
 	
 	--color-checkbox-text:          #A0A0A0;
 	--color-checkbox-text-hover:    #FFFFFF;
+	--color-checkbox-text-focus:    #FFFFFF;
 	--color-checkbox-text-disabled: #A0A0A0;
 	--color-checkbox-text-checked:  #FFFFFF;
 	
@@ -75,4 +78,8 @@
 	/* Hovered Lyrics */
 	
 	--color-textline-body-hover: #565656;
+	
+	/* Outline for Interactive Elements */
+	
+	--color-outline: #161616;
 }
