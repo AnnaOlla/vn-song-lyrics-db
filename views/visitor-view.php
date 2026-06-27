@@ -1367,6 +1367,24 @@ class VisitorView extends ErrorView
 				'.$this->createParagraph(\Localization\UserPage\Role.$role).'
 		';
 		
+		if (!Validation::isNullOrEmpty($userData['about_me']))
+		{
+			$html[] =
+			'
+				'.$this->createHeading(\Localization\UserPage\AboutMe, 2).'
+			';
+			
+			$aboutMe = explode("\n", $userData['about_me']);
+			
+			foreach ($aboutMe as $line)
+			{
+				$html[] =
+				'
+				'.$this->createParagraph($line).'
+				';
+			}
+		}
+		
 		if (Session::agentIs($userData['id']) || Session::agentIsAdministrator())
 		{
 			$label1 = \Localization\UserPage\ChangeAboutMe;
@@ -1411,30 +1429,6 @@ class VisitorView extends ErrorView
 		'
 			</section>
 		';
-		
-		if (!Validation::isNullOrEmpty($userData['about_me']))
-		{
-			$html[] =
-			'
-			<section>
-				'.$this->createHeading(\Localization\UserPage\AboutMe, 2).'
-			';
-			
-			$aboutMe = explode("\n", $userData['about_me']);
-			
-			foreach ($aboutMe as $line)
-			{
-				$html[] =
-				'
-				'.$this->createParagraph($line).'
-				';
-			}
-			
-			$html[] = 
-			'
-			</section>
-			';
-		}
 		
 		$html[] = 
 		'
