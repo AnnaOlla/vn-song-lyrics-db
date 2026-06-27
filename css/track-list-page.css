@@ -4,16 +4,16 @@ section:has(table) {
 }
 
 table {
-	margin: var(--section-padding);
-	
-	table-layout: fixed;
-	border: 0px;
+	table-layout:    fixed;
 	border-collapse: collapse;
+	
+	border: 0;
+	margin: var(--element-gap-medium);
 }
 
 td, th {
-	padding: var(--section-padding);
-	border: 0px;
+	padding: var(--element-gap-medium);
+	border:  0;
 }
 
 tr:first-child {
@@ -30,7 +30,7 @@ tr > *:nth-child(4), tr > *:nth-child(5) {
 
 tr > *:nth-child(1), tr > *:nth-child(2), tr > *:nth-child(4), tr > *:nth-child(5) {
 	vertical-align: center;
-	text-align: center;
+	text-align:     center;
 }
 
 tr > *:nth-child(4) > a, tr > *:nth-child(5) > a {
@@ -40,17 +40,17 @@ tr > *:nth-child(4) > a, tr > *:nth-child(5) > a {
 /* Selection */
 
 tr:hover {
-	background-color: var(--color-input-secondary);
+	background-color: var(--color-table-body-body-hover);
 }
 
 tr:hover > *:first-child {
-	border-top-left-radius: var(--border-radius);
-	border-bottom-left-radius: var(--border-radius);
+	border-top-left-radius:    var(--size-border-radius);
+	border-bottom-left-radius: var(--size-border-radius);
 }
 
 tr:hover > *:last-child {
-	border-top-right-radius: var(--border-radius);
-	border-bottom-right-radius: var(--border-radius);
+	border-top-right-radius:    var(--size-border-radius);
+	border-bottom-right-radius: var(--size-border-radius);
 }
 
 @media (max-width: 1023px) {

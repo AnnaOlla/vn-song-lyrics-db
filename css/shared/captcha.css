@@ -1,10 +1,10 @@
 input[type="text"].captcha-input {
 	font-family: var(--font-security);
-	font-size: 32px;
+	font-size:   var(--font-size-security);
 }
 
 img.captcha-image {
-	border-radius: var(--border-radius);
-	margin-top: var(--text-margin);
-	margin-bottom: var(--text-margin);
+	border-radius: var(--size-border-radius);
+	margin-top:    var(--element-gap-small);
+	margin-bottom: var(--element-gap-small);
 }

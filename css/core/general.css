@@ -1,40 +1,44 @@
 html {
-	overflow-y: scroll;
-	scrollbar-color: var(--color-clickable-item-primary) var(--color-background-section);
+	overflow-y:      scroll;
+	scrollbar-color: var(--color-button-body) var(--color-section);
 }
 
 body {
 	font-family: var(--font-content);
 	
-	background-color: var(--color-background);
-	color: var(--color-text);
+	background-color: var(--color-body);
+	color:            var(--color-text);
 	
-	margin: 0px;
-	
-	display: flex;
+	display:        flex;
 	flex-direction: column;
+	
 	min-height: 100vh;
+	margin:     0;
 }
 
 /* Selected text */
 
 ::selection {
-	background: var(--color-clickable-item-primary);
-	color: var(--color-text);
+	background: var(--color-body-selection);
+	color:      var(--color-text);
+	
 	text-shadow: none;
 }
 
 /* Header & Footer */
 
-header {
-	background-color: var(--color-clickable-item-primary);
-	width: 100%;
-	margin: 0px;
+header,
+footer {
+	background-color: var(--color-button-body);
+	
+	width:  100%;
+	margin: 0;
 }
 
 footer {
-	background-color: var(--color-clickable-item-primary);
-	width: 100%;
+	background-color: var(--color-button-body);
+	
+	width:      100%;
 	margin-top: auto;
 }
 
@@ -45,42 +49,44 @@ footer > nav {
 
 header > nav > section,
 footer > nav > section {
-	width: 0;
-	
 	display: flex;
-	text-align: center;
+	width:   0;
 	
-	font-size: var(--font-size-plain);
+	text-align: center;
+	font-size:  var(--font-size-plain);
 }
 
 header > nav > section > *,
 footer > nav > section > * {
 	flex-grow: 1;
-	width: 0;
+	width:     0;
+	padding:   var(--element-gap-small);
 	
 	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
+	overflow:      hidden;
+	white-space:   nowrap;
 	
 	border-image: linear-gradient(
 		to bottom,
-		var(--color-clickable-item-primary) 25%,
-		var(--color-clickable-item-secondary) 50%,
-		var(--color-clickable-item-primary) 75%
+		var(--color-button-body) 25%,
+		var(--color-button-text) 50%,
+		var(--color-button-body) 75%
 	) 1;
 	border-right-width: 2px;
 	border-right-style: solid;
 	
-	color: var(--color-clickable-item-secondary);
-	text-align: center;
+	color: var(--color-button-text);
+	
+	text-align:      center;
 	text-decoration: none;
-	padding: var(--text-padding);
+	
 }
 
 header > nav > section > *::selection,
 footer > nav > section > *::selection {
-	background: var(--color-clickable-item-secondary);
-	color: var(--color-clickable-item-primary);
+	background: var(--color-button-text);
+	color:      var(--color-button-body);
+	
 	text-shadow: none;
 }
 
@@ -120,8 +126,8 @@ footer > nav > section.contacts {
 
 header > nav > section > a:hover,
 footer > nav > section > a:hover {
-	background-color: var(--color-clickable-item-secondary);
-	color: var(--color-clickable-item-primary);
+	background-color: var(--color-button-body-hover);
+	color:            var(--color-button-text-hover);
 }
 
 /* General */
@@ -142,36 +148,39 @@ main h3 {
 }
 
 main a {
-	color: var(--color-clickable-item-primary);
+	color: var(--color-button-body);
+	
 	text-decoration: none;
 }
 
 main a:hover {
-	color: var(--color-clickable-item-secondary);
+	color: var(--color-button-body-hover);
 }
 
 main > article > section,
 main > aside   > section {
-	background-color: var(--color-background-section);
-	border-radius: var(--border-radius);
-	margin: var(--section-margin);
-	padding: var(--section-padding);
+	background-color: var(--color-section);
+	border-radius:    var(--size-border-radius);
+	
+	margin:  var(--element-gap-big);
+	padding: var(--element-gap-medium);
 }
 
 main p, main span {
-	margin-top: var(--text-margin);
-	margin-bottom: var(--text-margin);
+	margin-top:    var(--element-gap-small);
+	margin-bottom: var(--element-gap-small);
+	padding:       0;
+	
 	font-size: var(--font-size-plain);
-	padding: 0px;
 }
 
 main > article > section > *,
 main > aside   > section > * {
-	margin: var(--section-padding);
+	margin: var(--element-gap-medium);
 }
 
 .required-input {
-	color: var(--color-clickable-item-primary);
+	color: var(--color-button-body);
 }
 
 /* Mobile Devices */

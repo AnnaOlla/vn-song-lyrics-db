@@ -10,13 +10,13 @@ main > article {
 }
 
 article > section {
-	padding: var(--section-padding);
+	padding: var(--element-gap-medium);
 }
 
 article > section > p,
 article > section > h1,
 article > section > h3 {
-	margin: var(--text-margin);
+	margin: var(--element-gap-small);
 	padding: 0px;
 	overflow-wrap: break-word;
 }
@@ -31,22 +31,22 @@ textarea, input {
 }
 
 textarea {
-	margin-bottom: var(--section-padding);
+	margin-bottom: var(--element-gap-medium);
 	overflow: auto;
 	white-space: normal;
 }
 
 .feedback-reply {
-	background-color: var(--color-input-primary);
-	border-radius: var(--border-radius);
-	margin: var(--section-padding);
-	padding: var(--section-padding);
+	background-color: var(--color-textinput-body);
+	border-radius: var(--size-border-radius);
+	margin: var(--element-gap-medium);
+	padding: var(--element-gap-medium);
 }
 
 .feedback-reply-controls {
 	display: flex;
 	padding: 0px;
-	margin: var(--section-padding);
+	margin: var(--element-gap-medium);
 }
 
 .feedback-reply-controls > .filler {
@@ -58,9 +58,9 @@ input {
 }
 
 form section:has(input[type="submit"]) {
-	margin-top: var(--section-padding);
+	margin-top: var(--element-gap-medium);
 	display: flex;
-	gap: var(--section-padding);
+	gap: var(--element-gap-medium);
 }
 
 form section:has(input[type="submit"]) > * {

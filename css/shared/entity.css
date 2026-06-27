@@ -7,22 +7,22 @@ section.list-entity {
 section.main-entity > img,
 section.related-entity > img,
 section.list-entity > img {
-	border-radius: var(--image-border-radius);
-	object-fit: contain;
+	border-radius: var(--size-border-radius);
+	object-fit:    contain;
 }
 
 section.main-entity > img {
-	width: var(--image-size-big);
+	width:  var(--image-size-big);
 	height: var(--image-size-big);
 }
 
 section.related-entity > img {
-	width: var(--image-size-medium);
+	width:  var(--image-size-medium);
 	height: var(--image-size-medium);
 }
 
 section.list-entity > img {
-	width: var(--image-size-small);
+	width:  var(--image-size-small);
 	height: var(--image-size-small);
 }
 

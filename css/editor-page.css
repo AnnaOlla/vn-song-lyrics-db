@@ -10,14 +10,14 @@ main > article {
 article > section:first-child {
 	flex: 1 1 0;
 	min-width: 0;
-	margin-right: calc(var(--section-margin) / 2);
+	margin-right: calc(var(--element-gap-big) / 2);
 }
 
 article > section:last-child {
 	flex: 1 1 0;
 	min-width: 0;
-	margin-left: calc(var(--section-margin) / 2);
-	margin-right: calc(var(--section-margin) / 2);
+	margin-left: calc(var(--element-gap-big) / 2);
+	margin-right: calc(var(--element-gap-big) / 2);
 }
 
 main > aside {
@@ -28,7 +28,7 @@ main > aside {
 }
 
 #tooltip-window {
-	margin-left: calc(var(--section-margin) / 2);
+	margin-left: calc(var(--element-gap-big) / 2);
 }
 
 form > section,
@@ -41,7 +41,7 @@ section.form-replacement > section {
 .page-controls,
 .disc-track-controls {
 	display: flex;
-	gap: var(--section-padding);
+	gap: var(--element-gap-medium);
 	align-items: center;
 }
 
@@ -65,5 +65,5 @@ section.form-replacement > section {
 /* Do not apply margin-bottom to last child AND to select if select and fake are last*/
 h2 ~ *:not(:last-child):not(select:nth-last-child(2)),
 section:has(h2) {
-	margin-bottom: var(--section-padding);
+	margin-bottom: var(--element-gap-medium);
 }

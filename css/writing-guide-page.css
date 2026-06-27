@@ -1,37 +1,40 @@
 .kana-table {
-	width: 100%;
+	width:        100%;
 	table-layout: fixed;
-	border: 1px solid var(--color-text);
+	
+	border:          1px solid var(--color-text);
 	border-collapse: collapse;
+	padding:         0;
 	
 	font-size: calc(var(--font-size-plain) + 4px);
-	padding: 0px;
 }
 
 tr:first-child {
 	position: sticky;
-	top: 0;
+	top:      0;
 	
-	/* Border-collapse does not allow a sticky header to have a border */
-	box-shadow: inset 0 1px 0 var(--color-text), inset 0 -1px 0 var(--color-text);
+	/* Workaround: border-collapse does not allow a sticky header to have a border */
+	box-shadow: inset 0 +1px 0 var(--color-table-border),
+	            inset 0 -1px 0 var(--color-table-border);
 }
 
 th {
-	background-color: var(--color-input-secondary);
-	color: var(--color-clickable-item-primary);
+	background-color: var(--color-table-header-body);
+	color:            var(--color-table-header-text);
 }
 
 th, td {
 	text-align: center;
-	border: 1px solid var(--color-text);
+	
+	border: 1px solid var(--color-table-border);
 }
 
 tr:hover {
-	background-color: var(--color-input-secondary);
+	background-color: var(--color-textinput-body-secondary);
 }
 
 .highlight {
-	color: var(--color-clickable-item-primary);
+	color: var(--color-button-body);
 }
 
 .mistake {
@@ -44,8 +47,8 @@ tr:hover {
 
 .note {
 	text-decoration: none;
-	vertical-align: top;
-	font-size: calc(var(--font-size-plain) * 2 / 3);
+	vertical-align:  top;
+	font-size:       calc(var(--font-size-plain) * 2 / 3);
 }
 
 img {

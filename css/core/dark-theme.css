@@ -1,14 +1,78 @@
 :root {
-	--color-background:         #323232;
-	--color-background-section: #404040;
+	/* Background */
 	
-	--color-clickable-item-primary:   #FF9800;
-	--color-clickable-item-secondary: #FFFFFF;
-	--color-clickable-item-disabled:  #565656;
+	--color-body:    #323232;
+	--color-section: #404040;
 	
-	--color-input-primary:   #565656;
-	--color-input-secondary: #646464;
+	/* Text */
 	
-	--color-text: #FFFFFF;
+	--color-text:             #FFFFFF;
 	--color-text-placeholder: #A0A0A0;
+	--color-body-selection:   #FF9800;
+	
+	/* Buttons and Links */
+	
+	--color-button-body:          #FF9800;
+	--color-button-body-hover:    #FFFFFF;
+	--color-button-body-focus:    #FFFFFF;
+	--color-button-body-disabled: #565656;
+	--color-button-body-readonly: #565656;
+	
+	--color-button-text:          #FFFFFF;
+	--color-button-text-hover:    #FF9800;
+	--color-button-text-focus:    #FF9800;
+	--color-button-text-disabled: #A0A0A0;
+	--color-button-text-readonly: #FFFFFF;
+	
+	/* Textinput */
+	
+	--color-textinput-body:          #565656;
+	--color-textinput-body-focus:    #646464;
+	--color-textinput-body-hover:    #646464;
+	--color-textinput-body-disabled: #565656;
+	--color-textinput-body-readonly: #565656;
+	
+	--color-textinput-text:          #565656;
+	--color-textinput-text-focus:    #646464;
+	--color-textinput-text-hover:    #646464;
+	--color-textinput-text-disabled: #A0A0A0;
+	--color-textinput-text-readonly: #A0A0A0;
+	
+	/* Checkbox */
+	
+	--color-checkbox-body:          #565656;
+	--color-checkbox-body-hover:    #FFFFFF;
+	--color-checkbox-body-disabled: #565656;
+	--color-checkbox-body-checked:  #FF9800;
+	
+	--color-checkbox-mark:          #A0A0A0;
+	--color-checkbox-mark-hover:    #FF9800;
+	--color-checkbox-mark-disabled: #A0A0A0;
+	--color-checkbox-mark-checked:  #FFFFFF;
+	
+	--color-checkbox-text:          #A0A0A0;
+	--color-checkbox-text-hover:    #FFFFFF;
+	--color-checkbox-text-disabled: #A0A0A0;
+	--color-checkbox-text-checked:  #FFFFFF;
+	
+	/* Searchable-Select*/
+	
+	--color-select-option:          #646464;
+	--color-select-option-hover:    #565656;
+	--color-select-option-focus:    #565656;
+	--color-select-option-disabled: #646464;
+	--color-select-option-readonly: #646464;
+	
+	--color-select-option-container-border: #646464;
+	
+	/* Tables */
+	
+	--color-table-header-body:     #646464;
+	--color-table-header-text:     #FF9800;
+	--color-table-body-body-hover: #646464;
+	--color-table-border:          #FFFFFF;
+	
+	/* Hovered Lyrics */
+	
+	--color-textline-body-hover: #565656;
 }

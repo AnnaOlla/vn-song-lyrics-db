@@ -1,16 +1,16 @@
 article {
-	background-color: var(--color-background);
+	background-color: var(--color-body);
 }
 
 article > section {
-	background-color: var(--color-background-section);
-	border-radius: var(--border-radius);
+	background-color: var(--color-section);
+	border-radius: var(--size-border-radius);
 }
 
 article > section:last-child {
-	padding: var(--section-padding);
+	padding: var(--element-gap-medium);
 	display: flex;
-	gap: var(--section-padding);
+	gap: var(--element-gap-medium);
 }
 
 article > section:last-child > * {
@@ -18,7 +18,7 @@ article > section:last-child > * {
 }
 
 article > section:has(p) {
-	padding: var(--section-padding);
+	padding: var(--element-gap-medium);
 }
 
 article > section > p {

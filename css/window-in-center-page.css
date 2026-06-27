@@ -1,8 +1,9 @@
 main {
-	flex: 1;
 	display: flex;
+	flex:    1;
+	
     justify-content: center;
-    align-items: center;
+    align-items:     center;
 }
 
 article {
@@ -14,12 +15,13 @@ article > section {
 }
 
 article > section > * {
-	margin-top: 0;
+	margin-top:    0;
 	margin-bottom: 0;
 }
 
 form input {
 	width: 100%;
+	
 	text-align: center;
 }
 
@@ -28,9 +30,10 @@ form textarea {
 }
 
 form section:has(input[type="submit"]) {
-	margin-top: var(--section-padding);
+	margin-top: var(--element-gap-medium);
+	
 	display: flex;
-	gap: var(--section-padding);
+	gap:     var(--element-gap-medium);
 }
 
 form section:has(input[type="submit"]) > *:not(.filler):not(.custom-checkbox) {

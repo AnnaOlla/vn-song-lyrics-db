@@ -1,6 +1,6 @@
 .filter-section {
 	display: flex;
-	gap: var(--section-margin);
+	gap:     var(--element-gap-big);
 }
 
 .filter-section > input {
@@ -15,7 +15,7 @@
 
 .search-section {
 	display: flex;
-	gap: var(--section-margin);
+	gap:     var(--element-gap-big);
 }
 
 .search-section > section > section {
@@ -29,15 +29,15 @@
 }
 
 .results-limit > .custom-searchable-select {
-	text-align: center;
+	text-align:      center;
 	text-align-last: center;
 }
 
 .results-limit > .custom-searchable-select > .custom-searchable-select-shown-value {
-	text-align: center;
+	text-align:      center;
 	text-align-last: center;
 	
-	padding-left: calc(var(--section-padding) + 36px);
+	padding-left: calc(var(--element-gap-medium) + 36px);
 }
 
 /* Pagination */
@@ -58,7 +58,7 @@
 
 .search-elements {
 	display: flex;
-	gap: var(--section-padding);
+	gap:     var(--element-gap-medium);
 }
 
 .search-elements > input {
@@ -68,35 +68,34 @@
 /* Pagination Button */
 
 .pagination-button {
-	display: inline-block;
-	box-sizing: border-box;
+	display:    inline-block;
 	
 	/* Maximum: first page, dots, 7 pages, dots, last page => 11 buttons */
 	width: calc(100% / 11);
 	
-	margin-top: var(--text-margin);
-	margin-bottom: var(--text-margin);
-	padding: var(--section-padding);
+	box-sizing:    border-box;
+	margin-top:    var(--element-gap-small);
+	margin-bottom: var(--element-gap-small);
+	padding:       var(--element-gap-medium);
+	border:        0;
+	outline:       none;
 	
-	background-color: var(--color-clickable-item-primary);
-	color: var(--color-clickable-item-secondary);
+	background-color: var(--color-button-body);
+	color:            var(--color-button-text);
 	
-	font-size: var(--font-size-plain);
+	font-size:       var(--font-size-plain);
 	text-decoration: none;
 	
-	text-align: center;
+	text-align:    center;
 	align-content: center;
 	
 	cursor: pointer;
 	
-	outline: 0;
-	border: 0;
-	
 	border-image: linear-gradient(
 		to bottom,
-		var(--color-clickable-item-primary) 25%,
-		var(--color-clickable-item-secondary) 50%,
-		var(--color-clickable-item-primary) 75%
+		var(--color-button-body) 25%,
+		var(--color-button-text) 50%,
+		var(--color-button-body) 75%
 	) 1;
 	border-right-width: 2px;
 	border-right-style: solid;
@@ -107,30 +106,32 @@
 }
 
 .pagination-button:hover {
-	background-color: var(--color-clickable-item-secondary);
-	color: var(--color-clickable-item-primary);
+	background-color: var(--color-button-body-hover);
+	color:            var(--color-button-text-hover);
 }
 
 .pagination-button.disabled {
-	background-color: var(--color-clickable-item-disabled);
-	color: var(--color-text-placeholder);
+	background-color: var(--color-button-body-disabled);
+	color:            var(--color-button-text-disabled);
+	
 	cursor: not-allowed;
 }
 
 .pagination-button.current {
-	background-color: var(--color-clickable-item-secondary);
-	color: var(--color-clickable-item-primary);
+	background-color: var(--color-button-body-focus);
+	color:            var(--color-button-text-focus);
+	
 	cursor: not-allowed;
 }
 
 .pagination-button:first-child {
-	border-bottom-left-radius: var(--border-radius);
-	border-top-left-radius: var(--border-radius);
+	border-bottom-left-radius: var(--size-border-radius);
+	border-top-left-radius:    var(--size-border-radius);
 }
 
 .pagination-button:last-child {
-	border-bottom-right-radius: var(--border-radius);
-	border-top-right-radius: var(--border-radius);
+	border-bottom-right-radius: var(--size-border-radius);
+	border-top-right-radius:    var(--size-border-radius);
 }
 
 /* Mobile Devices */

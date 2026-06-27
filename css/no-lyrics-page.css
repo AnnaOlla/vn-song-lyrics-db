@@ -1,16 +1,17 @@
 #no-lyrics {
 	display: flex;
+	
 	justify-content: center;
-	align-items: center;
+	align-items:     center;
 }
 
 #no-lyrics > section {
 	align-items: center;
-	text-align: center;
+	text-align:  center;
 }
 
 #no-lyrics > section > * {
-	margin: var(--section-margin);
+	margin: var(--element-gap-big);
 }
 
 #no-lyrics a {

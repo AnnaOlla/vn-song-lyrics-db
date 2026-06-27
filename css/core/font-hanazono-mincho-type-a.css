@@ -1,5 +1,3 @@
-/* Only Hanazono Mincho Type A supports: кириллица, Latin script, 漢字 */
-
 @font-face {
 	font-family: HanazonoMinchoTypeA;
 	src: url('/fonts/hanazono-mincho-type-a.woff2') format('woff2'),
