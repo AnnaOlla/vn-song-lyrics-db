@@ -189,7 +189,13 @@ class AdministratorModel extends UserModel
 		return ($stmt->rowCount() !== 0);
 	}
 	
-	final public function updateGameAlbumRelationStatus(string $gameUri, string $albumUri, string $status): bool
+	final public function updateGameAlbumRelationStatus
+	(
+		string $gameUri,
+		string $albumUri,
+		string $status,
+		int    $userReviewedId
+	): bool
 	{
 		$stmt = $this->pdo->prepare
 		(
@@ -197,7 +203,9 @@ class AdministratorModel extends UserModel
 			UPDATE
 				game_album_relations
 			SET
-				status = :status
+				user_reviewed_id   = :user_reviewed_id,
+				timestamp_reviewed = NOW(),
+				status             = :status
 			WHERE
 				game_id = (SELECT id FROM games WHERE uri = :game_uri)
 			AND
@@ -205,16 +213,23 @@ class AdministratorModel extends UserModel
 			'
 		);
 		
-		$stmt->bindParam(':status',    $status,   PDO::PARAM_STR);
-		$stmt->bindParam(':game_uri',  $gameUri,  PDO::PARAM_STR);
-		$stmt->bindParam(':album_uri', $albumUri, PDO::PARAM_STR);
+		$stmt->bindParam(':status',           $status,         PDO::PARAM_STR);
+		$stmt->bindParam(':game_uri',         $gameUri,        PDO::PARAM_STR);
+		$stmt->bindParam(':album_uri',        $albumUri,       PDO::PARAM_STR);
+		$stmt->bindParam(':user_reviewed_id', $userReviewedId, PDO::PARAM_INT);
 		
 		$stmt->execute();
 		
 		return ($stmt->rowCount() !== 0);
 	}
 	
-	final public function updateCharacterGameRelationStatus(string $characterUri, string $gameUri, string $status): bool
+	final public function updateCharacterGameRelationStatus
+	(
+		string $characterUri,
+		string $gameUri,
+		string $status,
+		int    $userReviewedId
+	): bool
 	{
 		$stmt = $this->pdo->prepare
 		(
@@ -222,7 +237,9 @@ class AdministratorModel extends UserModel
 			UPDATE
 				character_game_relations
 			SET
-				status = :status
+				user_reviewed_id   = :user_reviewed_id,
+				timestamp_reviewed = NOW(),
+				status             = :status
 			WHERE
 				character_id = (SELECT id FROM characters WHERE uri = :character_uri)
 			AND
@@ -230,9 +247,10 @@ class AdministratorModel extends UserModel
 			'
 		);
 		
-		$stmt->bindParam(':status',        $status,       PDO::PARAM_STR);
-		$stmt->bindParam(':character_uri', $characterUri, PDO::PARAM_STR);
-		$stmt->bindParam(':game_uri',      $gameUri,      PDO::PARAM_STR);
+		$stmt->bindParam(':status',           $status,         PDO::PARAM_STR);
+		$stmt->bindParam(':character_uri',    $characterUri,   PDO::PARAM_STR);
+		$stmt->bindParam(':game_uri',         $gameUri,        PDO::PARAM_STR);
+		$stmt->bindParam(':user_reviewed_id', $userReviewedId, PDO::PARAM_INT);
 		
 		$stmt->execute();
 		
@@ -243,7 +261,8 @@ class AdministratorModel extends UserModel
 	(
 		string $albumUri,
 		string $songUri,
-		string $status
+		string $status,
+		int    $userReviewedId
 	): bool
 	{
 		$stmt = $this->pdo->prepare
@@ -252,7 +271,9 @@ class AdministratorModel extends UserModel
 			UPDATE
 				song_artist_character_relations
 			SET
-				status = :status
+				user_reviewed_id   = :user_reviewed_id,
+				timestamp_reviewed = NOW(),
+				status             = :status
 			WHERE
 				song_id =
 				(
@@ -268,9 +289,10 @@ class AdministratorModel extends UserModel
 			'
 		);
 		
-		$stmt->bindParam(':status',    $status,   PDO::PARAM_STR);
-		$stmt->bindParam(':album_uri', $albumUri, PDO::PARAM_STR);
-		$stmt->bindParam(':song_uri',  $songUri,  PDO::PARAM_STR);
+		$stmt->bindParam(':status',           $status,         PDO::PARAM_STR);
+		$stmt->bindParam(':album_uri',        $albumUri,       PDO::PARAM_STR);
+		$stmt->bindParam(':song_uri',         $songUri,        PDO::PARAM_STR);
+		$stmt->bindParam(':user_reviewed_id', $userReviewedId, PDO::PARAM_INT);
 		
 		$stmt->execute();
 		

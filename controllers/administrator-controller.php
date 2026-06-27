@@ -225,7 +225,8 @@ class AdministratorController extends UserController
 		(
 			$albumUri,
 			$songUri,
-			$status
+			$status,
+			$userId
 		);
 	}
 	
@@ -280,6 +281,7 @@ class AdministratorController extends UserController
 		}
 		
 		$status = $_POST['status'] ?? null;
+		$userId = $_SESSION['user']['id'];
 		
 		if (!$status)
 		{
@@ -295,7 +297,13 @@ class AdministratorController extends UserController
 			return;
 		}
 		
-		$isSuccess = $this->model->updateGameAlbumRelationStatus($gameUri, $albumUri, $status);
+		$isSuccess = $this->model->updateGameAlbumRelationStatus
+		(
+			$gameUri,
+			$albumUri,
+			$status,
+			$userId
+		);
 		
 		if (!$isSuccess)
 		{
@@ -315,6 +323,7 @@ class AdministratorController extends UserController
 		}
 		
 		$status = $_POST['status'] ?? null;
+		$userId = $_SESSION['user']['id'];
 		
 		if (!$status)
 		{
@@ -330,7 +339,13 @@ class AdministratorController extends UserController
 			return;
 		}
 		
-		$isSuccess = $this->model->updateCharacterGameRelationStatus($characterUri, $gameUri, $status);
+		$isSuccess = $this->model->updateCharacterGameRelationStatus
+		(
+			$characterUri,
+			$gameUri,
+			$status,
+			$userId
+		);
 		
 		if (!$isSuccess)
 		{

@@ -107,10 +107,10 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($albumIds as $albumId)
-			$this->model->addGameAlbumRelation($gameId, $albumId, 'unchecked');
+			$this->model->addGameAlbumRelation($gameId, $albumId, $userAddedId);
 		
 		foreach ($characterIds as $characterId)
-			$this->model->addCharacterGameRelation($characterId, $gameId, 'unchecked');
+			$this->model->addCharacterGameRelation($characterId, $gameId, $userAddedId);
 		
 		$link = Http::buildInternalPath($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
@@ -202,7 +202,7 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($gameIds as $gameId)
-			$this->model->addGameAlbumRelation($gameId, $albumId, 'unchecked');
+			$this->model->addGameAlbumRelation($gameId, $albumId, $userAddedId);
 		
 		$link = Http::buildInternalPath($this->language, 'album', $albumUri);
 		$this->handleRedirect($link);
@@ -377,7 +377,7 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($gameIds as $gameId)
-			$this->model->addCharacterGameRelation($characterId, $gameId, 'unchecked');
+			$this->model->addCharacterGameRelation($characterId, $gameId, $userAddedId);
 		
 		$link = Http::buildInternalPath($this->language, 'character', $characterUri);
 		$this->handleRedirect($link);
@@ -642,7 +642,7 @@ class UserController extends ViolatorController
 		);
 		
 		foreach (array_combine($artistIds, $characterIds) as $artistId => $characterId)
-			$this->model->addSongArtistCharacterRelation($song['id'], $artistId, $characterId, 'unchecked');
+			$this->model->addSongArtistCharacterRelation($song['id'], $artistId, $characterId, $userAddedId);
 		
 		$link = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		$this->handleRedirect($link);
@@ -884,13 +884,13 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($albumIdsToAdd as $albumId)
-			$this->model->addGameAlbumRelation($gameId, $albumId, 'unchecked');
+			$this->model->addGameAlbumRelation($gameId, $albumId, $userUpdatedId);
 		
 		foreach ($albumIdsToDelete as $albumId)
 			$this->model->deleteGameAlbumRelation($gameId, $albumId, 'unchecked');
-			
+		
 		foreach ($characterIdsToAdd as $characterId)
-			$this->model->addCharacterGameRelation($characterId, $gameId, 'unchecked');
+			$this->model->addCharacterGameRelation($characterId, $gameId, $userUpdatedId);
 		
 		foreach ($characterIdsToDelete as $characterId)
 			$this->model->deleteCharacterGameRelation($characterId, $gameId, 'unchecked');
@@ -1008,7 +1008,7 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($gameIdsToAdd as $gameId)
-			$this->model->addGameAlbumRelation($gameId, $albumId, 'unchecked');
+			$this->model->addGameAlbumRelation($gameId, $albumId, $userUpdatedId);
 		
 		foreach ($gameIdsToDelete as $gameId)
 			$this->model->deleteGameAlbumRelation($gameId, $albumId, 'unchecked');
@@ -1204,7 +1204,7 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($gameIdsToAdd as $gameId)
-			$this->model->addCharacterGameRelation($characterId, $gameId, 'unchecked');
+			$this->model->addCharacterGameRelation($characterId, $gameId, $userUpdatedId);
 		
 		foreach ($gameIdsToDelete as $gameId)
 			$this->model->deleteCharacterGameRelation($characterId, $gameId, 'unchecked');
@@ -1487,10 +1487,10 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($performersToDelete as $performer)
-			$this->model->deleteSongArtistCharacterRelation($song['id'], $performer['artist_id'], $performer['character_id'], 'unchecked');
+			$this->model->deleteSongArtistCharacterRelation($song['id'], $performer['artist_id'], $performer['character_id'], $userUpdatedId);
 		
 		foreach ($performersToAdd as $performer)
-			$this->model->addSongArtistCharacterRelation($song['id'], $performer['artist_id'], $performer['character_id'], 'unchecked');
+			$this->model->addSongArtistCharacterRelation($song['id'], $performer['artist_id'], $performer['character_id'], $userUpdatedId);
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']));
 	}
