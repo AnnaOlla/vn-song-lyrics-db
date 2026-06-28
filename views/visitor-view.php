@@ -1028,7 +1028,7 @@ class VisitorView extends ErrorView
 			<section class="lyrics-section">
 				'.$this->createSongLyrics($songToShow).'
 				'.$this->createSongNotes($songToShow).'
-				'.$this->createTimestampBlock($songToShow).'
+				'.$this->createTimestampBlock(Session::agentIsAdministrator() ? $song : $songToShow).'
 				'.$this->createEntityControlBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
 			</section>
 		</article>
@@ -1120,7 +1120,7 @@ class VisitorView extends ErrorView
 				'.$this->createTranslationNotes($translation).'
 				'.$this->createSongNotes($songToShow).'
 				'.$this->createTimestampBlock($translation).'
-				'.$this->createTimestampBlock($songToShow).'
+				'.$this->createTimestampBlock(Session::agentIsAdministrator() ? $song : $songToShow).'
 				'.$this->createEntityControlBlock([$album, $song, $translation], ['album', 'song', 'translation'], $translation, 'Translation').'
 				'.$this->createEntityControlBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
 			</section>
