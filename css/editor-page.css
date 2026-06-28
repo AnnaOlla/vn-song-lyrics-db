@@ -37,6 +37,12 @@ section.form-replacement > section {
 	flex-direction: column;
 }
 
+form > section > img {
+	border-radius: var(--size-border-radius);
+	margin-top:    var(--element-gap-small);
+	margin-bottom: var(--element-gap-small);
+}
+
 .related-entity-controls,
 .page-controls,
 .disc-track-controls {
