@@ -4,6 +4,10 @@ require_once 'models/violator-model.php';
 
 class UserModel extends ViolatorModel
 {	
+	private const IMAGE_MAX_WIDTH  = 384;
+	private const IMAGE_MAX_HEIGHT = 384;
+	private const IMAGE_GAUSSIAN_BLUR_ITERATION_COUNT = 25;
+	
 	public function __construct()
 	{
 		$this->pdo = getPdo('user');
@@ -32,7 +36,7 @@ class UserModel extends ViolatorModel
 		return $file['error'] === UPLOAD_ERR_OK;
 	}
 	
-	private function isFileExtensionAllowed(array $file): bool
+	private function isImageExtensionAllowed(array $file): bool
 	{
 		$allowedExtensions = ['jpg', 'jpeg' ,'png', 'webp'];
 		
@@ -42,7 +46,7 @@ class UserModel extends ViolatorModel
 		return in_array($extension, $allowedExtensions, true);
 	}
 	
-	private function isFileFormatAllowed(array $file): bool
+	private function isImageFormatAllowed(array $file): bool
 	{
 		$allowedFormats = [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP];
 		
@@ -51,29 +55,161 @@ class UserModel extends ViolatorModel
 		return in_array($format, $allowedFormats, true);
 	}
 	
-	private function moveUploadedFile(array $file, string $fullPath): bool
+	private function readUploadedImage(array &$file): bool
 	{
-		// This function automatically detects the file format
-		$uploadedImage = imagecreatefromstring(file_get_contents($file['tmp_name']));
+		$file = imagecreatefromstring(file_get_contents($file['tmp_name']));
 		
-		if (!$uploadedImage)
+		if (!$file)
 			return false;
 		
-		return imagewebp($uploadedImage, $fullPath, 100);
+		return true;
 	}
 	
-	final protected function saveUploadedFile(array $file, string $fullPath): void
+	private function convertImageToTrueColor(GdImage &$image): bool
+	{
+		if (imageistruecolor($image))
+			return true;
+		
+		$image = imagepalettetotruecolor($image);
+		
+		if (!$image)
+			return false;
+		
+		return true;
+	}
+	
+	private function scaleDownImage(GdImage &$image): bool
+	{
+		$sourceWidth  = imagesx($image);
+		$sourceHeight = imagesy($image);
+		
+		if ($sourceWidth <= self::IMAGE_MAX_WIDTH && $sourceHeight <= self::IMAGE_MAX_HEIGHT)
+			return true;
+		
+		if ($sourceWidth < $sourceHeight)
+		{
+			$ratio = $sourceHeight / self::IMAGE_MAX_HEIGHT;
+			
+			$targetWidth  = (int)round($sourceWidth / $ratio);
+			$targetHeight = self::IMAGE_MAX_HEIGHT;
+		}
+		else if ($sourceWidth > $sourceHeight)
+		{
+			$ratio = $sourceWidth / self::IMAGE_MAX_WIDTH;
+			
+			$targetWidth  = self::IMAGE_MAX_WIDTH;
+			$targetHeight = (int)round($sourceHeight / $ratio);
+		}
+		else
+		{
+			$targetWidth  = self::IMAGE_MAX_WIDTH;
+			$targetHeight = self::IMAGE_MAX_HEIGHT;
+		}
+		
+		$image = imagescale($image, $targetWidth, $targetHeight, IMG_BICUBIC);
+		
+		if (!$image)
+			return false;
+		
+		return true;
+	}
+	
+	private function applyBlurredBackdropToImage(GdImage &$image): bool
+	{
+		// If the image is not square, then use blurred backdrop to make it square
+		
+		$sourceWidth  = imagesx($image);
+		$sourceHeight = imagesy($image);
+		
+		if ($sourceWidth === $sourceHeight)
+			return true;
+		
+		if ($sourceWidth < $sourceHeight)
+		{
+			$ratio        = $sourceHeight / $sourceWidth;
+			$targetWidth  = $sourceHeight;
+			$targetHeight = (int)round($sourceHeight * $ratio);
+			
+			$backdrop = imagescale($image, $targetWidth, $targetHeight, IMG_BICUBIC);
+			
+			$x            = 0;
+			$y            = (int)round(($targetHeight - $sourceHeight) / 2);
+			$targetWidth  = $targetWidth;
+			$targetHeight = $targetWidth;
+			$rectangle    = ['x' => $x, 'y' => $y, 'width' => $targetWidth, 'height' => $targetHeight];
+			
+			$backdrop = imagecrop($backdrop, $rectangle);
+			
+			for ($i = 0; $i < self::IMAGE_GAUSSIAN_BLUR_ITERATION_COUNT; $i++)
+				imagefilter($backdrop, IMG_FILTER_GAUSSIAN_BLUR);
+			
+			$x = (int)round(($targetWidth - $sourceWidth) / 2);
+			$y = 0;
+			
+			imagecopy($backdrop, $image, $x, $y, 0, 0, $sourceWidth, $sourceHeight);
+		}
+		else
+		{
+			$ratio        = $sourceWidth / $sourceHeight;
+			$targetWidth  = (int)round($sourceWidth * $ratio);
+			$targetHeight = $sourceWidth;
+			
+			$backdrop = imagescale($image, $targetWidth, $targetHeight, IMG_BICUBIC);
+			
+			$x            = (int)round(($targetWidth - $sourceWidth) / 2);
+			$y            = 0;
+			$targetWidth  = $targetHeight;
+			$targetHeight = $targetHeight;
+			$rectangle    = ['x' => $x, 'y' => $y, 'width' => $targetWidth, 'height' => $targetHeight];
+			
+			$backdrop = imagecrop($backdrop, $rectangle);
+			
+			for ($i = 0; $i < self::IMAGE_GAUSSIAN_BLUR_ITERATION_COUNT; $i++)
+				imagefilter($backdrop, IMG_FILTER_GAUSSIAN_BLUR);
+			
+			$x = 0;
+			$y = (int)round(($targetHeight - $sourceHeight) / 2);
+			
+			imagecopy($backdrop, $image, $x, $y, 0, 0, $sourceWidth, $sourceHeight);
+		}
+		
+		$image = $backdrop;
+		
+		if (!$image)
+			return false;
+		
+		return true;
+	}
+	
+	private function moveUploadedImage(GdImage &$image, string $fullPath): bool
+	{
+		return imagewebp($image, $fullPath, 100);
+	}
+	
+	final protected function saveUploadedImage(array $file, string $fullPath): void
 	{
 		if (!$this->isFileUploaded($file))
 			throw new HttpContentTooLarge413('File upload failed', get_defined_vars());
 		
-		if (!$this->isFileExtensionAllowed($file))
+		if (!$this->isImageExtensionAllowed($file))
 			throw new HttpUnsupportedMediaType415('File extension not allowed', get_defined_vars());
 		
-		if (!$this->isFileFormatAllowed($file))
+		if (!$this->isImageFormatAllowed($file))
 			throw new HttpUnsupportedMediaType415('File format not allowed', get_defined_vars());
 		
-		if (!$this->moveUploadedFile($file, $fullPath))
+		if (!$this->readUploadedImage($file))
+			throw new HttpUnsupportedMediaType415('Failed to read image', get_defined_vars());
+		
+		if (!$this->convertImageToTrueColor($file))
+			throw new HttpUnsupportedMediaType415('Failed to convert image to TrueColor', get_defined_vars());
+		
+		if (!$this->scaleDownImage($file))
+			throw new HttpUnsupportedMediaType415('Failed to scale down image', get_defined_vars());
+		
+		if (!$this->applyBlurredBackdropToImage($file))
+			throw new HttpUnsupportedMediaType415('Failed to apply blurred backdrop to image', get_defined_vars());
+		
+		if (!$this->moveUploadedImage($file, $fullPath))
 			throw new HttpInternalServerError500('File move failed', get_defined_vars());
 	}
 	
@@ -437,7 +573,7 @@ class UserModel extends ViolatorModel
 		{
 			$filename = $this->buildFilename($uri);
 			$fullPath = $this->buildFullPath(AssetFolder::Base->value, AssetFolder::Games->value, $filename);
-			$this->saveUploadedFile($logo, $fullPath);
+			$this->saveUploadedImage($logo, $fullPath);
 		}
 		
 		$id = $this->pdo->lastInsertId();
@@ -509,7 +645,7 @@ class UserModel extends ViolatorModel
 		{
 			$filename = $this->buildFilename($uri);
 			$fullPath = $this->buildFullPath(AssetFolder::Base->value, AssetFolder::Albums->value, $filename);
-			$this->saveUploadedFile($cover, $fullPath);
+			$this->saveUploadedImage($cover, $fullPath);
 		}
 		
 		$id = $this->pdo->lastInsertId();
@@ -581,7 +717,7 @@ class UserModel extends ViolatorModel
 		{
 			$filename = $this->buildFilename($uri);
 			$fullPath = $this->buildFullPath(AssetFolder::Base->value, AssetFolder::Artists->value, $filename);
-			$this->saveUploadedFile($photo, $fullPath);
+			$this->saveUploadedImage($photo, $fullPath);
 		}
 		
 		$id = $this->pdo->lastInsertId();
@@ -649,7 +785,7 @@ class UserModel extends ViolatorModel
 		{
 			$filename = $this->buildFilename($uri);
 			$fullPath = $this->buildFullPath(AssetFolder::Base->value, AssetFolder::Characters->value, $filename);
-			$this->saveUploadedFile($image, $fullPath);
+			$this->saveUploadedImage($image, $fullPath);
 		}
 		
 		$id = $this->pdo->lastInsertId();
@@ -1033,7 +1169,7 @@ class UserModel extends ViolatorModel
 			
 			$newFilename = $this->buildFilename($newUri);
 			$newFullPath = $this->buildFullPath(AssetFolder::Base->value, AssetFolder::Games->value, $newFilename);
-			$this->saveUploadedFile($logo, $newFullPath);
+			$this->saveUploadedImage($logo, $newFullPath);
 		}
 		else
 		{
@@ -1128,7 +1264,7 @@ class UserModel extends ViolatorModel
 			
 			$newFilename = $this->buildFilename($newUri);
 			$newFullPath = $this->buildFullPath(AssetFolder::Base->value, AssetFolder::Albums->value, $newFilename);
-			$this->saveUploadedFile($cover, $newFullPath);
+			$this->saveUploadedImage($cover, $newFullPath);
 		}
 		else
 		{
@@ -1223,7 +1359,7 @@ class UserModel extends ViolatorModel
 			
 			$newFilename = $this->buildFilename($newUri);
 			$newFullPath = $this->buildFullPath(AssetFolder::Base->value, AssetFolder::Artists->value, $newFilename);
-			$this->saveUploadedFile($photo, $newFullPath);
+			$this->saveUploadedImage($photo, $newFullPath);
 		}
 		else
 		{
@@ -1315,7 +1451,7 @@ class UserModel extends ViolatorModel
 			
 			$newFilename = $this->buildFilename($newUri);
 			$newFullPath = $this->buildFullPath(AssetFolder::Base->value, AssetFolder::Characters->value, $newFilename);
-			$this->saveUploadedFile($image, $newFullPath);
+			$this->saveUploadedImage($image, $newFullPath);
 		}
 		else
 		{
