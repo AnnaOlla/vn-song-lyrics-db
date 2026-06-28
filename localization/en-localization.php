@@ -979,24 +979,24 @@ namespace Localization\PolicyPage
 	
 	const HeadingContent  = 'Content Policy';
 	const ContentPolicy1  = '1. All contributions are public and available for anybody on the Internet. The user agrees that they claim no rights on any contribution.';
-	const ContentPolicy2  = '2. Images are gathered from different online sources and may be subject to the licenses of their respective rightholders.';
+	const ContentPolicy2  = '2. Names of games and game characters, artists and albums and all depictions of them are gathered from different online sources and may be subject to the licenses of their respective rightholders.';
 	const ContentPolicy3  = '3. Lyrics are either transcribed with the use of materials provided in official editions of soundtracks or by listening. '.
-	                        'Therefore, they might look identical to the content on websites of the similar theme. In all cases, lyrics belong only to their respective rightholders.';
-	const ContentPolicy4  = '4. Translations belong to the website. No one, including the website and its owners, is in right to use translations to make any kind of profit or benefit.';
-	const ContentPolicy5  = '5. Any contribution may be removed on the legal note of the rightholder of the entity in question.';
-	const ContentPolicy6  = '6. The website owner is not liable for any damage or another kind of negative consequence that may be caused by the website and its content. '.
-	                        'It includes malfunctions and deliberate malicious actions by a third party.';
-	const ContentPolicy7  = '7. The user agrees not to use any part of the website content for commercial purposes.';
-	const ContentPolicy8  = '8. The user agrees not to use any part of the website content for AI machine learning purposes.';
-	const ContentPolicy9  = '9. The user is kindly asked to give a reference to the database in cases of copying any part of the website content.';
-	const ContentPolicy10 = '10. The user agrees not to modify, derive or exploit any part of the website content without a reference to the database and creator of the content in question.';
-	const ContentPolicy11 = '11. The policy may be changed without notifying users.';
+	                        'Therefore, they might look identical to the content on websites of the similar theme. In any case, lyrics belong only to their respective rightholders.';
+	const ContentPolicy4  = '4. The user is not allowed to plagiarize translations regardless of whether they were published on this website or anywhere else.';
+	const ContentPolicy5  = '5. All translations of all song lyrics belong to the public domain. No-one, including the website staff, is in right to claim ownership on this kind of content. '.
+	                        'Although it implies that anyone is in right to use them for any purpose, the website staff kindly asks you the following:';
+	const ContentPolicy5a = '5a. When using the content, please, reference the website and creator of the translation in question;';
+	const ContentPolicy5b = '5b. Do not use translations for machine learning purposes.';
+	const ContentPolicy6  = '6. Any contribution may be changed or removed on the legal note of the rightholder of the entity in question.';
+	const ContentPolicy7  = '7. The website owner and staff are not liable for any damage or another kind of negative consequence that may be caused by the operation of the website or its content. '.
+	                        'It includes any malfunctions and malicious actions by a third party.';
+	const ContentPolicy8  = '8. The policy may be changed without notifying users.';
 	
 	const HeadingPrivacy = 'Privacy Policy';
 	const PrivacyPolicy1 = '1. The user uses the service at their sole risk. The service is provided on basis “as is”. The website makes no warranties on anything.';
-	const PrivacyPolicy2 = '2. All network traffic including information about the user (e.g. a browser or their IP address) may be kept for indefinite time.';
+	const PrivacyPolicy2 = '2. All network traffic including information about the user (e.g. the browser they use or their IP address) may be kept for indefinite time.';
 	const PrivacyPolicy3 = '3. The information about the user is collected automatically and is not shared with third parties, except for cases of legal notes from authorities or the hosting provider.';
-	const PrivacyPolicy4 = '4. The website uses browser cookies. At the moment, the website uses the storage only for the unique session token.';
+	const PrivacyPolicy4 = '4. The website uses browser cookies. At the moment, the website uses the storage only to keep the unique session token.';
 	const PrivacyPolicy5 = '5. The website provides an opportunity to delete the account immediately. In this case, all contributions remain and are marked with tag “Deleted User”.';
 	const PrivacyPolicy6 = '6. The policy may be changed without notifying users.';
 	
@@ -1004,8 +1004,8 @@ namespace Localization\PolicyPage
 	const RightholderPolicy1 = '1. If you are not comfortable with the fact that any data about you or your work is included in the database, please, contact us at support@vn-song-lyrics-db.ru.';
 	const RightholderPolicy2 = '2. The website is ready to find a solution to your claims.';
 	
-	const LastUpdated        = 'Policies were last edited on 7 May 2026.';
-	const Timezone           = 'All dates and times are UTC+3.';
+	const LastUpdated        = 'Policies were last edited on 28 June 2026.';
+	const Timezone           = 'The timezone of the website is UTC+3.';
 }
 
 namespace Localization\RulesPage
@@ -1014,8 +1014,8 @@ namespace Localization\RulesPage
 	
 	const HeadingGeneral = 'Behavior Rules';
 	
-	const GeneralRule1  = '1. The user is expected to be over 18 years of age. The website do not require your age, but your country may have limitations. Visit the website at your own risk.';
-	const GeneralRule2  = '2. It is not allowed to have a username having obscene, abusive or political meaning.';
+	const GeneralRule1  = '1. The user is expected to be over 18 years of age. The website does not require your age, but your country may have limitations. Visit the website at your own risk.';
+	const GeneralRule2  = '2. It is not allowed to have a username or self-introduction section having obscene, abusive or political meaning.';
 	const GeneralRule3  = '3. It is not allowed to post any materials that are not related to the website theme.';
 	const GeneralRule4  = '4. Only official soundtracks are allowed. Gamerips are not allowed.';
 	const GeneralRule5  = '5. Visual novels may have a lot of albums containing songs related to them. All of them are welcome here.';
@@ -1023,7 +1023,8 @@ namespace Localization\RulesPage
 	const GeneralRule7a = '7. The website staff reserves the right to edit or remove content that violates ';
 	const GeneralRule7b = 'Writing Guide';
 	const GeneralRule7c = '.';
-	const GeneralRule8  = '8. The website staff reserves the right to block the access to the website for any user or restrict their functional without a notification and explanation.';
+	const GeneralRule8  = '8. Any controversial behavior that does not fall under the abovementioned rules still may be counted as malicious.';
+	const GeneralRule9  = '9. The website staff reserves the right to block the access to the website for any user or restrict their functional without a notification and explanation.';
 	
 	const HeadingAccess = 'Access Rules';
 	
@@ -1032,7 +1033,7 @@ namespace Localization\RulesPage
 	const AccessRule3 = '3. A registered user may add a contribution of any type.';
 	const AccessRule4 = '4. A registered user may edit or delete their contribution of type “Game”, “Album”, “Artist”, and “Character” if its status is “Awaiting Staff Approval”.';
 	const AccessRule5 = '5. A registered user may edit or delete their contribution of type “Lyrics” if its status is “Awaiting Staff Approval” and if the “Lyrics” in question has no “Translations”.';
-	const AccessRule6 = '6. A registered user may edit or delete their contribution of type “Translation” regardless the approval. Doing so changes the status to “Awaiting Staff Approval”.';
+	const AccessRule6 = '6. A registered user may edit or delete their contribution of type “Translation” regardless of the approval. Any edit changes the status to “Awaiting Staff Approval”.';
 	const AccessRule7 = '7. A user known for violating rules may be restricted from doing any changes on the website on any period. A violator may appeal through contacting the staff by mail.';
 	const AccessRule8 = '8. Only the website staff sets the status of the contribution.';
 }

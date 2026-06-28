@@ -1556,12 +1556,11 @@ class VisitorView extends ErrorView
 				<p>'.\Localization\PolicyPage\ContentPolicy3.'</p>
 				<p>'.\Localization\PolicyPage\ContentPolicy4.'</p>
 				<p>'.\Localization\PolicyPage\ContentPolicy5.'</p>
+				<p>'.\Localization\PolicyPage\ContentPolicy5a.'</p>
+				<p>'.\Localization\PolicyPage\ContentPolicy5b.'</p>
 				<p>'.\Localization\PolicyPage\ContentPolicy6.'</p>
 				<p>'.\Localization\PolicyPage\ContentPolicy7.'</p>
 				<p>'.\Localization\PolicyPage\ContentPolicy8.'</p>
-				<p>'.\Localization\PolicyPage\ContentPolicy9.'</p>
-				<p>'.\Localization\PolicyPage\ContentPolicy10.'</p>
-				<p>'.\Localization\PolicyPage\ContentPolicy11.'</p>
 				<br/>
 				<h2>'.\Localization\PolicyPage\HeadingPrivacy.'</h2>
 				<p>'.\Localization\PolicyPage\PrivacyPolicy1.'</p>
@@ -1612,6 +1611,7 @@ class VisitorView extends ErrorView
 					\Localization\RulesPage\GeneralRule7c.
 				'</p>
 				<p>'.\Localization\RulesPage\GeneralRule8.'</p>
+				<p>'.\Localization\RulesPage\GeneralRule9.'</p>
 				<br/>
 				<h2>'.\Localization\RulesPage\HeadingAccess.'</h2>
 				<p>'.\Localization\RulesPage\AccessRule1.'</p>

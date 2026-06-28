@@ -978,19 +978,19 @@ namespace Localization\PolicyPage
 	const Warning = 'あなたはウエッブサイトを使って、以下の全部のポリシーを受け入れます。';
 	
 	const HeadingContent  = 'コンテントポリシー';
-	const ContentPolicy1  = '１．全ての貢献は公開です。誰もインターネットユーザーは見ることができます。あなたは所有権を持っていません。';
-	const ContentPolicy2  = '２．イメージはインターネットから見つかります。イメージの有権者はある可能性があります。';
-	const ContentPolicy3  = '３．歌詞はオフィシャルサウンドトラックと共にある本を使って書きます。聞くことでも書くことができます。'.
+	const ContentPolicy1  = '１．全ての貢献は公開です。誰も見ることができます。あなたは貢献の所有権を持っていません。';
+	const ContentPolicy2  = '２．ゲームとゲームキャラクター、アルバムとカシュと全てのイメージはインターネットから見つかりました。この情報の有権者はある可能性があります。';
+	const ContentPolicy3  = '３．歌詞はオフィシャルサウンドトラックと共にある本を使って書きます。聞くことでも書けます。'.
 	                        '他のウエッブサイトのコンテントに類似している可能性があります。でも、歌詞は歌の有権者だけの物です。';
-	const ContentPolicy4  = '４．全ての歌詞はウェブサイトが所有権です。誰も（ウェブサイトとウェブサイトの所有者と）利益を得ることができません。';
-	const ContentPolicy5  = '５．どうでもよろしい実体は有権者が訴えを送り、消すことができます。';
-	const ContentPolicy6  = '６．ウエッブサイトとウエッブサイトの所有者は何でも悪いことがあったりし、責任がありません。'.
+	const ContentPolicy4  = '４．あなたはウェブサイトに出すように別の元から翻訳をコピーすることが許されません。';
+	const ContentPolicy5  = '５．全ての翻訳は公開です。誰も（ウェブサイトのスタッフも）所有権を持っていません。'.
+	                        '誰も使うことができますのに、あなたは求められています：';
+	const ContentPolicy5a = '５ａ．コンテントを使って、ウェブサイトと貢献を作った者を参照してください；';
+	const ContentPolicy5b = '５ｂ．機械学習の目的のためにコンテントを使わないでください。';
+	const ContentPolicy6  = '６．どうでもよろしい実体は有権者が訴えを送り、消すことができます。';
+	const ContentPolicy7  = '７．ウエッブサイトとウエッブサイトのスタッフは何でもの被害が出たりし、責任がありません。'.
 	                        '';
-	const ContentPolicy7  = '７．ユーザーはお金を稼ぐため、コンテントを使ってはいけません。';
-	const ContentPolicy8  = '８．ユーザーは機械学習のため、コンテントを使ってはいけません。';
-	const ContentPolicy9  = '９．ユーザーはコンテントをコピーすると、ウェブサイトへの参照はおすすめです。';
-	const ContentPolicy10 = '１０．ユーザーはコンテントを変更する、導かすと、ウェブサイトへの参照は必要です。';
-	const ContentPolicy11 = '１１．ポリシーは変わって、誰も知らせません。';
+	const ContentPolicy8  = '８．ポリシーは変わりましたなら、誰も知らせません。';
 	
 	const HeadingPrivacy = 'プライバシーポリシー';
 	const PrivacyPolicy1 = '１．ユーザーはウェブサイトを使るのが自己責任です。ウェブサイトは「ＡＳ　ＩＳ」というポリシーを使う。何も保証はありません。';
@@ -1004,7 +1004,7 @@ namespace Localization\PolicyPage
 	const RightholderPolicy1 = '１．あなたに情報の所有権はよろしかったら、support@vn-song-lyrics-db.ruへメールを送ってください。';
 	const RightholderPolicy2 = '２．ウェブサイトは問題への解決策を見つけたいです。';
 	
-	const LastUpdated        = '最後の編集：２０２６年０５月０７日。';
+	const LastUpdated        = '最後の編集：２０２６年０６月２８日。';
 	const Timezone           = '全部の日付：ＵＴＣ＋３。';
 }
 
@@ -1014,16 +1014,17 @@ namespace Localization\RulesPage
 	
 	const HeadingGeneral = '振る舞いのルール';
 	
-	const GeneralRule1  = '１．ユーザーは１８歳以上の者だと見込んでいます。ウェブサイトはチェックしないだですが、ユーザーが住んでいる国は法律を持っているかもしりません。そして、自己責任です。';
-	const GeneralRule2  = '２．ユーザーネームは猥褻と悪態と掃除的な意味を持っていません。';
+	const GeneralRule1  = '１．ユーザーは１８歳以上の者だと見込んでいます。ウェブサイトはチェックしませんのに、ユーザーが住んでいる国は法律を持っているかもしりません。そして、自己責任です。';
+	const GeneralRule2  = '２．ユーザーネームと自己紹介は猥褻と悪態と掃除的な意味を持つのは許されません。';
 	const GeneralRule3  = '３．ウェブサイトのテーマと違っている情報を出してはいけません。';
 	const GeneralRule4  = '４．オフィシャルサウンドトラックだけを出してもいいです。「ｇａｍｅｒｉｐ」というサウンドトラックを出してはいけません。';
-	const GeneralRule5  = '５．ビジュアルノベルにはたくさんのアルバムが関係するかもしれません。全部はいいです。';
+	const GeneralRule5  = '５．ビジュアルノベルにはたくさんのアルバムが関係するかもしれません。全部はよろしいです。';
 	const GeneralRule6  = '６．ウェブサイトにはユーザーのコンテントを削除の権利があります。';
 	const GeneralRule7a = '７．ウェブサイトには';
 	const GeneralRule7b = '文章作法';
 	const GeneralRule7c = 'と違っている情報を削除の権利があります。';
-	const GeneralRule8  = '８．ウェブサイトはユーザーとユーザーの出す権利を限ることができます。説明とお知らせは必要ではありません。';
+	const GeneralRule8  = '８．何でもの問題の行動は悪質に立ち並ぶことができます';
+	const GeneralRule9  = '９．ウェブサイトはユーザーとユーザーの出す権利を限ることができます。説明とお知らせは必要ではありません。';
 	
 	const HeadingAccess = 'アクセスルール';
 	
