@@ -1622,6 +1622,9 @@ class VisitorView extends ErrorView
 				<p>'.\Localization\RulesPage\AccessRule6.'</p>
 				<p>'.\Localization\RulesPage\AccessRule7.'</p>
 				<p>'.\Localization\RulesPage\AccessRule8.'</p>
+				<br/>
+				<p>'.\Localization\RulesPage\LastUpdated.'</p>
+				<p>'.\Localization\RulesPage\Timezone.'</p>
 			</section>
 		</article>
 		';

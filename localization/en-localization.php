@@ -1004,8 +1004,8 @@ namespace Localization\PolicyPage
 	const RightholderPolicy1 = '1. If you are not comfortable with the fact that any data about you or your work is included in the database, please, contact us at support@vn-song-lyrics-db.ru.';
 	const RightholderPolicy2 = '2. The website is ready to find a solution to your claims.';
 	
-	const LastUpdated        = 'Policies were last edited on 28 June 2026.';
-	const Timezone           = 'The timezone of the website is UTC+3.';
+	const LastUpdated = 'Policies were last edited on 29 June 2026.';
+	const Timezone    = 'The timezone of the website is UTC+3.';
 }
 
 namespace Localization\RulesPage
@@ -1017,7 +1017,7 @@ namespace Localization\RulesPage
 	const GeneralRule1  = '1. The user is expected to be over 18 years of age. The website does not require your age, but your country may have limitations. Visit the website at your own risk.';
 	const GeneralRule2  = '2. It is not allowed to have a username or self-introduction section having obscene, abusive or political meaning.';
 	const GeneralRule3  = '3. It is not allowed to post any materials that are not related to the website theme.';
-	const GeneralRule4  = '4. Only official soundtracks are allowed. Gamerips are not allowed.';
+	const GeneralRule4  = '4. Official soundtracks and fan arrangements are allowed. Gamerips are not allowed.';
 	const GeneralRule5  = '5. Visual novels may have a lot of albums containing songs related to them. All of them are welcome here.';
 	const GeneralRule6  = '6. The website staff reserves the right to remove any controversial content.';
 	const GeneralRule7a = '7. The website staff reserves the right to edit or remove content that violates ';
@@ -1036,6 +1036,9 @@ namespace Localization\RulesPage
 	const AccessRule6 = '6. A registered user may edit or delete their contribution of type “Translation” regardless of the approval. Any edit changes the status to “Awaiting Staff Approval”.';
 	const AccessRule7 = '7. A user known for violating rules may be restricted from doing any changes on the website on any period. A violator may appeal through contacting the staff by mail.';
 	const AccessRule8 = '8. Only the website staff sets the status of the contribution.';
+	
+	const LastUpdated = 'Rules were last edited on 29 June 2026.';
+	const Timezone    = 'The timezone of the website is UTC+3.';
 }
 
 namespace Localization\WritingGuidePage
