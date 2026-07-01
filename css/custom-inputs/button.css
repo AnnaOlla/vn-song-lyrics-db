@@ -30,14 +30,6 @@
 	outline: none;
 }
 
-.custom-button:focus,
-.custom-submit:focus {
-	background-color: var(--color-button-body-focus);
-	color:            var(--color-button-text-focus);
-	
-	outline: none;
-}
-
 .custom-button:disabled,
 .custom-button.disabled,
 .custom-submit:disabled {

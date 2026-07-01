@@ -22,6 +22,12 @@
 	cursor: pointer;
 }
 
+.custom-checkbox:has(.custom-checkbox-input:focus) {
+	outline:        var(--size-outline-width) solid var(--color-outline);
+	outline-offset: var(--size-outline-offset);
+	border-radius:  var(--size-border-radius);
+}
+
 .custom-checkbox:has(.custom-checkbox-input) > .custom-checkbox-label {
 	flex: 0 0 auto;
 	
@@ -43,10 +49,6 @@
 
 .custom-checkbox:has(.custom-checkbox-input:hover) > .custom-checkbox-label {
 	color: var(--color-checkbox-text-hover);
-}
-
-.custom-checkbox:has(.custom-checkbox-input:focus) > .custom-checkbox-label {
-	color: var(--color-checkbox-text-focus);
 }
 
 .custom-checkbox:has(.custom-checkbox-input:disabled) > .custom-checkbox-label {
@@ -79,10 +81,6 @@
 	background-color: var(--color-checkbox-body-hover);
 }
 
-.custom-checkbox:has(.custom-checkbox-input:focus) > .custom-checkbox-button {
-	background-color: var(--color-checkbox-body-focus);
-}
-
 .custom-checkbox:has(.custom-checkbox-input:disabled) > .custom-checkbox-button {
 	background-color: var(--color-checkbox-body-disabled);
 	
@@ -109,10 +107,6 @@
 
 .custom-checkbox:has(.custom-checkbox-input:hover) > .custom-checkbox-button::after {
 	color: var(--color-checkbox-mark-hover);
-}
-
-.custom-checkbox:has(.custom-checkbox-input:focus) > .custom-checkbox-button::after {
-	color: var(--color-checkbox-mark-focus);
 }
 
 .custom-checkbox:has(.custom-checkbox-input:disabled) > .custom-checkbox-button::after {

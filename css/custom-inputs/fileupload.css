@@ -51,9 +51,3 @@
 	
 	outline: none;
 }
-
-.custom-fileupload-button:focus {
-	background-color: var(--color-textinput-body-focus);
-	
-	outline: none;
-}
