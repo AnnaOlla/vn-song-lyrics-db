@@ -490,9 +490,9 @@ namespace Localization\DeleteEntityPage
 
 namespace Localization\ReportPage
 {
-	const Heading            = 'Жалоба: ';
+	const Heading            = 'Сообщение об ошибке: ';
 	
-	const Introduction       = 'На этой странице вы можете подать анонимную жалобу администрации сайта на контент.';
+	const Introduction       = 'На этой странице вы можете анонимно привлечь внимание администрации сайта к записи.';
 	const AboutReportContent = 'По всей видимости, вы нашли неполную, неверную или неприемлемую информацию. Пожалуйста, расскажите подробно о проблеме.';
 	const NoActionWarning    = 'Просим заметить, что реакция администрации не мгновенная, более того, ваша жалоба может быть отклонена.';
 	const ReplyOpportunity   = 'Если вы хотите получить ответ от администрации, то подайте жалобу нам на почту support@vn-song-lyrics-db.ru.';
@@ -607,7 +607,7 @@ namespace Localization\ModerationStatus
 
 namespace Localization\Controls
 {
-	const Report       = 'Пожаловаться';
+	const Report       = 'Сообщить об ошибке';
 	const Edit         = 'Редактировать';
 	const Delete       = 'Удалить';
 	
