@@ -64,20 +64,47 @@ section.entity-container > a:focus > img {
 /* Mobile Devices */
 
 @media (max-width: 1023px) {
-	.website-mascot {
-		display: none;
+	img.website-mascot {
+		width: var(--image-size-small);
+		height: var(--image-size-small);
+	}
+	
+	h1.home-page-text {
+		margin-bottom: 0;
 	}
 	
 	.home-page-heading p {
 		display: none;
 	}
 	
-	img {
-		width: var(--image-size-small);
-		height: var(--image-size-small);
+	section.entity-container {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
 	}
 	
-	h3 {
-		display: none;
+	section.entity-container > a {
+		display: flex;
+		align-items: center;
+		gap: var(--element-gap-medium);
+	}
+	
+	section.entity-container > a > h3 {
+		max-height: var(--image-size-tiny);
+		overflow: hidden;
+		position: relative;
+	}
+	
+	h3::after {
+		position: absolute;
+		top:      2lh;
+		right:    0;
+		
+		background: var(--color-section);
+		content:    "\2026";
+	}
+	
+	section.entity-container > a > img {
+		width: var(--image-size-tiny);
+		height: var(--image-size-tiny);
 	}
 }

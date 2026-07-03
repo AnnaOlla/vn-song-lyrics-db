@@ -208,14 +208,12 @@ main > aside   > section > * {
 		border-right-width: 0px;
 	}
 	
-	header > nav > section.main-pages > a:nth-child(1),
-	header > nav > section.main-pages > a:nth-child(3),
-	header > nav > section.main-pages > a:nth-child(4) {
-		display: none;
+	header > nav > section.main-pages > a:nth-child(5) {
+		border-right-width: 0px;
 	}
 	
 	header > nav > section.main-pages > a:nth-child(6) {
-		border-right-width: 0px;
+		display: none;
 	}
 	
 	header > nav > section.localization > a:nth-child(3) {
@@ -245,10 +243,6 @@ main > aside   > section > * {
 		display: none;
 	}
 	
-	footer > nav > section.links {
-		flex-direction: column;
-	}
-	
 	footer > nav > section.links > a {
 		width: auto;
 	}
@@ -257,7 +251,7 @@ main > aside   > section > * {
 		display: none;
 	}
 	
-	footer > nav > section.links > a {
+	footer > nav > section.links > a:nth-child(3) {
 		border-right-width: 0px;
 	}
 }
