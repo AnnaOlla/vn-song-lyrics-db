@@ -142,12 +142,26 @@
 /* Mobile Devices */
 
 @media (max-width: 1023px) {
-	.filter-section > a {
+	.filter-section {
 		display: none;
 	}
 	
+	.search-section {
+		flex-wrap:  wrap;
+		row-gap:    var(--element-gap-medium);
+		column-gap: var(--element-gap-big);
+	}
+	
 	.search-section > section:nth-child(1),
-	.search-section > section:nth-child(3)	{
+	.search-section > section:nth-child(2) {
+		flex-basis: 100%;
+	}
+	
+	.search-section > section:nth-child(3) {
 		display: none;
+	}
+	
+	.search-section:last-child {
+		gap: 0;
 	}
 }
