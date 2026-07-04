@@ -190,22 +190,17 @@ main > aside   > section > * {
 /* Mobile Devices */
 
 @media (max-width: 1023px) {
-	header > nav {
-		flex-direction: column;
-	}
-	
 	header > nav > section.home-page {
-		flex-grow: 1;
-		width: 100%;
-	}
-
-	header > nav > section.main-pages {
-		flex-grow: 3;
-		width: 100%;
+		flex: 1 0 auto;
 	}
 	
-	header > nav > section.home-page > a {
-		border-right-width: 0px;
+	header > nav > section.home-page > a:nth-child(1) {
+		font-size: 0px;
+	}
+	
+	header > nav > section.home-page > a:nth-child(1)::after {
+		font-size: var(--font-size-plain);
+		content:   "\21F1";
 	}
 	
 	header > nav > section.main-pages > a:nth-child(5) {
@@ -216,13 +211,8 @@ main > aside   > section > * {
 		display: none;
 	}
 	
-	header > nav > section.localization > a:nth-child(3) {
-		border-right-width: 0px;
-	}
-	
 	header > nav > section.localization {
-		flex-grow: 1;
-		width: 100%;
+		display: none;
 	}
 
 	header > nav > section.authorization {
@@ -232,8 +222,6 @@ main > aside   > section > * {
 	header > nav > section.filler {
 		display: none;
 	}
-	
-	/* Footer: */
 	
 	footer > nav > section.filler {
 		display: none;
