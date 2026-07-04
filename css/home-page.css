@@ -99,7 +99,7 @@ section.entity-container > a:focus > img {
 	
 	h3::after {
 		position: absolute;
-		bottom:   calc(100% - 3lh);
+		bottom:   calc(100% - var(--image-size-tiny));
 		right:    0;
 		
 		background: var(--color-section);
