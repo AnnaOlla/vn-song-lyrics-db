@@ -65,7 +65,7 @@ section.entity-container > a:focus > img {
 
 @media (max-width: 1023px) {
 	img.website-mascot {
-		width: var(--image-size-small);
+		width:  var(--image-size-small);
 		height: var(--image-size-small);
 	}
 	
@@ -78,25 +78,28 @@ section.entity-container > a:focus > img {
 	}
 	
 	section.entity-container {
-		display: grid;
+		display:               grid;
 		grid-template-columns: 1fr 1fr 1fr;
+		column-gap:            var(--element-gap-big);
 	}
 	
 	section.entity-container > a {
-		display: flex;
+		display:     flex;
+		gap:         var(--element-gap-medium);
 		align-items: center;
-		gap: var(--element-gap-medium);
 	}
 	
 	section.entity-container > a > h3 {
+		max-width:  none;
 		max-height: var(--image-size-tiny);
-		overflow: hidden;
-		position: relative;
+		overflow:   hidden;
+		position:   relative;
+		text-align: left;
 	}
 	
 	h3::after {
 		position: absolute;
-		top:      2lh;
+		bottom:   calc(100% - 3lh);
 		right:    0;
 		
 		background: var(--color-section);
@@ -104,7 +107,7 @@ section.entity-container > a:focus > img {
 	}
 	
 	section.entity-container > a > img {
-		width: var(--image-size-tiny);
+		width:  var(--image-size-tiny);
 		height: var(--image-size-tiny);
 	}
 }
