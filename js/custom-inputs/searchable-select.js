@@ -2,8 +2,9 @@
 // -- prepare-entity-name-for-filtering.js
 
 function customSearchableSelectFilterOptions(e) {
-	const select   = e.target;
+	const select      = e.target;
 	const filterValue = prepareEntityNameForFiltering(select.value);
+	const regexp      = new RegExp(filterValue, 'i');
 	
 	const optionList  = select.nextElementSibling;
 	const options     = optionList.children;
@@ -14,9 +15,8 @@ function customSearchableSelectFilterOptions(e) {
 		
 		for (const name of names) {
 			const content = prepareEntityNameForFiltering(name.textContent);
-			const re      = new RegExp(filterValue, 'i');
 			
-			isMatch = isMatch || re.test(content);
+			isMatch = isMatch || regexp.test(content);
 		}
 		
 		if (isMatch) {
@@ -32,10 +32,15 @@ function customSearchableSelectOnFocus(e) {
 	const hiddenInput = actualInput.previousElementSibling;
 	const optionList  = e.target.nextElementSibling;
 	
+	// Prevent reopening if was already open (used by optionList's scrollbar)
+	if (optionList.checkVisibility() === true) {
+		return;
+	}
+	
 	actualInput.setAttribute('data-current-value', actualInput.value ?? '');
 	hiddenInput.setAttribute('data-current-value', hiddenInput.value ?? '');
 	
-	actualInput.value      = '';
+	actualInput.value = '';
 	hiddenInput.value = '';
 	
 	actualInput.placeholder = actualInput.getAttribute('data-placeholder-filter') ?? '';
@@ -65,6 +70,11 @@ function customSearchableSelectOnBlur(e) {
 		hiddenInput.value = clickedElement.getAttribute('value');
 		
 		emulateEvent(hiddenInput, 'change');
+	} else if (clickedElement === optionList) {
+		// Scrollbar was clicked: return focus and do nothing
+		// (does not work for disabled options)
+		actualInput.focus();
+		return;
 	} else {
 		actualInput.value = actualInput.getAttribute('data-current-value') ?? '';
 		hiddenInput.value = hiddenInput.getAttribute('data-current-value') ?? '';
