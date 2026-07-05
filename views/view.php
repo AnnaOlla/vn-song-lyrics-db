@@ -1694,8 +1694,8 @@ HTML;
 		// If you change it,
 		// then change the divisor of pagination.button in search-filter-section.css
 		$mostLeftPage       = 1;
-		$pageCountFromLeft  = 3;
-		$pageCountfromRight = 3;
+		$pageCountFromLeft  = 2;
+		$pageCountfromRight = 2;
 		$mostRightPage      = $pageCount;
 		
 		$fromLeft = $currentPageIndex - $pageCountFromLeft;
