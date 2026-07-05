@@ -254,19 +254,16 @@ class VisitorView extends ErrorView
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
-				'/css/shared/search-filter-section.css'
+				'/css/entity-list-page.css'
 			]
 		);
 		
 		$html[] = 
 		'
 		<article>
-			<section>
+			<section class="entity-list-heading">
 				'.$this->createHeading(\Localization\GameListPage\Heading, 1).'
-				<section class="filter-section">
-					'.$this->createFilterBar().'
-					'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
-				</section>
+				'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
 			</section>
 			<section>
 				<form class="search-section">
@@ -295,7 +292,6 @@ class VisitorView extends ErrorView
 		(
 			jsScriptUris:
 			[
-				'/js/shared/entity-list-filter.js',
 				'/js/shared/entity-list-search.js',
 				'/js/entity-list-page.js'
 			]
@@ -328,19 +324,16 @@ class VisitorView extends ErrorView
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
-				'/css/shared/search-filter-section.css'
+				'/css/entity-list-page.css'
 			]
 		);
 		
 		$html[] = 
 		'
 		<article>
-			<section>
+			<section class="entity-list-heading">
 				'.$this->createHeading(\Localization\AlbumListPage\Heading, 1).'
-				<section class="filter-section">
-					'.$this->createFilterBar().'
-					'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
-				</section>
+				'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
 			</section>
 			<section>
 				<form class="search-section">
@@ -369,7 +362,6 @@ class VisitorView extends ErrorView
 		(
 			jsScriptUris:
 			[
-				'/js/shared/entity-list-filter.js',
 				'/js/shared/entity-list-search.js',
 				'/js/entity-list-page.js'
 			]
@@ -402,19 +394,16 @@ class VisitorView extends ErrorView
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
-				'/css/shared/search-filter-section.css'
+				'/css/entity-list-page.css'
 			]
 		);
 		
 		$html[] = 
 		'
 		<article>
-			<section>
+			<section class="entity-list-heading">
 				'.$this->createHeading(\Localization\ArtistListPage\Heading, 1).'
-				<section class="filter-section">
-					'.$this->createFilterBar().'
-					'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
-				</section>
+				'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
 			</section>
 			<section>
 				<form class="search-section">
@@ -443,7 +432,6 @@ class VisitorView extends ErrorView
 		(
 			jsScriptUris:
 			[
-				'/js/shared/entity-list-filter.js',
 				'/js/shared/entity-list-search.js',
 				'/js/entity-list-page.js'
 			]
@@ -476,19 +464,16 @@ class VisitorView extends ErrorView
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
-				'/css/shared/search-filter-section.css'
+				'/css/entity-list-page.css'
 			]
 		);
 		
 		$html[] = 
 		'
 		<article>
-			<section>
+			<section class="entity-list-heading">
 				'.$this->createHeading(\Localization\CharacterListPage\Heading, 1).'
-				<section class="filter-section">
-					'.$this->createFilterBar().'
-					'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
-				</section>
+				'.$this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes).'
 			</section>
 			<section>
 				<form class="search-section">
@@ -517,7 +502,6 @@ class VisitorView extends ErrorView
 		(
 			jsScriptUris:
 			[
-				'/js/shared/entity-list-filter.js',
 				'/js/shared/entity-list-search.js',
 				'/js/entity-list-page.js'
 			]
@@ -546,18 +530,15 @@ class VisitorView extends ErrorView
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
-				'/css/shared/search-filter-section.css'
+				'/css/entity-list-page.css'
 			]
 		);
 		
 		$html[] = 
 		'
 		<article>
-			<section>
+			<section class="entity-list-heading">
 				'.$this->createHeading(\Localization\SongListPage\Heading, 1).'
-				<section class="filter-section">
-					'.$this->createFilterBar().'
-				</section>
 			</section>
 			<section>
 				<form class="search-section">
@@ -586,7 +567,6 @@ class VisitorView extends ErrorView
 		(
 			jsScriptUris:
 			[
-				'/js/shared/entity-list-filter.js',
 				'/js/shared/entity-list-search.js',
 				'/js/entity-list-page.js'
 			]
@@ -615,18 +595,15 @@ class VisitorView extends ErrorView
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
-				'/css/shared/search-filter-section.css'
+				'/css/entity-list-page.css'
 			]
 		);
 		
 		$html[] = 
 		'
 		<article>
-			<section>
+			<section class="entity-list-heading">
 				'.$this->createHeading(\Localization\TranslationListPage\Heading, 1).'
-				<section class="filter-section">
-					'.$this->createFilterBar().'
-				</section>
 			</section>
 			<section>
 				<form class="search-section">
@@ -655,7 +632,6 @@ class VisitorView extends ErrorView
 		(
 			jsScriptUris:
 			[
-				'/js/shared/entity-list-filter.js',
 				'/js/shared/entity-list-search.js',
 				'/js/entity-list-page.js'
 			]

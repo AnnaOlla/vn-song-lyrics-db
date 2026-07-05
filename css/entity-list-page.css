@@ -1,14 +1,21 @@
-.filter-section {
+.entity-list-heading {
 	display: flex;
-	gap:     var(--element-gap-big);
+	
+	/*
+	The idea is to match add-entity button size with results-limit button
+	Search bar has 2 gaps; both h1 and button take half of the gap => 4
+	*/
+	gap:     calc(var(--element-gap-big) * 4);
 }
 
-.filter-section > input {
+.entity-list-heading > h1 {
 	flex: 4 1 0;
 }
 
-.filter-section > .custom-button {
+.entity-list-heading > .custom-button {
 	flex: 1 1 0;
+	
+	margin: var(--element-gap-medium);
 }
 
 /* Results Limit, Pagination, Search */
@@ -142,7 +149,7 @@
 /* Mobile Devices */
 
 @media (max-width: 1023px) {
-	.filter-section {
+	.entity-list-heading > .custom-button {
 		display: none;
 	}
 	
