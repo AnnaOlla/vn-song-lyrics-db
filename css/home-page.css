@@ -65,8 +65,7 @@ section.entity-container > a:focus > img {
 
 @media (max-width: 1023px) {
 	img.website-mascot {
-		width:  var(--image-size-small);
-		height: var(--image-size-small);
+		display: none;
 	}
 	
 	h1.home-page-text {
@@ -79,8 +78,7 @@ section.entity-container > a:focus > img {
 	
 	section.entity-container {
 		display:               grid;
-		grid-template-columns: 1fr 1fr 1fr;
-		column-gap:            var(--element-gap-big);
+		grid-template-columns: 1fr;
 	}
 	
 	section.entity-container > a {
@@ -109,5 +107,9 @@ section.entity-container > a:focus > img {
 	section.entity-container > a > img {
 		width:  var(--image-size-tiny);
 		height: var(--image-size-tiny);
+	}
+	
+	section.entity-container > a:nth-child(n + 4) {
+		display: none;
 	}
 }
