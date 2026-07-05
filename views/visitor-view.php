@@ -2114,12 +2114,17 @@ class VisitorView extends ErrorView
 				<br/>
 				
 				<h2 id="captcha">'.\Localization\WritingGuidePage\HeadingCaptcha.'</h2>
-				<section><img src="/assets/static-images/captcha-solution.png" /></section>
+				<section>
+					<img id="captcha-solution" />
+				</section>
 			</section>
 		</article>
 		';
 		
-		$html[] = $this->endRender();
+		$html[] = $this->endRender
+		(
+			jsScriptUris: ['/js/writing-guide-page.js']
+		);
 		
 		$this->echoHtml($html);
 	}
@@ -2226,7 +2231,10 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html[] = $this->endRender(['/js/translation-page.js']);
+		$html[] = $this->endRender
+		(
+			jsScriptUris: ['/js/translation-page.js']
+		);
 		
 		$this->echoHtml($html);
 	}

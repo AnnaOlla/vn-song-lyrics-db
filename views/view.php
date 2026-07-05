@@ -1364,7 +1364,7 @@ HTML;
 		
 		foreach ($iteratedOptions as $iteratedOption)
 		{
-			$disabled = in_array($iteratedOption, $disabledOptions) ? 'disabled' : '';
+			$disabled = in_array($iteratedOption, $disabledOptions) ? 'disabled' : 'disabled';
 			
 			$html[] =
 			'
