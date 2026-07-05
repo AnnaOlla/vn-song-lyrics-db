@@ -169,6 +169,8 @@ namespace Localization\SignUpPage
 	const Policy       = 'Политикой сайта';
 	const Rules        = 'Правилами сайта';
 	const WritingGuide = 'Руководством';
+	const Separator    = ', ';
+	const FullStop     = '.';
 	const Warning      = 'Убедительно просим уделить пару минут на ознакомление.';
 	
 	const AwaitingVerification = 'На указанную почту отправлено письмо. Пожалуйста, проверьте входящие письма, а также папку со спамом.';
@@ -558,7 +560,7 @@ namespace Localization\ChangeAboutMePage
 	const AboutMe     = 'Описание (не более 500 символов)';
 }
 
-namespace Localization\UserAccountDeletePage
+namespace Localization\DeleteAccountPage
 {
 	const Delete       = ': удалить';
 	const AccountData  = 'Предупреждение';

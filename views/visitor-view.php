@@ -140,10 +140,9 @@ class VisitorView extends ErrorView
 		'
 		<article>
 			<section>
-				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
+				'.$this->createHeading(\Localization\LogInPage\Heading, 1).'
 			</section>
 			<section>
-				'.$this->createHeading(\Localization\LogInPage\Heading, 2).'
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
 					<section>
@@ -185,10 +184,9 @@ class VisitorView extends ErrorView
 		'
 		<article>
 			<section>
-				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
+				'.$this->createHeading(\Localization\SignUpPage\Heading, 1).'
 			</section>
 			<section>
-				'.$this->createHeading(\Localization\SignUpPage\Heading, 2).'
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
 					<section>
@@ -205,9 +203,12 @@ class VisitorView extends ErrorView
 					</section>
 					<section>
 						<p>'.\Localization\SignUpPage\Confirmation.'</p>
-							<a href="'.Http::buildInternalPath($this->language, 'policy').'" target="_blank">'.\Localization\SignUpPage\Policy.'</a>,
-							<a href="'.Http::buildInternalPath($this->language, 'rules').'" target="_blank">'.\Localization\SignUpPage\Rules.'</a>,
-							<a href="'.Http::buildInternalPath($this->language, 'writing-guide').'" target="_blank">'.\Localization\SignUpPage\WritingGuide.'</a>.
+							<a href="'.Http::buildInternalPath($this->language, 'policy').'" target="_blank">'.\Localization\SignUpPage\Policy.'</a>'
+							.\Localization\SignUpPage\Separator.
+							'<a href="'.Http::buildInternalPath($this->language, 'rules').'" target="_blank">'.\Localization\SignUpPage\Rules.'</a>'
+							.\Localization\SignUpPage\Separator.
+							'<a href="'.Http::buildInternalPath($this->language, 'writing-guide').'" target="_blank">'.\Localization\SignUpPage\WritingGuide.'</a>'
+							.\Localization\SignUpPage\FullStop.'
 						<p>'.\Localization\SignUpPage\Warning.'</p>
 					</section>
 					<section>
@@ -1309,6 +1310,8 @@ class VisitorView extends ErrorView
 		<article>
 			<section>
 				'.$this->createHeading($heading, 1).'
+			</section>
+			<section>
 				'.$this->createParagraph(\Localization\ReportPage\AboutReportContent).'
 				'.$this->createParagraph(\Localization\ReportPage\ReplyOpportunity).'
 				<form method="POST" autocomplete="off" action="'.$reportLink.'">

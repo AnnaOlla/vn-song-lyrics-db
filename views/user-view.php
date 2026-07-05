@@ -1810,12 +1810,12 @@ class UserView extends ViolatorView
 	
 	final public function renderChangeEmailPage(array $user, InputError $error = InputError::None)
 	{
-		$heading2          = $user['username'].\Localization\ChangeEmailPage\Edit;
+		$heading           = $user['username'].\Localization\ChangeEmailPage\Edit;
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
 		
 		$html[] = $this->startRender
 		(
-			title:        $heading2,
+			title:        $heading,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
@@ -1823,10 +1823,9 @@ class UserView extends ViolatorView
 		'
 		<article>
 			<section>
-				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
+				'.$this->createHeading($heading, 1).'
 			</section>
 			<section>
-				'.$this->createHeading($heading2, 2).'
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
 					<section>
@@ -1854,12 +1853,12 @@ class UserView extends ViolatorView
 	
 	final public function renderChangeUsernamePage(array $user, InputError $error = InputError::None)
 	{
-		$heading2          = $user['username'].\Localization\ChangeUsernamePage\Edit;
+		$heading           = $user['username'].\Localization\ChangeUsernamePage\Edit;
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
 		
 		$html[] = $this->startRender
 		(
-			title:        $heading2,
+			title:        $heading,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
@@ -1867,10 +1866,9 @@ class UserView extends ViolatorView
 		'
 		<article>
 			<section>
-				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
+				'.$this->createHeading($heading, 1).'
 			</section>
 			<section>
-				'.$this->createHeading($heading2, 2).'
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
 					<section>
@@ -1898,12 +1896,12 @@ class UserView extends ViolatorView
 	
 	final public function renderChangePasswordPage(array $user, InputError $error = InputError::None)
 	{
-		$heading2          = $user['username'].\Localization\ChangePasswordPage\Edit;
+		$heading           = $user['username'].\Localization\ChangePasswordPage\Edit;
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
 		
 		$html[] = $this->startRender
 		(
-			title:        $heading2,
+			title:        $heading,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
@@ -1911,10 +1909,9 @@ class UserView extends ViolatorView
 		'
 		<article>
 			<section>
-				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
+				'.$this->createHeading($heading, 1).'
 			</section>
 			<section>
-				'.$this->createHeading($heading2, 2).'
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
 					<section>
@@ -1942,12 +1939,12 @@ class UserView extends ViolatorView
 	
 	final public function renderChangeAboutMePage(array $user, InputError $error = InputError::None)
 	{
-		$heading2          = $user['username'].\Localization\ChangeAboutMePage\Edit;
+		$heading           = $user['username'].\Localization\ChangeAboutMePage\Edit;
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
 		
 		$html[] = $this->startRender
 		(
-			title:        $heading2,
+			title:        $heading,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
@@ -1955,10 +1952,9 @@ class UserView extends ViolatorView
 		'
 		<article>
 			<section>
-				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
+				'.$this->createHeading($heading, 1).'
 			</section>
 			<section>
-				'.$this->createHeading($heading2, 2).'
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
 					<section>
@@ -1990,12 +1986,12 @@ class UserView extends ViolatorView
 	
 	final public function renderDeleteAccountPage(array $user, InputError $error = InputError::None)
 	{
-		$heading2          = $user['username'].\Localization\DeleteAccountPage\Delete;
+		$heading           = $user['username'].\Localization\DeleteAccountPage\Delete;
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['username']);
 		
 		$html[] = $this->startRender
 		(
-			title:        $heading2,
+			title:        $heading,
 			cssSheetUris: ['/css/window-in-center-page.css']
 		);
 		
@@ -2003,10 +1999,9 @@ class UserView extends ViolatorView
 		'
 		<article>
 			<section>
-				'.$this->createHeading(\Localization\HomePage\Heading, 1).'
+				'.$this->createHeading($heading, 1).'
 			</section>
 			<section>
-				'.$this->createHeading($heading2, 2).'
 				'.$this->createParagraph(\Localization\DeleteAccountPage\Warning2).'
 				'.$this->createParagraph(\Localization\DeleteAccountPage\Warning3).'
 				'.$this->createParagraph(\Localization\DeleteAccountPage\Warning4).'

@@ -169,6 +169,8 @@ namespace Localization\SignUpPage
 	const Policy       = 'Website Policy';
 	const Rules        = 'Website Rules';
 	const WritingGuide = 'Writing Guide';
+	const Separator    = ', ';
+	const FullStop     = '.';
 	const Warning      = 'Make sure you spent at least one minute for each link.';
 	
 	const AwaitingVerification = 'We have sent you a verification mail. Please, check your inbox and spam folder.';

@@ -169,7 +169,9 @@ namespace Localization\SignUpPage
 	const Policy       = 'サイトのポリシー';
 	const Rules        = 'サイトのルール';
 	const WritingGuide = '文章作法';
-	const Warning      = 'ルールを読むためにお時間をいただけてください。';
+	const Separator    = '、';
+	const FullStop     = '。';
+	const Warning      = 'ルールを読むようにお時間をいただけてください。';
 	
 	const AwaitingVerification = 'アカウントは確認するために、メールを送りました。受信箱とスパムチェックしてください。';
 }
@@ -558,13 +560,13 @@ namespace Localization\ChangeAboutMePage
 	const AboutMe     = '自己紹介（５００文字以下）';
 }
 
-namespace Localization\UserAccountDeletePage
+namespace Localization\DeleteAccountPage
 {
 	const Delete       = '：削除';
 	const AccountData  = '注意！';
 	
 	const Warning1     = 'これはアカウントを削除のぺーじです。';
-	const Warning2     = 'ウェブサイトはあなたのデータを忘れる。';
+	const Warning2     = 'ウェブサイトはあなたのデータを忘れます。';
 	const Warning3     = 'あなたの貢献は消しません。「削除したユーザー」に変わります。';
 	const Warning4     = '削除はすぐに発効します。取り消しはできません。';
 	const Confirmation = 'ご確認のため、パスワードを入力してください。';
