@@ -77,8 +77,8 @@
 .pagination-button {
 	display:    inline-block;
 	
-	/* Maximum: first page, dots, 7 pages, dots, last page => 11 buttons */
-	width: calc(100% / 11);
+	/* Maximum: first page, dots, 5 pages, dots, last page => 9 buttons */
+	width: calc(100% / 9);
 	
 	box-sizing:    border-box;
 	margin-top:    var(--element-gap-small);
@@ -164,11 +164,31 @@
 		flex-basis: 100%;
 	}
 	
+	.pagination {
+		width: 100%;
+		display: flex;
+	}
+	
+	.pagination-button {
+		flex: 1 1 auto;
+	}
+	
+	/* Normally, current button has 2 available buttons before and after */
+	/* Reduce by one button */
+	.pagination-button.disabled:nth-child(2) + .pagination-button,
+	.pagination-button:has(+ .pagination-button.disabled:nth-last-child(2)) {
+		display: none;
+	}
+	
 	.search-section > section:nth-child(3) {
 		display: none;
 	}
 	
 	.search-section:last-child {
 		gap: 0;
+	}
+	
+	.list-entity > img {
+		display: none;
 	}
 }
