@@ -4,13 +4,14 @@ article {
 
 article > section {
 	background-color: var(--color-section);
-	border-radius: var(--size-border-radius);
+	border-radius:    var(--size-border-radius);
 }
 
 article > section:last-child {
 	padding: var(--element-gap-medium);
+	
 	display: flex;
-	gap: var(--element-gap-medium);
+	gap:     var(--element-gap-medium);
 }
 
 article > section:last-child > * {
@@ -27,7 +28,7 @@ article > section > p {
 
 /* Mobile Devices */
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
 	article > section:last-child > a:nth-child(1),
 	article > section:last-child > a:nth-child(2) {
 		display: none;

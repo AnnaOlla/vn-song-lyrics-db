@@ -148,7 +148,7 @@
 
 /* Mobile Devices */
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
 	.entity-list-heading > .custom-button {
 		display: none;
 	}
@@ -188,7 +188,21 @@
 		gap: 0;
 	}
 	
-	.list-entity > img {
-		display: none;
+	.search-elements > button {
+		font-size: 0px;
+		
+		position: relative;
+		
+		flex: 0 0 calc(var(--font-size-plain) * 2);
+	}
+	
+	.search-elements > button::after {
+		position:  absolute;
+		top:       50%;
+		left:      50%;
+		transform: translate(-50%, -50%); 
+		
+		font-size: var(--font-size-plain);
+		content:   "\FF1E";
 	}
 }

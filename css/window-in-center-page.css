@@ -49,10 +49,22 @@ form section:has(input[type="submit"]) > .custom-checkbox {
 	flex: 5 1 0;
 }
 
+.mobile-device-blocker {
+	display: none;
+}
+
 /* Mobile Devices */
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
 	article {
 		width: 100%;
+	}
+	
+	article > *:not(.mobile-device-blocker, .page-heading) {
+		display: none;
+	}
+	
+	.mobile-device-blocker {
+		display: block;
 	}
 }

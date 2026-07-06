@@ -609,6 +609,9 @@ namespace Localization\ModerationStatus
 
 namespace Localization\Controls
 {
+	const PageDisabledForMobile1 = 'Данная страница не поддерживается для мобильных устройств.';
+	const PageDisabledForMobile2 = 'Вы можете посетить её на компьютере.';
+	
 	const Report       = 'Сообщить об ошибке';
 	const Edit         = 'Редактировать';
 	const Delete       = 'Удалить';

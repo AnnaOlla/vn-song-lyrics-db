@@ -28,5 +28,10 @@ section.list-entity > img {
 
 /* Mobile Devices */
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
+	section.main-entity > img,
+	section.related-entity > img,
+	section.list-entity > img {
+		display: none;
+	}
 }

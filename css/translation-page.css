@@ -81,7 +81,11 @@ a.note-small {
 
 /* Mobile Devices */
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
+	.lyrics-controls {
+		display: none;
+	}
+	
 	.lyrics-section {
 		display: grid;
 		grid-template-columns: 1fr;

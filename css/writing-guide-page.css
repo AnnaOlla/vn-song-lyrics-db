@@ -54,3 +54,19 @@ tr:hover {
 img {
 	max-width: 100%;
 }
+
+.mobile-device-blocker {
+	display: none;
+}
+
+/* Mobile Devices */
+
+@media (max-width: 767px) {
+	article > section:not(.mobile-device-blocker) > *:not(h1) {
+		display: none;
+	}
+	
+	.mobile-device-blocker {
+		display: block;
+	}
+}

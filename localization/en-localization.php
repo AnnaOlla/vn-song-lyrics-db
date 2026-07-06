@@ -609,6 +609,9 @@ namespace Localization\ModerationStatus
 
 namespace Localization\Controls
 {
+	const PageDisabledForMobile1 = 'This page may not be visited on mobile devices.';
+	const PageDisabledForMobile2 = 'Please, view it on a desktop screen.';
+	
 	const Report       = 'Report Data';
 	const Edit         = 'Edit Data';
 	const Delete       = 'Delete Data';

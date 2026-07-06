@@ -189,7 +189,7 @@ main > aside   > section > * {
 
 /* Mobile Devices */
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
 	header > nav > section.home-page {
 		flex: 1 0 auto;
 	}
@@ -241,5 +241,17 @@ main > aside   > section > * {
 	
 	footer > nav > section.links > a:nth-child(3) {
 		border-right-width: 0px;
+	}
+	
+	main h1 {
+		font-size: var(--font-size-h2);
+	}
+
+	main h2 {
+		font-size: var(--font-size-h3);
+	}
+
+	main h3 {
+		font-size: var(--font-size-h3);
 	}
 }

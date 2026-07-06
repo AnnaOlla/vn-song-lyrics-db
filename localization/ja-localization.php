@@ -609,6 +609,9 @@ namespace Localization\ModerationStatus
 
 namespace Localization\Controls
 {
+	const PageDisabledForMobile1 = 'このページは携帯電話で見えません。';
+	const PageDisabledForMobile2 = 'あとでコンピューターで訪れてください。';
+	
 	const Report       = '情報を訴え出る';
 	const Edit         = '情報を編集';
 	const Delete       = '情報を削除';
