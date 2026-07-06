@@ -15,7 +15,7 @@ final class Router
 	private const ERROR_LOG_DIRNAME              = '.administering/.error-logs';
 	private const ERROR_LOG_FILENAME             = '-error.log';
 	
-	private const RATE_LIMIT_WINDOW              = 20;
+	private const RATE_LIMIT_WINDOW              = 10;
 	private const RATE_LIMIT_COUNT               = 20;
 	private const RATE_LIMIT_BANNABLE_COUNT      = 40;
 	
@@ -291,11 +291,13 @@ final class Router
 			$parameters = ['userUri' => $routes[3]];
 		}
 		
+		/* Disabled: prevent hiding the first input
 		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'change-email')
 		{
 			$method = 'handleChangeEmailPage';
 			$parameters = ['userUri' => $routes[3]];
 		}
+		*/
 		
 		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'change-password')
 		{
