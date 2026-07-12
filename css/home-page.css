@@ -57,10 +57,6 @@ section.entity-container > a:hover > img {
 	border: var(--size-border-width) solid var(--color-button-body-hover);
 }
 
-section.entity-container > a:focus > img {
-	border: var(--size-border-width) solid var(--color-button-body-focus);
-}
-
 /* Mobile Devices */
 
 @media (max-width: 767px) {
