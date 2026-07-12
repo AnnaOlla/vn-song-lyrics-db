@@ -23,7 +23,7 @@ function changeFontSize(e) {
 	
 	const smallNotes = document.querySelectorAll('.lyrics-section a.note-small');
 	for (let smallNote of smallNotes) {
-		smallNote.style.fontSize = (16 * 2 / 3 + difference) + 'px';
+		smallNote.style.fontSize = ((16 + difference) * 2 / 3) + 'px';
 	}
 	
 	const bigNotes = document.querySelectorAll('.lyrics-section a.note-big');
