@@ -1461,7 +1461,7 @@ class VisitorModel extends Model
 		
 		if (!is_null($search))
 		{
-			$where[]  = '(REGEXP_REPLACE(t.name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")';
+			$where[]  = '(REGEXP_REPLACE(t.name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
