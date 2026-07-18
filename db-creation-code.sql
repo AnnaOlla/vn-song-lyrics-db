@@ -367,3 +367,4 @@ ALTER TABLE `song_artist_character_relations` CHANGE `timestamp_added` `timestam
 
 ALTER TABLE `fingerprints` DROP CONSTRAINT `fingerprints_ibfk_1`;
 ALTER TABLE `fingerprints` ADD CONSTRAINT `fingerprints_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `fingerprints` ADD UNIQUE(`user_id`, `ip_address`);
