@@ -266,7 +266,9 @@ HTML;
 	): string
 	{
 		header("Content-Security-Policy: script-src 'nonce-{$this->nonce}';");
-		header("Content-Security-Policy: style-src 'nonce-{$this->nonce}';");
+		
+		// The problem now is that inline-styles on lyrics and translation pages are blocked
+		// header("Content-Security-Policy: style-src 'nonce-{$this->nonce}';");
 		
 		return
 <<<HTML
