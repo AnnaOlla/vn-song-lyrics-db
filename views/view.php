@@ -10,6 +10,7 @@ abstract class View
 	protected const REPORT_MAX_LENGTH       = 500;
 	
 	protected $language;
+	private   $nonce;
 	
 	public function __construct(string $language)
 	{
@@ -21,6 +22,7 @@ abstract class View
 		require_once $localizationFilePath;
 		
 		$this->language = $language;
+		$this->nonce    = \Cryptography::generateNonce();
 	}
 	
 	final protected function getTimestamp(string $path)
@@ -140,7 +142,6 @@ abstract class View
 	<meta name="tdm-reservation" content="1" />
 	
 	<link rel="canonical"                      href="{$canonicalUrl}" />
-
 	<link rel="alternate" hreflang="en"        href="{$alternateRefEn}" />
 	<link rel="alternate" hreflang="ru"        href="{$alternateRefRu}" />
 	<link rel="alternate" hreflang="ja"        href="{$alternateRefJa}" />
@@ -151,28 +152,31 @@ abstract class View
 	<link rel="shortcut icon"                                         href="/favicon.ico" />
 	<link rel="apple-touch-icon" sizes="180x180"                      href="/apple-touch-icon.png" />
 	<link rel="manifest"                                              href="/site.webmanifest" />
-	
-	<link type="text/css" rel="stylesheet" href="/css/core/font-hanazono-mincho-type-a.css?v={$this->getTimestamp('/css/core/font-hanazono-mincho-type-a.css')}" />
-	<link type="text/css" rel="stylesheet" href="/css/core/font-juliamo-ampleksa.css?v={$this->getTimestamp('/css/core/font-juliamo-ampleksa.css')}" />
-	<link type="text/css" rel="stylesheet" href="/css/core/sizes.css?v={$this->getTimestamp('/css/core/sizes.css')}" />
-	<link type="text/css" rel="stylesheet" href="/css/core/dark-theme.css?v={$this->getTimestamp('/css/core/dark-theme.css')}" />
-	<link type="text/css" rel="stylesheet" href="/css/core/general.css?v={$this->getTimestamp('/css/core/general.css')}" />
-	
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/button.css?v={$this->getTimestamp('/css/custom-inputs/button.css')}" />
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/checkbox.css?v={$this->getTimestamp('/css/custom-inputs/checkbox.css')}" />
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/fileupload.css?v={$this->getTimestamp('/css/custom-inputs/fileupload.css')}" />
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/searchable-select.css?v={$this->getTimestamp('/css/custom-inputs/searchable-select.css')}" />
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/select.css?v={$this->getTimestamp('/css/custom-inputs/select.css')}" />
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textarea.css?v={$this->getTimestamp('/css/custom-inputs/textarea.css')}" />
-	<link type="text/css" rel="stylesheet" href="/css/custom-inputs/textinput.css?v={$this->getTimestamp('/css/custom-inputs/textinput.css')}" />
+
 
 HTML;
+		array_unshift
+		(
+			$cssSheetUris,
+			'/css/core/font-hanazono-mincho-type-a.css',
+			'/css/core/font-juliamo-ampleksa.css',
+			'/css/core/sizes.css',
+			'/css/core/dark-theme.css',
+			'/css/core/general.css',
+			'/css/custom-inputs/button.css',
+			'/css/custom-inputs/checkbox.css',
+			'/css/custom-inputs/fileupload.css',
+			'/css/custom-inputs/searchable-select.css',
+			'/css/custom-inputs/select.css',
+			'/css/custom-inputs/textarea.css',
+			'/css/custom-inputs/textinput.css'
+		);
 		
 		foreach ($cssSheetUris as $cssSheetUri)
 		{
 			$html[] =
 <<<HTML
-	<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={$this->getTimestamp($cssSheetUri)}"/>
+	<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={$this->getTimestamp($cssSheetUri)}" nonce="{$this->nonce}"/>
 
 HTML;
 		}
@@ -181,7 +185,7 @@ HTML;
 		{
 			$html[] =
 <<<HTML
-	<script src="{$jsScriptUri}?v={$this->getTimestamp($jsScriptUri)}"/></script>
+	<script src="{$jsScriptUri}?v={$this->getTimestamp($jsScriptUri)}" nonce="{$this->nonce}"/></script>
 
 HTML;
 		}
@@ -261,6 +265,9 @@ HTML;
 		array       $jsScriptUris = []
 	): string
 	{
+		header("Content-Security-Policy: script-src 'nonce-{$this->nonce}';");
+		header("Content-Security-Policy: style-src 'nonce-{$this->nonce}';");
+		
 		return
 <<<HTML
 <!DOCTYPE html>
@@ -305,24 +312,27 @@ HTML;
 
 	</main>
 	{$this->createFooter()}
-	
-	<script src="/js/core/emulate-event.js?v={$this->getTimestamp('/js/core/emulate-event.js')}"/></script>
-	<script src="/js/core/prepare-entity-name-for-filtering.js?v={$this->getTimestamp('/js/core/prepare-entity-name-for-filtering.js')}"/></script>
-	
-	<script src="/js/custom-inputs/captcha-input.js?v={$this->getTimestamp('/js/custom-inputs/captcha-input.js')}"/></script>
-	<script src="/js/custom-inputs/checkbox.js?v={$this->getTimestamp('/js/custom-inputs/checkbox.js')}"/></script>
-	<script src="/js/custom-inputs/fileupload.js?v={$this->getTimestamp('/js/custom-inputs/fileupload.js')}"/></script>
-	<script src="/js/custom-inputs/searchable-select.js?v={$this->getTimestamp('/js/custom-inputs/searchable-select.js')}"/></script>
-	<script src="/js/custom-inputs/select.js?v={$this->getTimestamp('/js/custom-inputs/select.js')}"/></script>
-	<script src="/js/custom-inputs/textarea.js?v={$this->getTimestamp('/js/custom-inputs/textarea.js')}"/></script>
 
 HTML;
+		
+		array_unshift
+		(
+			$jsScriptUris,
+			'/js/core/emulate-event.js',
+			'/js/core/prepare-entity-name-for-filtering.js',
+			'/js/custom-inputs/checkbox.js',
+			'/js/custom-inputs/captcha-input.js',
+			'/js/custom-inputs/fileupload.js',
+			'/js/custom-inputs/searchable-select.js',
+			'/js/custom-inputs/select.js',
+			'/js/custom-inputs/textarea.js'
+		);
 		
         foreach ($jsScriptUris as $jsScriptUri)
 		{
 			$html[] =
 <<<HTML
-	<script src="{$jsScriptUri}?v={$this->getTimestamp($jsScriptUri)}"/></script>
+	<script src="{$jsScriptUri}?v={$this->getTimestamp($jsScriptUri)}" nonce="{$this->nonce}"/></script>
 
 HTML;
 		}
@@ -1364,7 +1374,7 @@ HTML;
 		
 		foreach ($iteratedOptions as $iteratedOption)
 		{
-			$disabled = in_array($iteratedOption, $disabledOptions) ? 'disabled' : 'disabled';
+			$disabled = in_array($iteratedOption, $disabledOptions) ? 'disabled' : '';
 			
 			$html[] =
 			'
