@@ -297,6 +297,14 @@ VALUES
 	('日本語', 'Японский', 'Japanese', '日本語'),
 	('Romanization', 'Транслитерация', 'Romanization', 'ローマ字');
 
+CREATE INDEX index_uri ON games(uri);
+CREATE INDEX index_uri ON albums(uri);
+CREATE INDEX index_uri ON characters(uri);
+CREATE INDEX index_uri ON artists(uri);
+CREATE INDEX index_uri ON songs(uri);
+CREATE INDEX index_uri ON translations(uri);
+CREATE INDEX index_uri ON users(uri);
+
 CREATE TABLE fingerprints
 (
 	user_id    INT UNSIGNED   NOT NULL,
@@ -357,10 +365,5 @@ ALTER TABLE `game_album_relations` CHANGE `timestamp_added` `timestamp_added` TI
 ALTER TABLE `song_artist_character_relations` CHANGE `user_added_id` `user_added_id` INT(10) UNSIGNED NULL DEFAULT NULL;
 ALTER TABLE `song_artist_character_relations` CHANGE `timestamp_added` `timestamp_added` TIMESTAMP NULL DEFAULT NULL;
 
-CREATE INDEX index_uri ON games(uri);
-CREATE INDEX index_uri ON albums(uri);
-CREATE INDEX index_uri ON characters(uri);
-CREATE INDEX index_uri ON artists(uri);
-CREATE INDEX index_uri ON songs(uri);
-CREATE INDEX index_uri ON translations(uri);
-CREATE INDEX index_uri ON users(uri);
+ALTER TABLE `fingerprints` DROP CONSTRAINT `fingerprints_ibfk_1`;
+ALTER TABLE `fingerprints` ADD CONSTRAINT `fingerprints_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
