@@ -22,7 +22,7 @@ abstract class View
 		require_once $localizationFilePath;
 		
 		$this->language = $language;
-		$this->nonce    = \Cryptography::generateNonce();
+		$this->nonce    = Cryptography::generateNonce();
 	}
 	
 	final protected function getTimestamp(string $path)

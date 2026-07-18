@@ -54,16 +54,24 @@ final class Validation
 		return true;
 	}
 	
-	public static function areCaptchasEqual(string $generated, string $sent): bool
+	public static function areCaptchasEqual(string|null $captchaA, string|null $captchaB): bool
 	{
-		if ($generated === null || $sent === null)
-			throw new HttpUnprocessableEntity422('At least one of captchas was null');
+		if ($captchaA === null || $captchaB === null)
+			return false;
 		
-		return mb_strtoupper($generated) === mb_strtoupper($sent);
+		return mb_strtoupper($captchaA) === mb_strtoupper($captchaB);
 	}
 	
 	public static function isDataEncodedInUTF8(string|array $data): bool
 	{
 		return mb_check_encoding($data, 'UTF-8');
+	}
+	
+	public static function areNoncesEqual(string|null $nonceA, string|null $nonceB): bool
+	{
+		if ($nonceA === null || $nonceB === null)
+			return false;
+		
+		return $nonceA === $nonceB;
 	}
 }

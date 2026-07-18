@@ -49,6 +49,8 @@ class UserController extends ViolatorController
 		$albums     = $this->model->getAlbumList(fetchMinInfo: true);
 		$characters = $this->model->getCharacterList(fetchMinInfo: true);
 		
+		$_SESSION['addGamePage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderAddGamePage($albums, $characters);
 	}
 	
@@ -57,14 +59,16 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$originalName       = $_POST['original-name']       ?? null;
-		$transliteratedName = $_POST['transliterated-name'] ?? null;
-		$localizedName      = $_POST['localized-name']      ?? null;
-		$logo               = $_FILES['logo']               ?? null;
-		$vndbLink           = $_POST['vndb-link']           ?? null;
-		$albumIds           = $_POST['album-ids']           ?? [];
-		$characterIds       = $_POST['character-ids']       ?? [];
+		$originalName       = $_POST['original-name']           ?? null;
+		$transliteratedName = $_POST['transliterated-name']     ?? null;
+		$localizedName      = $_POST['localized-name']          ?? null;
+		$logo               = $_FILES['logo']                   ?? null;
+		$vndbLink           = $_POST['vndb-link']               ?? null;
+		$albumIds           = $_POST['album-ids']               ?? [];
+		$characterIds       = $_POST['character-ids']           ?? [];
 		$userAddedId        = $_SESSION['user']['id'];
+		$userNonce          = $_POST['nonce']                   ?? null;
+		$serverNonce        = $_SESSION['addGamePage']['nonce'] ?? null;
 		
 		$originalName       = Parsing::trimNullableString($originalName);
 		$transliteratedName = Parsing::trimNullableString($transliteratedName);
@@ -80,6 +84,9 @@ class UserController extends ViolatorController
 		$allAlbumIds        = array_column($allAlbumIds, 'id');
 		$allCharacterIds    = $this->model->getCharacterList(fetchMinInfo: true);
 		$allCharacterIds    = array_column($allCharacterIds, 'id');
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -114,6 +121,8 @@ class UserController extends ViolatorController
 		
 		$link = Http::buildInternalPath($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
+		
+		unset($_SESSION['addGamePage']);
 	}
 	
 	final public function handleAddAlbumPage(): void
@@ -148,7 +157,9 @@ class UserController extends ViolatorController
 	private function handleAddAlbumPageGet(): void
 	{
 		$games = $this->model->getGameList(fetchMinInfo: true);
-
+		
+		$_SESSION['addAlbumPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderAddAlbumPage($games);
 	}
 	
@@ -157,14 +168,16 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$originalName       = $_POST['original-name']       ?? null;
-		$transliteratedName = $_POST['transliterated-name'] ?? null;
-		$localizedName      = $_POST['localized-name']      ?? null;
-		$cover              = $_FILES['cover']              ?? null;
-		$vgmdbLink          = $_POST['vgmdb-link']          ?? null;
-		$songCount          = $_POST['song-count']          ?? null;
-		$gameIds            = $_POST['game-ids']            ?? [];
+		$originalName       = $_POST['original-name']            ?? null;
+		$transliteratedName = $_POST['transliterated-name']      ?? null;
+		$localizedName      = $_POST['localized-name']           ?? null;
+		$cover              = $_FILES['cover']                   ?? null;
+		$vgmdbLink          = $_POST['vgmdb-link']               ?? null;
+		$songCount          = $_POST['song-count']               ?? null;
+		$gameIds            = $_POST['game-ids']                 ?? [];
 		$userAddedId        = $_SESSION['user']['id'];
+		$userNonce          = $_POST['nonce']                    ?? null;
+		$serverNonce        = $_SESSION['addAlbumPage']['nonce'] ?? null;
 		
 		$originalName       = Parsing::trimNullableString($originalName);
 		$transliteratedName = Parsing::trimNullableString($transliteratedName);
@@ -177,6 +190,9 @@ class UserController extends ViolatorController
 		
 		$allGameIds         = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds         = array_column($allGameIds, 'id');
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $songCount))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -206,6 +222,8 @@ class UserController extends ViolatorController
 		
 		$link = Http::buildInternalPath($this->language, 'album', $albumUri);
 		$this->handleRedirect($link);
+		
+		unset($_SESSION['addAlbumPage']);
 	}
 	
 	final public function handleAddArtistPage(): void
@@ -241,6 +259,8 @@ class UserController extends ViolatorController
 	{
 		$originalArtists = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
 		
+		$_SESSION['addArtistPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderAddArtistPage($originalArtists);
 	}
 	
@@ -249,13 +269,15 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$originalName       = $_POST['original-name']       ?? null;
-		$transliteratedName = $_POST['transliterated-name'] ?? null;
-		$localizedName      = $_POST['localized-name']      ?? null;
-		$photo              = $_FILES['photo']              ?? null;
-		$vgmdbLink          = $_POST['vgmdb-link']          ?? null;
-		$aliasOfId          = $_POST['original-artist-id']  ?? null;
+		$originalName       = $_POST['original-name']             ?? null;
+		$transliteratedName = $_POST['transliterated-name']       ?? null;
+		$localizedName      = $_POST['localized-name']            ?? null;
+		$photo              = $_FILES['photo']                    ?? null;
+		$vgmdbLink          = $_POST['vgmdb-link']                ?? null;
+		$aliasOfId          = $_POST['original-artist-id']        ?? null;
 		$userAddedId        = $_SESSION['user']['id'];
+		$userNonce          = $_POST['nonce']                     ?? null;
+		$serverNonce        = $_SESSION['addArtistPage']['nonce'] ?? null;
 		
 		$originalName       = Parsing::trimNullableString($originalName);
 		$transliteratedName = Parsing::trimNullableString($transliteratedName);
@@ -266,6 +288,9 @@ class UserController extends ViolatorController
 		
 		$originalArtists    = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
 		$originalArtists    = array_column($originalArtists, 'id');
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -292,6 +317,8 @@ class UserController extends ViolatorController
 		
 		$link = Http::buildInternalPath($this->language, 'artist', $artistUri);
 		$this->handleRedirect($link);
+		
+		unset($_SESSION['addArtistPage']);
 	}
 	
 	final public function handleAddCharacterPage(): void
@@ -327,6 +354,8 @@ class UserController extends ViolatorController
 	{
 		$games = $this->model->getGameList(fetchMinInfo: true);
 		
+		$_SESSION['addCharacterPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderAddCharacterPage($games);
 	}
 	
@@ -335,13 +364,15 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$originalName       = $_POST['original-name']       ?? null;
-		$transliteratedName = $_POST['transliterated-name'] ?? null;
-		$localizedName      = $_POST['localized-name']      ?? null;
-		$image              = $_FILES['image']              ?? null;
-		$vndbLink           = $_POST['vndb-link']           ?? null;
-		$gameIds            = $_POST['game-ids']            ?? [];
+		$originalName       = $_POST['original-name']                ?? null;
+		$transliteratedName = $_POST['transliterated-name']          ?? null;
+		$localizedName      = $_POST['localized-name']               ?? null;
+		$image              = $_FILES['image']                       ?? null;
+		$vndbLink           = $_POST['vndb-link']                    ?? null;
+		$gameIds            = $_POST['game-ids']                     ?? [];
 		$userAddedId        = $_SESSION['user']['id'];
+		$userNonce          = $_POST['nonce']                        ?? null;
+		$serverNonce        = $_SESSION['addCharacterPage']['nonce'] ?? null;
 		
 		$originalName       = Parsing::trimNullableString($originalName);
 		$transliteratedName = Parsing::trimNullableString($transliteratedName);
@@ -353,6 +384,9 @@ class UserController extends ViolatorController
 		
 		$allGameIds         = $this->model->getGameList(fetchMinInfo: true);
 		$allGameIds         = array_column($allGameIds, 'id');
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -381,6 +415,8 @@ class UserController extends ViolatorController
 		
 		$link = Http::buildInternalPath($this->language, 'character', $characterUri);
 		$this->handleRedirect($link);
+		
+		unset($_SESSION['addCharacterPage']);
 	}
 	
 	final public function handleAddSongPage(string $albumUri): void
@@ -431,6 +467,8 @@ class UserController extends ViolatorController
 		$currentTrack = $lastSongInfo ? $lastSongInfo['track_number'] + 1 : 1;
 		$isLastSong   = ($album['song_count'] - $songCount === 1);
 		
+		$_SESSION['addSongPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderAddSongPage($album, $currentDisc, $currentTrack, $isLastSong);
 	}
 	
@@ -439,13 +477,15 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$discNumber         = $_POST['disc-number']         ?? null;
-		$trackNumber        = $_POST['track-number']        ?? null;
-		$originalName       = $_POST['original-name']       ?? null;
-		$transliteratedName = $_POST['transliterated-name'] ?? null;
-		$localizedName      = $_POST['localized-name']      ?? null;
-		$hasVocal           = $_POST['has-vocal']           ?? null;
+		$discNumber         = $_POST['disc-number']             ?? null;
+		$trackNumber        = $_POST['track-number']            ?? null;
+		$originalName       = $_POST['original-name']           ?? null;
+		$transliteratedName = $_POST['transliterated-name']     ?? null;
+		$localizedName      = $_POST['localized-name']          ?? null;
+		$hasVocal           = $_POST['has-vocal']               ?? null;
 		$userAddedId        = $_SESSION['user']['id'];
+		$userNonce          = $_POST['nonce']                   ?? null;
+		$serverNonce        = $_SESSION['addSongPage']['nonce'] ?? null;
 		
 		$discNumber         = Parsing::parseNullableInteger($discNumber, 1);
 		$trackNumber        = Parsing::parseNullableInteger($trackNumber, 1);
@@ -464,6 +504,9 @@ class UserController extends ViolatorController
 		$isFirstDisc           = ($discNumber === 1 && $currentDiscNumber === 1);
 		$isFirstTrack          = ($trackNumber === 1 && $currentTrackNumber === 1);
 		$isFirstDiscFirstTrack = ($isFirstDisc && $isFirstTrack);
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($discNumber, $trackNumber, $originalName, $transliteratedName, $hasVocal))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -495,6 +538,8 @@ class UserController extends ViolatorController
 			$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri']));
 		else
 			$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri'], 'add-song'));
+		
+		unset($_SESSION['addSongPage']);
 	}
 	
 	final public function handleAddLyricsPage(string $albumUri, string $songUri): void
@@ -549,7 +594,7 @@ class UserController extends ViolatorController
 		$artists    = $this->model->getArtistList(fetchMinInfo: true);
 		$characters = $this->model->getCharacterList(fetchMinInfo: true);
 		$languages  = $this->model->getLanguageList(orderBy: [$this->language.'_name ASC']);
-		$originals    = $this->model->getSongList
+		$originals  = $this->model->getSongList
 		(
 			fetchMinInfo: true,
 			isOriginal:   true,
@@ -557,6 +602,8 @@ class UserController extends ViolatorController
 			hasVocal:     true,
 			orderBy:      ['sn.transliterated_name ASC']
 		);
+		
+		$_SESSION['addLyricsPage']['nonce'] = Cryptography::generateNonce();
 		
 		$this->view->renderAddLyricsPage
 		(
@@ -574,13 +621,15 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$artistIds         = $_POST['artist-ids']       ?? [];
-		$characterIds      = $_POST['character-ids']    ?? [];
-		$originalSongId    = $_POST['original-song-id'] ?? null;
-		$languageId        = $_POST['language-id']      ?? null;
-		$lyrics            = $_POST['lyrics']           ?? null;
-		$notes             = $_POST['notes']            ?? null;
+		$artistIds         = $_POST['artist-ids']                ?? [];
+		$characterIds      = $_POST['character-ids']             ?? [];
+		$originalSongId    = $_POST['original-song-id']          ?? null;
+		$languageId        = $_POST['language-id']               ?? null;
+		$lyrics            = $_POST['lyrics']                    ?? null;
+		$notes             = $_POST['notes']                     ?? null;
 		$userAddedId       = $_SESSION['user']['id'];
+		$userNonce         = $_POST['nonce']                     ?? null;
+		$serverNonce       = $_SESSION['addLyricsPage']['nonce'] ?? null;
 		
 		$artistIds         = Parsing::parseNullableIntegerArray($artistIds, 1);
 		$characterIds      = Parsing::parseNullableIntegerArray($characterIds, 1);
@@ -605,6 +654,9 @@ class UserController extends ViolatorController
 		);
 		$allOriginalIds    = array_column($allOriginalIds, 'id');
 		$allOriginalIds[]  = null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (count($artistIds) === 0)
 			throw new HttpUnprocessableEntity422('Artists were not provided', get_defined_vars());
@@ -646,6 +698,8 @@ class UserController extends ViolatorController
 		
 		$link = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		$this->handleRedirect($link);
+		
+		unset($_SESSION['addLyricsPage']);
 	}
 	
 	final public function handleAddTranslationPage(string $albumUri, string $songUri): void
@@ -709,6 +763,8 @@ class UserController extends ViolatorController
 			userAddedUri: $_SESSION['user']['username']
 		);
 		
+		$_SESSION['addTranslationPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderAddTranslationPage($album, $song, $languages, $translationsByUser);
 	}
 	
@@ -717,11 +773,13 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$languageId           = $_POST['translation-language-id'] ?? null;
-		$name                 = $_POST['translation-name']        ?? null;
-		$lyrics               = $_POST['translation-lyrics']      ?? null;
-		$notes                = $_POST['translation-notes']       ?? null;
+		$languageId           = $_POST['translation-language-id']        ?? null;
+		$name                 = $_POST['translation-name']               ?? null;
+		$lyrics               = $_POST['translation-lyrics']             ?? null;
+		$notes                = $_POST['translation-notes']              ?? null;
 		$userAddedId          = $_SESSION['user']['id'];
+		$userNonce            = $_POST['nonce']                          ?? null;
+		$serverNonce          = $_SESSION['addTranslationPage']['nonce'] ?? null;
 		
 		$languageId           = Parsing::parseNullableInteger($languageId, 1);
 		$name                 = Parsing::trimNullableString($name);
@@ -740,6 +798,9 @@ class UserController extends ViolatorController
 		$allLanguages         = array_column($allLanguages, 'id');
 		$forbiddenLanguages   = array_column($translationsByUser, 'language_id');
 		$forbiddenLanguages[] = $song['language_id'];
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($name, $lyrics, $languageId))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -766,6 +827,8 @@ class UserController extends ViolatorController
 		
 		$link = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translationUri);
 		$this->handleRedirect($link);
+		
+		unset($_SESSION['addTranslationPage']);
 	}
 	
 	final public function handleEditGamePage(string $gameUri): void
@@ -812,6 +875,8 @@ class UserController extends ViolatorController
 		$fullAlbumList        = $this->model->getAlbumList(fetchMinInfo: true);
 		$fullCharacterList    = $this->model->getCharacterList(fetchMinInfo: true);
 		
+		$_SESSION['editGamePage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderEditGamePage
 		(
 			$game,
@@ -827,14 +892,16 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$originalName         = $_POST['original-name']       ?? null;
-		$transliteratedName   = $_POST['transliterated-name'] ?? null;
-		$localizedName        = $_POST['localized-name']      ?? null;
-		$logo                 = $_FILES['logo']               ?? null;
-		$vndbLink             = $_POST['vndb-link']           ?? null;
-		$albumIds             = $_POST['album-ids']           ?? [];
-		$characterIds         = $_POST['character-ids']       ?? [];
+		$originalName         = $_POST['original-name']            ?? null;
+		$transliteratedName   = $_POST['transliterated-name']      ?? null;
+		$localizedName        = $_POST['localized-name']           ?? null;
+		$logo                 = $_FILES['logo']                    ?? null;
+		$vndbLink             = $_POST['vndb-link']                ?? null;
+		$albumIds             = $_POST['album-ids']                ?? [];
+		$characterIds         = $_POST['character-ids']            ?? [];
 		$userUpdatedId        = $_SESSION['user']['id'];
+		$userNonce            = $_POST['nonce']                    ?? null;
+		$serverNonce          = $_SESSION['editGamePage']['nonce'] ?? null;
 		
 		$originalName         = Parsing::trimNullableString($originalName);
 		$transliteratedName   = Parsing::trimNullableString($transliteratedName);
@@ -897,6 +964,8 @@ class UserController extends ViolatorController
 		
 		$link = Http::buildInternalPath($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
+		
+		unset($_SESSION['editGamePage']);
 	}
 	
 	final public function handleEditAlbumPage(string $albumUri): void
@@ -942,6 +1011,8 @@ class UserController extends ViolatorController
 		$currentSongCount = $this->model->getSongCurrentCount($album['uri']);
 		$fullGameList     = $this->model->getGameList(fetchMinInfo: true);
 		
+		$_SESSION['editAlbumPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderEditAlbumPage
 		(
 			$album,
@@ -956,14 +1027,16 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$originalName        = $_POST['original-name']       ?? null;
-		$transliteratedName  = $_POST['transliterated-name'] ?? null;
-		$localizedName       = $_POST['localized-name']      ?? null;
-		$cover               = $_FILES['cover']              ?? null;
-		$vgmdbLink           = $_POST['vgmdb-link']          ?? null;
-		$songCount           = $_POST['song-count']          ?? null;
-		$gameIds             = $_POST['game-ids']            ?? [];
+		$originalName        = $_POST['original-name']             ?? null;
+		$transliteratedName  = $_POST['transliterated-name']       ?? null;
+		$localizedName       = $_POST['localized-name']            ?? null;
+		$cover               = $_FILES['cover']                    ?? null;
+		$vgmdbLink           = $_POST['vgmdb-link']                ?? null;
+		$songCount           = $_POST['song-count']                ?? null;
+		$gameIds             = $_POST['game-ids']                  ?? [];
 		$userUpdatedId       = $_SESSION['user']['id'];
+		$userNonce           = $_POST['nonce']                     ?? null;
+		$serverNonce         = $_SESSION['editAlbumPage']['nonce'] ?? null;
 		
 		$originalName        = Parsing::trimNullableString($originalName);
 		$transliteratedName  = Parsing::trimNullableString($transliteratedName);
@@ -1014,6 +1087,8 @@ class UserController extends ViolatorController
 			$this->model->deleteGameAlbumRelation($gameId, $albumId, 'unchecked');
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $albumUri));
+		
+		unset($_SESSION['editAlbumPage']);
 	}
 	
 	final public function handleEditArtistPage(string $artistUri): void
@@ -1057,6 +1132,8 @@ class UserController extends ViolatorController
 	{
 		$originalArtists = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
 		
+		$_SESSION['editArtistPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderEditArtistPage($artist, $originalArtists);
 	}
 	
@@ -1065,13 +1142,15 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$originalName        = $_POST['original-name']       ?? null;
-		$transliteratedName  = $_POST['transliterated-name'] ?? null;
-		$localizedName       = $_POST['localized-name']      ?? null;
-		$photo               = $_FILES['photo']              ?? null;
-		$vgmdbLink           = $_POST['vgmdb-link']          ?? null;
-		$aliasOfId           = $_POST['original-artist-id']  ?? null;
+		$originalName        = $_POST['original-name']              ?? null;
+		$transliteratedName  = $_POST['transliterated-name']        ?? null;
+		$localizedName       = $_POST['localized-name']             ?? null;
+		$photo               = $_FILES['photo']                     ?? null;
+		$vgmdbLink           = $_POST['vgmdb-link']                 ?? null;
+		$aliasOfId           = $_POST['original-artist-id']         ?? null;
 		$userUpdatedId       = $_SESSION['user']['id'];
+		$userNonce           = $_POST['nonce']                      ?? null;
+		$serverNonce         = $_SESSION['editArtistPage']['nonce'] ?? null;
 		
 		$originalName        = Parsing::trimNullableString($originalName);
 		$transliteratedName  = Parsing::trimNullableString($transliteratedName);
@@ -1082,6 +1161,9 @@ class UserController extends ViolatorController
 		
 		$originalArtists     = $this->model->getArtistList(fetchMinInfo: true, mayBeAlias: false);
 		$originalArtists     = array_column($originalArtists, 'id');
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -1108,6 +1190,8 @@ class UserController extends ViolatorController
 		);
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'artist', $artistUri));
+		
+		unset($_SESSION['editArtistPage']);
 	}
 	
 	final public function handleEditCharacterPage(string $characterUri): void
@@ -1152,6 +1236,8 @@ class UserController extends ViolatorController
 		$relatedGamesList = $this->model->getGameList(fetchMinInfo: true, characterUri: $character['uri']);
 		$fullGameList     = $this->model->getGameList(fetchMinInfo: true);
 		
+		$_SESSION['editCharacterPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderEditCharacterPage($character, $relatedGamesList, $fullGameList);
 	}
 	
@@ -1160,13 +1246,15 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$originalName        = $_POST['original-name']       ?? null;
-		$transliteratedName  = $_POST['transliterated-name'] ?? null;
-		$localizedName       = $_POST['localized-name']      ?? null;
-		$image               = $_FILES['image']              ?? null;
-		$vndbLink            = $_POST['vndb-link']           ?? null;
-		$gameIds             = $_POST['game-ids']            ?? [];
+		$originalName        = $_POST['original-name']                 ?? null;
+		$transliteratedName  = $_POST['transliterated-name']           ?? null;
+		$localizedName       = $_POST['localized-name']                ?? null;
+		$image               = $_FILES['image']                        ?? null;
+		$vndbLink            = $_POST['vndb-link']                     ?? null;
+		$gameIds             = $_POST['game-ids']                      ?? [];
 		$userUpdatedId       = $_SESSION['user']['id'];
+		$userNonce           = $_POST['nonce']                         ?? null;
+		$serverNonce         = $_SESSION['editCharacterPage']['nonce'] ?? null;
 		
 		$originalName        = Parsing::trimNullableString($originalName);
 		$transliteratedName  = Parsing::trimNullableString($transliteratedName);
@@ -1182,6 +1270,9 @@ class UserController extends ViolatorController
 		$currentGameIds      = array_column($currentGameIds, 'id');
 		$gameIdsToAdd        = array_diff($gameIds, $currentGameIds);
 		$gameIdsToDelete     = array_diff($currentGameIds, $gameIds);
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -1210,6 +1301,8 @@ class UserController extends ViolatorController
 			$this->model->deleteCharacterGameRelation($characterId, $gameId, 'unchecked');
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'character', $characterUri));
+		
+		unset($_SESSION['editCharacterPage']);
 	}
 	
 	final public function handleEditSongPage(string $albumUri, string $songUri): void
@@ -1255,6 +1348,8 @@ class UserController extends ViolatorController
 	
 	private function handleEditSongPageGet(array $album, array $song): void
 	{
+		$_SESSION['editSongPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderEditSongPage($album, $song);
 	}
 	
@@ -1263,16 +1358,21 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$originalName       = $_POST['original-name']       ?? null;
-		$transliteratedName = $_POST['transliterated-name'] ?? null;
-		$localizedName      = $_POST['localized-name']      ?? null;
-		$hasVocal           = $_POST['has-vocal']           ?? null;
+		$originalName       = $_POST['original-name']            ?? null;
+		$transliteratedName = $_POST['transliterated-name']      ?? null;
+		$localizedName      = $_POST['localized-name']           ?? null;
+		$hasVocal           = $_POST['has-vocal']                ?? null;
 		$userUpdatedId      = $_SESSION['user']['id'];
+		$userNonce          = $_POST['nonce']                    ?? null;
+		$serverNonce        = $_SESSION['editSongPage']['nonce'] ?? null;
 		
 		$originalName       = Parsing::trimNullableString($originalName);
 		$transliteratedName = Parsing::trimNullableString($transliteratedName);
 		$localizedName      = Parsing::trimNullableString($localizedName);
 		$hasVocal           = Parsing::parseNullableInteger($hasVocal, 0, 1);
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $hasVocal))
 			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
@@ -1294,6 +1394,8 @@ class UserController extends ViolatorController
 		);
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri']));
+		
+		unset($_SESSION['editSongPage']);
 	}
 	
 	final public function handleEditLyricsPage(string $albumUri, string $songUri): void
@@ -1372,6 +1474,8 @@ class UserController extends ViolatorController
 			orderBy:      ['sn.transliterated_name ASC']
 		);
 		
+		$_SESSION['editLyricsPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderEditLyricsPage
 		(
 			$album,
@@ -1389,13 +1493,15 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$artistIds            = $_POST['artist-ids']       ?? [];
-		$characterIds         = $_POST['character-ids']    ?? [];
-		$originalSongId       = $_POST['original-song-id'] ?? null;
-		$languageId           = $_POST['language-id']      ?? null;
-		$lyrics               = $_POST['lyrics']           ?? null;
-		$notes                = $_POST['notes']            ?? null;
+		$artistIds            = $_POST['artist-ids']                 ?? [];
+		$characterIds         = $_POST['character-ids']              ?? [];
+		$originalSongId       = $_POST['original-song-id']           ?? null;
+		$languageId           = $_POST['language-id']                ?? null;
+		$lyrics               = $_POST['lyrics']                     ?? null;
+		$notes                = $_POST['notes']                      ?? null;
 		$userUpdatedId        = $_SESSION['user']['id'];
+		$userNonce            = $_POST['nonce']                      ?? null;
+		$serverNonce          = $_SESSION['editLyricsPage']['nonce'] ?? null;
 		
 		$artistIds            = Parsing::parseNullableIntegerArray($artistIds, 1);
 		$characterIds         = Parsing::parseNullableIntegerArray($characterIds, 1);
@@ -1454,6 +1560,9 @@ class UserController extends ViolatorController
 			}
 		);
 		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+		
 		if (count($artistIds) !== count($characterIds))
 			throw new HttpUnprocessableEntity422('Artist count was not equal to character count', get_defined_vars());
 		
@@ -1493,6 +1602,8 @@ class UserController extends ViolatorController
 			$this->model->addSongArtistCharacterRelation($song['id'], $performer['artist_id'], $performer['character_id'], $userUpdatedId);
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']));
+		
+		unset($_SESSION['editLyricsPage']);
 	}
 	
 	final public function handleEditTranslationPage(string $albumUri, string $songUri, string $translationUri): void
@@ -1554,6 +1665,8 @@ class UserController extends ViolatorController
 	
 	private function handleEditTranslationPageGet(array $album, array $song, array $translation): void
 	{
+		$_SESSION['editTranslationPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderEditTranslationPage($album, $song, $translation);
 	}
 	
@@ -1562,10 +1675,12 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$name          = $_POST['translation-name']   ?? null;
-		$lyrics        = $_POST['translation-lyrics'] ?? null;
-		$notes         = $_POST['translation-notes']  ?? null;
+		$name          = $_POST['translation-name']                ?? null;
+		$lyrics        = $_POST['translation-lyrics']              ?? null;
+		$notes         = $_POST['translation-notes']               ?? null;
 		$userUpdatedId = $_SESSION['user']['id'];
+		$userNonce     = $_POST['nonce']                           ?? null;
+		$serverNonce   = $_SESSION['editTranslationPage']['nonce'] ?? null;
 		
 		$name          = Parsing::trimNullableString($name);
 		$lyrics        = Parsing::trimNullableText($lyrics);
@@ -1587,6 +1702,8 @@ class UserController extends ViolatorController
 		
 		$link = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		$this->handleRedirect($link);
+		
+		unset($_SESSION['editTranslationPage']);
 	}
 	
 	final public function handleDeleteGamePage(string $gameUri): void
@@ -1628,6 +1745,8 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteGamePageGet(array $game): void
 	{
+		$_SESSION['deleteGamePage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderDeleteGamePage($game);
 	}
 	
@@ -1636,7 +1755,12 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$requestConfirmed = $_POST['confirmation'] ?? null;
+		$requestConfirmed = $_POST['confirmation']               ?? null;
+		$userNonce        = $_POST['nonce']                      ?? null;
+		$serverNonce      = $_SESSION['deleteGamePage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
 			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
@@ -1646,6 +1770,8 @@ class UserController extends ViolatorController
 		$path  = Http::buildInternalPath($this->language, 'game-list');
 		$query = Http::buildQueryParameters(self::ENTITY_LIST_DEFAULT_QUERY);
 		$this->handleRedirect($path.$query);
+		
+		unset($_SESSION['deleteGamePage']);
 	}
 	
 	final public function handleDeleteAlbumPage(string $albumUri): void
@@ -1687,6 +1813,8 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteAlbumPageGet(array $album): void
 	{
+		$_SESSION['deleteAlbumPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderDeleteAlbumPage($album);
 	}
 	
@@ -1695,7 +1823,9 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$requestConfirmed = $_POST['confirmation'] ?? null;
+		$requestConfirmed = $_POST['confirmation']                ?? null;
+		$userNonce        = $_POST['nonce']                       ?? null;
+		$serverNonce      = $_SESSION['deleteAlbumPage']['nonce'] ?? null;
 		
 		if (!$requestConfirmed)
 			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
@@ -1705,6 +1835,8 @@ class UserController extends ViolatorController
 		$path  = Http::buildInternalPath($this->language, 'album-list');
 		$query = Http::buildQueryParameters(self::ENTITY_LIST_DEFAULT_QUERY);
 		$this->handleRedirect($path.$query);
+		
+		unset($_SESSION['deleteAlbumPage']);
 	}
 	
 	final public function handleDeleteArtistPage(string $artistUri): void
@@ -1746,6 +1878,8 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteArtistPageGet(array $artist): void
 	{
+		$_SESSION['deleteArtistPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderDeleteArtistPage($artist);
 	}
 	
@@ -1754,7 +1888,12 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$requestConfirmed = $_POST['confirmation'] ?? null;
+		$requestConfirmed = $_POST['confirmation']                 ?? null;
+		$userNonce        = $_POST['nonce']                        ?? null;
+		$serverNonce      = $_SESSION['deleteArtistPage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
 			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
@@ -1764,6 +1903,8 @@ class UserController extends ViolatorController
 		$path  = Http::buildInternalPath($this->language, 'artist-list');
 		$query = Http::buildQueryParameters(self::ENTITY_LIST_DEFAULT_QUERY);
 		$this->handleRedirect($path.$query);
+		
+		unset($_SESSION['deleteArtistPage']);
 	}
 	
 	final public function handleDeleteCharacterPage(string $characterUri): void
@@ -1805,6 +1946,8 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteCharacterPageGet(array $character): void
 	{
+		$_SESSION['deleteCharacterPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderDeleteCharacterPage($character);
 	}
 	
@@ -1813,7 +1956,12 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$requestConfirmed = $_POST['confirmation'] ?? null;
+		$requestConfirmed = $_POST['confirmation']                    ?? null;
+		$userNonce        = $_POST['nonce']                           ?? null;
+		$serverNonce      = $_SESSION['deleteCharacterPage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
 			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
@@ -1823,6 +1971,8 @@ class UserController extends ViolatorController
 		$path  = Http::buildInternalPath($this->language, 'character-list');
 		$query = Http::buildQueryParameters(self::ENTITY_LIST_DEFAULT_QUERY);
 		$this->handleRedirect($path.$query);
+		
+		unset($_SESSION['deleteCharacterPage']);
 	}
 	
 	final public function handleDeleteSongPage(string $albumUri, string $songUri): void
@@ -1880,6 +2030,8 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteSongPageGet(array $album, array $song): void
 	{
+		$_SESSION['deleteSongPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderDeleteSongPage($album, $song);
 	}
 	
@@ -1888,7 +2040,12 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$requestConfirmed = $_POST['confirmation'] ?? null;
+		$requestConfirmed = $_POST['confirmation']               ?? null;
+		$userNonce        = $_POST['nonce']                      ?? null;
+		$serverNonce      = $_SESSION['deleteSongPage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
 			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
@@ -1897,6 +2054,8 @@ class UserController extends ViolatorController
 		
 		$path = Http::buildInternalPath($this->language, 'album', $album['uri']);
 		$this->handleRedirect($path);
+		
+		unset($_SESSION['deleteSongPage']);
 	}
 	
 	final public function handleDeleteLyricsPage(string $albumUri, string $songUri): void
@@ -1957,6 +2116,8 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteLyricsPageGet(array $album, array $song): void
 	{
+		$_SESSION['deleteLyricsPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderDeleteLyricsPage($album, $song);
 	}
 	
@@ -1965,7 +2126,12 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$requestConfirmed = $_POST['confirmation'] ?? null;
+		$requestConfirmed = $_POST['confirmation']                 ?? null;
+		$userNonce        = $_POST['nonce']                        ?? null;
+		$serverNonce      = $_SESSION['deleteLyricsPage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
 			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
@@ -1974,6 +2140,8 @@ class UserController extends ViolatorController
 		$this->model->deleteSongArtistCharacterRelation(songId: $song['id']);
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri']));
+		
+		unset($_SESSION['deleteLyricsPage']);
 	}
 	
 	final public function handleDeleteTranslationPage(string $albumUri, string $songUri, string $translationUri): void
@@ -2035,6 +2203,8 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteTranslationPageGet(array $album, array $song, array $translation): void
 	{
+		$_SESSION['deleteTranslationPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderDeleteTranslationPage($album, $song, $translation);
 	}
 	
@@ -2043,7 +2213,12 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$requestConfirmed = $_POST['confirmation'] ?? null;
+		$requestConfirmed = $_POST['confirmation']                      ?? null;
+		$userNonce        = $_POST['nonce']                             ?? null;
+		$serverNonce      = $_SESSION['deleteTranslationPage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
 			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
@@ -2051,6 +2226,8 @@ class UserController extends ViolatorController
 		$this->model->deleteTranslation($translation);
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']));
+		
+		unset($_SESSION['deleteTranslationPage']);
 	}
 	
 	final public function handleChangeEmailPage(string $userUri): void
@@ -2089,6 +2266,8 @@ class UserController extends ViolatorController
 	
 	private function handleChangeEmailPageGet(array $user, InputError $error = InputError::None): void
 	{
+		$_SESSION['changeEmailPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderChangeEmailPage($user, $error);
 	}
 	
@@ -2097,11 +2276,16 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$newEmail        = $_POST['email']            ?? null;
-		$currentPassword = $_POST['current-password'] ?? null;
+		$newEmail        = $_POST['email']                       ?? null;
+		$currentPassword = $_POST['current-password']            ?? null;
+		$userNonce       = $_POST['nonce']                       ?? null;
+		$serverNonce     = $_SESSION['changeEmailPage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($newEmail, $currentPassword))
-			throw new HttpUnprocessableEntity422();
+			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
 		
 		if (!Session::agentIsAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
 		{
@@ -2130,6 +2314,8 @@ class UserController extends ViolatorController
 		}
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'user', $user['uri']));
+		
+		unset($_SESSION['changeEmailPage']);
 	}
 	
 	final public function handleChangeUsernamePage(string $userUri): void
@@ -2168,6 +2354,8 @@ class UserController extends ViolatorController
 	
 	private function handleChangeUsernamePageGet(array $user, InputError $error = InputError::None): void
 	{
+		$_SESSION['changeUsernamePage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderChangeUsernamePage($user, $error);
 	}
 	
@@ -2176,11 +2364,16 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$newUsername     = $_POST['username']         ?? null;
-		$currentPassword = $_POST['current-password'] ?? null;
+		$newUsername     = $_POST['username']                       ?? null;
+		$currentPassword = $_POST['current-password']               ?? null;
+		$userNonce       = $_POST['nonce']                          ?? null;
+		$serverNonce     = $_SESSION['changeUsernamePage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($newUsername, $currentPassword))
-			throw new HttpUnprocessableEntity422();
+			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
 		
 		if (!Session::agentIsAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
 		{
@@ -2259,6 +2452,8 @@ class UserController extends ViolatorController
 	
 	private function handleChangePasswordPageGet(array $user, InputError $error = InputError::None): void
 	{
+		$_SESSION['changePasswordPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderChangePasswordPage($user, $error);
 	}
 	
@@ -2267,15 +2462,20 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$newPassword     = $_POST['password']         ?? null;
-		$currentPassword = $_POST['current-password'] ?? null;
+		$newPassword     = $_POST['password']                       ?? null;
+		$currentPassword = $_POST['current-password']               ?? null;
+		$userNonce       = $_POST['nonce']                          ?? null;
+		$serverNonce     = $_SESSION['changePasswordPage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($newPassword, $currentPassword))
-			throw new HttpUnprocessableEntity422();
+			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
 		
 		if (!Session::agentIsAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
 		{
-			$this->handleChangeUsernamePageGet($user, InputError::IncorrectPassword);
+			$this->handleChangePasswordPageGet($user, InputError::IncorrectPassword);
 			return;
 		}
 		
@@ -2306,6 +2506,8 @@ class UserController extends ViolatorController
 		}
 		
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'user', $user['uri']));
+		
+		unset($_SESSION['changePasswordPage']);
 	}
 	
 	final public function handleChangeAboutMePage(string $userUri): void
@@ -2344,18 +2546,25 @@ class UserController extends ViolatorController
 	
 	private function handleChangeAboutMePageGet(array $user, InputError $error = InputError::None): void
 	{
+		$_SESSION['changeAboutMePage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderChangeAboutMePage($user, $error);
 	}
 	
 	private function handleChangeAboutMePagePost(array $user): void
-	{	
+	{
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$newAboutMe = $_POST['about-me'] ?? null;
+		$newAboutMe  = $_POST['about-me']                      ?? null;
+		$userNonce   = $_POST['nonce']                         ?? null;
+		$serverNonce = $_SESSION['changeAboutMePage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (is_null($newAboutMe))
-			throw new HttpUnprocessableEntity422();
+			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
 		
 		$this->model->updateUserData($user['id'], newAboutMe: $newAboutMe);
 		
@@ -2407,6 +2616,8 @@ class UserController extends ViolatorController
 	
 	private function handleDeleteAccountPageGet(array $user, InputError $error = InputError::None): void
 	{
+		$_SESSION['deleteAccountPage']['nonce'] = Cryptography::generateNonce();
+		
 		$this->view->renderDeleteAccountPage($user, $error);
 	}
 	
@@ -2415,10 +2626,15 @@ class UserController extends ViolatorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$password = $_POST['password'] ?? null;
+		$password    = $_POST['password']                      ?? null;
+		$userNonce   = $_POST['nonce']                         ?? null;
+		$serverNonce = $_SESSION['deleteAccountPage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (!$password)
-			throw new HttpUnprocessableEntity422();
+			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
 		
 		if (!$this->model->isPasswordCorrect($user['id'], $password))
 		{
@@ -2428,5 +2644,8 @@ class UserController extends ViolatorController
 		
 		$this->model->deleteUser($user);
 		$this->handleLogOutPage();
+		
+		// Not needed, session is destroyed on call of logout page
+		// unset($_SESSION['deleteAccountPage']);
 	}
 }

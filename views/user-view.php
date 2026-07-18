@@ -18,7 +18,8 @@ class UserView extends ViolatorView
 		array|null $relatedCharacters,
 		array      $albums,
 		array      $characters,
-		string     $heading
+		string     $heading,
+		string     $nonce
 	): void
 	{
 		if ($game)
@@ -76,6 +77,7 @@ class UserView extends ViolatorView
 			<section>
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\GameEditorPage\OriginalName, 2, true).'
 						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => '蒼の彼方のフォーリズム', 'value' => $originalName, 'required' => true]).'
@@ -277,7 +279,8 @@ class UserView extends ViolatorView
 		array|null $relatedSongs,
 		int  |null $currentSongCount,
 		array      $games,
-		string     $heading
+		string     $heading,
+		string     $nonce
 	): void
 	{
 		if ($album)
@@ -325,6 +328,7 @@ class UserView extends ViolatorView
 			<section>
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\OriginalName, 2, true).'
 						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => '蒼の彼方のフォーリズム サウンドトラックCD vol.1', 'value' => $originalName, 'required' => true]).'
@@ -486,7 +490,8 @@ class UserView extends ViolatorView
 	(
 		array|null $artist,
 		array      $originalArtists,
-		string     $heading
+		string     $heading,
+		string     $nonce
 	): void
 	{
 		if ($artist)
@@ -529,6 +534,7 @@ class UserView extends ViolatorView
 			<section>
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\OriginalName, 2, true).'
 						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => 'いとうかなこ', 'value' => $originalName, 'required' => true]).'
@@ -656,7 +662,8 @@ class UserView extends ViolatorView
 		array|null $character,
 		array|null $relatedGames,
 		array      $games,
-		string     $heading
+		string     $heading,
+		string     $nonce
 	): void
 	{
 		if ($character)
@@ -702,6 +709,7 @@ class UserView extends ViolatorView
 			<section>
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\OriginalName, 2, true).'
 						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => '桐生萌郁', 'value' => $originalName, 'required' => true]).'
@@ -860,7 +868,8 @@ class UserView extends ViolatorView
 		int|null   $discNumber,
 		int|null   $trackNumber,
 		bool|null  $isLastSong,
-		string     $heading
+		string     $heading,
+		string     $nonce
 	): void
 	{
 		if ($song)
@@ -911,6 +920,7 @@ class UserView extends ViolatorView
 			<section>
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\SongEditorPage\DiscAndTrack, 2, true).'
 						<section class="disc-track-controls">
@@ -1010,7 +1020,8 @@ class UserView extends ViolatorView
 		array      $characters,
 		array      $originalSongs,
 		array      $languages,
-		string     $heading
+		string     $heading,
+		string     $nonce
 	): void
 	{
 		if (!$relatedPerformers)
@@ -1085,6 +1096,7 @@ class UserView extends ViolatorView
 			<section>
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\LyricsEditorPage\ArtistAndCharacter, 2, true).'
 		';
@@ -1249,7 +1261,8 @@ class UserView extends ViolatorView
 		array|null $translation,
 		array      $languages,
 		array      $translationsByCurrentUser,
-		string     $heading
+		string     $heading,
+		string     $nonce
 	): void
 	{
 		if ($translation)
@@ -1322,6 +1335,7 @@ class UserView extends ViolatorView
 			<section>
 				'.$this->createHeading($heading, 1).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\TargetLanguage, 2, true).'
 						'.$languageSelect.'
@@ -1412,7 +1426,12 @@ class UserView extends ViolatorView
 		$this->echoHtml($html);
 	}
 	
-	private function renderDeleteEntityPage(string $heading, string $defaultReturnLink)
+	private function renderDeleteEntityPage
+	(
+		string $heading,
+		string $defaultReturnLink,
+		string $nonce
+	): void
 	{
 		$html[] = $this->startRender
 		(
@@ -1428,6 +1447,7 @@ class UserView extends ViolatorView
 				'.$this->createParagraph(\Localization\DeleteEntityPage\Introduction).'
 				'.$this->createParagraph(\Localization\DeleteEntityPage\Warning).'
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section>
 						'.$this->createReturnButton($defaultReturnLink).'
 						'.$this->createFillerSection().'
@@ -1464,7 +1484,8 @@ class UserView extends ViolatorView
 			null,
 			$albums,
 			$characters,
-			\Localization\GameEditorPage\HeadingAdd
+			\Localization\GameEditorPage\HeadingAdd,
+			$_SESSION['addGamePage']['nonce']
 		);
 	}
 	
@@ -1480,7 +1501,8 @@ class UserView extends ViolatorView
 			null,
 			null,
 			$games,
-			\Localization\AlbumEditorPage\HeadingAdd
+			\Localization\AlbumEditorPage\HeadingAdd,
+			$_SESSION['addAlbumPage']['nonce']
 		);
 	}
 	
@@ -1493,7 +1515,8 @@ class UserView extends ViolatorView
 		(
 			null,
 			$originalArtists,
-			\Localization\ArtistEditorPage\HeadingAdd
+			\Localization\ArtistEditorPage\HeadingAdd,
+			$_SESSION['addArtistPage']['nonce']
 		);
 	}
 	
@@ -1507,7 +1530,8 @@ class UserView extends ViolatorView
 			null,
 			null,
 			$games,
-			\Localization\CharacterEditorPage\HeadingAdd
+			\Localization\CharacterEditorPage\HeadingAdd,
+			$_SESSION['addCharacterPage']['nonce']
 		);
 	}
 	
@@ -1526,7 +1550,8 @@ class UserView extends ViolatorView
 			$discNumber,
 			$trackNumber,
 			$isLastSong,
-			$album['transliterated_name'].\Localization\SongEditorPage\HeadingAdd
+			$album['transliterated_name'].\Localization\SongEditorPage\HeadingAdd,
+			$_SESSION['addSongPage']['nonce']
 		);
 	}
 	
@@ -1549,7 +1574,8 @@ class UserView extends ViolatorView
 			$characters,
 			$originalSongs,
 			$languages,
-			\Localization\LyricsEditorPage\HeadingAdd.$song['transliterated_name']
+			\Localization\LyricsEditorPage\HeadingAdd.$song['transliterated_name'],
+			$_SESSION['addLyricsPage']['nonce']
 		);
 	}
 
@@ -1568,7 +1594,8 @@ class UserView extends ViolatorView
 			null,
 			$languages,
 			$translationsByCurrentUser,
-			\Localization\TranslationEditorPage\HeadingAdd
+			\Localization\TranslationEditorPage\HeadingAdd,
+			$_SESSION['addTranslationPage']['nonce']
 		);
 	}
 	
@@ -1588,7 +1615,8 @@ class UserView extends ViolatorView
 			$relatedCharacters,
 			$albums,
 			$characters,
-			\Localization\GameEditorPage\HeadingEdit.$game['transliterated_name']
+			\Localization\GameEditorPage\HeadingEdit.$game['transliterated_name'],
+			$_SESSION['editGamePage']['nonce']
 		);
 	}
 	
@@ -1607,7 +1635,8 @@ class UserView extends ViolatorView
 			null,
 			$currentSongCount,
 			$games,
-			\Localization\AlbumEditorPage\HeadingEdit.$album['transliterated_name']
+			\Localization\AlbumEditorPage\HeadingEdit.$album['transliterated_name'],
+			$_SESSION['editAlbumPage']['nonce']
 		);
 	}
 	
@@ -1621,7 +1650,8 @@ class UserView extends ViolatorView
 		(
 			$artist,
 			$originalArtists,
-			\Localization\ArtistEditorPage\HeadingEdit.$artist['transliterated_name']
+			\Localization\ArtistEditorPage\HeadingEdit.$artist['transliterated_name'],
+			$_SESSION['editArtistPage']['nonce']
 		);
 	}
 	
@@ -1637,7 +1667,8 @@ class UserView extends ViolatorView
 			$character,
 			$relatedGames,
 			$games,
-			\Localization\CharacterEditorPage\HeadingEdit.$character['transliterated_name']
+			\Localization\CharacterEditorPage\HeadingEdit.$character['transliterated_name'],
+			$_SESSION['editCharacterPage']['nonce']
 		);
 	}
 	
@@ -1654,7 +1685,8 @@ class UserView extends ViolatorView
 			null,
 			null,
 			null,
-			\Localization\SongEditorPage\HeadingEdit.$song['transliterated_name']
+			\Localization\SongEditorPage\HeadingEdit.$song['transliterated_name'],
+			$_SESSION['editSongPage']['nonce']
 		);
 	}
 	
@@ -1678,7 +1710,8 @@ class UserView extends ViolatorView
 			$characters,
 			$originalSongs,
 			$languages,
-			\Localization\LyricsEditorPage\HeadingEdit.$song['transliterated_name']
+			\Localization\LyricsEditorPage\HeadingEdit.$song['transliterated_name'],
+			$_SESSION['editLyricsPage']['nonce']
 		);
 	}
 	
@@ -1696,7 +1729,8 @@ class UserView extends ViolatorView
 			$translation,
 			[],
 			[],
-			\Localization\TranslationEditorPage\HeadingEdit
+			\Localization\TranslationEditorPage\HeadingEdit,
+			$_SESSION['editTranslationPage']['nonce']
 		);
 	}
 	
@@ -1705,7 +1739,12 @@ class UserView extends ViolatorView
 		$heading = \Localization\DeleteEntityPage\DeleteGame.$game['transliterated_name'];
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'game', $game['uri']);
 		
-		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+		$this->renderDeleteEntityPage
+		(
+			$heading,
+			$defaultReturnLink,
+			$_SESSION['deleteGamePage']['nonce']
+		);
 }
 	
 	final public function renderDeleteAlbumPage(array $album): void
@@ -1713,7 +1752,12 @@ class UserView extends ViolatorView
 		$heading           = \Localization\DeleteEntityPage\DeleteAlbum.$album['transliterated_name'];
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
 		
-		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+		$this->renderDeleteEntityPage
+		(
+			$heading,
+			$defaultReturnLink,
+			$_SESSION['deleteAlbumPage']['nonce']
+		);
 	}
 	
 	final public function renderDeleteArtistPage(array $artist): void
@@ -1721,7 +1765,12 @@ class UserView extends ViolatorView
 		$heading           = \Localization\DeleteEntityPage\DeleteArtist.$artist['transliterated_name'];
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'artist', $artist['uri']);
 		
-		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+		$this->renderDeleteEntityPage
+		(
+			$heading,
+			$defaultReturnLink,
+			$_SESSION['deleteArtistPage']['nonce']
+		);
 	}
 	
 	final public function renderDeleteCharacterPage(array $character): void
@@ -1729,7 +1778,12 @@ class UserView extends ViolatorView
 		$heading           = \Localization\DeleteEntityPage\DeleteCharacter.$character['transliterated_name'];
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'character', $character['uri']);
 		
-		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+		$this->renderDeleteEntityPage
+		(
+			$heading,
+			$defaultReturnLink,
+			$_SESSION['deleteCharacterPage']['nonce']
+		);
 	}
 	
 	final public function renderDeleteSongPage(array $album, array $song): void
@@ -1737,7 +1791,12 @@ class UserView extends ViolatorView
 		$heading           = \Localization\DeleteEntityPage\DeleteSong.$song['transliterated_name'];
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
 		
-		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+		$this->renderDeleteEntityPage
+		(
+			$heading,
+			$defaultReturnLink,
+			$_SESSION['deleteSongPage']['nonce']
+		);
 	}
 	
 	final public function renderDeleteLyricsPage(array $album, array $song): void
@@ -1745,7 +1804,12 @@ class UserView extends ViolatorView
 		$heading           = \Localization\DeleteEntityPage\DeleteLyrics.$song['transliterated_name'];
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		
-		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
+		$this->renderDeleteEntityPage
+		(
+			$heading,
+			$defaultReturnLink,
+			$_SESSION['deleteLyricsPage']['nonce']
+		);
 	}
 	
 	final public function renderDeleteTranslationPage(array $album, array $song, array $translation): void
@@ -1753,59 +1817,12 @@ class UserView extends ViolatorView
 		$heading           = \Localization\DeleteEntityPage\DeleteTranslation.$song['transliterated_name'];
 		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		
-		$this->renderDeleteEntityPage($heading, $defaultReturnLink);
-	}
-	
-	final public function renderChangeAccountDataPage(array $user, InputError $error = InputError::None)
-	{
-		$heading           = $user['username'].\Localization\UserAccountDataPage\Edit;
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['username']);
-		
-		$html[] = $this->startRender
+		$this->renderDeleteEntityPage
 		(
-			title:        $heading,
-			cssSheetUris: ['/css/window-in-center-page.css']
+			$heading,
+			$defaultReturnLink,
+			$_SESSION['deleteTranslationPage']['nonce']
 		);
-		
-		$html[] = 
-		'
-		<article>
-			<section>
-				'.$this->createHeading($heading, 1).'
-			</section>
-			<section>
-				'.$this->createHeading(\Localization\UserAccountDataPage\AccountData, 2).'
-				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
-				<form method="POST">
-					<section>
-						'.$this->createHeadingForInput(\Localization\UserAccountDataPage\Username, 3, true).'
-						'.$this->createTextInput(['name' => 'username', 'value' => $user['username'], 'placeholder' => \Localization\SignUpPage\HintUsername, 'required' => true, 'pattern' => '[a-zA-Z0-9]+']).'
-					</section>
-					<section>
-						'.$this->createHeadingForInput(\Localization\UserAccountDataPage\Email, 3, true).'
-						'.$this->createEmailInput(['name' => 'email', 'value' => Cryptography::decryptData($user['email']), 'placeholder' => 'name@mailserver.domain', 'required' => true]).'
-					</section>
-					<section>
-						'.$this->createHeadingForInput(\Localization\UserAccountDataPage\NewPassword, 3, false).'
-						'.$this->createPasswordInput(['name' => 'new-password', 'placeholder' => \Localization\SignUpPage\HintPassword]).'
-					</section>
-					<section>
-						'.$this->createHeadingForInput(\Localization\UserAccountDataPage\OldPassword, 3, true).'
-						'.$this->createPasswordInput(['name' => 'old-password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
-					</section>
-					<section>
-						'.$this->createReturnButton($defaultReturnLink).'
-						'.$this->createFillerSection().'
-						'.$this->createSubmitButton().'
-					</section>
-				</form>
-			</section>
-		</article>
-		';
-		
-		$html[] = $this->endRender();
-		
-		$this->echoHtml($html);
 	}
 	
 	final public function renderChangeEmailPage(array $user, InputError $error = InputError::None)
@@ -1828,6 +1845,7 @@ class UserView extends ViolatorView
 			<section>
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['changeEmailPage']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\ChangeEmailPage\Email, 3, true).'
 						'.$this->createEmailInput(['name' => 'email', 'value' => Cryptography::decryptData($user['email']), 'placeholder' => \Localization\SignUpPage\HintEmail, 'required' => true]).'
@@ -1871,6 +1889,7 @@ class UserView extends ViolatorView
 			<section>
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['changeUsernamePage']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\ChangeUsernamePage\Username, 3, true).'
 						'.$this->createUsernameInput(['name' => 'username', 'value' => $user['username'], 'placeholder' => \Localization\SignUpPage\HintUsername, 'required' => true]).'
@@ -1914,6 +1933,7 @@ class UserView extends ViolatorView
 			<section>
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['changePasswordPage']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\ChangePasswordPage\NewPassword, 3, true).'
 						'.$this->createPasswordInput(['name' => 'password', 'placeholder' => \Localization\SignUpPage\HintPassword, 'required' => true]).'
@@ -1957,6 +1977,7 @@ class UserView extends ViolatorView
 			<section>
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['changeAboutMePage']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\ChangeAboutMePage\AboutMe, 3, false).'
 						'.$this->createTextarea
@@ -2007,6 +2028,7 @@ class UserView extends ViolatorView
 				'.$this->createParagraph(\Localization\DeleteAccountPage\Warning4).'
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['deleteAccountPage']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\DeleteAccountPage\Password, 3, true).'
 						'.$this->createPasswordInput(['name' => 'password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'

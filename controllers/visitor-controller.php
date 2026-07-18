@@ -75,9 +75,11 @@ class VisitorController extends ErrorController
 	): void
 	{
 		if (isset($_SERVER['HTTP_REFERER']))
-			$_SESSION['redirect']['logIn'] = $_SERVER['HTTP_REFERER'];
+			$_SESSION['logInPage']['redirect'] = $_SERVER['HTTP_REFERER'];
 		else
-			$_SESSION['redirect']['logIn'] = Http::buildInternalPath($this->language);
+			$_SESSION['logInPage']['redirect'] = Http::buildInternalPath($this->language);
+		
+		$_SESSION['logInPage']['nonce'] = Cryptography::generateNonce();
 		
 		$this->view->renderLogInPage($email, $error);
 	}
@@ -87,9 +89,14 @@ class VisitorController extends ErrorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$email     = $_POST['email']         ?? null;
-		$password  = $_POST['password']      ?? null;
-		$ipAddress = $_SERVER['REMOTE_ADDR'] ?? null;
+		$email       = $_POST['email']                 ?? null;
+		$password    = $_POST['password']              ?? null;
+		$ipAddress   = $_SERVER['REMOTE_ADDR']         ?? null;
+		$userNonce   = $_POST['nonce']                 ?? null;
+		$serverNonce = $_SESSION['logInPage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($email, $password, $ipAddress))
 			throw new HttpBadRequest400('Log-in data was not sent', get_defined_vars());
@@ -114,8 +121,9 @@ class VisitorController extends ErrorController
 		$this->model->updateLastLogInTimestamp($userId);
 		$this->model->addUserFingerprint($userId, $ipAddress);
 		
-		$this->handleRedirect($_SESSION['redirect']['logIn']);
-		unset($_SESSION['redirect']['logIn']);
+		$this->handleRedirect($_SESSION['logInPage']['redirect']);
+		
+		unset($_SESSION['logInPage']);
 	}
 	
 	public function handleSignUpPage(): void
@@ -152,14 +160,16 @@ class VisitorController extends ErrorController
 	): void
 	{
 		if (isset($_SERVER['HTTP_REFERER']))
-			$_SESSION['redirect']['signUp'] = $_SERVER['HTTP_REFERER'];
+			$_SESSION['signUpPage']['redirect'] = $_SERVER['HTTP_REFERER'];
 		else
-			$_SESSION['redirect']['signUp'] = Http::buildInternalPath($this->language);
+			$_SESSION['signUpPage']['redirect'] = Http::buildInternalPath($this->language);
+		
+		$_SESSION['signUpPage']['nonce'] = Cryptography::generateNonce();
 		
 		$captchaData = $this->model->getRandomCaptcha(6, 3);
 		
-		$_SESSION['captcha']['signUp'] = $captchaData[0];
-		$captchaBase64Image            = $captchaData[1];
+		$_SESSION['signUpPage']['captcha'] = $captchaData[0];
+		$captchaBase64Image                = $captchaData[1];
 		
 		$this->view->renderSignUpPage($username, $email, $error, $captchaBase64Image);
 	}
@@ -169,17 +179,22 @@ class VisitorController extends ErrorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$username    = $_POST['username']             ?? null;
-		$email       = $_POST['email']                ?? null;
-		$password    = $_POST['password']             ?? null;
-		$ipAddress   = $_SERVER['REMOTE_ADDR']        ?? null;
-		$sentCaptcha = $_POST['captcha-code']         ?? null;
-		$madeCaptcha = $_SESSION['captcha']['signUp'] ?? null;
+		$username      = $_POST['username']                 ?? null;
+		$email         = $_POST['email']                    ?? null;
+		$password      = $_POST['password']                 ?? null;
+		$ipAddress     = $_SERVER['REMOTE_ADDR']            ?? null;
+		$userCaptcha   = $_POST['captcha-code']             ?? null;
+		$serverCaptcha = $_SESSION['signUpPage']['captcha'] ?? null;
+		$userNonce     = $_POST['nonce']                    ?? null;
+		$serverNonce   = $_SESSION['signUpPage']['nonce']   ?? null;
 		
-		if (Validation::haveNullOrEmpty($username, $email, $password, $ipAddress, $sentCaptcha, $madeCaptcha))
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+		
+		if (Validation::haveNullOrEmpty($username, $email, $password, $ipAddress))
 			throw new HttpBadRequest400('Sign-up data was not sent', get_defined_vars());
 		
-		if (!Validation::areCaptchasEqual($madeCaptcha, $sentCaptcha))
+		if (!Validation::areCaptchasEqual($serverCaptcha, $userCaptcha))
 		{
 			$this->handleSignUpPageGet($username, $email, InputError::CaptchaInvalid);
 			return;
@@ -245,9 +260,9 @@ class VisitorController extends ErrorController
 		$this->createUserSession($userData);
 		$this->model->addUserFingerprint($userId, $ipAddress);
 		
-		$this->handleRedirect($_SESSION['redirect']['signUp']);
-		unset($_SESSION['redirect']['signUp']);
-		unset($_SESSION['captcha']['signUp']);
+		$this->handleRedirect($_SESSION['signUpPage']['redirect']);
+		
+		unset($_SESSION['signUpPage']);
 	}
 	
 	public function handleLogOutPage(): void
@@ -1041,8 +1056,10 @@ class VisitorController extends ErrorController
 	{
 		$captchaData = $this->model->getRandomCaptcha(4, 0);
 		
-		$_SESSION['captcha']['feedback'] = $captchaData[0];
-		$captchaBase64Image              = $captchaData[1];
+		$_SESSION['feedbackPage']['captcha'] = $captchaData[0];
+		$captchaBase64Image                  = $captchaData[1];
+		
+		$_SESSION['feedbackPage']['nonce'] = Cryptography::generateNonce();
 		
 		$feedbacks = $this->model->getFeedbackList();
 		$this->view->renderFeedbackPage($feedbacks, $feedback, $error, $captchaBase64Image);
@@ -1053,18 +1070,23 @@ class VisitorController extends ErrorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$senderId    = $_SESSION['user']['id']          ?? null;
-		$senderIp    = $_SERVER['REMOTE_ADDR']          ?? null;
-		$message     = $_POST['message']                ?? null;
-		$sentCaptcha = $_POST['captcha-code']           ?? null;
-		$madeCaptcha = $_SESSION['captcha']['feedback'] ?? null;
+		$senderId      = $_SESSION['user']['id']              ?? null;
+		$senderIp      = $_SERVER['REMOTE_ADDR']              ?? null;
+		$message       = $_POST['message']                    ?? null;
+		$userCaptcha   = $_POST['captcha-code']               ?? null;
+		$serverCaptcha = $_SESSION['feedbackPage']['captcha'] ?? null;
+		$userNonce     = $_POST['nonce']                      ?? null;
+		$serverNonce   = $_SESSION['feedbackPage']['nonce']   ?? null;
 		
-		$message     = Parsing::trimNullableString($message);
+		$message       = Parsing::trimNullableString($message);
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::isNullOrEmpty($senderIp, $message))
 			throw new HttpUnprocessableEntity422('Feedback data was not sent');
 		
-		if (!Validation::areCaptchasEqual($madeCaptcha, $sentCaptcha))
+		if (!Validation::areCaptchasEqual($serverCaptcha, $userCaptcha))
 		{
 			$this->handleFeedbackPageGet($message, InputError::CaptchaInvalid);
 			return;
@@ -1072,29 +1094,8 @@ class VisitorController extends ErrorController
 		
 		$this->model->addFeedback($senderId, $senderIp, $message);
 		$this->handleRedirect(Http::buildInternalPath($this->language, 'feedback'));
-	}
-	
-	final public function handleReport(): void
-	{
-		switch ($_SERVER['REQUEST_METHOD'])
-		{
-			case 'POST':
-				$this->handleReportPost();
-				break;
-			
-			case 'CONNECT':
-			case 'DELETE':
-			case 'GET':
-			case 'HEAD':
-			case 'OPTIONS':
-			case 'PATCH':
-			case 'PUT':
-			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
-			
-			default:
-				throw new HttpNotImplemented501();
-		}
+		
+		unset($_SESSION['feedbackPage']);
 	}
 	
 	private function handleReportPost(): void
@@ -1102,11 +1103,17 @@ class VisitorController extends ErrorController
 		if (!Validation::isDataEncodedInUTF8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$senderId  = $_SESSION['user']['id']     ?? null;
-		$ipAddress = $_SERVER['REMOTE_ADDR']     ?? null;
-		$message   = $_POST['report-text']       ?? null;
-		$entityUri = $_POST['entity-uri']        ?? null;
-		$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
+		$senderId    = $_SESSION['user']['id']          ?? null;
+		$ipAddress   = $_SERVER['REMOTE_ADDR']          ?? null;
+		$message     = $_POST['report-text']            ?? null;
+		$entityUri   = $_POST['entity-uri']             ?? null;
+		$userAgent   = $_SERVER['HTTP_USER_AGENT']      ?? null;
+		
+		$userNonce   = $_POST['nonce']                  ?? null;
+		$serverNonce = $_SESSION['reportPage']['nonce'] ?? null;
+		
+		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
+			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($ipAddress, $message, $entityUri, $userAgent))
 			throw new HttpUnprocessableEntity422('Null or empty submitted', get_defined_vars());
@@ -1121,6 +1128,8 @@ class VisitorController extends ErrorController
 		);
 		
 		$this->handleRedirect($entityUri);
+		
+		unset($_SESSION['reportPage']);
 	}
 	
 	final public function handleReportGamePage(string $gameUri): void
@@ -1142,12 +1151,15 @@ class VisitorController extends ErrorController
 				$this->handleReportGamePageGet($game);
 				break;
 			
+			case 'POST':
+				$this->handleReportPost();
+				break;
+			
 			case 'CONNECT':
 			case 'DELETE':
 			case 'HEAD':
 			case 'OPTIONS':
 			case 'PATCH':
-			case 'POST':
 			case 'PUT':
 			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
@@ -1159,6 +1171,8 @@ class VisitorController extends ErrorController
 	
 	final public function handleReportGamePageGet(array $game): void
 	{
+		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
+		
 		$linkBack = Http::buildInternalPath($this->language, 'game', $game['uri']);
 		$this->view->renderReportPage('game', $game['transliterated_name'], $linkBack);
 	}
@@ -1182,12 +1196,15 @@ class VisitorController extends ErrorController
 				$this->handleReportAlbumPageGet($album);
 				break;
 			
+			case 'POST':
+				$this->handleReportPost();
+				break;
+			
 			case 'CONNECT':
 			case 'DELETE':
 			case 'HEAD':
 			case 'OPTIONS':
 			case 'PATCH':
-			case 'POST':
 			case 'PUT':
 			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
@@ -1199,6 +1216,8 @@ class VisitorController extends ErrorController
 	
 	private function handleReportAlbumPageGet(array $album): void
 	{
+		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
+		
 		$linkBack = Http::buildInternalPath($this->language, 'album', $album['uri']);
 		$this->view->renderReportPage('album', $album['transliterated_name'], $linkBack);
 	}
@@ -1222,12 +1241,15 @@ class VisitorController extends ErrorController
 				$this->handleReportArtistPageGet($artist);
 				break;
 			
+			case 'POST':
+				$this->handleReportPost();
+				break;
+			
 			case 'CONNECT':
 			case 'DELETE':
 			case 'HEAD':
 			case 'OPTIONS':
 			case 'PATCH':
-			case 'POST':
 			case 'PUT':
 			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
@@ -1239,6 +1261,8 @@ class VisitorController extends ErrorController
 	
 	private function handleReportArtistPageGet(array $artist): void
 	{
+		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
+		
 		$linkBack = Http::buildInternalPath($this->language, 'artist', $artist['uri']);
 		$this->view->renderReportPage('artist', $artist['transliterated_name'], $linkBack);
 	}
@@ -1262,12 +1286,15 @@ class VisitorController extends ErrorController
 				$this->handleReportCharacterPageGet($character);
 				break;
 			
+			case 'POST':
+				$this->handleReportPost();
+				break;
+			
 			case 'CONNECT':
 			case 'DELETE':
 			case 'HEAD':
 			case 'OPTIONS':
 			case 'PATCH':
-			case 'POST':
 			case 'PUT':
 			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
@@ -1279,6 +1306,8 @@ class VisitorController extends ErrorController
 	
 	private function handleReportCharacterPageGet(array $character): void
 	{
+		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
+		
 		$linkBack = Http::buildInternalPath($this->language, 'character', $character['uri']);
 		$this->view->renderReportPage('character', $character['transliterated_name'], $linkBack);
 	}
@@ -1318,12 +1347,15 @@ class VisitorController extends ErrorController
 				$this->handleReportLyricsPageGet($album, $song);
 				break;
 			
+			case 'POST':
+				$this->handleReportPost();
+				break;
+			
 			case 'CONNECT':
 			case 'DELETE':
 			case 'HEAD':
 			case 'OPTIONS':
 			case 'PATCH':
-			case 'POST':
 			case 'PUT':
 			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
@@ -1335,6 +1367,8 @@ class VisitorController extends ErrorController
 	
 	private function handleReportLyricsPageGet(array $album, array $song): void
 	{
+		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
+		
 		$linkBack = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		$this->view->renderReportPage('lyrics', $song['transliterated_name'], $linkBack);
 	}
@@ -1404,12 +1438,15 @@ class VisitorController extends ErrorController
 				$this->handleReportTranslationPageGet($album, $song, $translation);
 				break;
 			
+			case 'POST':
+				$this->handleReportPost();
+				break;
+			
 			case 'CONNECT':
 			case 'DELETE':
 			case 'HEAD':
 			case 'OPTIONS':
 			case 'PATCH':
-			case 'POST':
 			case 'PUT':
 			case 'TRACE':
 				throw new HttpMethodNotAllowed405();
@@ -1421,6 +1458,8 @@ class VisitorController extends ErrorController
 	
 	private function handleReportTranslationPageGet(array $album, array $song, array $translation): void
 	{
+		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
+		
 		$linkBack = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		$this->view->renderReportPage('translation', $translation['name'], $linkBack);
 	}
