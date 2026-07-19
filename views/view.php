@@ -1614,20 +1614,16 @@ HTML;
 	//       Content Pages: Pagination       //
 	//---------------------------------------//
 	
-	final protected function createResultsLimitBlock(int|null $limit): string
+	final protected function createResultsLimitBlock(int $limit): string
 	{
-		if (is_null($limit))
-			$selectedOption = ['toShow' => \Localization\Controls\NoLimit, 'toSend' => null];
-		else
-			$selectedOption = ['toShow' => $limit, 'toSend' => $limit];
+		$selectedOption = ['toShow' => $limit, 'toSend' => $limit];
 		
 		$options =
 		[
 			['toShow' => 10,  'toSend' => 10],
 			['toShow' => 25,  'toSend' => 25],
-			['toShow' => 50,  'toSend' => 50],
-			['toShow' => 100, 'toSend' => 100],
-			['toShow' => \Localization\Controls\NoLimit, 'toSend' => null]
+			['toShow' => 33,  'toSend' => 33],
+			['toShow' => 50,  'toSend' => 50]
 		];
 		
 		// sort nulls last
@@ -1639,8 +1635,10 @@ HTML;
 				$options,
 				function($a, $b)
 				{
-					if ($a === null) return +1;
-					if ($b === null) return -1;
+					if ($a === null)
+						return +1;
+					if ($b === null)
+						return -1;
 					return $a <=> $b;
 				}
 			);

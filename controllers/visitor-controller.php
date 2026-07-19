@@ -7,6 +7,8 @@ class VisitorController extends ErrorController
 	protected const ACCOUNT_DATA_MIN_LENGTH = 4;
 	protected const ACCOUNT_DATA_MAX_LENGTH = 32;
 	
+	private   const RESULTS_LIMIT_MAX_VALUE = 50;
+	
 	public function __construct(string $language)
 	{
 		parent::__construct($language);
@@ -341,21 +343,12 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$limit  = Parsing::parseNullableInteger($limit, 1, self::RESULTS_LIMIT_MAX_VALUE);
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
+		if (is_null($limit) || is_null($page))
+			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getGameList(page: $page, limit: $limit, search: $search);
 		$count = $this->model->getGameCount(search: $search);
@@ -395,21 +388,12 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$limit  = Parsing::parseNullableInteger($limit, 1, self::RESULTS_LIMIT_MAX_VALUE);
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
+		if (is_null($limit) || is_null($page))
+			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getAlbumList(page: $page, limit: $limit, search: $search);
 		$count = $this->model->getAlbumCount(search: $search);
@@ -449,21 +433,12 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$limit  = Parsing::parseNullableInteger($limit, 1, self::RESULTS_LIMIT_MAX_VALUE);
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
+		if (is_null($limit) || is_null($page))
+			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getArtistList(page: $page, limit: $limit, search: $search);
 		$count = $this->model->getArtistCount(search: $search);
@@ -503,21 +478,12 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$limit  = Parsing::parseNullableInteger($limit, 1, self::RESULTS_LIMIT_MAX_VALUE);
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
+		if (is_null($limit) || is_null($page))
+			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getCharacterList(page: $page, limit: $limit, search: $search);
 		$count = $this->model->getCharacterCount(search: $search);
@@ -557,21 +523,12 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$limit  = Parsing::parseNullableInteger($limit, 1, self::RESULTS_LIMIT_MAX_VALUE);
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
+		if (is_null($limit) || is_null($page))
+			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getSongList(page: $page, limit: $limit, search: $search, hasVocal: true);
 		$count = $this->model->getSongCount(search: $search, hasVocal: true);
@@ -611,21 +568,12 @@ class VisitorController extends ErrorController
 		$page   = $_GET['page']   ?? null;
 		$search = $_GET['search'] ?? null;
 		
-		$limit  = Parsing::parseNullableInteger($limit, 1);
+		$limit  = Parsing::parseNullableInteger($limit, 1, self::RESULTS_LIMIT_MAX_VALUE);
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (!Validation::isNullOrEmpty($_GET['page'] ?? null) && Validation::isNullOrEmpty($page))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($_GET['limit'] ?? null) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (!Validation::isNullOrEmpty($page) && Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
-		
-		if (Validation::isNullOrEmpty($page) && !Validation::isNullOrEmpty($limit))
-			throw new HttpBadRequest400();
+		if (is_null($limit) || is_null($page))
+			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getTranslationList(page: $page, limit: $limit, search: $search);
 		$count = $this->model->getTranslationCount(search: $search);
