@@ -514,6 +514,7 @@ namespace Localization\UserPage
 {
 	const User                 = 'User: ';
 	const Role                 = 'Role: ';
+	const Created              = 'Joined: ';
 	
 	const AccountControl       = 'Account Control Panel';
 	const ChangeAboutMe        = 'Change “About Me”';

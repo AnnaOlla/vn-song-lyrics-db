@@ -514,6 +514,7 @@ namespace Localization\UserPage
 {
 	const User                 = 'Пользователь: ';
 	const Role                 = 'Роль: ';
+	const Created              = 'Участник с: ';
 	
 	const AccountControl       = 'Управление аккаунтом';
 	const ChangeAboutMe        = 'Изменить «О себе»';

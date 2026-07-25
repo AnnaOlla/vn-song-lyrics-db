@@ -1360,6 +1360,7 @@ class VisitorView extends ErrorView
 			<section>
 				'.$this->createHeading($heading, 1).'
 				'.$this->createParagraph(\Localization\UserPage\Role.$role).'
+				'.$this->createParagraph(\Localization\UserPage\Created.$userData['timestamp_created']).'
 		';
 		
 		if (!Validation::isNullOrEmpty($userData['about_me']))

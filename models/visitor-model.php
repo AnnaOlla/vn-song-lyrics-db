@@ -186,7 +186,8 @@ class VisitorModel extends Model
 		
 		if (!$fetchMinInfo)
 		{
-			$select[] = 'u.about_me       AS about_me';
+			$select[] = 'u.timestamp_created AS timestamp_created';
+			$select[] = 'u.about_me          AS about_me';
 		}
 		
 		if (!is_null($id))

@@ -514,6 +514,7 @@ namespace Localization\UserPage
 {
 	const User                 = 'ユーザー：';
 	const Role                 = '役：';
+	const Created              = '入った：';
 	
 	const AccountControl       = 'アカウントコントロール';
 	const ChangeAboutMe        = '自己紹介を編集';
