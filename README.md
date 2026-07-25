@@ -1,114 +1,102 @@
 # vn-song-lyrics-db
-Небольшой проект, посвящённый хранению текстов песен, исполняемых в видеоиграх жанра "визуальная новелла", и их переводам.
+## Description
+A small project dedicated for lyrics of songs that sound in games of genre "visual novel".
 
-Сайт доступен по адресу [vn-song-lyrics-db.ru](https://vn-song-lyrics-db.ru).
+The website is available at [vn-song-lyrics-db.ru](https://vn-song-lyrics-db.ru).
 
-## Описание
-Саундтреки к играм сегодня обязательно продаются на любой площадке вместе с играми. Их популярность, конечно же, ниже, чем у эстрадной музыки, но это не делает такое творчество менее значимым. Для хранения текстов песен из видеоигр и был придуман этот проект.
+## Requirements
+General modules that were tested:
+* PHP 8.4.11-8.5.8
+* Apache 2.4 or nginx 1.30.1
+* MySQL 8.0.44 or MariaDB 10.11.18
 
-Какую же нишу заполняет сайт:
-* сайты с текстами и переводами эстрадной музыки (например, самый большой агрегатор genius.com) не имеют фокуса на видеоиграх и какой-либо связи с ними
-  * в результате контент, даже если он есть, он там теряется как на фоне более популярной эстрады, так и из-за отсутствия объединяющего их фактора;
-* саундтреки имеют как песни, так и чисто музыкальные треки без вокала;
-  * а потому такие альбомы представлены не без проблем на сайтах, посвящённых именно эстрадным исполнителям, у которых все песни имеют вокал.
-* видеоигры имеют ситуативную особенность в виде "исполнитель -- это не только реальный человек, но ещё и персонаж" \[чаще всего оформляется строкой **%CharacterName (CV. %RealArtist)**]
-  * те сайты, на которых такой контент всё-таки есть, решают эту проблему "костылём" в виде создания дубликатов исполнителей с этой особенностью, что ещё больше затрудняет создание и поиск этого контента;
-* исполнители музыки для видеоигр не так известны на эстраде в принципе и такой контент добавляется частями на разные сайты и теряется между ними.
-
-Фанаты имеют как крупные сайты, посвящённые играм жанра "визуальная новелла" (vndb.org), так и саундтрекам для видеоигр в целом (vgmdb.org). Сайт с текстами и переводами песен для этого жанра поможет построить маленький "мост" и заполнить пробел.
-
-Проект -- маленький и нишевый. Он не рассчитывает на какую-то популярность.
-
-## Ключевые сущности
-В описании уже были выделены ключевые сущности:
-
-* игра
-* альбом
-* исполнитель
-* персонаж
-* песня
-* перевод
-
-Связи между сущностями:
-
-* одна игра может иметь несколько альбомов, а один альбом может относится к нескольким играм;
-* одна песня может иметь несколько исполнителей, а исполнитель может иметь несколько песен;
-* одна песня может иметь ноль или несколько персонажей-исполнителей, а персонаж-исполнитель может иметь несколько песен;
-* за одним персонажем могут стоять разные люди, а один человек может представлять разных персонажей;
-* один альбом имеет много песен, но песня всегда относится только к одному альбому;
-* одна песня может иметь много переводов, но перевод относится только к одной песне.
-
-Схематично **главные атрибуты**, **главные сущности** связующие сущности и связи между ними между ними изображены ниже:
-<img width="1142" height="1022" alt="ER-Diagram" src="https://github.com/user-attachments/assets/2c2ab342-4522-4ab8-b370-307d08657e54" />
-
-Сами таблицы имеют больше полей, таблиц тоже больше (см. файл db-creation-code.sql).
-
-## Реализованный функционал
-
-* На сайт можно добавлять игры, альбомы, исполнителей, персонажей песни и переводы;
-* На сайте можно управлять связями между этими сущностями
-* Редактор текста поддерживает специальный синтаксис для оформления:
-  * позволяется устанавливать цвет текста
-  * произношения слов
-  * создавать ссылки между текстом и комментариями в оба направления
-
-## Использованные технологии
-
-Для работы сайта требуется PHP версии 8.4.11 и MySQL 10.11.11. Нужно подключить следующие расширения в php.ini:
-
+Required PHP extensions in php.ini:
 * gd
 * mbstring
 * exif
 * pdo\_mysql
 
-Также в файле конфигурации нужно ограничить размер файла upload\_max\_filesize, установив 512K (512 килобайт).
+Required PHP settings in php.ini:
+* upload\_max\_filesize = 512K
 
-Никаких внешних зависимостей нет, в связи с:
+The project does not use external libraries in case of possible malfunctions caused by blockages of websites or impossiblity to maintain them for the same reason. Also, I wanted to do all on my own to get more experience.
 
-* желанием автора разобраться "под капотом" самостоятельно;
-* небольшим размером проекта;
-* различными блокировками, из-за которых теоретически может частично потеряться работоспособность сайта или возможность поддержки в будущем.
+## Setup
+Automated setup is not available. Follow the steps:
+* Install the selected server, database and PHP according to instructions provided with them.
+* Apply changes in php.ini as mentioned above.
+* Download files from this page.
+* Unpack the archive into a folder named *htdocs*.
+* Run the script `db-creation-code.sql` to initialize the database.
+* Run the server on this folder. Example for Apache 2.4:
+    * Find and edit the following lines in httpd.conf:
+        * `Define SRVROOT "{absolute_path_to_apache_folder}"`
+        * `LoadModule php_module "{absolute_path_to_php_folder}/php8apache2_4.dll"`
+        * `PHPIniDir "{absolute_path_to_php_folder}"`
+        * `DocumentRoot "{absolute_path_to_htdocs_folder}"`
+        * `ErrorLog "{absolute_path_to_any_folder_you_want_to_use}/error.log"`
+        * `CustomLog "{absolute_path_to_any_folder_you_want_to_use}/access.log" common`
+    * Run the server with the following command:
+        * `"{absolute_path_to_apache_folder}\bin\httpd.exe" -k runservice`
 
-HTML, CSS и JS также не имеют каких-либо расширений или библиотек.
+## Project Structure
+By initial design, the website was supposed to use MVC. However, the Controller is used rather as the validator of incoming requests and included data. The Model uses only clean data.
 
-Работоспособность тестировалась в Google Chrome, Opera, Edge, Firefox (различных версий от января 2026 года).
+All MVC parts are divided into roles. Each higher role inherits all the functional of the lower.
 
-## Структура проекта
+Main parts:
+* **assets**
+    * all images uploaded to the website or used by it statically
+* **controllers**
+    * methods that accept requests and bind models and views together
+* **core**
+    * router for the requested path, boot to include all required files, config for connecting to the database
+* **css**
+    * **core**
+        * general settings used across all pages
+    * **custom-inputs**
+        * design of input fields across all pages
+    * **moderation**
+        * design of admin elements and pages
+    * **shared**
+        * elements shared by several pages
+    * other files are used by separate pages
+* **include**
+    * all functions that does not belong to the MVC pattern
+* **js**
+    * **core**
+        * general settings used across all pages
+    * **custom-inputs**
+        * design of input fields across all pages
+    * **moderation**
+        * design of admin elements and pages
+    * **shared**
+        * elements shared by several pages
+    * other files are used by separate pages
+* **localization**
+    * strings used by views to show localized pages
+* **models**
+    * methods that process requests and return data
+* **views**
+    * methods that return the result of the request to the user
+* **index.php**
+    * the entry point of the website
 
-Сайт написан с использованием паттерна MVC.
+General pipeline of the code execution:
 
-* assets: папка для подпапок с изображениями, загруженных пользователями и используемых на сайте.
-* controllers: папка для контроллеров; один контроллер -- одна роль пользователя
-* core: файлы маршрутизатора и конфигураций
-* css: файлы для дизайна отдельных элементов и страниц сайта
-  * core: общие файлы для всего сайта
-  * fonts: шрифты
-* include: папка для php-кода, который не является непосредственной частью MVC
-* js: скрипты для отдельных страниц
-  * moderation: скрипты для администрирования
-  * shared: хранят только функции, которые переиспользуются на разных страницах
-* localization: файлы со строками для локализации проекта на разные языки
-* models: папка для моделей; одна модель -- одна роль пользователя
-* views: папка для представлений; одно представление -- одна роль пользователя.
+`index.php` -> `core/router.php` -> `controllers/*-controller.php` -> `models/*-model.php` -> `controllers/*-controller.php`-> `views/*-view.php` (where \* is the user role)
 
-Некоторые методы внутри контроллеров, моделей и представлений не имеют отношения непосредственно к паттерну, так как остались там только исторически. Они будут вынесены в отдельные файлы в include с функциями в будущем.
+## User Roles
+At the moment, following roles are available:
+* visitor: any unregistered user, granted automatically
+* user: registered user, granted after signing-up or logging-in
+* violator: read-only registered user, granted manually
+* administrator: only the owner of the website, granted manually
 
-Упрощённо запрос проходит как минимум следующие файлы в последовательности:
-
-index.php -> router.php -> \*-controller.php -> \*-model.php ->  \*-controller.php-> \*-view.php (где \* -- роль пользователя)
-
-## Роли пользователей
-На данный момент имеются следующие роли в следующей иерархии:
-* visitor: выдаётся автоматически каждому посетителю
-* violator: зарегистрированный пользователь с правами readonly, выдаётся вручную
-* user: зарегистрированный пользователь, выдаётся автоматически при регистрации
-* administrator: администратор, только владелец сайта
-
-Каждый следующий пользователь расширяет весь функционал предыдущего через механизм наследования.
-
-## Отсутствующие файлы
-По причинам безопасности:
-* отсутствует файл .htaccess (как минимум, он должен направлять все запросы в index.php, кроме запросов файлов css, шрифтов, js, изображений)
-* из файла core/config.php удалены пароли, а также не реализованы функции для хэширования строк
-* в файле models/visitor-model.php в методах VisitorModel::createUser и VisitorModel::isPasswordCorrect использован стандартный способ хэширования
-* отсутствует sql-файл с созданием ролей пользователей и настройкой доступов
+## Missing Files
+At the moment, following files are not included due to security reasons:
+* .htaccess (all requests that do not point to files, should be sent to index.php)
+* .administering/* (see router.php for details)
+* SQL-file for creating roles in database
+* core/boot.php should be filled with database info from the list item above
+* include/cryptography.php does not implement methods
