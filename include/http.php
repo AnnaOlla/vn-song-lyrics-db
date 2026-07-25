@@ -10,8 +10,11 @@ final class Http
 		return '/'.implode('/', $uriParts);
 	}
 	
-	public static function buildQueryParameters(array|null $keysToValues): string
+	public static function buildQueryParameters(array|null $keysToValues, bool $dropNullValues = true): string
 	{
+		if ($dropNullValues)
+			$keysToValues = array_filter($keysToValues, function ($value) { return $value !== null; });
+		
 		if (!$keysToValues)
 			return '';
 		
