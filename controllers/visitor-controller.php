@@ -7,7 +7,7 @@ class VisitorController extends ErrorController
 	protected const ACCOUNT_DATA_MIN_LENGTH = 4;
 	protected const ACCOUNT_DATA_MAX_LENGTH = 32;
 	
-	private   const RESULTS_LIMIT_MAX_VALUE = 50;
+	private   const RESULTS_LIMIT_MAX_VALUE = 30;
 	
 	public function __construct(string $language)
 	{

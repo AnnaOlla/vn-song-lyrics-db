@@ -1621,9 +1621,8 @@ HTML;
 		$options =
 		[
 			['toShow' => 10,  'toSend' => 10],
-			['toShow' => 25,  'toSend' => 25],
-			['toShow' => 33,  'toSend' => 33],
-			['toShow' => 50,  'toSend' => 50]
+			['toShow' => 20,  'toSend' => 20],
+			['toShow' => 30,  'toSend' => 30]
 		];
 		
 		// sort nulls last
