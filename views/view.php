@@ -100,9 +100,9 @@ abstract class View
 		$requestUri     = htmlspecialchars(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 		$currentUrl     = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$requestUri);
 		$canonicalUrl   = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].($canonicalUri ?? $requestUri));
-		$alternateRefEn = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'en'));
-		$alternateRefRu = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'ru'));
-		$alternateRefJa = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale($requestUri, 'ja'));
+		$alternateRefEn = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale(($canonicalUri ?? $requestUri), 'en'));
+		$alternateRefRu = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale(($canonicalUri ?? $requestUri), 'ru'));
+		$alternateRefJa = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale(($canonicalUri ?? $requestUri), 'ja'));
 		
 		$ogUrl          = htmlspecialchars($currentUrl);
 		$ogImageUrl     = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].($ogImageUri ?? '/assets/static-images/wee-hagana-og.webp'));
@@ -1621,7 +1621,9 @@ HTML;
 		$options =
 		[
 			['toShow' => 10,  'toSend' => 10],
+			['toShow' => 15,  'toSend' => 15],
 			['toShow' => 20,  'toSend' => 20],
+			['toShow' => 25,  'toSend' => 25],
 			['toShow' => 30,  'toSend' => 30]
 		];
 		

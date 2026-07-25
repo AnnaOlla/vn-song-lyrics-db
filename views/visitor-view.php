@@ -253,14 +253,18 @@ class VisitorView extends ErrorView
 		$buttonLabel      = \Localization\GameListPage\AddGame;
 		$buttonAccess     = Session::agentHasRightToAddGame();
 		
-		$hrefThisPage      = Http::buildInternalPath($this->language, 'game-list');
+		$hrefThisPage  = Http::buildInternalPath($this->language, 'game-list');
+		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
+		$queryThisPage = Http::buildQueryParameters($parameters);
+		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $gameCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html[] = $this->startRender
 		(
-			title: \Localization\GameListPage\Heading,
+			title:        \Localization\GameListPage\Heading,
+			canonicalUri: $hrefThisPage.$queryThisPage,
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
@@ -323,14 +327,18 @@ class VisitorView extends ErrorView
 		$buttonLabel      = \Localization\AlbumListPage\AddAlbum;
 		$buttonAccess     = Session::agentHasRightToAddAlbum();
 		
-		$hrefThisPage      = Http::buildInternalPath($this->language, 'album-list');
+		$hrefThisPage  = Http::buildInternalPath($this->language, 'album-list');
+		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
+		$queryThisPage = Http::buildQueryParameters($parameters);
+		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $albumCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html[] = $this->startRender
 		(
-			title: \Localization\AlbumListPage\Heading,
+			title:        \Localization\AlbumListPage\Heading,
+			canonicalUri: $hrefThisPage.$queryThisPage,
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
@@ -393,14 +401,18 @@ class VisitorView extends ErrorView
 		$buttonLabel      = \Localization\ArtistListPage\AddArtist;
 		$buttonAccess     = Session::agentHasRightToAddArtist();
 		
-		$hrefThisPage      = Http::buildInternalPath($this->language, 'artist-list');
+		$hrefThisPage  = Http::buildInternalPath($this->language, 'artist-list');
+		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
+		$queryThisPage = Http::buildQueryParameters($parameters);
+		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $artistCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html[] = $this->startRender
 		(
-			title: \Localization\ArtistListPage\Heading,
+			title:        \Localization\ArtistListPage\Heading,
+			canonicalUri: $hrefThisPage.$queryThisPage,
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
@@ -463,14 +475,18 @@ class VisitorView extends ErrorView
 		$buttonLabel      = \Localization\CharacterListPage\AddCharacter;
 		$buttonAccess     = Session::agentHasRightToAddCharacter();
 		
-		$hrefThisPage      = Http::buildInternalPath($this->language, 'character-list');
+		$hrefThisPage  = Http::buildInternalPath($this->language, 'character-list');
+		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
+		$queryThisPage = Http::buildQueryParameters($parameters);
+		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $characterCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html[] = $this->startRender
 		(
-			title: \Localization\CharacterListPage\Heading,
+			title:        \Localization\CharacterListPage\Heading,
+			canonicalUri: $hrefThisPage.$queryThisPage,
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
@@ -529,14 +545,18 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefThisPage      = Http::buildInternalPath($this->language, 'song-list');
+		$hrefThisPage  = Http::buildInternalPath($this->language, 'song-list');
+		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
+		$queryThisPage = Http::buildQueryParameters($parameters);
+		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $songCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html[] = $this->startRender
 		(
-			title: \Localization\SongListPage\Heading,
+			title:        \Localization\SongListPage\Heading,
+			canonicalUri: $hrefThisPage.$queryThisPage,
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
@@ -594,14 +614,18 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefThisPage      = Http::buildInternalPath($this->language, 'translation-list');
+		$hrefThisPage  = Http::buildInternalPath($this->language, 'translation-list');
+		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
+		$queryThisPage = Http::buildQueryParameters($parameters);
+		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $translationCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
 		$searchBarBlock    = $this->createSearchBarBlock($limit, $page, $search);
 		
 		$html[] = $this->startRender
 		(
-			title: \Localization\TranslationListPage\Heading,
+			title:        \Localization\TranslationListPage\Heading,
+			canonicalUri: $hrefThisPage.$queryThisPage,
 			cssSheetUris:
 			[
 				'/css/shared/entity.css',
