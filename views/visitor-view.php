@@ -943,7 +943,8 @@ class VisitorView extends ErrorView
 		
 		$html[] = $this->startRender
 		(
-			title: $headingText,     
+			title:        $headingText,
+			allowIndex:   false,
 			cssSheetUris:
 			[
 				'/css/no-lyrics-page.css',
