@@ -985,7 +985,7 @@ namespace Localization\PolicyPage
 	
 	const HeadingContent  = 'コンテントポリシー';
 	const ContentPolicy1  = '１．全ての貢献は公開です。誰も見ることができます。あなたは貢献の所有権を持っていません。';
-	const ContentPolicy2  = '２．ゲームとゲームキャラクター、アルバムとカシュと全てのイメージはインターネットから見つかりました。この情報の有権者はある可能性があります。';
+	const ContentPolicy2  = '２．ゲームとゲームキャラクターとアルバムとカシュとの名前と翻訳した名前、全てのイメージはインターネットから見つかりました。この情報の有権者はある可能性があります。';
 	const ContentPolicy3  = '３．歌詞はオフィシャルサウンドトラックと共にある本を使って書きます。聞くことでも書けます。'.
 	                        '他のウエッブサイトのコンテントに類似している可能性があります。でも、歌詞は歌の有権者だけの物です。';
 	const ContentPolicy4  = '４．あなたはウェブサイトに出すように別の元から翻訳をコピーしてもいけません。';
@@ -995,7 +995,7 @@ namespace Localization\PolicyPage
 	const ContentPolicy5b = '５ｂ．機械学習の目的のためにコンテントを使わないでください。';
 	const ContentPolicy6  = '６．何でもの実体は有権者が訴えを送り、消すことができます。';
 	const ContentPolicy7  = '７．ウエッブサイトとウエッブサイトのスタッフは何でもの被害が出たりし、責任がありません。'.
-	                        '';
+	                        '障害、第三者と犯人の行動もありならも、責任がありません';
 	const ContentPolicy8  = '８．ポリシーは変わりましたなら、誰も知らせません。';
 	
 	const HeadingPrivacy = 'プライバシーポリシー';
@@ -1009,6 +1009,13 @@ namespace Localization\PolicyPage
 	const HeadingRightholder = 'あなたは有権者ですなら';
 	const RightholderPolicy1 = '１．あなたに情報の所有権はよろしかったら、support@vn-song-lyrics-db.ruへメールを送ってください。';
 	const RightholderPolicy2 = '２．ウェブサイトは問題への解決策を見つけたいです。';
+	
+	const HeadingContentWarning = 'コンテントについて警告';
+	const ContentWarning1       = '１．ウェブサイトは全ての歌と歌の翻訳を集めるデータベースです。'.
+	                              '何かのコンテントが侮辱的だと可能性があります。';
+	const ContentWarning2       = '２．ウェブサイトはロシア連邦に違反しているコンテントを持ちません。'.
+	                              '別の国からウェブサイトを訪れるのは自己責任です。';
+	const ContentWarning3       = '３．データベースは世界中から情報を集めています。コンテントはスタッフの意見に関係がありません。';
 	
 	const LastUpdated = '最後の編集：２０２６年０６月２９日。';
 	const Timezone    = '全部の日付：ＵＴＣ＋３。';

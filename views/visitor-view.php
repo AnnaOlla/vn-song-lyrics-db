@@ -1579,6 +1579,15 @@ class VisitorView extends ErrorView
 				<p>'.\Localization\PolicyPage\ContentPolicy7.'</p>
 				<p>'.\Localization\PolicyPage\ContentPolicy8.'</p>
 				<br/>
+				<h2>'.\Localization\PolicyPage\HeadingContentWarning.'</h2>
+				<p>'.\Localization\PolicyPage\ContentWarning1.'</p>
+				<p>'.\Localization\PolicyPage\ContentWarning2.'</p>
+				<p>'.\Localization\PolicyPage\ContentWarning3.'</p>
+				<br/>
+				<h2>'.\Localization\PolicyPage\HeadingRightholder.'</h2>
+				<p>'.\Localization\PolicyPage\RightholderPolicy1.'</p>
+				<p>'.\Localization\PolicyPage\RightholderPolicy2.'</p>
+				<br/>
 				<h2>'.\Localization\PolicyPage\HeadingPrivacy.'</h2>
 				<p>'.\Localization\PolicyPage\PrivacyPolicy1.'</p>
 				<p>'.\Localization\PolicyPage\PrivacyPolicy2.'</p>
@@ -1586,10 +1595,6 @@ class VisitorView extends ErrorView
 				<p>'.\Localization\PolicyPage\PrivacyPolicy4.'</p>
 				<p>'.\Localization\PolicyPage\PrivacyPolicy5.'</p>
 				<p>'.\Localization\PolicyPage\PrivacyPolicy6.'</p>
-				<br/>
-				<h2>'.\Localization\PolicyPage\HeadingRightholder.'</h2>
-				<p>'.\Localization\PolicyPage\RightholderPolicy1.'</p>
-				<p>'.\Localization\PolicyPage\RightholderPolicy2.'</p>
 				<br/>
 				<p>'.\Localization\PolicyPage\LastUpdated.'</p>
 				<p>'.\Localization\PolicyPage\Timezone.'</p>

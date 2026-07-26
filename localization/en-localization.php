@@ -985,7 +985,7 @@ namespace Localization\PolicyPage
 	
 	const HeadingContent  = 'Content Policy';
 	const ContentPolicy1  = '1. All contributions are public and available for anybody on the Internet. The user agrees that they claim no rights on any contribution.';
-	const ContentPolicy2  = '2. Names of games and game characters, artists and albums and all depictions of them are gathered from different online sources and may be subject to the licenses of their respective rightholders.';
+	const ContentPolicy2  = '2. Names and all translated names of games and game characters, artists and albums and all depictions of them are gathered from different online sources and may be subject to the licenses of their respective rightholders.';
 	const ContentPolicy3  = '3. Lyrics are either transcribed with the use of materials provided in official editions of soundtracks or by listening. '.
 	                        'Therefore, they might look identical to the content on websites of the similar theme. In any case, lyrics belong only to their respective rightholders.';
 	const ContentPolicy4  = '4. The user is not allowed to plagiarize translations regardless of whether they were published on this website or anywhere else.';
@@ -1009,6 +1009,13 @@ namespace Localization\PolicyPage
 	const HeadingRightholder = 'For Rightholder';
 	const RightholderPolicy1 = '1. If you are not comfortable with the fact that any data about you or your work is included in the database, please, contact us at support@vn-song-lyrics-db.ru.';
 	const RightholderPolicy2 = '2. The website is ready to find a solution to your claims.';
+	
+	const HeadingContentWarning = 'Content Warning';
+	const ContentWarning1       = '1. The website aims to be a database containing all songs regardless of the content in their lyrics and translations. '.
+	                              'It is possible that some content might be counted as offensive.';
+	const ContentWarning2       = '2. The website follows the legislation of Russian Federation and does not host content that violates it. '.
+	                              'Some content may be illegal in other countries, visit the website at your own risk.';
+	const ContentWarning3       = '3. The database collects information from around the world and no content represents the opinion of the website staff.';
 	
 	const LastUpdated = 'Policies were last edited on 29 June 2026.';
 	const Timezone    = 'The timezone of the website is UTC+3.';
