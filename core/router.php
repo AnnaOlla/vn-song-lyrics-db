@@ -87,6 +87,29 @@ final class Router
 	{
 		return $_SESSION['rateLimit']->count() > self::RATE_LIMIT_BANNABLE_COUNT;
 	}
+	private static function isUserAgentSearchEngineCrawler(): bool
+	{
+		// Crawlers do not like redirections from the root
+		// The fix is to allow them use the root as the homepage
+		
+		$mainCrawlers =
+		[
+			'Googlebot',
+			'Bingbot',
+			'DuckDuckBot',
+			'Baiduspider',
+			'YandexBot',
+			'Slurp'
+		];
+		
+		foreach ($mainCrawlers as $mainCrawler)
+		{
+			if (str_contains($_SERVER['HTTP_USER_AGENT'], $mainCrawler))
+				return true;
+		}
+		
+		return false;
+	}
 	
 	private static function detectUserLanguages(): array
 	{
@@ -229,7 +252,13 @@ final class Router
 		
 		$requestedPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 		
-		if (self::isRootRequested($requestedPath))
+		if (self::isNonExistentFileRequested($requestedPath))
+		{
+			http_response_code(404);
+			exit;
+		}
+		
+		if (self::isRootRequested($requestedPath) && !self::isUserAgentSearchEngineCrawler())
 		{
 			$languages = self::detectUserLanguages();
 			$language  = self::getSuitableLanguage($languages);
@@ -239,11 +268,8 @@ final class Router
 			exit;
 		}
 		
-		if (self::isNonExistentFileRequested($requestedPath))
-		{
-			http_response_code(404);
-			exit;
-		}
+		if (self::isRootRequested($requestedPath) && self::isUserAgentSearchEngineCrawler())
+			$requestedPath = '/en';
 		
 		$routes     = explode('/', $requestedPath);
 		$routeCount = count($routes);
@@ -556,12 +582,6 @@ final class Router
 		//----------------------------------------//
 		//      Methods related to reporting      //
 		//----------------------------------------//
-		
-		else if ($routeCount === 3 && $routes[2] === 'report')
-		{
-			$method = 'handleReport';
-			$parameters = [];
-		}
 		
 		else if ($routeCount === 5 && $routes[2] === 'game' && $routes[4] === 'report')
 		{
