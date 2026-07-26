@@ -18,6 +18,7 @@ class VisitorView extends ErrorView
 		$html[] = $this->startRender
 		(
 			title:        \Localization\HomePage\Heading,
+			canonicalUri: Http::buildInternalPath($this->language),
 			cssSheetUris: ['/css/home-page.css']
 		);
 		
