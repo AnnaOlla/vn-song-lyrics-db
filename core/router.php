@@ -769,6 +769,48 @@ final class Router
 			$parameters = [];
 		}
 		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-static-pages-sitemap')
+		{
+			$method = 'handleUpdateStaticPageSitemap';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-game-list-sitemap')
+		{
+			$method = 'handleUpdateGameListSitemap';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-album-list-sitemap')
+		{
+			$method = 'handleUpdateAlbumListSitemap';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-artist-list-sitemap')
+		{
+			$method = 'handleUpdateArtistListSitemap';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-character-list-sitemap')
+		{
+			$method = 'handleUpdateCharacterListSitemap';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-song-list-sitemap')
+		{
+			$method = 'handleUpdateSongListSitemap';
+			$parameters = [];
+		}
+		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-translation-list-sitemap')
+		{
+			$method = 'handleUpdateTranslationListSitemap';
+			$parameters = [];
+		}
+		
 		//-------------------------//
 		//      Other Methods      //
 		//-------------------------//
