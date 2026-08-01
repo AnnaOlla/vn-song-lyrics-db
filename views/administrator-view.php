@@ -37,6 +37,16 @@ class AdministratorView extends UserView
 				<p><a href="/en/control-panel/unchecked-character-list">Unchecked Character List</a></p>
 				<p><a href="/en/control-panel/unchecked-song-list">Unchecked Song List</a></p>
 				<p><a href="/en/control-panel/unchecked-translation-list">Unchecked Translation List</a></p>
+				<br/>
+				
+				<h2>Update Sitemap</h2>
+				<p><a href="/en/control-panel/update-static-pages-sitemap">Static Pages</a></p>
+				<p><a href="/en/control-panel/update-game-list-sitemap">Games</a></p>
+				<p><a href="/en/control-panel/update-album-list-sitemap">Albums</a></p>
+				<p><a href="/en/control-panel/update-artist-list-sitemap">Artists</a></p>
+				<p><a href="/en/control-panel/update-character-list-sitemap">Characters</a></p>
+				<p><a href="/en/control-panel/update-song-list-sitemap">Songs</a></p>
+				<p><a href="/en/control-panel/update-translation-list-sitemap">Translations</a></p>
 			</section>
 		</article>
 		';

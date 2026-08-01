@@ -821,4 +821,158 @@ class AdministratorController extends UserController
 		$list = $this->model->getTranslationList(status: 'unchecked');
 		$this->view->renderTranslationListPage($list, 0, null, null, null);
 	}
+	
+	final public function handleUpdateStaticPageSitemap(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUpdateStaticPageSitemapGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUpdateStaticPageSitemapGet(): void
+	{
+		$this->model->updateStaticPageSitemap();
+		$this->model->updateSitemapIndex();
+		
+		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$this->handleRedirect($redirect);
+	}
+	
+	final public function handleUpdateGameListSitemap(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUpdateGameListSitemapGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUpdateGameListSitemapGet(): void
+	{
+		$this->model->updateGameListSitemap();
+		$this->model->updateSitemapIndex();
+		
+		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$this->handleRedirect($redirect);
+	}
+	
+	final public function handleUpdateAlbumListSitemap(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUpdateAlbumListSitemapGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUpdateAlbumListSitemapGet(): void
+	{
+		$this->model->updateAlbumListSitemap();
+		$this->model->updateSitemapIndex();
+		
+		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$this->handleRedirect($redirect);
+	}
+	
+	final public function handleUpdateArtistListSitemap(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUpdateArtistListSitemapGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUpdateArtistListSitemapGet(): void
+	{
+		$this->model->updateArtistListSitemap();
+		$this->model->updateSitemapIndex();
+		
+		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$this->handleRedirect($redirect);
+	}
+	
+	final public function handleUpdateCharacterListSitemap(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUpdateCharacterListSitemapGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUpdateCharacterListSitemapGet(): void
+	{
+		$this->model->updateCharacterListSitemap();
+		$this->model->updateSitemapIndex();
+		
+		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$this->handleRedirect($redirect);
+	}
+	
+	final public function handleUpdateSongListSitemap(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUpdateSongListSitemapGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUpdateSongListSitemapGet(): void
+	{
+		$this->model->updateSongListSitemap();
+		$this->model->updateSitemapIndex();
+		
+		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$this->handleRedirect($redirect);
+	}
+	
+	final public function handleUpdateTranslationListSitemap(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleUpdateTranslationListSitemapGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleUpdateTranslationListSitemapGet(): void
+	{
+		$this->model->updateTranslationListSitemap();
+		$this->model->updateSitemapIndex();
+		
+		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$this->handleRedirect($redirect);
+	}
 }

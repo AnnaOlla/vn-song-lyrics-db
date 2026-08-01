@@ -4,6 +4,15 @@ require_once 'models/user-model.php';
 
 class AdministratorModel extends UserModel
 {
+	private const SITEMAP_INDEX_NAME            = 'sitemap.xml';
+	private const SITEMAP_STATIC_PAGES_NAME     = 'sitemap-static-pages.xml';
+	private const SITEMAP_GAME_LIST_NAME        = 'sitemap-game-list.xml';
+	private const SITEMAP_ALBUM_LIST_NAME       = 'sitemap-album-list.xml';
+	private const SITEMAP_ARTIST_LIST_NAME      = 'sitemap-artist-list.xml';
+	private const SITEMAP_CHARACTER_LIST_NAME   = 'sitemap-character-list.xml';
+	private const SITEMAP_SONG_LIST_NAME        = 'sitemap-song-list.xml';
+	private const SITEMAP_TRANSLATION_LIST_NAME = 'sitemap-translation-list.xml';
+	
 	public function __construct()
 	{
 		$this->pdo = getPdo('administrator');
@@ -716,5 +725,315 @@ class AdministratorModel extends UserModel
 			throw new HttpInternalServerError500(__METHOD__.': song insert failed for '.$albumUri);
 		
 		$this->pdo->commit();
+	}
+	
+	private function writeSitemapToFile(array $data, string $filepath, bool $isSitemapIndex = false): void
+	{
+		if ($isSitemapIndex)
+		{
+			$tagOuter = 'sitemapindex';
+			$tagInner = 'sitemap';
+		}
+		else
+		{
+			$tagOuter = 'urlset';
+			$tagInner = 'url';
+		}
+		
+		$sitemap = new SplFileObject($filepath, 'w');
+		
+		$sitemap->fwrite('<?xml version="1.0" encoding="UTF-8"?>');
+		$sitemap->fwrite('<'.$tagOuter.' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+		
+		foreach ($data as $item)
+		{
+			$sitemap->fwrite('<'.$tagInner.'>');
+			
+			foreach ($item as $key => $value)
+			{
+				$sitemap->fwrite('<'.$key.'>');
+				$sitemap->fwrite(htmlspecialchars($value ?? '', ENT_XML1 | ENT_QUOTES, 'UTF-8'));
+				$sitemap->fwrite('</'.$key.'>');
+			}
+			
+			$sitemap->fwrite('</'.$tagInner.'>');
+		}
+		
+		$sitemap->fwrite('</'.$tagOuter.'>');
+	}
+	
+	final public function updateStaticPageSitemap(): void
+	{
+		$updateTime = date('Y-m-d');
+		$language = 'en';
+		
+		$data =
+		[
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language,
+				'lastmod'  =>  $updateTime,
+				'priority' => '1.0'
+			],
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/log-in',
+				'lastmod'  => $updateTime,
+				'priority' => '0.1'
+			],
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/sign-up',
+				'lastmod'  => $updateTime,
+				'priority' => '0.1'
+			],
+			/*
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/game-list',
+				'lastmod'  => $updateTime,
+				'priority' => '0.5'
+			],
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/album-list',
+				'lastmod'  => $updateTime,
+				'priority' => '0.5'
+			],
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/artist-list',
+				'lastmod'  => $updateTime,
+				'priority' => '0.5'
+			],
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/character-list',
+				'lastmod'  => $updateTime,
+				'priority' => '0.5'
+			],
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/song-list',
+				'lastmod'  => $updateTime,
+				'priority' => '0.5'
+			],
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/translation-list',
+				'lastmod'  => $updateTime,
+				'priority' => '0.5'
+			],
+			*/
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/about',
+				'lastmod'  => $updateTime,
+				'priority' => '0.1'
+			],
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/policy',
+				'lastmod'  => $updateTime,
+				'priority' => '0.1'
+			],
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/rules',
+				'lastmod'  => $updateTime,
+				'priority' => '0.1'
+			],
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/writing-guide',
+				'lastmod'  => $updateTime,
+				'priority' => '0.1'
+			],
+			[
+				'loc'      => 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/lyrics-example',
+				'lastmod'  => $updateTime,
+				'priority' => '0.1'
+			]
+		];
+		$path = self::SITEMAP_STATIC_PAGES_NAME;
+		
+		$this->writeSitemapToFile($data, $path);
+	}
+	
+	final public function updateGameListSitemap(): void
+	{
+		$language = 'en';
+		$baseLink = 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/game/';
+		
+		$query = $this->pdo->query
+		(
+			'
+			SELECT
+				CONCAT("'.$baseLink.'", g.uri)                                            as loc,
+				DATE_FORMAT(COALESCE(g.timestamp_updated, g.timestamp_added), "%Y-%m-%d") as lastmod,
+				"0.3"                                                                     as priority
+			FROM
+				games as g
+			'
+		);
+		
+		$data = $query->fetchAll(PDO::FETCH_ASSOC);
+		$path = self::SITEMAP_GAME_LIST_NAME;
+		
+		$this->writeSitemapToFile($data, $path);
+	}
+	
+	final public function updateAlbumListSitemap(): void
+	{
+		$language = 'en';
+		$baseLink = 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/album/';
+		
+		$query = $this->pdo->query
+		(
+			'
+			SELECT
+				CONCAT("'.$baseLink.'", a.uri)                                            as loc,
+				DATE_FORMAT(COALESCE(a.timestamp_updated, a.timestamp_added), "%Y-%m-%d") as lastmod,
+				"0.5"                                                                     as priority
+			FROM
+				albums as a
+			'
+		);
+		
+		$data = $query->fetchAll(PDO::FETCH_ASSOC);
+		$path = self::SITEMAP_ALBUM_LIST_NAME;
+		
+		$this->writeSitemapToFile($data, $path);
+	}
+	
+	final public function updateArtistListSitemap(): void
+	{
+		$language = 'en';
+		$baseLink = 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/artist/';
+		
+		$query = $this->pdo->query
+		(
+			'
+			SELECT
+				CONCAT("'.$baseLink.'", a.uri)                                            as loc,
+				DATE_FORMAT(COALESCE(a.timestamp_updated, a.timestamp_added), "%Y-%m-%d") as lastmod,
+				"0.3"                                                                     as priority
+			FROM
+				artists as a
+			'
+		);
+		
+		$data = $query->fetchAll(PDO::FETCH_ASSOC);
+		$path = self::SITEMAP_ARTIST_LIST_NAME;
+		
+		$this->writeSitemapToFile($data, $path);
+	}
+	
+	final public function updateCharacterListSitemap(): void
+	{
+		$language = 'en';
+		$baseLink = 'https://'.$_SERVER['HTTP_HOST'].'/'.$language.'/artist/';
+		
+		$query = $this->pdo->query
+		(
+			'
+			SELECT
+				CONCAT("'.$baseLink.'", c.uri)                                            as loc,
+				DATE_FORMAT(COALESCE(c.timestamp_updated, c.timestamp_added), "%Y-%m-%d") as lastmod,
+				"0.3"                                                                     as priority
+			FROM
+				characters as c
+			'
+		);
+		
+		$data = $query->fetchAll(PDO::FETCH_ASSOC);
+		$path = self::SITEMAP_CHARACTER_LIST_NAME;
+		
+		$this->writeSitemapToFile($data, $path);
+	}
+	
+	final public function updateSongListSitemap(): void
+	{
+		$language = 'en';
+		$baseLink = 'https://'.$_SERVER['HTTP_HOST'].'/'.$language;
+		
+		$query = $this->pdo->query
+		(
+			'
+			SELECT
+				CONCAT("'.$baseLink.'", "/album/", a.uri, "/song/", s.uri)                as loc,
+				DATE_FORMAT(COALESCE(s.timestamp_updated, s.timestamp_added), "%Y-%m-%d") as lastmod,
+				"0.9"                                                                     as priority
+			FROM
+				songs as s
+			JOIN
+				albums as a
+			ON
+				s.album_id = a.id
+			WHERE
+				s.lyrics IS NOT NULL
+			'
+		);
+		
+		$data = $query->fetchAll(PDO::FETCH_ASSOC);
+		$path = self::SITEMAP_SONG_LIST_NAME;
+		
+		$this->writeSitemapToFile($data, $path);
+	}
+	
+	final public function updateTranslationListSitemap(): void
+	{
+		$language = 'en';
+		$baseLink = 'https://'.$_SERVER['HTTP_HOST'].'/'.$language;
+		
+		$query = $this->pdo->query
+		(
+			'
+			SELECT
+				CONCAT("'.$baseLink.'", "/album/", a.uri, "/song/", s.uri, "/translation/", t.uri) as loc,
+				DATE_FORMAT(COALESCE(s.timestamp_updated, s.timestamp_added), "%Y-%m-%d")          as lastmod,
+				"0.9"                                                                              as priority
+			FROM
+				translations as t
+			JOIN
+				songs as s
+			ON
+				t.song_id = s.id
+			JOIN
+				albums as a
+			ON
+				s.album_id = a.id
+			'
+		);
+		
+		$data = $query->fetchAll(PDO::FETCH_ASSOC);
+		$path = self::SITEMAP_TRANSLATION_LIST_NAME;
+		
+		$this->writeSitemapToFile($data, $path);
+	}
+	
+	final public function updateSitemapIndex(): void
+	{
+		$data =
+		[
+			[
+				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_STATIC_PAGES_NAME,
+				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_STATIC_PAGES_NAME))
+			],
+			[
+				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_GAME_LIST_NAME,
+				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_GAME_LIST_NAME))
+			],
+			[
+				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_ALBUM_LIST_NAME,
+				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_ALBUM_LIST_NAME))
+			],
+			[
+				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_ARTIST_LIST_NAME,
+				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_ARTIST_LIST_NAME))
+			],
+			[
+				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_CHARACTER_LIST_NAME,
+				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_CHARACTER_LIST_NAME))
+			],
+			[
+				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_SONG_LIST_NAME,
+				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_SONG_LIST_NAME))
+			],
+			[
+				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_TRANSLATION_LIST_NAME,
+				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_TRANSLATION_LIST_NAME))
+			]
+		];
+		$path = self::SITEMAP_INDEX_NAME;
+		
+		$this->writeSitemapToFile($data, $path, true);
 	}
 }
