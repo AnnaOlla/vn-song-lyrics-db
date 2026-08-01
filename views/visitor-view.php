@@ -1624,16 +1624,20 @@ class VisitorView extends ErrorView
 				<p>'.\Localization\RulesPage\GeneralRule2.'</p>
 				<p>'.\Localization\RulesPage\GeneralRule3.'</p>
 				<p>'.\Localization\RulesPage\GeneralRule4.'</p>
-				<p>'.\Localization\RulesPage\GeneralRule5.'</p>
-				<p>'.\Localization\RulesPage\GeneralRule6.'</p>
 				<p>'.
-					\Localization\RulesPage\GeneralRule7a.
+					\Localization\RulesPage\GeneralRule5a.
 					'<a href="/'.$this->language.'/writing-guide" target="_blank">'.
-					\Localization\RulesPage\GeneralRule7b.'</a>'.
-					\Localization\RulesPage\GeneralRule7c.
+					\Localization\RulesPage\GeneralRule5b.'</a>'.
+					\Localization\RulesPage\GeneralRule5c.
 				'</p>
-				<p>'.\Localization\RulesPage\GeneralRule8.'</p>
-				<p>'.\Localization\RulesPage\GeneralRule9.'</p>
+				<p>'.\Localization\RulesPage\GeneralRule6.'</p>
+				<p>'.\Localization\RulesPage\GeneralRule7.'</p>
+				<br/>
+				<h2>'.\Localization\RulesPage\HeadingPublication.'</h2>
+				<p>'.\Localization\RulesPage\PublicationRule1.'</p>
+				<p>'.\Localization\RulesPage\PublicationRule2.'</p>
+				<p>'.\Localization\RulesPage\PublicationRule3.'</p>
+				<p>'.\Localization\RulesPage\PublicationRule4.'</p>
 				<br/>
 				<h2>'.\Localization\RulesPage\HeadingAccess.'</h2>
 				<p>'.\Localization\RulesPage\AccessRule1.'</p>
@@ -2114,6 +2118,12 @@ class VisitorView extends ErrorView
 				<p>15. <span class="highlight">'.\Localization\WritingGuidePage\SpecialReadings.'</span></p>
 				<p>---- 未来　→　mirai</p>
 				<p>---- <ruby>未来<rt>あした</rt></ruby>　→　ashita</p>
+				<p>16. <span class="highlight">'.\Localization\WritingGuidePage\WidthOfCharacters.'</span></p>
+				<p>---- '.\Localization\WritingGuidePage\AsianLanguages.'１，２。Ａ　Ｂ！</p>
+				<p>---- '.\Localization\WritingGuidePage\EuropeanLanguages.'1, 2. A B!</p>
+				<p>17. <span class="highlight">'.\Localization\WritingGuidePage\Punctuation.'</span></p>
+				<p>---- '.\Localization\WritingGuidePage\AsianLanguages.'「日本語、『引用符』」。　→　"Nihongo, \'In\'youfu\'".</p>
+				<p>---- '.\Localization\WritingGuidePage\EuropeanLanguages.'“English, ‘quotation marks’”.　→　"ENGLISH, \'QUOTATION MARKS\'".</p>
 				<br/>
 				
 				<h2 id="formatting">'.\Localization\WritingGuidePage\HeadingFormatting.'<a class="note" href="#formatting-note">[1]</a></h2>

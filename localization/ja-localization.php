@@ -1030,14 +1030,19 @@ namespace Localization\RulesPage
 	const GeneralRule1  = '１．ユーザーは１８歳以上の者だと見込んでいます。ウェブサイトはチェックしませんのに、ユーザーが住んでいる国は法律を持っているかもしりません。そして、自己責任です。';
 	const GeneralRule2  = '２．ユーザーネームと自己紹介は猥褻と悪態と掃除的な意味を持つのは許されません。';
 	const GeneralRule3  = '３．ウェブサイトのテーマと違っている情報を出してはいけません。';
-	const GeneralRule4  = '４．オフィシャルサウンドトラックとファンアレンジを出してもいいです。「ｇａｍｅｒｉｐ」というサウンドトラックを出してはいけません。';
-	const GeneralRule5  = '５．ビジュアルノベルにはたくさんのアルバムが関係するかもしれません。全部はよろしいです。';
-	const GeneralRule6  = '６．ウェブサイトにはユーザーのコンテントを削除の権利があります。';
-	const GeneralRule7a = '７．ウェブサイトには';
-	const GeneralRule7b = '文章作法';
-	const GeneralRule7c = 'と違っている情報を削除の権利があります。';
-	const GeneralRule8  = '８．何でもの問題の行動は悪質に立ち並ぶことができます';
-	const GeneralRule9  = '９．ウェブサイトはユーザーとユーザーの出す権利を限ることができます。説明とお知らせは必要ではありません。';
+	const GeneralRule4  = '４．ウェブサイトにはユーザーのコンテントを削除の権利があります。';
+	const GeneralRule5a = '５．ウェブサイトには';
+	const GeneralRule5b = '文章作法';
+	const GeneralRule5c = 'と違っている情報を削除の権利があります。';
+	const GeneralRule6  = '６．何でもの問題の行動は悪質に立ち並ぶことができます';
+	const GeneralRule7  = '７．ウェブサイトはユーザーとユーザーの出す権利を限ることができます。説明とお知らせは必要ではありません。';
+	
+	const HeadingPublication = 'コンテントを出しのルール';
+	
+	const PublicationRule1 = '１．「ゲーム」はビジュアルノベルのゲームだけです。ジャンルを「vndb.org」でチェックのは必要です。';
+	const PublicationRule2 = '２．「アルバム」はオリジナルサウンドトラックと同人だけです。「ｇａｍｅｒｉｐ」というサウンドトラックを出してはいけません。';
+	const PublicationRule3 = '３．「カシュ」は歌う人です。たまにバンドもです。';
+	const PublicationRule4 = '４．「キャラ」は歌うキャラクターです。ゲームのエンドロールとアルバムの冊子と歌のタッグで「キャラの名前 (CV. 歌手の名前)」見えます。';
 	
 	const HeadingAccess = 'アクセスのルール';
 	
@@ -1050,7 +1055,7 @@ namespace Localization\RulesPage
 	const AccessRule7 = '７．ルールを守らないユーザーは無期限に限られることができます。メールを送って、訴えることができます。';
 	const AccessRule8 = '８．ウェブサイトのスタッフだけステータスを変えることができます。';
 	
-	const LastUpdated = '最後の編集：２０２６年０６月２９日。';
+	const LastUpdated = '最後の編集：２０２６年０８月０１日。';
 	const Timezone    = '全部の日付：ＵＴＣ＋３。';
 }
 
@@ -1116,7 +1121,7 @@ namespace Localization\WritingGuidePage
 	const RomanizationJapanese2 = '注意！あなたはサインアップのとき、このルールを受け入れました。好きとか嫌いとか、受け入れました。';
 	
 	const HeadingAllowedSymbols = '使われる文字';
-	const AllowedSymbols        = 'ＡＳＣＩＩだけです。英語のキーボード使うように書いてください。';
+	const AllowedSymbols        = 'ローマ字に日本語を変わると、ＡＳＣＩＩだけを使いますです。英語のキーボード使うように書いてください。';
 	
 	const HeadingNameOrder = '名字と名前';
 	const NameOrder        = '日本では、名字は始めで、名前は終わりです。ローマ字で書くとき、同じ並び方が使われます。';
@@ -1137,8 +1142,9 @@ namespace Localization\WritingGuidePage
 	const Apart               = '離れる';
 	const DifferenceInMeaning = '意味は間違っているとき';
 	const SpecialReadings     = '特別な読み方';
-	const DivisionBySyllables = '離れた文字：';
-	const OldWritingStyle     = '旧い書き方';
+	const WidthOfCharacters   = '文字の幅';
+	const AsianLanguages      = '東洋語：';
+	const EuropeanLanguages   = '西洋語：';
 	
 	const HeadingFormatting      = 'マークアップの書き方';
 	const FormattingIntroduction = 'ウェッブサイトは書き方の機械があります：';

@@ -1030,14 +1030,19 @@ namespace Localization\RulesPage
 	const GeneralRule1  = '1. The user is expected to be over 18 years of age. The website does not require your age, but your country may have limitations. Visit the website at your own risk.';
 	const GeneralRule2  = '2. It is not allowed to have a username or self-introduction section having obscene, abusive or political meaning.';
 	const GeneralRule3  = '3. It is not allowed to post any materials that are not related to the website theme.';
-	const GeneralRule4  = '4. Official soundtracks and fan arrangements are allowed. Gamerips are not allowed.';
-	const GeneralRule5  = '5. Visual novels may have a lot of albums containing songs related to them. All of them are welcome here.';
-	const GeneralRule6  = '6. The website staff reserves the right to remove any controversial content.';
-	const GeneralRule7a = '7. The website staff reserves the right to edit or remove content that violates ';
-	const GeneralRule7b = 'Writing Guide';
-	const GeneralRule7c = '.';
-	const GeneralRule8  = '8. Any controversial behavior that does not fall under the abovementioned rules still may be counted as malicious.';
-	const GeneralRule9  = '9. The website staff reserves the right to block the access to the website for any user or restrict their functional without a notification and explanation.';
+	const GeneralRule4  = '4. The website staff reserves the right to remove any controversial content.';
+	const GeneralRule5a = '5. The website staff reserves the right to edit or remove content that violates ';
+	const GeneralRule5b = 'Writing Guide';
+	const GeneralRule5c = '.';
+	const GeneralRule6  = '6. Any controversial behavior that does not fall under the abovementioned rules still may be counted as malicious.';
+	const GeneralRule7  = '7. The website staff reserves the right to block the access to the website for any user or restrict their functional without a notification and explanation.';
+	
+	const HeadingPublication = 'Publication Rules';
+	
+	const PublicationRule1 = '1. Under “games” are meant videogames of the “visual novel” genre. Using vndb.org to check the genre is recommended.';
+	const PublicationRule2 = '2. Under “albums” are meant official soundtracks published by developers or publishers and fan arrangements. So called “gamerips” are not allowed.';
+	const PublicationRule3 = '3. Under “artists” are meant vocalists. In rare cases, music bands may be meant too.';
+	const PublicationRule4 = '4. Under “characters” are meant singing characters of visual novels. Such characters are referenced as performers in game credits, album booklets and meta-tags of music files in the format similar to “CharacterName (CV. ArtistName)”.';
 	
 	const HeadingAccess = 'Access Rules';
 	
@@ -1050,7 +1055,7 @@ namespace Localization\RulesPage
 	const AccessRule7 = '7. A user known for violating rules may be restricted from doing any changes on the website on any period. A violator may appeal through contacting the staff by mail.';
 	const AccessRule8 = '8. Only the website staff sets the status of the contribution.';
 	
-	const LastUpdated = 'Rules were last edited on 29 June 2026.';
+	const LastUpdated = 'Rules were last edited on 01 August 2026.';
 	const Timezone    = 'The timezone of the website is UTC+3.';
 }
 
@@ -1116,7 +1121,7 @@ namespace Localization\WritingGuidePage
 	const RomanizationJapanese2 = 'Before we start, a little reminder: you agreed to comply with these rules when signed up. Whether you like them or not.';
 	
 	const HeadingAllowedSymbols = 'Allowed Symbols';
-	const AllowedSymbols        = 'Romanization uses only characters that you can see on your keyboard. This is the rule #1.';
+	const AllowedSymbols        = 'Romanization of Japanese symbols uses only characters visible on a regular English keyboard.';
 	
 	const HeadingNameOrder = 'Name Order';
 	const NameOrder        = 'In Japan, first goes surname and only then name. This order must be preserved in romanization.';
@@ -1137,8 +1142,10 @@ namespace Localization\WritingGuidePage
 	const Apart               = 'apart';
 	const DifferenceInMeaning = 'Difference in Meaning';
 	const SpecialReadings     = 'Special Readings';
-	const DivisionBySyllables = 'Separated Syllables';
-	const OldWritingStyle     = 'Old Writing Style';
+	const WidthOfCharacters   = 'Character Width';
+	const AsianLanguages      = 'Asian languages: ';
+	const EuropeanLanguages   = 'European languages: ';
+	const Punctuation         = 'Punctuation';
 	
 	const HeadingFormatting      = 'How To Apply Formatting';
 	const FormattingIntroduction = 'The text editor of the website supports special syntax to allow use of:';
