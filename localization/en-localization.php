@@ -1274,7 +1274,7 @@ namespace Localization\ErrorPage\UnavailableForLegalReasons451
 namespace Localization\ErrorPage\InternalServerError500
 {
 	const Reason = 'The server has encountered an error while processing your request.';
-	const Hint   = 'Please, send a mail to support@vn-song-lyrics-db.ru with details.';
+	const Hint   = 'Try reloading the page. It will help if a momentary glitch occured.';
 }
 
 namespace Localization\ErrorPage\NotImplemented501

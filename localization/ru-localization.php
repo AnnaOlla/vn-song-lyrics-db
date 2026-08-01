@@ -1274,7 +1274,7 @@ namespace Localization\ErrorPage\UnavailableForLegalReasons451
 namespace Localization\ErrorPage\InternalServerError500
 {
 	const Reason = 'В ходе обработки вашего запроса обнаружилась критическая ошибка.';
-	const Hint   = 'Пожалуйста, напишите подробности нам на почту support@vn-song-lyrics-db.ru.';
+	const Hint   = 'Попробуйте перезагрузить страницу. Это могла быть секундная ошибка.';
 }
 
 namespace Localization\ErrorPage\NotImplemented501

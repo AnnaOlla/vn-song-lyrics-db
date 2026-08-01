@@ -1274,7 +1274,7 @@ namespace Localization\ErrorPage\UnavailableForLegalReasons451
 namespace Localization\ErrorPage\InternalServerError500
 {
 	const Reason = 'サーバーのエラー行いました。';
-	const Hint   = 'support@vn-song-lyrics-db.ruへメールを送ってください。';
+	const Hint   = '瞬間的な欠陥があったら、リロードが助けます。';
 }
 
 namespace Localization\ErrorPage\NotImplemented501
