@@ -1,6 +1,6 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "Visual Novel Song Lyrics Database",
+  "short_name": "vn-song-lyrics-db",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
