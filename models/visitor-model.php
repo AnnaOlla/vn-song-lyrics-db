@@ -1115,7 +1115,7 @@ class VisitorModel extends Model
 			';
 		}
 		
-		if (!is_null($albumUri))
+		if ($fetchMinInfo && !is_null($albumUri))
 		{
 			$join[]   =
 			'
@@ -1135,7 +1135,7 @@ class VisitorModel extends Model
 			$binds[] = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($songUri) && is_null($albumUri))
+		if ($fetchMinInfo && is_null($albumUri) && !is_null($songUri))
 		{
 			$join[]  =
 			'
