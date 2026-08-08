@@ -1135,7 +1135,7 @@ class VisitorModel extends Model
 			$binds[] = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($songUri))
+		if (!is_null($songUri) && is_null($albumUri))
 		{
 			$join[]  =
 			'
@@ -1181,11 +1181,6 @@ class VisitorModel extends Model
 			$where[]  = 'REGEXP_REPLACE(tr.name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")';
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
-		
-		// These two: "if (!is_null($albumUri))" and "if (!is_null($songUri))"
-		// have the same join, so the second should be removed
-		// Yes, this is awful solution
-		$join = array_unique($join);
 		
 		$stmt = $this->pdo->prepare
 		(
