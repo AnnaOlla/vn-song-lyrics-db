@@ -884,12 +884,13 @@ class VisitorModel extends Model
 		string|null $search         = null
 	): array
 	{
-		$select = ['sn.id', 'sn.original_name', 'sn.transliterated_name', 'sn.localized_name'];
-		$from   = ['songs AS sn'];
-		$join   = [];
-		$where  = ['TRUE'];
-		$binds  = [];
-		$limits = '';
+		$select   = ['sn.id', 'sn.original_name', 'sn.transliterated_name', 'sn.localized_name'];
+		$distinct = '';
+		$from     = ['songs AS sn'];
+		$join     = [];
+		$where    = ['TRUE'];
+		$binds    = [];
+		$limits   = '';
 		
 		if (!$fetchMinInfo)
 		{
@@ -916,6 +917,7 @@ class VisitorModel extends Model
 		if (!is_null($artistUri) || !is_null($characterUri))
 		{
 			$select[] = 'sacr.status AS song_artist_character_relation_status';
+			$distinct = 'DISTINCT';
 			$join[]   = 
 			'
 			JOIN
@@ -1032,7 +1034,7 @@ class VisitorModel extends Model
 		$stmt = $this->pdo->prepare
 		(
 			'
-			SELECT
+			SELECT '.$distinct.'
 				'.implode(', ', $select).'
 			FROM
 				'.implode(', ', $from).'
