@@ -3,11 +3,7 @@
 require_once 'models/violator-model.php';
 
 class UserModel extends ViolatorModel
-{	
-	private const IMAGE_MAX_WIDTH  = 384;
-	private const IMAGE_MAX_HEIGHT = 384;
-	private const IMAGE_GAUSSIAN_BLUR_ITERATION_COUNT = 25;
-	
+{
 	public function __construct()
 	{
 		$this->pdo = getPdo('user');
