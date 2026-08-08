@@ -1077,7 +1077,27 @@ class VisitorModel extends Model
 	{
 		$select = ['tr.id', 'tr.name', 'tr.language_id'];
 		$from   = ['translations AS tr'];
-		$join   = [];
+		$join   =
+		[
+			'
+			JOIN
+				songs AS sn
+			ON
+				sn.id = tr.song_id
+			',
+			'
+			JOIN
+				albums AS al
+			ON
+				al.id = sn.album_id
+			',
+			'
+			JOIN
+				languages AS lg
+			ON
+				lg.id = tr.language_id
+			'
+		];
 		$where  = ['TRUE'];
 		$binds  = [];
 		$limits = '';
@@ -1093,59 +1113,16 @@ class VisitorModel extends Model
 			$select[] = 'lg.ru_name             AS language_ru_name';
 			$select[] = 'lg.en_name             AS language_en_name';
 			$select[] = 'lg.ja_name             AS language_ja_name';
-			
-			$join[]   =
-			'
-			JOIN
-				songs AS sn
-			ON
-				sn.id = tr.song_id
-			';
-			$join[]   =
-			'
-			JOIN
-				albums AS al
-			ON
-				al.id = sn.album_id
-			';
-			$join[]   =
-			'
-			JOIN
-				languages AS lg
-			ON
-				lg.id = tr.language_id
-			';
 		}
 		
-		if ($fetchMinInfo && !is_null($albumUri))
+		if (!is_null($albumUri))
 		{
-			$join[]   =
-			'
-			JOIN
-				songs AS sn
-			ON
-				sn.id = tr.song_id
-			';
-			$join[]  =
-			'
-			JOIN
-				albums AS al
-			ON
-				al.id = sn.album_id
-			';
 			$where[] = 'al.uri = :album_uri';
 			$binds[] = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
 		
-		if ($fetchMinInfo && is_null($albumUri) && !is_null($songUri))
+		if (!is_null($songUri))
 		{
-			$join[]  =
-			'
-			JOIN
-				songs AS sn
-			ON
-				sn.id = tr.song_id
-			';
 			$where[] = 'sn.uri = :song_uri';
 			$binds[] = [':song_uri', $songUri, PDO::PARAM_STR];
 		}
