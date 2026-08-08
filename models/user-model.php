@@ -55,137 +55,6 @@ class UserModel extends ViolatorModel
 		return in_array($format, $allowedFormats, true);
 	}
 	
-	private function readUploadedImage(array &$file): bool
-	{
-		$file = imagecreatefromstring(file_get_contents($file['tmp_name']));
-		
-		if (!$file)
-			return false;
-		
-		return true;
-	}
-	
-	private function convertImageToTrueColor(GdImage &$image): bool
-	{
-		if (imageistruecolor($image))
-			return true;
-		
-		$image = imagepalettetotruecolor($image);
-		
-		if (!$image)
-			return false;
-		
-		return true;
-	}
-	
-	private function scaleDownImage(GdImage &$image): bool
-	{
-		$sourceWidth  = imagesx($image);
-		$sourceHeight = imagesy($image);
-		
-		if ($sourceWidth <= self::IMAGE_MAX_WIDTH && $sourceHeight <= self::IMAGE_MAX_HEIGHT)
-			return true;
-		
-		if ($sourceWidth < $sourceHeight)
-		{
-			$ratio = $sourceHeight / self::IMAGE_MAX_HEIGHT;
-			
-			$targetWidth  = (int)round($sourceWidth / $ratio);
-			$targetHeight = self::IMAGE_MAX_HEIGHT;
-		}
-		else if ($sourceWidth > $sourceHeight)
-		{
-			$ratio = $sourceWidth / self::IMAGE_MAX_WIDTH;
-			
-			$targetWidth  = self::IMAGE_MAX_WIDTH;
-			$targetHeight = (int)round($sourceHeight / $ratio);
-		}
-		else
-		{
-			$targetWidth  = self::IMAGE_MAX_WIDTH;
-			$targetHeight = self::IMAGE_MAX_HEIGHT;
-		}
-		
-		$image = imagescale($image, $targetWidth, $targetHeight, IMG_BICUBIC);
-		
-		if (!$image)
-			return false;
-		
-		return true;
-	}
-	
-	private function applyBlurredBackdropToImage(GdImage &$image): bool
-	{
-		// If the image is not square, then use blurred backdrop to make it square
-		
-		$sourceWidth  = imagesx($image);
-		$sourceHeight = imagesy($image);
-		
-		if ($sourceWidth === $sourceHeight)
-			return true;
-		
-		if ($sourceWidth < $sourceHeight)
-		{
-			$ratio        = $sourceHeight / $sourceWidth;
-			$targetWidth  = $sourceHeight;
-			$targetHeight = (int)round($sourceHeight * $ratio);
-			
-			$backdrop = imagescale($image, $targetWidth, $targetHeight, IMG_BICUBIC);
-			
-			$x            = 0;
-			$y            = (int)round(($targetHeight - $sourceHeight) / 2);
-			$targetWidth  = $targetWidth;
-			$targetHeight = $targetWidth;
-			$rectangle    = ['x' => $x, 'y' => $y, 'width' => $targetWidth, 'height' => $targetHeight];
-			
-			$backdrop = imagecrop($backdrop, $rectangle);
-			
-			for ($i = 0; $i < self::IMAGE_GAUSSIAN_BLUR_ITERATION_COUNT; $i++)
-				imagefilter($backdrop, IMG_FILTER_GAUSSIAN_BLUR);
-			
-			$x = (int)round(($targetWidth - $sourceWidth) / 2);
-			$y = 0;
-			
-			imagecopy($backdrop, $image, $x, $y, 0, 0, $sourceWidth, $sourceHeight);
-		}
-		else
-		{
-			$ratio        = $sourceWidth / $sourceHeight;
-			$targetWidth  = (int)round($sourceWidth * $ratio);
-			$targetHeight = $sourceWidth;
-			
-			$backdrop = imagescale($image, $targetWidth, $targetHeight, IMG_BICUBIC);
-			
-			$x            = (int)round(($targetWidth - $sourceWidth) / 2);
-			$y            = 0;
-			$targetWidth  = $targetHeight;
-			$targetHeight = $targetHeight;
-			$rectangle    = ['x' => $x, 'y' => $y, 'width' => $targetWidth, 'height' => $targetHeight];
-			
-			$backdrop = imagecrop($backdrop, $rectangle);
-			
-			for ($i = 0; $i < self::IMAGE_GAUSSIAN_BLUR_ITERATION_COUNT; $i++)
-				imagefilter($backdrop, IMG_FILTER_GAUSSIAN_BLUR);
-			
-			$x = 0;
-			$y = (int)round(($targetHeight - $sourceHeight) / 2);
-			
-			imagecopy($backdrop, $image, $x, $y, 0, 0, $sourceWidth, $sourceHeight);
-		}
-		
-		$image = $backdrop;
-		
-		if (!$image)
-			return false;
-		
-		return true;
-	}
-	
-	private function moveUploadedImage(GdImage &$image, string $fullPath): bool
-	{
-		return imagewebp($image, $fullPath, 100);
-	}
-	
 	final protected function saveUploadedImage(array $file, string $fullPath): void
 	{
 		if (!$this->isFileUploaded($file))
@@ -197,19 +66,19 @@ class UserModel extends ViolatorModel
 		if (!$this->isImageFormatAllowed($file))
 			throw new HttpUnsupportedMediaType415('File format not allowed', get_defined_vars());
 		
-		if (!$this->readUploadedImage($file))
+		if (!ImageProcession::readUploadedImage($file))
 			throw new HttpUnsupportedMediaType415('Failed to read image', get_defined_vars());
 		
-		if (!$this->convertImageToTrueColor($file))
+		if (!ImageProcession::convertImageToTrueColor($file))
 			throw new HttpUnsupportedMediaType415('Failed to convert image to TrueColor', get_defined_vars());
 		
-		if (!$this->scaleDownImage($file))
+		if (!ImageProcession::scaleDownImage($file))
 			throw new HttpUnsupportedMediaType415('Failed to scale down image', get_defined_vars());
 		
-		if (!$this->applyBlurredBackdropToImage($file))
+		if (!ImageProcession::applyBlurredBackdropToImage($file))
 			throw new HttpUnsupportedMediaType415('Failed to apply blurred backdrop to image', get_defined_vars());
 		
-		if (!$this->moveUploadedImage($file, $fullPath))
+		if (!ImageProcession::saveUploadedImage($file, $fullPath))
 			throw new HttpInternalServerError500('File move failed', get_defined_vars());
 	}
 	
