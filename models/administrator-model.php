@@ -1003,6 +1003,7 @@ class AdministratorModel extends UserModel
 	{
 		$data =
 		[
+			/*
 			[
 				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_STATIC_PAGES_NAME,
 				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_STATIC_PAGES_NAME))
@@ -1011,10 +1012,12 @@ class AdministratorModel extends UserModel
 				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_GAME_LIST_NAME,
 				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_GAME_LIST_NAME))
 			],
+			*/
 			[
 				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_ALBUM_LIST_NAME,
 				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_ALBUM_LIST_NAME))
 			],
+			/*
 			[
 				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_ARTIST_LIST_NAME,
 				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_ARTIST_LIST_NAME))
@@ -1023,6 +1026,7 @@ class AdministratorModel extends UserModel
 				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_CHARACTER_LIST_NAME,
 				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_CHARACTER_LIST_NAME))
 			],
+			*/
 			[
 				'loc'     => 'https://'.$_SERVER['HTTP_HOST'].'/'.self::SITEMAP_SONG_LIST_NAME,
 				'lastmod' => date('Y-m-d', filemtime(self::SITEMAP_SONG_LIST_NAME))

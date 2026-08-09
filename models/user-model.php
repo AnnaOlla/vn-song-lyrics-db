@@ -1807,8 +1807,8 @@ class UserModel extends ViolatorModel
 	
 	final public function deleteCharacterGameRelation
 	(
-		int|null $characterId    = null,
-		int|null $gameId         = null,
+		int|null    $characterId = null,
+		int|null    $gameId      = null,
 		string|null $whereStatus = null
 	): void
 	{

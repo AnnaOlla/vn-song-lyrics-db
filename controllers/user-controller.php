@@ -1596,7 +1596,7 @@ class UserController extends ViolatorController
 		);
 		
 		foreach ($performersToDelete as $performer)
-			$this->model->deleteSongArtistCharacterRelation($song['id'], $performer['artist_id'], $performer['character_id'], $userUpdatedId);
+			$this->model->deleteSongArtistCharacterRelation($song['id'], $performer['artist_id'], $performer['character_id'], 'unchecked');
 		
 		foreach ($performersToAdd as $performer)
 			$this->model->addSongArtistCharacterRelation($song['id'], $performer['artist_id'], $performer['character_id'], $userUpdatedId);
