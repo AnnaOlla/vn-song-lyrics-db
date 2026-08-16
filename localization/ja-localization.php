@@ -668,7 +668,7 @@ namespace Localization\GameEditorPage\TooltipContent
 	                           'まずは、ローマ字に変換し方を<a href="/ja/writing-guide#romanization" target="_blank">文章作法</a>に見てください。<br/><br/>'.
 							   'ローマ字はＡＳＣＩＩだけを使っています。<br/><br/>'.
 							   '* = 必要';
-	const LocalizedName      = '外国で使った名前です。逆もまた然り：ゲームを作った国の言語に変換した名前もです。<br/><br/>'.
+	const LocalizedName      = '外国で使った名前です。普通に英語で書いた名前です。<br/><br/>'.
 	                           'ゲームが外国へ出ませんでしたならば、何も書かないでください。';
 	const OldLogo            = '今のアップロードしているイメージ。';
 	const NewLogo            = 'ロゴを替えてほしいなら、別のイメージをアップロードしてもいいです。<br/><br/>'.
@@ -717,7 +717,7 @@ namespace Localization\AlbumEditorPage\TooltipContent
 	                           'まずは、ローマ字に変換し方を<a href="/ja/writing-guide#romanization" target="_blank">文章作法</a>に見てください。<br/><br/>'.
 							   'ローマ字はＡＳＣＩＩだけを使っています。<br/><br/>'.
 							   '* = 必要';
-	const LocalizedName      = '外国で使った名前です。逆もまた然り：アルバムを作った国の言語に変換した名前もです。<br/><br/>'.
+	const LocalizedName      = '外国で使った名前です。普通に英語で書いた名前です。<br/><br/>'.
 	                           'アルバムが外国へ出ませんでしたならば、何も書かないでください。';
 	const OldCover           = '今のアルバムのカバーです。';
 	const NewCover           = 'カバーを替えてほしいなら、別のイメージをアップロードしてもいいです。<br/><br/>'.
@@ -763,7 +763,7 @@ namespace Localization\ArtistEditorPage\TooltipContent
 	                           'まずは、ローマ字に変換し方を<a href="/ja/writing-guide#romanization" target="_blank">文章作法</a>に見てください。<br/><br/>'.
 							   'ローマ字はＡＳＣＩＩだけを使っています。<br/><br/>'.
 							   '* = 必要';
-	const LocalizedName      = '外国で使った名前です。逆もまた然り：歌手の国の言語に変換した名前もです。<br/><br/>'.
+	const LocalizedName      = '外国で使った名前です。普通に英語で書いた名前です。<br/><br/>'.
 	                           '歌手はいつも外国に来たなら、何も書かないでください。';
 	const OldPhoto           = '今の歌手の写真です。';
 	const NewPhoto           = '写真を替えてほしいなら、別のイメージをアップロードしてもいいです。<br/><br/>'.
@@ -802,7 +802,7 @@ namespace Localization\CharacterEditorPage\TooltipContent
 	                           'まずは、ローマ字に変換し方を文章作法に見てください。<br/><br/>'.
 							   'ローマ字はＡＳＣＩＩだけを使っています。<br/><br/>'.
 							   '* = 必要';
-	const LocalizedName      = '外国で使った名前です。逆もまた然り：キャラの国の言語に変換した名前もです。<br/><br/>'.
+	const LocalizedName      = '外国で使った名前です。普通に英語で書いた名前です。<br/><br/>'.
 	                           'ゲームは外国に売られなかったなら、何も書かないでください。';
 	const OldImage           = '今のキャラのイメージです。';
 	const NewImage           = 'イメージを替えてほしいなら、別のイメージをアップロードしてもいいです。<br/><br/>'.
@@ -844,7 +844,7 @@ namespace Localization\SongEditorPage\TooltipContent
 	                           'まずは、ローマ字に変換し方を<a href="/ja/writing-guide#romanization" target="_blank">文章作法</a>に見てください。<br/><br/>'.
 							   'ローマ字はＡＳＣＩＩだけを使っています。<br/><br/>'.
 							   '* = 必要';
-	const LocalizedName      = '外国で使った名前です。逆もまた然り：アルバムを作った国の言語に変換した名前もです。<br/><br/>'.
+	const LocalizedName      = '外国で使った名前です。普通に英語で書いた名前です。<br/><br/>'.
 	                           '歌のアルバムが外国へ出ませんでしたならば、何も書かないでください。';
 	const HasVocal           = '歌はインストなら、「ない」を選んでください。歌詞があるなら、「ある」を選んでください。<br/><br/>'.
 	                           '「ある」は選ばれたら、あと歌詞を加えることができるようになります。'.

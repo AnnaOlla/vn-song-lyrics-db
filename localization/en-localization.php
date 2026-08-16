@@ -668,7 +668,7 @@ namespace Localization\GameEditorPage\TooltipContent
 	                           'Please, check the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a> on how to romanize names.<br/><br/>'.
 							   'Remember that the romanized name is not allowed to have symbols other than printable ASCII.<br/><br/>'.
 							   '* = mandatory';
-	const LocalizedName      = 'The name used in international stores or vica versa: localized exclusively for its own market.<br/><br/>'.
+	const LocalizedName      = 'The name used in international stores (usually English).<br/><br/>'.
 	                           'If the game was never released for international community, leave this field empty.';
 	const OldLogo            = 'The current logo of the game.';
 	const NewLogo            = 'If you want to change the logo, upload a new image.<br/><br/>'.
@@ -717,7 +717,7 @@ namespace Localization\AlbumEditorPage\TooltipContent
 	                           'Please, check the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a> on how to romanize names.<br/><br/>'.
 							   'Remember that the romanized name is not allowed to have symbols other than printable ASCII.<br/><br/>'.
 							   '* = mandatory';
-	const LocalizedName      = 'The name used in international stores or vice versa: localized exclusively for its own market.<br/><br/>'.
+	const LocalizedName      = 'The name used in international stores (usually English).<br/><br/>'.
 	                           'If the album was never released for international community, leave this field empty.';
 	const OldCover           = 'The current cover of the album.';
 	const NewCover           = 'If you want to change the cover, upload a new image.<br/><br/>'.
@@ -763,7 +763,7 @@ namespace Localization\ArtistEditorPage\TooltipContent
 	                           'Please, check the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a> on how to romanize names.<br/><br/>'.
 							   'Remember that the romanized name is not allowed to have symbols other than printable ASCII.<br/><br/>'.
 							   '* = mandatory';
-	const LocalizedName      = 'The name used in international stores or vice versa: localized exclusively for its own market.<br/><br/>'.
+	const LocalizedName      = 'The name mentioned in international stores.<br/><br/>'.
 	                           'If the artist was never advertized for international community, leave this field empty.';
 	const OldPhoto           = 'The current photo of the artist.';
 	const NewPhoto           = 'If you want to change the photo, upload a new image.<br/><br/>'.
@@ -802,7 +802,7 @@ namespace Localization\CharacterEditorPage\TooltipContent
 	                           'Please, check the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a> on how to romanize names.<br/><br/>'.
 							   'Remember that the romanized name is not allowed to have symbols other than printable ASCII.<br/><br/>'.
 							   '* = mandatory';
-	const LocalizedName      = 'The name used in most of localized versions of the game or vice versa: localized exclusively for its own region.<br/><br/>'.
+	const LocalizedName      = 'The name used in a localized version of the game.<br/><br/>'.
 	                           'If the game was never released for international community, leave this field empty.';
 	const OldImage           = 'The current image of the character.';
 	const NewImage           = 'If you want to change the image, upload a new one.<br/><br/>'.
@@ -844,7 +844,7 @@ namespace Localization\SongEditorPage\TooltipContent
 	                           'Please, check the <a href="/en/writing-guide#romanization" target="_blank">Writing Guide</a> on how to romanize names.<br/><br/>'.
 	                           'Remember that the romanized name is not allowed to have symbols other than printable ASCII.<br/><br/>'.
 							   '* = mandatory';
-	const LocalizedName      = 'The title of the song used in most of localized versions of the album or vice versa: localized exclusively for its own region.<br/><br/>'.
+	const LocalizedName      = 'The title of the song used in a localized version of the album.<br/><br/>'.
 	                           'If the album was never released for international community, leave this field empty.';
 	const HasVocal           = 'If the song is instrumental, then select “No”. If the song has lyrics, then select “Yes”.<br/><br/>'.
 	                           'Selecting “Yes” allows you to add its lyrics later. The song becomes clickable in the track list of the album.'.
