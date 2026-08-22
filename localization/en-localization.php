@@ -673,10 +673,10 @@ namespace Localization\GameEditorPage\TooltipContent
 	const OldLogo            = 'The current logo of the game.';
 	const NewLogo            = 'If you want to change the logo, upload a new image.<br/><br/>'.
 	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
-							   'We advise you to use an image with the same width and height.';
+							   'You are advised to use a square image.';
 	const Logo               = 'The logo of the game.<br/><br/>'.
 	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
-							   'We advise you to use an image with the same width and height.';
+							   'You are advised to use a square image.';
 	const VndbLink           = 'The link to the game in the database vndb.org.<br/><br/>'.
 	                           'vndb.org focuses on visual novels and, perhaps, is the largest visual novel database in the internet.<br/><br/>'.
 							   'Detailed information on the game is not the purpose of this website.<br/><br/>'.
@@ -722,10 +722,10 @@ namespace Localization\AlbumEditorPage\TooltipContent
 	const OldCover           = 'The current cover of the album.';
 	const NewCover           = 'If you want to change the cover, upload a new image.<br/><br/>'.
 	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
-							   'We advise you to use an image with the same width and height.';
+							   'You are advised to use a square image.';
 	const Cover              = 'The cover of the album.<br/><br/>'.
 	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
-							   'We advise you to use an image with the same width and height.';
+							   'You are advised to use a square image.';
 	const VgmdbLink          = 'The link to the album in the database vgmdb.net.<br/><br/>'.
 	                           'vgmdb.net mainly focuses on game soundtracks and has a big community supporting the website.<br/><br/>'.
 							   'Detailed information on the album is not the purpose of this website.<br/><br/>'.
@@ -768,10 +768,10 @@ namespace Localization\ArtistEditorPage\TooltipContent
 	const OldPhoto           = 'The current photo of the artist.';
 	const NewPhoto           = 'If you want to change the photo, upload a new image.<br/><br/>'.
 	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
-							   'We advise you to use an image with the same width and height.';
+							   'You are advised to use a square image.';
 	const Photo              = 'The photo of the artist.<br/><br/>'.
 	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
-							   'We advise you to use an image with the same width and height.';
+							   'You are advised to use a square image.';
 	const VgmdbLink          = 'The link to the artist in the database vgmdb.net.<br/><br/>'.
 	                           'vgmdb.net mainly focuses on game soundtracks and has a big community supporting the website.<br/><br/>'.
 							   'Detailed information on the artist is not the purpose of this website.<br/><br/>'.
@@ -807,10 +807,10 @@ namespace Localization\CharacterEditorPage\TooltipContent
 	const OldImage           = 'The current image of the character.';
 	const NewImage           = 'If you want to change the image, upload a new one.<br/><br/>'.
 	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
-							   'We advise you to use an image with the same width and height.';
+							   'You are advised to use a square image.';
 	const Image              = 'The image of the character.<br/><br/>'.
 	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
-							   'We advise you to use an image with the same width and height.';
+							   'You are advised to use a square image.';
 	const VndbLink           = 'The link to the game character in the database vndb.org.<br/><br/>'.
 	                           'vndb.org focuses on visual novels and, perhaps, is the largest visual novel database in the internet.<br/><br/>'.
 							   'Detailed information on the character is not the purpose of this website.<br/><br/>'.
