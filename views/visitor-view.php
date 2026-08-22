@@ -918,7 +918,7 @@ class VisitorView extends ErrorView
 			</section>
 			';
 			
-			$html[] = $this->createArtistList($artists, 3, 'related-entity', 'song_artist_character_relation_status');
+			$html[] = $this->createArtistList($artists, 3, 'related-entity', 'song_artist_character_relation_status', false);
 		}
 		
 		if ($songs)
