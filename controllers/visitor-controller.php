@@ -736,10 +736,11 @@ class VisitorController extends ErrorController
 	
 	private function handleCharacterPageGet(array $character): void
 	{		
-		$gameList = $this->model->getGameList(characterUri: $character['uri']);
-		$songList = $this->model->getSongList(characterUri: $character['uri']);
+		$gameList   = $this->model->getGameList(characterUri: $character['uri']);
+		$artistList = $this->model->getArtistList(characterUri: $character['uri']);
+		$songList   = $this->model->getSongList(characterUri: $character['uri']);
 		
-		$this->view->renderCharacterPage($character, $gameList, $songList);
+		$this->view->renderCharacterPage($character, $gameList, $artistList, $songList);
 	}
 	
 	final public function handleLyricsPage(string $albumUri, string $songUri): void

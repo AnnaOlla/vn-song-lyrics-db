@@ -873,7 +873,13 @@ class VisitorView extends ErrorView
 		$this->echoHtml($html);
 	}
 	
-	final public function renderCharacterPage(array $character, array $games, array $songs): void
+	final public function renderCharacterPage
+	(
+		array $character,
+		array $games,
+		array $artists,
+		array $songs
+	): void
 	{
 		$html[] = $this->startRender
 		(
@@ -901,6 +907,18 @@ class VisitorView extends ErrorView
 			';
 			
 			$html[] = $this->createGameList($games, 3, 'related-entity', 'character_game_relation_status');
+		}
+		
+		if ($artists)
+		{
+			$html[] = 
+			'
+			<section>
+				'.$this->createHeading(\Localization\CharacterPage\RelatedArtists, 2).'
+			</section>
+			';
+			
+			$html[] = $this->createArtistList($artists, 3, 'related-entity', 'song_artist_character_relation_status');
 		}
 		
 		if ($songs)

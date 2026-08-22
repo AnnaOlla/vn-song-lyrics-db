@@ -555,6 +555,7 @@ class VisitorModel extends Model
 	final public function getArtistList
 	(
 		bool        $fetchMinInfo = false,
+		string|null $characterUri = null,
 		string|null $userAddedUri = null,
 		string|null $status       = null,
 		int|null    $aliasesOfId  = null,
@@ -565,18 +566,38 @@ class VisitorModel extends Model
 		string|null $search       = null
 	): array
 	{
-		$select = ['a.id', 'a.original_name', 'a.transliterated_name', 'a.localized_name'];
-		$from   = ['artists AS a'];
-		$join   = [];
-		$where  = ['TRUE'];
-		$binds  = [];
-		$limits = '';
+		$select   = ['a.id', 'a.original_name', 'a.transliterated_name', 'a.localized_name'];
+		$distinct = '';
+		$from     = ['artists AS a'];
+		$join     = [];
+		$where    = ['TRUE'];
+		$binds    = [];
+		$limits   = '';
 		
 		if (!$fetchMinInfo)
 		{
 			$select[] = 'a.is_image_uploaded';
 			$select[] = 'a.uri';
 			$select[] = 'a.status';
+		}
+		
+		if (!is_null($characterUri))
+		{
+			$distinct = 'DISTINCT';
+			$select[] = 'sar.status AS song_artist_character_relation_status';
+			$join[]   =
+			'
+			JOIN
+				song_artist_character_relations AS sar
+			ON
+				a.id = sar.artist_id
+			JOIN
+				characters AS c
+			ON
+				c.id = sar.character_id
+			';
+			$where[]  = 'c.uri = :character_uri';
+			$binds[]  = [':character_uri', $characterUri, PDO::PARAM_STR];
 		}
 		
 		if (!is_null($userAddedUri))
@@ -632,7 +653,7 @@ class VisitorModel extends Model
 		$stmt = $this->pdo->prepare
 		(
 			'
-			SELECT
+			SELECT '.$distinct.'
 				'.implode(', ', $select).'
 			FROM
 				'.implode(', ', $from).'

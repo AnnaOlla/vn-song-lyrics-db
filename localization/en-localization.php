@@ -266,9 +266,10 @@ namespace Localization\ArtistPage
 
 namespace Localization\CharacterPage
 {
-	const Details      = 'Details: ';
-	const RelatedGames = 'Related Games';
-	const RelatedSongs = 'Related Songs';
+	const Details        = 'Details: ';
+	const RelatedGames   = 'Related Games';
+	const RelatedArtists = 'Related Artists';
+	const RelatedSongs   = 'Related Songs';
 }
 
 namespace Localization\SongPage

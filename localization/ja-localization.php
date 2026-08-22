@@ -266,9 +266,10 @@ namespace Localization\ArtistPage
 
 namespace Localization\CharacterPage
 {
-	const Details      = '詳細：';
-	const RelatedGames = '関係があるゲーム';
-	const RelatedSongs = '関係があるウタ';
+	const Details        = '詳細：';
+	const RelatedGames   = '関係があるゲーム';
+	const RelatedArtists = '関係があるカシュ';
+	const RelatedSongs   = '関係があるウタ';
 }
 
 namespace Localization\SongPage
