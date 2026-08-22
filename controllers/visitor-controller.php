@@ -1551,22 +1551,22 @@ class VisitorController extends ErrorController
 	
 	private function handleUserPageGet(array $user): void
 	{
-		$games        = $this->model->getGameList(userAddedUri: $user['username']);
-		$albums       = $this->model->getAlbumList(userAddedUri: $user['username']);
-		$artists      = $this->model->getArtistList(userAddedUri: $user['username']);
-		$characters   = $this->model->getCharacterList(userAddedUri: $user['username']);
-		$songs        = $this->model->getSongList(userAddedUri: $user['username'], hasVocal: true, isOriginal: true);
-		$translations = $this->model->getTranslationList(userAddedUri: $user['username'], orderBy: ['tr.name ASC', 'tr.id ASC']);
+		$gameCount        = $this->model->getGameCount(userAddedUri: $user['username']);
+		$albumCount       = $this->model->getAlbumCount(userAddedUri: $user['username']);
+		$artistCount      = $this->model->getArtistCount(userAddedUri: $user['username']);
+		$characterCount   = $this->model->getCharacterCount(userAddedUri: $user['username']);
+		$songCount        = $this->model->getSongCount(userAddedUri: $user['username'], hasVocal: true, isOriginal: true);
+		$translationCount = $this->model->getTranslationCount(userAddedUri: $user['username']);
 		
 		$this->view->renderUserPage
 		(
 			$user,
-			$games,
-			$albums,
-			$artists,
-			$characters,
-			$songs,
-			$translations
+			$gameCount,
+			$albumCount,
+			$artistCount,
+			$characterCount,
+			$songCount,
+			$translationCount
 		);
 	}
 	

@@ -1243,8 +1243,13 @@ class VisitorModel extends Model
 		return $feedbackList;
 	}
 	
-	final public function getGameCount(string|null $search): int
+	final public function getGameCount
+	(
+		string|null $search       = null,
+		string|null $userAddedUri = null
+	): int
 	{
+		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
 		
@@ -1259,6 +1264,19 @@ class VisitorModel extends Model
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($userAddedUri))
+		{
+			$join[]  =
+			'
+			JOIN
+				users as u
+			ON
+				g.user_added_id = u.id
+			';
+			$where[] = 'u.uri = :user_added_uri';
+			$binds[] = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -1266,6 +1284,9 @@ class VisitorModel extends Model
 				COUNT(*) AS result
 			FROM
 				games AS g
+			
+			'.implode("\n", $join).'
+			
 			WHERE
 				'.implode(' AND ', $where).'
 			'
@@ -1279,8 +1300,13 @@ class VisitorModel extends Model
 		return $gameCount;
 	}
 	
-	final public function getAlbumCount(string|null $search): int
+	final public function getAlbumCount
+	(
+		string|null $search       = null,
+		string|null $userAddedUri = null
+	): int
 	{
+		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
 		
@@ -1295,6 +1321,19 @@ class VisitorModel extends Model
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($userAddedUri))
+		{
+			$join[]  =
+			'
+			JOIN
+				users as u
+			ON
+				a.user_added_id = u.id
+			';
+			$where[] = 'u.uri = :user_added_uri';
+			$binds[] = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -1302,6 +1341,9 @@ class VisitorModel extends Model
 				COUNT(*) AS result
 			FROM
 				albums AS a
+			
+			'.implode("\n", $join).'
+			
 			WHERE
 				'.implode(' AND ', $where).'
 			'
@@ -1315,8 +1357,13 @@ class VisitorModel extends Model
 		return $albumCount;
 	}
 	
-	final public function getArtistCount(string|null $search): int
+	final public function getArtistCount
+	(
+		string|null $search       = null,
+		string|null $userAddedUri = null
+	): int
 	{
+		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
 		
@@ -1331,6 +1378,19 @@ class VisitorModel extends Model
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($userAddedUri))
+		{
+			$join[]  =
+			'
+			JOIN
+				users as u
+			ON
+				a.user_added_id = u.id
+			';
+			$where[] = 'u.uri = :user_added_uri';
+			$binds[] = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -1338,6 +1398,9 @@ class VisitorModel extends Model
 				COUNT(*) AS result
 			FROM
 				artists AS a
+			
+			'.implode("\n", $join).'
+			
 			WHERE
 				'.implode(' AND ', $where).'
 			'
@@ -1351,8 +1414,13 @@ class VisitorModel extends Model
 		return $artistCount;
 	}
 	
-	final public function getCharacterCount(string|null $search): int
+	final public function getCharacterCount
+	(
+		string|null $search       = null,
+		string|null $userAddedUri = null
+	): int
 	{
+		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
 		
@@ -1367,6 +1435,19 @@ class VisitorModel extends Model
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($userAddedUri))
+		{
+			$join[]  =
+			'
+			JOIN
+				users as u
+			ON
+				c.user_added_id = u.id
+			';
+			$where[] = 'u.uri = :user_added_uri';
+			$binds[] = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -1374,6 +1455,9 @@ class VisitorModel extends Model
 				COUNT(*) AS result
 			FROM
 				characters AS c
+			
+			'.implode("\n", $join).'
+			
 			WHERE
 				'.implode(' AND ', $where).'
 			'
@@ -1387,8 +1471,15 @@ class VisitorModel extends Model
 		return $characterCount;
 	}
 	
-	final public function getSongCount(string|null $search, bool|null $hasVocal): int
+	final public function getSongCount
+	(
+		string|null $search       = null,
+		bool|null   $hasVocal     = null,
+		bool|null   $isOriginal   = null,
+		string|null $userAddedUri = null
+	): int
 	{
+		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
 		
@@ -1409,6 +1500,30 @@ class VisitorModel extends Model
 			$binds[]  = [':has_vocal', $hasVocal, PDO::PARAM_BOOL];
 		}
 		
+		if ($isOriginal === true)
+		{
+			$where[]  = 's.original_song_id IS NULL';
+			$where[]  = 's.lyrics IS NOT NULL';
+		}
+		
+		if ($isOriginal === false)
+		{
+			$where[]  = 's.original_song_id IS NOT NULL';
+		}
+		
+		if (!is_null($userAddedUri))
+		{
+			$join[]  =
+			'
+			JOIN
+				users as u
+			ON
+				s.user_added_id = u.id
+			';
+			$where[] = 'u.uri = :user_added_uri';
+			$binds[] = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -1416,6 +1531,9 @@ class VisitorModel extends Model
 				COUNT(*) AS result
 			FROM
 				songs AS s
+			
+			'.implode("\n", $join).'
+			
 			WHERE
 				'.implode(' AND ', $where).'
 			'
@@ -1429,8 +1547,13 @@ class VisitorModel extends Model
 		return $songCount;
 	}
 	
-	final public function getTranslationCount(string|null $search): int
+	final public function getTranslationCount
+	(
+		string|null $search       = null,
+		string|null $userAddedUri = null
+	): int
 	{
+		$join   = [];
 		$where  = ['TRUE'];
 		$binds  = [];
 		
@@ -1440,6 +1563,19 @@ class VisitorModel extends Model
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
+		if (!is_null($userAddedUri))
+		{
+			$join[]  =
+			'
+			JOIN
+				users as u
+			ON
+				t.user_added_id = u.id
+			';
+			$where[] = 'u.uri = :user_added_uri';
+			$binds[] = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
+		}
+		
 		$stmt = $this->pdo->prepare
 		(
 			'
@@ -1447,6 +1583,9 @@ class VisitorModel extends Model
 				COUNT(*) AS result
 			FROM
 				translations AS t
+			
+			'.implode("\n", $join).'
+			
 			WHERE
 				'.implode(' AND ', $where).'
 			'

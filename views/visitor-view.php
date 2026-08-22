@@ -1358,12 +1358,12 @@ class VisitorView extends ErrorView
 	final public function renderUserPage
 	(
 		array $userData,
-		array $relatedGames,
-		array $relatedAlbums,
-		array $relatedArtists,
-		array $relatedCharacters,
-		array $relatedSongs,
-		array $relatedTranslations
+		int   $relatedGameCount,
+		int   $relatedAlbumCount,
+		int   $relatedArtistCount,
+		int   $relatedCharacterCount,
+		int   $relatedSongCount,
+		int   $relatedTranslationCount
 	): void
 	{
 		$heading = \Localization\UserPage\User.htmlspecialchars($userData['username']);
@@ -1387,12 +1387,14 @@ class VisitorView extends ErrorView
 				'.$this->createHeading($heading, 1).'
 				'.$this->createParagraph(\Localization\UserPage\Role.$role).'
 				'.$this->createParagraph(\Localization\UserPage\Created.$userData['timestamp_created']).'
+			</section>
 		';
 		
 		if (!Validation::isNullOrEmpty($userData['about_me']))
 		{
 			$html[] =
 			'
+			<section>
 				'.$this->createHeading(\Localization\UserPage\AboutMe, 2).'
 			';
 			
@@ -1405,7 +1407,26 @@ class VisitorView extends ErrorView
 				'.$this->createParagraph($line).'
 				';
 			}
+			
+			$html[] =
+			'
+			</section>
+			';
 		}
+		
+		$html[] = 
+		'
+			
+			<section>
+				'.$this->createHeading(\Localization\UserPage\Contributions, 2).'
+				'.$this->createParagraph(\Localization\UserPage\RelatedGames.$relatedGameCount).'
+				'.$this->createParagraph(\Localization\UserPage\RelatedAlbums.$relatedAlbumCount).'
+				'.$this->createParagraph(\Localization\UserPage\RelatedArtists.$relatedArtistCount).'
+				'.$this->createParagraph(\Localization\UserPage\RelatedCharacters.$relatedCharacterCount).'
+				'.$this->createParagraph(\Localization\UserPage\RelatedSongs.$relatedSongCount).'
+				'.$this->createParagraph(\Localization\UserPage\RelatedTranslations.$relatedTranslationCount).'
+			</section>
+		';
 		
 		if (Session::agentIs($userData['id']) || Session::agentIsAdministrator())
 		{
@@ -1437,10 +1458,8 @@ class VisitorView extends ErrorView
 			'
 				<section class="account-control">
 					'.$this->createButtonAsRestrictedLink($label1, $access1, $attributes1).'
-					<section class="filler"></section>
 					'.$this->createButtonAsRestrictedLink($label2, $access2, $attributes2).'
 					'.$this->createButtonAsRestrictedLink($label4, $access4, $attributes4).'
-					<section class="filler"></section>
 					'.$this->createButtonAsRestrictedLink($label5, $access5, $attributes5).'
 				</section>
 			';
@@ -1448,69 +1467,6 @@ class VisitorView extends ErrorView
 		
 		$html[] = 
 		'
-			</section>
-		';
-		
-		$html[] = 
-		'
-			<section>
-				'.$this->createHeading(\Localization\UserPage\Contributions, 2).'
-			</section>
-			<section>
-				'.$this->createHeading(\Localization\UserPage\RelatedGames.count($relatedGames), 3).'
-			</section>
-		';
-		
-		$html[] = $this->createGameList($relatedGames, 3, 'related-entity');
-		
-		$html[] =
-		'
-			<section>
-				'.$this->createHeading(\Localization\UserPage\RelatedAlbums.count($relatedAlbums), 3).'
-			</section>
-		';
-		
-		$html[] = $this->createAlbumList($relatedAlbums, 3, 'related-entity');
-		
-		$html[] =
-		'
-			<section>
-				'.$this->createHeading(\Localization\UserPage\RelatedArtists.count($relatedArtists), 3).'
-			</section>
-		';
-		
-		$html[] = $this->createArtistList($relatedArtists, 3, 'related-entity');
-		
-		$html[] =
-		'
-			<section>
-				'.$this->createHeading(\Localization\UserPage\RelatedCharacters.count($relatedCharacters), 3).'
-			</section>
-		';
-		
-		$html[] = $this->createCharacterList($relatedCharacters, 3, 'related-entity');
-		
-		$html[] = 
-		'
-			<section>
-				'.$this->createHeading(\Localization\UserPage\RelatedSongs.count($relatedSongs), 3).'
-			</section>
-		';
-		
-		$html[] = $this->createSongList($relatedSongs, 3, 'related-entity');
-		
-		$html[] = 
-		'
-			<section>
-				'.$this->createHeading(\Localization\UserPage\RelatedTranslations.count($relatedTranslations), 3).'
-			</section>
-		';
-		
-		$html[] = $this->createTranslationList($relatedTranslations, 3, 'related-entity');
-		
-		$html[] = 
-		'
-			</section>
 		</article>
 		';
 		
