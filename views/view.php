@@ -1888,7 +1888,7 @@ HTML;
 			
 			if ($relationKey)
 			{
-				if (Session::agentIsAdministrator())
+				if (Session::agentIsAdministrator() && $statusChangeAllowed)
 					$textEntities[] = $this->createStatusSelect($artist, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($artist[$relationKey], true);

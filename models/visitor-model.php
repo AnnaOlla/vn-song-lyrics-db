@@ -576,6 +576,7 @@ class VisitorModel extends Model
 		{
 			$select[] = 'a.is_image_uploaded';
 			$select[] = 'a.uri';
+			$select[] = 'a.status';
 		}
 		
 		if (!is_null($userAddedUri))
