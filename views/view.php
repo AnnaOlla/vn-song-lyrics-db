@@ -1614,7 +1614,7 @@ HTML;
 	//       Content Pages: Pagination       //
 	//---------------------------------------//
 	
-	final protected function createResultsLimitBlock(int $limit): string
+	final protected function createResultsLimitBlock(int|null $limit): string
 	{
 		$selectedOption = ['toShow' => $limit, 'toSend' => $limit];
 		
