@@ -113,6 +113,15 @@ namespace Localization\HomePage
 	const LastAlbums       = 'Recently Added Albums';
 	const LastLyrics       = 'Recently Added Lyrics';
 	const LastTranslations = 'Recently Added Translations';
+	
+	const Search                = 'Search';
+	const SearchAll             = 'All';
+	const SearchGameList        = 'Games';
+	const SearchAlbumList       = 'Albums';
+	const SearchArtistList      = 'Artists';
+	const SearchCharacterList   = 'Characters';
+	const SearchSongList        = 'Songs';
+	const SearchTranslationList = 'Translations';
 }
 
 namespace Localization\Header
@@ -619,16 +628,16 @@ namespace Localization\Controls
 	const Delete       = 'Delete Data';
 	
 	const SearchHeading     = 'Search over the database';
-	const SearchPlaceholder = 'Start typing …';
+	const SearchPlaceholder = 'Enter text …';
 	const SearchButton      = 'Search';
 	const PageHeading       = 'Page';
 	const LimitHeading      = 'Results per page';
 	const NoLimit           = 'All';
 	
 	const FilterPage   = 'Filter results on this page …';
-	const Textarea     = 'Start typing …';
+	const Textarea     = 'Enter text …';
 	
-	const ChooseFile   = 'Choose file (max. size: 512 KiB) …';
+	const ChooseFile   = 'Choose file (max. size: 2 MiB) …';
 	const FileTooBig   = 'File is too big. Try another file …';
 	
 	const SelectOption = 'Select …';
@@ -673,10 +682,10 @@ namespace Localization\GameEditorPage\TooltipContent
 	                           'If the game was never released for international community, leave this field empty.';
 	const OldLogo            = 'The current logo of the game.';
 	const NewLogo            = 'If you want to change the logo, upload a new image.<br/><br/>'.
-	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
+	                           'Maximum size of the file: 2 megabytes.<br/><br/>'.
 							   'It is recommended to use an image of 384x384 pixels.';
 	const Logo               = 'The logo of the game.<br/><br/>'.
-	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
+	                           'Maximum size of the file: 2 megabytes.<br/><br/>'.
 							   'It is recommended to use an image of 384x384 pixels.';
 	const VndbLink           = 'The link to the game in the database vndb.org.<br/><br/>'.
 	                           'vndb.org focuses on visual novels and, perhaps, is the largest visual novel database in the internet.<br/><br/>'.
@@ -722,10 +731,10 @@ namespace Localization\AlbumEditorPage\TooltipContent
 	                           'If the album was never released for international community, leave this field empty.';
 	const OldCover           = 'The current cover of the album.';
 	const NewCover           = 'If you want to change the cover, upload a new image.<br/><br/>'.
-	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
+	                           'Maximum size of the file: 2 megabytes.<br/><br/>'.
 							   'It is recommended to use an image of 384x384 pixels.';
 	const Cover              = 'The cover of the album.<br/><br/>'.
-	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
+	                           'Maximum size of the file: 2 megabytes.<br/><br/>'.
 							   'It is recommended to use an image of 384x384 pixels.';
 	const VgmdbLink          = 'The link to the album in the database vgmdb.net.<br/><br/>'.
 	                           'vgmdb.net mainly focuses on game soundtracks and has a big community supporting the website.<br/><br/>'.
@@ -768,10 +777,10 @@ namespace Localization\ArtistEditorPage\TooltipContent
 	                           'If the artist was never advertized for international community, leave this field empty.';
 	const OldPhoto           = 'The current photo of the artist.';
 	const NewPhoto           = 'If you want to change the photo, upload a new image.<br/><br/>'.
-	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
+	                           'Maximum size of the file: 2 megabytes.<br/><br/>'.
 							   'It is recommended to use an image of 384x384 pixels.';
 	const Photo              = 'The photo of the artist.<br/><br/>'.
-	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
+	                           'Maximum size of the file: 2 megabytes.<br/><br/>'.
 							   'It is recommended to use an image of 384x384 pixels.';
 	const VgmdbLink          = 'The link to the artist in the database vgmdb.net.<br/><br/>'.
 	                           'vgmdb.net mainly focuses on game soundtracks and has a big community supporting the website.<br/><br/>'.
@@ -807,10 +816,10 @@ namespace Localization\CharacterEditorPage\TooltipContent
 	                           'If the game was never released for international community, leave this field empty.';
 	const OldImage           = 'The current image of the character.';
 	const NewImage           = 'If you want to change the image, upload a new one.<br/><br/>'.
-	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
+	                           'Maximum size of the file: 2 megabytes.<br/><br/>'.
 							   'It is recommended to use an image of 384x384 pixels.';
 	const Image              = 'The image of the character.<br/><br/>'.
-	                           'Maximum size of the file: 512 kilobytes.<br/><br/>'.
+	                           'Maximum size of the file: 2 megabytes.<br/><br/>'.
 							   'It is recommended to use an image of 384x384 pixels.';
 	const VndbLink           = 'The link to the game character in the database vndb.org.<br/><br/>'.
 	                           'vndb.org focuses on visual novels and, perhaps, is the largest visual novel database in the internet.<br/><br/>'.

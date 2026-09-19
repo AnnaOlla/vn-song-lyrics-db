@@ -113,6 +113,15 @@ namespace Localization\HomePage
 	const LastAlbums       = '最近加えたアルバム';
 	const LastLyrics       = '最近加えた歌詞';
 	const LastTranslations = '最近加えた翻訳';
+	
+	const Search                = '探す';
+	const SearchAll             = 'すべて';
+	const SearchGameList        = 'ゲーム';
+	const SearchAlbumList       = 'アルバム';
+	const SearchArtistList      = 'カシュ';
+	const SearchCharacterList   = 'キャラ';
+	const SearchSongList        = 'ウタ';
+	const SearchTranslationList = 'ホンヤク';
 }
 
 namespace Localization\Header
@@ -628,7 +637,7 @@ namespace Localization\Controls
 	const FilterPage   = 'このページから探す…';
 	const Textarea     = '入力して…';
 	
-	const ChooseFile   = 'ファイルを選ぶ（ｍａｘ：５１２ＫｉＢ）…';
+	const ChooseFile   = 'ファイルを選ぶ（ｍａｘ：２ＭｉＢ）…';
 	const FileTooBig   = 'ファイルは大きすぎています…';
 	
 	const SelectOption = '選ぶ…';
@@ -673,10 +682,10 @@ namespace Localization\GameEditorPage\TooltipContent
 	                           'ゲームが外国へ出ませんでしたならば、何も書かないでください。';
 	const OldLogo            = '今のアップロードしているイメージ。';
 	const NewLogo            = 'ロゴを替えてほしいなら、別のイメージをアップロードしてもいいです。<br/><br/>'.
-	                           '上限の大きさ:５１２キロバイト。<br/><br/>'.
+	                           '上限の大きさ:２メガバイト。<br/><br/>'.
 							   'おすすめは、３８４✕３８４ピクセルのイメージです。';
 	const Logo               = 'ゲームのロゴです。<br/><br/>'.
-	                           '上限の大きさ:５１２キロバイト。<br/><br/>'.
+	                           '上限の大きさ:２メガバイト。<br/><br/>'.
 							   'おすすめは、３８４✕３８４ピクセルのイメージです。';
 	const VndbLink           = 'vndb.orgデータベースのゲームの情報にリンクです。<br/><br/>'.
 	                           'vndb.orgはインターネットで一番大きいビジュアルノベルのデータベースだかもしれません。<br/><br/>'.
@@ -722,10 +731,10 @@ namespace Localization\AlbumEditorPage\TooltipContent
 	                           'アルバムが外国へ出ませんでしたならば、何も書かないでください。';
 	const OldCover           = '今のアルバムのカバーです。';
 	const NewCover           = 'カバーを替えてほしいなら、別のイメージをアップロードしてもいいです。<br/><br/>'.
-	                           '上限の大きさ:５１２キロバイト。<br/><br/>'.
+	                           '上限の大きさ:２メガバイト。<br/><br/>'.
 							   'おすすめは、３８４✕３８４ピクセルのイメージです。';
 	const Cover              = 'アルバムのカバーです。<br/><br/>'.
-	                           '上限の大きさ:５１２キロバイト。<br/><br/>'.
+	                           '上限の大きさ:２メガバイト。<br/><br/>'.
 							   'おすすめは、３８４✕３８４ピクセルのイメージです。';
 	const VgmdbLink          = 'vgmdb.netデータベースのアルバムの情報にリンクです。<br/><br/>'.
 	                           'vgmdb.netはゲームのサウンドトラックのデータベースです。たくさんの人が参加していて、情報が詳しいです。<br/><br/>'.
@@ -768,10 +777,10 @@ namespace Localization\ArtistEditorPage\TooltipContent
 	                           '歌手はいつも外国に来たなら、何も書かないでください。';
 	const OldPhoto           = '今の歌手の写真です。';
 	const NewPhoto           = '写真を替えてほしいなら、別のイメージをアップロードしてもいいです。<br/><br/>'.
-	                           '上限の大きさ:５１２キロバイト。<br/><br/>'.
+	                           '上限の大きさ:２メガバイト。<br/><br/>'.
 							   'おすすめは、３８４✕３８４ピクセルのイメージです。';
 	const Photo              = '歌手の写真です。<br/><br/>'.
-	                           '上限の大きさ:５１２キロバイト。<br/><br/>'.
+	                           '上限の大きさ:２メガバイト。<br/><br/>'.
 							   'おすすめは、３８４✕３８４ピクセルのイメージです。';
 	const VgmdbLink          = 'vgmdb.netデータベースのアルバムの情報にリンクです。<br/><br/>'.
 	                           'vgmdb.netはゲームのサウンドトラックのデータベースです。たくさんの人が参加していて、情報が詳しいです。<br/><br/>'.
@@ -807,10 +816,10 @@ namespace Localization\CharacterEditorPage\TooltipContent
 	                           'ゲームは外国に売られなかったなら、何も書かないでください。';
 	const OldImage           = '今のキャラのイメージです。';
 	const NewImage           = 'イメージを替えてほしいなら、別のイメージをアップロードしてもいいです。<br/><br/>'.
-	                           '上限の大きさ:５１２キロバイト。<br/><br/>'.
+	                           '上限の大きさ:２メガバイト。<br/><br/>'.
 							   'おすすめは、３８４✕３８４ピクセルのイメージです。';
 	const Image              = 'キャラのイメージです。<br/><br/>'.
-	                           '上限の大きさ:５１２キロバイト。<br/><br/>'.
+	                           '上限の大きさ:２メガバイト。<br/><br/>'.
 							   'おすすめは、３８４✕３８４ピクセルのイメージです。';
 	const VndbLink           = 'vndb.orgデータベースのキャラの情報にリンクです。<br/><br/>'.
 	                           'vndb.orgはインターネットで一番大きいビジュアルノベルのデータベースだかもしれません。<br/><br/>'.

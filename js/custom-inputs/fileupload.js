@@ -10,8 +10,8 @@ function selectFileWithCustomInput(e) {
 		return;
 	}
 	
-	// Max. size: 512 kilobytes
-	if (fileInput.files[0].size > 1024 * 512) {
+	// Max. size: 2 MB
+	if (fileInput.files[0].size > 2 * 1024 * 1024) {
 		fileInput.value = '';
 		fakeInput.textContent = fakeInput.getAttribute('text-file-too-big');
 		fakeInput.classList.remove('has-file');
