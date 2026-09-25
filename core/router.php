@@ -13,8 +13,8 @@ final class Router
 	private const ERROR_LOG_DIRNAME              = '.administering/.error-logs';
 	private const ERROR_LOG_FILENAME             = '-error.log';
 	
-	private const REQUEST_LOG_DIRNAME            = '.administering/.request-logs';
-	private const REQUEST_LOG_FILENAME           = '-request.log';
+	private const ACCESS_LOG_DIRNAME             = '.administering/.access-logs';
+	private const ACCESS_LOG_FILENAME            = '-access.log';
 	
 	private const MAINTENANCE_MODE_FILENAME      = '.administering/.maintenance-mode-on';
 	
@@ -210,7 +210,7 @@ final class Router
 	private static function logRequest(): void
 	{
 		$currentDate = date("Y-m-d", $_SERVER['REQUEST_TIME']);
-		$logFilename = self::REQUEST_LOG_DIRNAME.'/.'.$currentDate.self::REQUEST_LOG_FILENAME;
+		$logFilename = self::ACCESS_LOG_DIRNAME.'/.'.$currentDate.self::ACCESS_LOG_FILENAME;
 		
 		$log['datetime']   = date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME']);
 		$log['agentIp']    = $_SERVER['REMOTE_ADDR'];
