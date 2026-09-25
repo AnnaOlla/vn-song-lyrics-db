@@ -215,13 +215,14 @@ final class Router
 		$log['datetime']   = date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME']);
 		$log['agentIp']    = $_SERVER['REMOTE_ADDR'];
 		$log['request']    = $_SERVER['REQUEST_URI'];
-		$log['method']     = $_SERVER['REQUEST_METHOD'];
+		$log['method']     = 'HTTP method: '.$_SERVER['REQUEST_METHOD'];
+		$log['httpCode']   = 'HTTP code: '.http_response_code();
 		$log['emptyLine1'] = '';
 		$log['get']        = '$_GET = ('.var_export($_GET, true).')';
 		$log['emptyLine2'] = '';
 		$log['post']       = '$_POST = ('.var_export($_POST, true).')';
 		$log['emptyLine3'] = '';
-		$log['post']       = '$_FILES = ('.var_export($_FILES, true).')';
+		$log['files']      = '$_FILES = ('.var_export($_FILES, true).')';
 		$log['separator']  = '----------------------------------------------------------';
 		
 		foreach ($log as $part => $line)
