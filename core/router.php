@@ -2,18 +2,21 @@
 
 final class Router
 {
+	private const ACCEPTED_LANGUAGES             = ['en', 'ru', 'ja'];
+	private const DEFAULT_LANGUAGE               = 'en';
+	
 	private const BLOCKED_IPS_FILENAME          = '.administering/.blockages/.blocked-ips.txt';
 	private const BLOCKED_USER_AGENTS_FILENAME  = '.administering/.blockages/.blocked-user-agents.txt';
 	private const BLOCKED_REQUESTS_FILENAME     = '.administering/.blockages/.blocked-requests.txt';
 	private const BLOCKED_USER_PAGE_FILENAME    = 'include/violator-page.php';
 	
-	private const MAINTENANCE_MODE_FILENAME      = '.administering/.maintenance-mode-on';
-	
-	private const ACCEPTED_LANGUAGES             = ['en', 'ru', 'ja'];
-	private const DEFAULT_LANGUAGE               = 'en';
-	
 	private const ERROR_LOG_DIRNAME              = '.administering/.error-logs';
 	private const ERROR_LOG_FILENAME             = '-error.log';
+	
+	private const REQUEST_LOG_DIRNAME            = '.administering/.request-logs';
+	private const REQUEST_LOG_FILENAME           = '-request.log';
+	
+	private const MAINTENANCE_MODE_FILENAME      = '.administering/.maintenance-mode-on';
 	
 	private const RATE_LIMIT_WINDOW              = 10;
 	private const RATE_LIMIT_COUNT               = 20;
@@ -165,7 +168,7 @@ final class Router
 	
 	private static function logError(Throwable $exception): void
 	{
-		$currentDate = date("Y-m-d");
+		$currentDate = date("Y-m-d", $_SERVER['REQUEST_TIME']);
 		$logFilename = self::ERROR_LOG_DIRNAME.'/.'.$currentDate.self::ERROR_LOG_FILENAME;
 		
 		$trace      = $exception->getTrace();
@@ -189,7 +192,7 @@ final class Router
 			$stackTrace[] = $index.' '.$place.': '.$function.$args;
 		}
 		
-		$log['datetime']   = date("Y-m-d H:i:s");
+		$log['datetime']   = date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME']);
 		$log['agentIp']    = $_SERVER['REMOTE_ADDR'];
 		$log['class']      = get_class($exception);
 		$log['message']    = $exception->getMessage();
@@ -202,6 +205,27 @@ final class Router
 		
 		// Use the default logger too [just in case]
 		error_log($exception);
+	}
+	
+	private static function logRequest(): void
+	{
+		$currentDate = date("Y-m-d", $_SERVER['REQUEST_TIME']);
+		$logFilename = self::REQUEST_LOG_DIRNAME.'/.'.$currentDate.self::REQUEST_LOG_FILENAME;
+		
+		$log['datetime']   = date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME']);
+		$log['agentIp']    = $_SERVER['REMOTE_ADDR'];
+		$log['request']    = $_SERVER['REQUEST_URI'];
+		$log['method']     = $_SERVER['REQUEST_METHOD'];
+		$log['emptyLine1'] = '';
+		$log['get']        = '$_GET = ('.var_export($_GET, true).')';
+		$log['emptyLine2'] = '';
+		$log['post']       = '$_POST = ('.var_export($_POST, true).')';
+		$log['emptyLine3'] = '';
+		$log['post']       = '$_FILES = ('.var_export($_FILES, true).')';
+		$log['separator']  = '----------------------------------------------------------';
+		
+		foreach ($log as $part => $line)
+			error_log($line.PHP_EOL, 3, $logFilename);
 	}
 	
 	private static function startSession(): void
@@ -988,5 +1012,7 @@ final class Router
 			self::logError($e);
 			$controller->handleInternalServerError500();
 		}
+		
+		self::logRequest();
 	}
 }
