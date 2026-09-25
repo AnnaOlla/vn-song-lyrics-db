@@ -214,9 +214,10 @@ final class Router
 		
 		$log['datetime']   = date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME']);
 		$log['agentIp']    = $_SERVER['REMOTE_ADDR'];
+		$log['agentInfo']  = $_SERVER['HTTP_USER_AGENT'];
 		$log['request']    = $_SERVER['REQUEST_URI'];
-		$log['method']     = 'HTTP method: '.$_SERVER['REQUEST_METHOD'];
-		$log['httpCode']   = 'HTTP code: '.http_response_code();
+		$log['method']     = $_SERVER['REQUEST_METHOD'];
+		$log['httpCode']   = http_response_code();
 		$log['emptyLine1'] = '';
 		$log['get']        = '$_GET = ('.var_export($_GET, true).')';
 		$log['emptyLine2'] = '';
