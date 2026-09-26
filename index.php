@@ -3,6 +3,8 @@
 try
 {
 	require_once 'core/boot.php';
+	
+	Config::initialize();
 	Router::run();
 }
 catch (Throwable $e)

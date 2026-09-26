@@ -6,7 +6,7 @@ class ViolatorModel extends VisitorModel
 {
 	public function __construct()
 	{
-		$this->pdo = getPdo('violator');
+		$this->pdo = Config::getPdo('violator');
 	}
 	
 	// Nothing here.

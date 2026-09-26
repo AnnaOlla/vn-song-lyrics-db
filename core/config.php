@@ -1,42 +1,42 @@
 <?php
 
-function getPdo(string $userRole): PDO
+final class Config
 {
-	$settings =
-	[
-		'dbName' => '',
-		'dbHost' => '',
-		'dbUser' => $userRole,
-		'dbPswd' => null,
-		'dbChar' => 'utf8mb4'
-	];
+	private static $settings = null;
+	private const USER_ROLES = ['visitor', 'violator', 'user', 'administrator'];
 	
-	switch ($userRole)
+	public static function initialize(): void
 	{
-		case 'visitor':
-			$settings['dbPswd'] = '';
-			break;
-			
-		case 'violator':
-			$settings['dbPswd'] = '';
-			break;
-			
-		case 'user':
-			$settings['dbPswd'] = '';
-			break;
-			
-		case 'administrator':
-			$settings['dbPswd'] = '';
-			break;
-			
-		default:
-			throw HttpInternalServerError500('Database connection problem', get_defined_vars());
+		self::$settings = parse_ini_file('.env', true);
 	}
 	
-	$dsn = 'mysql:dbname='.$settings['dbName'].';host='.$settings['dbHost'].';charset='.$settings['dbChar'];
+	public static function getPdo(string $userRole): PDO
+	{
+		if (!in_array($userRole, self::USER_ROLES, true))
+			throw HttpInternalServerError500('Database connection problem', get_defined_vars());
+		
+		$type     = self::$settings['database']['type'];
+		$name     = self::$settings['database']['name'];
+		$host     = self::$settings['database']['host'];
+		$login    = self::$settings['database']['login_'.$userRole];
+		$password = self::$settings['database']['password_'.$userRole];
+		$charset  = self::$settings['database']['character_set'];
+		
+		$connection = "{$type}:dbname={$name};host={$host};charset={$charset}";
+		
+		$pdo = new PDO($connection, $login, $password);
+		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		
+		return $pdo;
+	}
 	
-	$pdo = new PDO($dsn, $settings['dbUser'], $settings['dbPswd']);
-	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	public static function getPasswordSettings(): array
+	{
+		return self::$settings['password'];
+	}
 	
-	return $pdo;
+	public static function getHashSettings(): array
+	{
+		return self::$settings['hash'];
+	}
 }
