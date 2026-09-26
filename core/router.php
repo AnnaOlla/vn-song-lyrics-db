@@ -2,94 +2,9 @@
 
 final class Router
 {
-	private const ACCEPTED_LANGUAGES             = ['en', 'ru', 'ja'];
-	private const DEFAULT_LANGUAGE               = 'en';
+	private const ACCEPTED_LANGUAGES = ['en', 'ru', 'ja'];
+	private const DEFAULT_LANGUAGE   = 'en';
 	
-	private const BLOCKED_IPS_FILENAME          = '.administering/.blockages/.blocked-ips.txt';
-	private const BLOCKED_USER_AGENTS_FILENAME  = '.administering/.blockages/.blocked-user-agents.txt';
-	private const BLOCKED_REQUESTS_FILENAME     = '.administering/.blockages/.blocked-requests.txt';
-	private const BLOCKED_USER_PAGE_FILENAME    = 'include/violator-page.php';
-	
-	private const ERROR_LOG_DIRNAME              = '.administering/.error-logs';
-	private const ERROR_LOG_FILENAME             = '-error.log';
-	
-	private const ACCESS_LOG_DIRNAME             = '.administering/.access-logs';
-	private const ACCESS_LOG_FILENAME            = '-access.log';
-	
-	private const MAINTENANCE_MODE_FILENAME      = '.administering/.maintenance-mode-on';
-	
-	private const RATE_LIMIT_WINDOW              = 10;
-	private const RATE_LIMIT_COUNT               = 20;
-	private const RATE_LIMIT_BANNABLE_COUNT      = 40;
-	
-	private static function isBlockedIp(): bool
-	{
-		$blockedIps = new SplFileObject(self::BLOCKED_IPS_FILENAME);
-		$blockedIps->setFlags(SplFileObject::DROP_NEW_LINE);
-		
-		foreach ($blockedIps as $blockedIp)
-		{
-			if ($_SERVER['REMOTE_ADDR'] === $blockedIp)
-				return true;
-		}
-		
-		return false;
-	}
-	
-	private static function isBlockedRequest(): bool
-	{
-		$blockedRequests = new SplFileObject(self::BLOCKED_REQUESTS_FILENAME);
-		$blockedRequests->setFlags(SplFileObject::DROP_NEW_LINE);
-		
-		foreach ($blockedRequests as $blockedRequest)
-		{
-			if (str_contains($_SERVER['REQUEST_URI'], $blockedRequest))
-				return true;
-		}
-		
-		return false;
-	}
-	
-	private static function isBlockedUserAgent(): bool
-	{
-		$blockedUserAgents = new SplFileObject(self::BLOCKED_USER_AGENTS_FILENAME);
-		$blockedUserAgents->setFlags(SplFileObject::DROP_NEW_LINE);
-		
-		foreach ($blockedUserAgents as $blockedUserAgent)
-		{
-			if (str_contains($_SERVER['HTTP_USER_AGENT'], $blockedUserAgent))
-				return true;
-		}
-		
-		return false;
-	}
-	
-	private static function blockIp(): void
-	{
-		$blockedIps = new SplFileObject(self::BLOCKED_IPS_FILENAME, 'a');
-		$blockedIps->fwrite($_SERVER['REMOTE_ADDR'].PHP_EOL);
-	}
-	
-	private static function updateRateLimit(): void
-	{
-		$now = time();
-		
-		while (!$_SESSION['rateLimit']->isEmpty() && $now - $_SESSION['rateLimit']->bottom() >= self::RATE_LIMIT_WINDOW)
-			$_SESSION['rateLimit']->shift();
-		
-		if (!Session::agentIsAdministrator())
-			$_SESSION['rateLimit']->push($now);
-	}
-	
-	private static function isRateLimitExceeded(): bool
-	{
-		return $_SESSION['rateLimit']->count() > self::RATE_LIMIT_COUNT;
-	}
-	
-	private static function isRateLimitExceededTooMuch(): bool
-	{
-		return $_SESSION['rateLimit']->count() > self::RATE_LIMIT_BANNABLE_COUNT;
-	}
 	private static function isUserAgentSearchEngineCrawler(): bool
 	{
 		// Crawlers do not like redirections from the root
@@ -141,11 +56,16 @@ final class Router
 		return $languages;
 	}
 	
+	private static function isAcceptedLanguage(string $language): string
+	{
+		return in_array($language, self::ACCEPTED_LANGUAGES, true);
+	}
+	
 	private static function getSuitableLanguage(array $languages): string
 	{
 		foreach ($languages as $language => $weight)
 		{
-			if (in_array($language, self::ACCEPTED_LANGUAGES, true))
+			if (self::isAcceptedLanguage($language))
 				return $language;
 		}
 		
@@ -166,116 +86,8 @@ final class Router
 		return ($dot > $slash);
 	}
 	
-	private static function logError(Throwable $exception): void
-	{
-		$currentDate = date("Y-m-d", $_SERVER['REQUEST_TIME']);
-		$logFilename = self::ERROR_LOG_DIRNAME.'/.'.$currentDate.self::ERROR_LOG_FILENAME;
-		
-		$trace      = $exception->getTrace();
-		$stackTrace = [];
-		
-		for ($i = 0; $i < count($trace); $i++)
-		{
-			$index = '#'.$i;
-			$place = $trace[$i]['file'].'('.$trace[$i]['line'].')';
-			
-			if (isset($trace[$i]['class']))
-				$function = $trace[$i]['class'].'->'.$trace[$i]['function'];
-			else
-				$function = $trace[$i]['function'];
-			
-			if (isset($trace[$i]['args']))
-				$args = PHP_EOL.'('.var_export($trace[$i]['args'], true).')';
-			else
-				$args = '';
-			
-			$stackTrace[] = $index.' '.$place.': '.$function.$args;
-		}
-		
-		$log['datetime']   = date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME']);
-		$log['agentIp']    = $_SERVER['REMOTE_ADDR'];
-		$log['class']      = get_class($exception);
-		$log['message']    = $exception->getMessage();
-		$log['emptyLine']  = '';
-		$log['stackTrace'] = implode(PHP_EOL, $stackTrace);
-		$log['separator']  = '----------------------------------------------------------';
-		
-		foreach ($log as $part => $line)
-			error_log($line.PHP_EOL, 3, $logFilename);
-		
-		// Use the default logger too [just in case]
-		error_log($exception);
-	}
-	
-	private static function logRequest(): void
-	{
-		$currentDate = date("Y-m-d", $_SERVER['REQUEST_TIME']);
-		$logFilename = self::ACCESS_LOG_DIRNAME.'/.'.$currentDate.self::ACCESS_LOG_FILENAME;
-		
-		$log['datetime']   = date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME']);
-		$log['agentIp']    = $_SERVER['REMOTE_ADDR'];
-		$log['agentInfo']  = $_SERVER['HTTP_USER_AGENT'];
-		$log['request']    = $_SERVER['REQUEST_URI'];
-		$log['method']     = $_SERVER['REQUEST_METHOD'];
-		$log['httpCode']   = http_response_code();
-		$log['emptyLine1'] = '';
-		$log['get']        = '$_GET = ('.var_export($_GET, true).')';
-		$log['emptyLine2'] = '';
-		$log['post']       = '$_POST = ('.var_export($_POST, true).')';
-		$log['emptyLine3'] = '';
-		$log['files']      = '$_FILES = ('.var_export($_FILES, true).')';
-		$log['separator']  = '----------------------------------------------------------';
-		
-		foreach ($log as $part => $line)
-			error_log($line.PHP_EOL, 3, $logFilename);
-	}
-	
-	private static function startSession(): void
-	{
-		session_start();
-
-		if (!isset($_SESSION['user']))
-			$_SESSION['user']['role'] = 'visitor';
-
-		if (!isset($_SESSION['rateLimit']))
-			$_SESSION['rateLimit'] = new SplDoublyLinkedList();
-	}
-	
-	private static function endSession(): void
-	{
-		session_unset();
-		setcookie(session_name(), session_id(), time() - 60 * 60 * 60 * 24);
-		session_destroy();
-	}
-	
 	public static function run(): void
 	{
-		self::startSession();
-		self::updateRateLimit();
-		
-		if (self::isBlockedIp() || self::isBlockedUserAgent())
-		{
-			self::endSession();
-			
-			http_response_code(403);
-			header("Connection: close");
-			require_once self::BLOCKED_USER_PAGE_FILENAME;
-			
-			exit;
-		}
-		
-		if (self::isBlockedRequest() || self::isRateLimitExceededTooMuch())
-		{
-			self::blockIp();
-			self::endSession();
-			
-			http_response_code(403);
-			header("Connection: close");
-			require_once self::BLOCKED_USER_PAGE_FILENAME;
-			
-			exit;
-		}
-		
 		$requestedPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 		
 		if (self::isNonExistentFileRequested($requestedPath))
@@ -303,7 +115,7 @@ final class Router
 		for ($i = 0; $i < $routeCount; $i++)
 			$routes[$i] = rawurldecode($routes[$i]);
 		
-		$language = $routes[1];
+		$requestedLanguage = $routes[1];
 		
 		//-------------------//
 		//      Routing      //
@@ -877,11 +689,13 @@ final class Router
 			$parameters = [];
 		}
 		
+		/*
 		else if ($routeCount == 3 && $routes[2] === 'font-test')
 		{
 			echo file_get_contents('.administering/.font-tests/font-test-page.html');
 			exit;
 		}
+		*/
 		
 		else
 		{
@@ -895,126 +709,136 @@ final class Router
 		
 		try
 		{
-			// Fallback
+			AccessManager::startSession();
+			AccessManager::updateRateLimit();
 			
-			if (in_array($language, self::ACCEPTED_LANGUAGES))
-				$errorLanguage = $language;
+			if (AccessManager::isBlockedRequest() || AccessManager::isRateLimitExceededToBlock())
+				AccessManager::blockIp();
+			
+			if (AccessManager::isBlockedIp() || AccessManager::isBlockedUserAgent())
+			{
+				AccessManager::endSession();
+				
+				http_response_code(403);
+				header("Connection: close");
+				require_once AccessManager::BLOCKED_USER_PAGE_FILENAME;
+				
+				exit;
+			}
+			
+			if (self::isAcceptedLanguage($requestedLanguage))
+				$language = $requestedLanguage;
 			else
-				$errorLanguage = self::DEFAULT_LANGUAGE;
-			
-			require_once 'controllers/error-controller.php';
-			$controller = new ErrorController($errorLanguage);
-			
-			// Complete the request
-			
-			if (file_exists(self::MAINTENANCE_MODE_FILENAME) && !Session::agentIsAdministrator())
-				throw new HttpServiceUnavailable503();
-			
-			if (self::isRateLimitExceeded())
-				throw new HttpTooManyRequests429();
-			
-			if (!in_array($language, self::ACCEPTED_LANGUAGES))
-				throw new HttpNotAcceptable406();
+				$language = self::DEFAULT_LANGUAGE;
 			
 			require_once 'controllers/'.$_SESSION['user']['role'].'-controller.php';
 			$controller = new ($_SESSION['user']['role'].'controller')($language);
 			
-			if (method_exists($controller, $method))
-				$controller->$method(...$parameters);
-			else
+			if (AccessManager::isMaintenanceModeActive() && !Session::agentIsAdministrator())
+				throw new HttpServiceUnavailable503();
+			
+			if (AccessManager::isRateLimitExceeded())
+				throw new HttpTooManyRequests429();
+			
+			if (!self::isAcceptedLanguage($requestedLanguage))
+				throw new HttpNotAcceptable406();
+			
+			if (!method_exists($controller, $method))
 				throw new HttpNotFound404();
+			
+			$controller->$method(...$parameters);
 		}
 		catch (HttpBadRequest400 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleBadRequest400();
 		}
 		catch (HttpUnauthorized401 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleUnauthorized401();
 		}
 		catch (HttpPaymentRequired402 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handlePaymentRequired402();
 		}
 		catch (HttpForbidden403 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleForbidden403();
 		}
 		catch (HttpNotFound404 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleNotFound404();
 		}
 		catch (HttpMethodNotAllowed405 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleMethodNotAllowed405();
 		}
 		catch (HttpNotAcceptable406 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleNotAcceptable406();
 		}
 		catch (HttpConflict409 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleConflict409();
 		}
 		catch (HttpContentTooLarge413 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleContentTooLarge413();
 		}
 		catch (HttpUnsupportedMediaType415 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleUnsupportedMediaType415();
 		}
 		catch (HttpUnprocessableEntity422 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleUnprocessableEntity422();
 		}
 		catch (HttpTooManyRequests429 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleTooManyRequests429();
 		}
 		catch (HttpUnavailableForLegalReasons451 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleUnavailableForLegalReasons451();
 		}
 		catch (HttpInternalServerError500 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleInternalServerError500();
 		}
 		catch (HttpNotImplemented501 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleNotImplemented501();
 		}
 		catch (HttpBadGateway502 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleBadGateway502();
 		}
 		catch (HttpServiceUnavailable503 $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleServiceUnavailable503();
 		}
 		catch (Throwable $e)
 		{
-			self::logError($e);
+			Logger::logError($e);
 			$controller->handleInternalServerError500();
 		}
 		
-		self::logRequest();
+		Logger::logRequest();
 	}
 }

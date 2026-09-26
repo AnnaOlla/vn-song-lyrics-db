@@ -1,6 +1,8 @@
 <?php
 
-require_once 'core/config.php';
+require_once 'core/access-manager.php';
+require_once 'core/configuration.php';
+require_once 'core/logger.php';
 require_once 'core/router.php';
 
 require_once 'include/.cryptography.php';

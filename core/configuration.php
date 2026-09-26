@@ -1,6 +1,6 @@
 <?php
 
-final class Config
+final class Configuration
 {
 	private static $settings = null;
 	private const USER_ROLES = ['visitor', 'violator', 'user', 'administrator'];
