@@ -6,7 +6,7 @@ class UserModel extends ViolatorModel
 {
 	public function __construct()
 	{
-		$this->pdo = Config::getPdo('user');
+		$this->pdo = Configuration::getPdo('user');
 	}
 	
 	//------------------------------------//

@@ -8,7 +8,7 @@ class VisitorModel extends Model
 	
 	public function __construct()
 	{
-		$this->pdo = Config::getPdo('visitor');
+		$this->pdo = Configuration::getPdo('visitor');
 	}
 	
 	final protected function buildUri(string $value): string

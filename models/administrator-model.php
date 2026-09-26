@@ -15,7 +15,7 @@ class AdministratorModel extends UserModel
 	
 	public function __construct()
 	{
-		$this->pdo = Config::getPdo('administrator');
+		$this->pdo = Configuration::getPdo('administrator');
 	}
 	
 	final public function updateGameStatus(string $gameUri, string $status, int $userReviewedId): bool
