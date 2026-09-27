@@ -11,7 +11,7 @@ class AdministratorView extends UserView
 	
 	final public function renderControlPanelPage(): void
 	{
-		$maintenance = AccessManager::isMaintenanceModeActive() ? 'Activate Maintenance Mode' : 'Deactivate Maintenance Mode';
+		$maintenance = RoleManager::isMaintenanceModeActive() ? 'Activate Maintenance Mode' : 'Deactivate Maintenance Mode';
 		
 		$html[] = $this->startRender(title: 'Control Panel');
 		

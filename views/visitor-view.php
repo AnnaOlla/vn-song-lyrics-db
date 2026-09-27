@@ -299,7 +299,7 @@ class VisitorView extends ErrorView
 	{
 		$buttonAttributes = ['href'  => Http::buildInternalPath($this->language, 'add-game')];
 		$buttonLabel      = \Localization\GameListPage\AddGame;
-		$buttonAccess     = AccessManager::getStateForUserToAddGame();
+		$buttonAccess     = RoleManager::getStateToAddGame();
 		
 		$hrefThisPage  = Http::buildInternalPath($this->language, 'game-list');
 		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
@@ -373,7 +373,7 @@ class VisitorView extends ErrorView
 	{
 		$buttonAttributes = ['href'  => Http::buildInternalPath($this->language, 'add-album')];
 		$buttonLabel      = \Localization\AlbumListPage\AddAlbum;
-		$buttonAccess     = AccessManager::getStateForUserToAddAlbum();
+		$buttonAccess     = RoleManager::getStateToAddAlbum();
 		
 		$hrefThisPage  = Http::buildInternalPath($this->language, 'album-list');
 		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
@@ -447,7 +447,7 @@ class VisitorView extends ErrorView
 	{
 		$buttonAttributes = ['href'  => Http::buildInternalPath($this->language, 'add-artist')];
 		$buttonLabel      = \Localization\ArtistListPage\AddArtist;
-		$buttonAccess     = AccessManager::getStateForUserToAddArtist();
+		$buttonAccess     = RoleManager::getStateToAddArtist();
 		
 		$hrefThisPage  = Http::buildInternalPath($this->language, 'artist-list');
 		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
@@ -521,7 +521,7 @@ class VisitorView extends ErrorView
 	{
 		$buttonAttributes = ['href'  => Http::buildInternalPath($this->language, 'add-character')];
 		$buttonLabel      = \Localization\CharacterListPage\AddCharacter;
-		$buttonAccess     = AccessManager::getStateForUserToAddCharacter();
+		$buttonAccess     = RoleManager::getStateToAddCharacter();
 		
 		$hrefThisPage  = Http::buildInternalPath($this->language, 'character-list');
 		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
@@ -772,7 +772,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (AccessManager::isUserAdministrator())
+		if (Authorizer::isCurrentUserAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -826,7 +826,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (AccessManager::isUserAdministrator())
+		if (Authorizer::isCurrentUserAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -907,7 +907,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (AccessManager::isUserAdministrator())
+		if (Authorizer::isCurrentUserAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -988,7 +988,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (AccessManager::isUserAdministrator())
+		if (Authorizer::isCurrentUserAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1029,7 +1029,7 @@ class VisitorView extends ErrorView
 		
 		$buttonAttributes = ['href'  => Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'add-lyrics')];
 		$buttonLabel      = \Localization\LyricsPage\AddLyrics;
-		$buttonAccess     = AccessManager::getStateForUserToAddLyrics($song);
+		$buttonAccess     = RoleManager::getStateToAddLyrics($song);
 		
 		$addLyricsButton = $this->createButtonAsRestrictedLink($buttonLabel, $buttonAccess, $buttonAttributes);
 		
@@ -1106,7 +1106,7 @@ class VisitorView extends ErrorView
 			<section class="lyrics-section">
 				'.$this->createSongLyrics($songToShow).'
 				'.$this->createSongNotes($songToShow).'
-				'.$this->createTimestampBlock(AccessManager::isUserAdministrator() ? $song : $songToShow).'
+				'.$this->createTimestampBlock(Authorizer::isCurrentUserAdministrator() ? $song : $songToShow).'
 				'.$this->createEntityControlBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
 			</section>
 		</article>
@@ -1118,7 +1118,7 @@ class VisitorView extends ErrorView
 			'/js/lyrics-page.js'
 		];
 		
-		if (AccessManager::isUserAdministrator())
+		if (Authorizer::isCurrentUserAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1198,7 +1198,7 @@ class VisitorView extends ErrorView
 				'.$this->createTranslationNotes($translation).'
 				'.$this->createSongNotes($songToShow).'
 				'.$this->createTimestampBlock($translation).'
-				'.$this->createTimestampBlock(AccessManager::isUserAdministrator() ? $song : $songToShow).'
+				'.$this->createTimestampBlock(Authorizer::isCurrentUserAdministrator() ? $song : $songToShow).'
 				'.$this->createEntityControlBlock([$album, $song, $translation], ['album', 'song', 'translation'], $translation, 'Translation').'
 				'.$this->createEntityControlBlock([$album, $song], ['album', 'song'], $song, 'Lyrics', 'edit-lyrics', 'delete-lyrics', 'report-lyrics').'
 			</section>
@@ -1211,7 +1211,7 @@ class VisitorView extends ErrorView
 			'/js/lyrics-page.js',
 			'/js/translation-page.js'
 		];
-		if (AccessManager::isUserAdministrator())
+		if (Authorizer::isCurrentUserAdministrator())
 		{
 			$js[] = '/js/moderation/change-status-select.js';
 		}
@@ -1271,7 +1271,7 @@ class VisitorView extends ErrorView
 			$ip        = Cryptography::generateSimpleHash($feedback['sender_ip']);
 			$timestamp = $feedback['message_timestamp'];
 			$message   = $feedback['message'];
-			$id        = AccessManager::isUserAdministrator() ? ' data-id="'.htmlspecialchars($feedback['id']).'"' : '';
+			$id        = Authorizer::isCurrentUserAdministrator() ? ' data-id="'.htmlspecialchars($feedback['id']).'"' : '';
 			
 			$html[] = 
 			'
@@ -1295,7 +1295,7 @@ class VisitorView extends ErrorView
 				';
 			}
 			
-			if (AccessManager::isUserAdministrator())
+			if (Authorizer::isCurrentUserAdministrator())
 			{
 				$html[] = 
 				'
@@ -1322,7 +1322,7 @@ class VisitorView extends ErrorView
 		';
 		
 		$js = [];
-		if (AccessManager::isUserAdministrator())
+		if (Authorizer::isCurrentUserAdministrator())
 		{
 			$js[] = '/js/moderation/feedback.js';
 		}
@@ -1493,7 +1493,7 @@ class VisitorView extends ErrorView
 			</section>
 		';
 		
-		if (AccessManager::isUser($userData['id']) || AccessManager::isUserAdministrator())
+		if (Authorizer::isCurrentUser($userData['id']) || Authorizer::isCurrentUserAdministrator())
 		{
 			$label1 = \Localization\UserPage\ChangeAboutMe;
 			$label2 = \Localization\UserPage\ChangeUsername;
@@ -1513,11 +1513,11 @@ class VisitorView extends ErrorView
 			$attributes4 = ['href' => $href4];
 			$attributes5 = ['href' => $href5];
 			
-			$access1 = (AccessManager::isUserViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
-			$access2 = (AccessManager::isUserViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
-			//$access3 = (AccessManager::isUserViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
-			$access4 = (AccessManager::isUserViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
-			$access5 = (AccessManager::isUserViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
+			$access1 = (Authorizer::isCurrentUserViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
+			$access2 = (Authorizer::isCurrentUserViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
+			//$access3 = (Authorizer::isCurrentUserViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
+			$access4 = (Authorizer::isCurrentUserViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
+			$access5 = (Authorizer::isCurrentUserViolator()) ? AccessState::AgentIsViolatorError : AccessState::Ok;
 			
 			$html[] = 
 			'

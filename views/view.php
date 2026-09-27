@@ -205,7 +205,7 @@ HTML;
 		$ruLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'ru');
 		$jaLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'ja');
 		
-		if (AccessManager::isUserVisitor())
+		if (Authorizer::isCurrentUserVisitor())
 		{
 			$logIn    = '<a href="/'.$this->language.'/log-in">'.\Localization\Header\LogIn.'</a>';
 			$signUp   = '<a href="/'.$this->language.'/sign-up">'.\Localization\Header\SignUp.'</a>';
@@ -767,9 +767,9 @@ HTML;
 		$deleteAttributes = ['href' => $deleteHref];
 		$reportAttributes = ['href' => $reportHref];
 		
-		$editAccess   = ('AccessManager::getStateForUserToEdit'  .$currentEntityName)($currentEntity);
-		$deleteAccess = ('AccessManager::getStateForUserToDelete'.$currentEntityName)($currentEntity);
-		$reportAccess = ('AccessManager::getStateForUserToReport'.$currentEntityName)($currentEntity);
+		$editAccess   = ('RoleManager::getStateToEdit'  .$currentEntityName)($currentEntity);
+		$deleteAccess = ('RoleManager::getStateToDelete'.$currentEntityName)($currentEntity);
+		$reportAccess = ('RoleManager::getStateToReport'.$currentEntityName)($currentEntity);
 		
 		$editButton   = $this->createButtonAsRestrictedLink(\Localization\Controls\Edit,   $editAccess,   $editAttributes);
 		$deleteButton = $this->createButtonAsRestrictedLink(\Localization\Controls\Delete, $deleteAccess, $deleteAttributes);
@@ -868,7 +868,7 @@ HTML;
 			}
 		}
 		
-		if ((AccessManager::isUserContributor() || AccessManager::isUserAdministrator()) && is_null($song['original_song_id']))
+		if ((Authorizer::isCurrentUserContributor() || Authorizer::isCurrentUserAdministrator()) && is_null($song['original_song_id']))
 		{
 			$href = Http::buildInternalPath
 			(
@@ -1190,7 +1190,7 @@ HTML;
 	
 	final protected function createTimestampBlock(array $entity): string
 	{
-		if (AccessManager::isUserAdministrator())
+		if (Authorizer::isCurrentUserAdministrator())
 			$statusRow = $this->createStatusSelect($entity);
 		else
 			$statusRow = $this->createStatus($entity['status']);
@@ -1816,7 +1816,7 @@ HTML;
 			
 			if ($relationKey)
 			{
-				if (AccessManager::isUserAdministrator() && $statusChangeAllowed)
+				if (Authorizer::isCurrentUserAdministrator() && $statusChangeAllowed)
 					$textEntities[] = $this->createStatusSelect($game, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($game[$relationKey], true);
@@ -1852,7 +1852,7 @@ HTML;
 			
 			if ($relationKey)
 			{
-				if (AccessManager::isUserAdministrator()&& $statusChangeAllowed)
+				if (Authorizer::isCurrentUserAdministrator()&& $statusChangeAllowed)
 					$textEntities[] = $this->createStatusSelect($album, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($album[$relationKey], true);
@@ -1888,7 +1888,7 @@ HTML;
 			
 			if ($relationKey)
 			{
-				if (AccessManager::isUserAdministrator() && $statusChangeAllowed)
+				if (Authorizer::isCurrentUserAdministrator() && $statusChangeAllowed)
 					$textEntities[] = $this->createStatusSelect($artist, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($artist[$relationKey], true);
@@ -1924,7 +1924,7 @@ HTML;
 			
 			if ($relationKey)
 			{
-				if (AccessManager::isUserAdministrator() && $statusChangeAllowed)
+				if (Authorizer::isCurrentUserAdministrator() && $statusChangeAllowed)
 					$textEntities[] = $this->createStatusSelect($character, $relationKey, $href);
 				else
 					$textEntities[] = $this->createStatus($character[$relationKey], true);
@@ -1956,14 +1956,14 @@ HTML;
 				$transliteratedName = $this->createParagraph($songs[$i]['transliterated_name']);
 			
 			$editLabel    = \Localization\AlbumPage\EditSong;
-			$editAccess   = AccessManager::getStateForUserToEditAlbum($album);
-			$editAccess   = ($editAccess === AccessState::Ok) ? AccessManager::getStateForUserToEditSong($songs[$i]) : $editAccess;
+			$editAccess   = RoleManager::getStateToEditAlbum($album);
+			$editAccess   = ($editAccess === AccessState::Ok) ? RoleManager::getStateToEditSong($songs[$i]) : $editAccess;
 			$editHref     = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'edit');
 			$editButton   = $this->createButtonAsRestrictedLink($editLabel, $editAccess, ['href' => $editHref]);
 			
 			$deleteLabel  = \Localization\AlbumPage\DeleteSong;
-			$deleteAccess = AccessManager::getStateForUserToEditAlbum($album);
-			$deleteAccess = ($deleteAccess === AccessState::Ok) ? AccessManager::getStateForUserToDeleteSong($songs[$i]) : $deleteAccess;
+			$deleteAccess = RoleManager::getStateToEditAlbum($album);
+			$deleteAccess = ($deleteAccess === AccessState::Ok) ? RoleManager::getStateToDeleteSong($songs[$i]) : $deleteAccess;
 			$deleteHref   = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'delete');
 			$deleteButton = $this->createButtonAsRestrictedLink($deleteLabel, $deleteAccess, ['href' => $deleteHref]);
 			
@@ -2014,7 +2014,7 @@ HTML;
 		if (count($songs) < $album['song_count'])
 		{
 			$addLabel  = \Localization\AlbumPage\AddSong;
-			$addAccess = AccessManager::getStateForUserToEditAlbum($album);
+			$addAccess = RoleManager::getStateToEditAlbum($album);
 			$addHref   = Http::buildInternalPath($this->language, 'album', $album['uri'], 'add-song');
 			$addButton = $this->createButtonAsRestrictedLink($addLabel, $addAccess, ['href' => $addHref]);
 			
@@ -2029,7 +2029,7 @@ HTML;
 			';
 		}
 		
-		if (count($songs) === 0 && AccessManager::isUserAdministrator())
+		if (count($songs) === 0 && Authorizer::isCurrentUserAdministrator())
 		{
 			$title = \Localization\AlbumPage\FillAlbum;
 			$href  = Http::buildInternalPath($this->language, 'album', $album['uri'], 'fill-album');

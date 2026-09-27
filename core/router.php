@@ -2,23 +2,12 @@
 
 final class Router
 {
-	private const ACCEPTED_LANGUAGES = ['en', 'ru', 'ja'];
-	private const DEFAULT_LANGUAGE   = 'en';
-	
 	private static function isUserAgentSearchEngineCrawler(): bool
 	{
 		// Crawlers do not like redirections from the root
 		// The fix is to allow them use the root as the homepage
 		
-		$mainCrawlers =
-		[
-			'Googlebot',
-			'Bingbot',
-			'DuckDuckBot',
-			'Baiduspider',
-			'YandexBot',
-			'Slurp'
-		];
+		$mainCrawlers = ['Googlebot', 'Bingbot', 'DuckDuckBot', 'Baiduspider', 'YandexBot', 'Slurp'];
 		
 		foreach ($mainCrawlers as $mainCrawler)
 		{
@@ -27,49 +16,6 @@ final class Router
 		}
 		
 		return false;
-	}
-	
-	private static function detectUserLanguages(): array
-	{
-		// My example: en-GB,en;q=0.9,ru;q=0.8,fi;q=0.7,ja;q=0.6
-		// en-GB must be deduced to q=1.0
-		// en;q=0.9 must be dropped
-		
-		$preferences = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '');
-		$languages = [];
-		
-		foreach ($preferences as $preference)
-		{
-			// Split code and value
-			$parts    = explode(';', $preference);
-			
-			// Strip country code if exists
-			$language = explode('-', $parts[0])[0];
-			
-			// Deduce q=1.0 if parts[1] does not exist
-			$weight   = explode('=', $parts[1] ?? 'q=1.0')[1];
-			
-			// Assign and avoid collision (same language, different countries)
-			$languages[$language] = $languages[$language] ?? (float)$weight;
-		}
-		
-		return $languages;
-	}
-	
-	private static function isAcceptedLanguage(string $language): string
-	{
-		return in_array($language, self::ACCEPTED_LANGUAGES, true);
-	}
-	
-	private static function getSuitableLanguage(array $languages): string
-	{
-		foreach ($languages as $language => $weight)
-		{
-			if (self::isAcceptedLanguage($language))
-				return $language;
-		}
-		
-		return self::DEFAULT_LANGUAGE;
 	}
 	
 	private static function isRootRequested(string $requestedPath): bool
@@ -98,8 +44,8 @@ final class Router
 		
 		if (self::isRootRequested($requestedPath) && !self::isUserAgentSearchEngineCrawler())
 		{
-			$languages = self::detectUserLanguages();
-			$language  = self::getSuitableLanguage($languages);
+			$languages = Localizer::detectUserLanguages();
+			$language  = Localizer::getSuitableLanguage($languages);
 			
 			http_response_code(302);
 			header('Location: /'.$language);
@@ -715,10 +661,10 @@ final class Router
 		
 		try
 		{
-			AccessManager::startSession();
-			AccessManager::updateRateLimit();
+			Authorizer::startSession();
+			Authorizer::updateRateLimit();
 			
-			if (self::isAcceptedLanguage($requestedLanguage))
+			if (Localizer::isAcceptedLanguage($requestedLanguage))
 				$language = $requestedLanguage;
 			else
 				$language = self::DEFAULT_LANGUAGE;
@@ -726,19 +672,19 @@ final class Router
 			require_once 'controllers/'.$_SESSION['user']['role'].'-controller.php';
 			$controller = new ($_SESSION['user']['role'].'controller')($language);
 			
-			if (AccessManager::isRequestForbidden() || AccessManager::isRateLimitExceededToBlock())
-				AccessManager::blockCurrentIp();
+			if (Authorizer::isRequestForbidden() || Authorizer::isRateLimitExceededToBlock())
+				Authorizer::blockCurrentIp();
 			
-			if (AccessManager::isCurrentIpBlocked() || AccessManager::isCurrentUserAgentBlocked())
+			if (Authorizer::isCurrentIpBlocked() || Authorizer::isCurrentUserAgentBlocked())
 				throw new HttpForbidden403();
 			
-			if (AccessManager::isMaintenanceModeActive() && !AccessManager::isUserAdministrator())
+			if (Authorizer::isMaintenanceModeActive() && !Authorizer::isCurrentUserAdministrator())
 				throw new HttpServiceUnavailable503();
 			
-			if (AccessManager::isRateLimitExceeded())
+			if (Authorizer::isRateLimitExceeded())
 				throw new HttpTooManyRequests429();
 			
-			if (!self::isAcceptedLanguage($requestedLanguage))
+			if (!Localizer::isAcceptedLanguage($requestedLanguage))
 				throw new HttpNotAcceptable406();
 			
 			if (!method_exists($controller, $method))

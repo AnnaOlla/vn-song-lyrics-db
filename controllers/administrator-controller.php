@@ -570,13 +570,13 @@ class AdministratorController extends UserController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if ($album['status'] === 'hidden' && !AccessManager::isUserAdministrator())
+		if ($album['status'] === 'hidden' && !Authorizer::isCurrentUserAdministrator())
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if ($album['status'] === 'checked' && !AccessManager::isUserAdministrator())
+		if ($album['status'] === 'checked' && !Authorizer::isCurrentUserAdministrator())
 			throw new HttpForbidden403();
 		
-		if (!AccessManager::isUser($album['user_added_id']) && !AccessManager::isUserAdministrator())
+		if (!Authorizer::isCurrentUser($album['user_added_id']) && !Authorizer::isCurrentUserAdministrator())
 			throw new HttpForbidden403();
 		
 		if ($currentSongCount !== 0)
