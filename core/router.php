@@ -667,7 +667,7 @@ final class Router
 			if (Localizer::isAcceptedLanguage($requestedLanguage))
 				$language = $requestedLanguage;
 			else
-				$language = self::DEFAULT_LANGUAGE;
+				$language = Localizer::DEFAULT_LANGUAGE;
 			
 			require_once 'controllers/'.$_SESSION['user']['role'].'-controller.php';
 			$controller = new ($_SESSION['user']['role'].'controller')($language);
