@@ -35,6 +35,50 @@ class VisitorView extends ErrorView
 					<p class="home-page-text">'.\Localization\HomePage\DescriptionFour.'</p>
 				</section>
 			</section>
+		';
+		/*
+			<section class="search-section">
+				<h2>'.\Localization\HomePage\Search.'</h2>
+				<section class="search-elements">
+					'.$this->createTextInput
+					(
+						attributes:
+						[
+							'name' => 'search',
+							'type' => 'search',
+							'id' => 'search-bar',
+							'placeholder' => \Localization\Controls\SearchPlaceholder
+						]
+					).'
+					'.$this->createSearchableSelect
+					(
+						iteratedOptions:
+						[
+							['toShow' => \Localization\HomePage\SearchAll,             'toSend' => 'entity-list'],
+							['toShow' => \Localization\HomePage\SearchGameList,        'toSend' => 'game-list'],
+							['toShow' => \Localization\HomePage\SearchAlbumList,       'toSend' => 'album-list'],
+							['toShow' => \Localization\HomePage\SearchArtistList,      'toSend' => 'artist-list'],
+							['toShow' => \Localization\HomePage\SearchCharacterList,   'toSend' => 'character-list'],
+							['toShow' => \Localization\HomePage\SearchSongList,        'toSend' => 'song-list'],
+							['toShow' => \Localization\HomePage\SearchTranslationList, 'toSend' => 'translation-list']
+						],
+						selectedOption:          ['toShow' => \Localization\HomePage\SearchAll, 'toSend' => 'entity-list'],
+						addEmptyOption:          false,
+						keyToShownValue:         'toShow',
+						keyToSentValue:          'toSend',
+						attributesForSentInput:  ['id' => 'search-entity-select'],
+						attributesForShownInput: [
+						                              'readonly' => true,
+													  'data-placeholder-filter' => \Localization\Controls\SelectOption
+												 ]
+					).'
+					<button class="custom-button" id="search-bar-button">'.\Localization\Controls\SearchButton.'</button>
+				</section>
+			</section>
+		*/
+		
+		$html[] =
+		'
 			<section>
 				<h2>'.\Localization\HomePage\LastAlbums.'</h2>
 				<section class="entity-container">
@@ -116,7 +160,10 @@ class VisitorView extends ErrorView
 		</article>
 		';
 		
-		$html[] = $this->endRender();
+		$html[] = $this->endRender
+		(
+			jsScriptUris: ['/js/home-page.js']
+		);
 		
 		$this->echoHtml($html);
 	}
