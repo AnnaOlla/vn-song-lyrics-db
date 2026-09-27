@@ -975,4 +975,25 @@ class AdministratorController extends UserController
 		$redirect = Http::buildInternalPath($this->language, 'control-panel');
 		$this->handleRedirect($redirect);
 	}
+	
+	final public function handleSwitchMaintenanceMode(): void
+	{
+		switch ($_SERVER['REQUEST_METHOD'])
+		{
+			case 'GET':
+				$this->handleSwitchMaintenanceModeGet();
+				break;
+			
+			default:
+				throw new HttpMethodNotAllowed405();
+		}
+	}
+	
+	private function handleSwitchMaintenanceModeGet(): void
+	{
+		$this->model->switchMaintenanceMode();
+		
+		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$this->handleRedirect($redirect);
+	}
 }

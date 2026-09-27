@@ -11,15 +11,19 @@ class AdministratorView extends UserView
 	
 	final public function renderControlPanelPage(): void
 	{
-		$html[] = $this->startRender(title: 'Control Panel');
+		$maintenance = AccessManager::isMaintenanceModeActive() ? 'Activate Maintenance Mode' : 'Deactivate Maintenance Mode';
 		
-		// Add new links as new pages appear
+		$html[] = $this->startRender(title: 'Control Panel');
 		
 		$html[] = 
 		'
 		<article>
 			<section>
 				<h1>Control Panel</h1>
+				
+				<h2>Maintenance</h2>
+				<p><a href="/en/control-panel/switch-maintenance-mode">'.$maintenance.'</a></p>
+				<br/>
 				
 				<h2>Add Data</h2>
 				<p><a href="/en/control-panel/add-language">Add Language</a></p>

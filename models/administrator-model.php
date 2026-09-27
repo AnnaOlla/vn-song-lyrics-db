@@ -1040,4 +1040,17 @@ class AdministratorModel extends UserModel
 		
 		$this->writeSitemapToFile($data, $path, true);
 	}
+	
+	final public function switchMaintenanceMode(): void
+	{
+		$fileName = Configuration::getMaintenanceModeFileName();
+		
+		if (file_exists($fileName))
+			$result = unlink($fileName);
+		else
+			$result = touch($fileName);
+		
+		if (!$result)
+			throw new HttpInternalServerError500();
+	}
 }
