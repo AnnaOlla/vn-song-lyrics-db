@@ -44,8 +44,16 @@ class VisitorController extends ErrorController
 		];
 	}
 	
-	public function handleLogInPage(): void
+	final public function handleLogInPage(): void
 	{
+		if (!Session::agentIsVisitor())
+		{
+			$redirect = $_SERVER['HTTP_REFERER'] ?? Http::buildInternalPath($this->language);
+		
+			$this->handleRedirect($redirect);
+			return;
+		}
+		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
@@ -128,8 +136,16 @@ class VisitorController extends ErrorController
 		unset($_SESSION['logInPage']);
 	}
 	
-	public function handleSignUpPage(): void
+	final public function handleSignUpPage(): void
 	{
+		if (!Session::agentIsVisitor())
+		{
+			$redirect = $_SERVER['HTTP_REFERER'] ?? Http::buildInternalPath($this->language);
+		
+			$this->handleRedirect($redirect);
+			return;
+		}
+		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
@@ -267,9 +283,14 @@ class VisitorController extends ErrorController
 		unset($_SESSION['signUpPage']);
 	}
 	
-	public function handleLogOutPage(): void
+	final public function handleLogOutPage(): void
 	{
-		$this->handleRedirect(Http::buildInternalPath($this->language));
+		if (!Session::agentIsVisitor())
+			AccessManager::endSession();
+		
+		$redirect = $_SERVER['HTTP_REFERER'] ?? Http::buildInternalPath($this->language);
+		
+		$this->handleRedirect($redirect);
 	}
 	
 	//---------------------------------//

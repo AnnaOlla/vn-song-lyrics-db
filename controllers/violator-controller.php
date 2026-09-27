@@ -11,31 +11,8 @@ class ViolatorController extends VisitorController
 		require_once 'models/violator-model.php';
 		require_once 'views/violator-view.php';
 
-		$this->model = new VisitorModel;
-		$this->view = new VisitorView($language);
-	}
-	
-	final public function handleLogInPage(): void
-	{
-		$this->handleRedirect(Http::buildInternalPath($this->language));
-	}
-	
-	final public function handleSignUpPage(): void
-	{
-		$this->handleRedirect(Http::buildInternalPath($this->language));
-	}
-	
-	final public function handleLogOutPage(): void
-	{
-		$this->deleteUserSession();
-		$this->handleRedirect($_SERVER['HTTP_REFERER']);
-	}
-	
-	final protected function deleteUserSession(): void
-	{
-		session_unset();
-		setcookie(session_name(), session_id(), time() - 60 * 60 * 60 * 24);
-		session_destroy();
+		$this->model = new ViolatorModel;
+		$this->view = new ViolatorView($language);
 	}
 	
 	public function handleAddGamePage(): void
