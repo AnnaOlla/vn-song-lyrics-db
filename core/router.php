@@ -712,20 +712,6 @@ final class Router
 			AccessManager::startSession();
 			AccessManager::updateRateLimit();
 			
-			if (AccessManager::isBlockedRequest() || AccessManager::isRateLimitExceededToBlock())
-				AccessManager::blockIp();
-			
-			if (AccessManager::isBlockedIp() || AccessManager::isBlockedUserAgent())
-			{
-				AccessManager::endSession();
-				
-				http_response_code(403);
-				header("Connection: close");
-				require_once AccessManager::BLOCKED_USER_PAGE_FILENAME;
-				
-				exit;
-			}
-			
 			if (self::isAcceptedLanguage($requestedLanguage))
 				$language = $requestedLanguage;
 			else
@@ -733,6 +719,12 @@ final class Router
 			
 			require_once 'controllers/'.$_SESSION['user']['role'].'-controller.php';
 			$controller = new ($_SESSION['user']['role'].'controller')($language);
+			
+			if (AccessManager::isRequestForbidden() || AccessManager::isRateLimitExceededToBlock())
+				AccessManager::blockCurrentIp();
+			
+			if (AccessManager::isCurrentIpBlocked() || AccessManager::isCurrentUserAgentBlocked())
+				throw new HttpForbidden403();
 			
 			if (AccessManager::isMaintenanceModeActive() && !Session::agentIsAdministrator())
 				throw new HttpServiceUnavailable503();

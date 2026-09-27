@@ -5,7 +5,6 @@ final class AccessManager
 	private const BLOCKED_IPS_FILENAME          = 'blockings/.blocked-ips.txt';
 	private const BLOCKED_USER_AGENTS_FILENAME  = 'blockings/.blocked-user-agents.txt';
 	private const BLOCKED_REQUESTS_FILENAME     = 'blockings/.blocked-requests.txt';
-	public  const BLOCKED_USER_PAGE_FILENAME    = 'include/violator-page.php';
 	
 	private const RATE_LIMIT_WINDOW         = 10;
 	private const RATE_LIMIT_COUNT          = 20;
@@ -37,7 +36,7 @@ final class AccessManager
 		return file_exists(self::MAINTENANCE_MODE_ON_FILENAME);
 	}
 	
-	public static function isBlockedIp(): bool
+	public static function isCurrentIpBlocked(): bool
 	{
 		$blockedIps = new SplFileObject(self::BLOCKED_IPS_FILENAME);
 		$blockedIps->setFlags(SplFileObject::DROP_NEW_LINE);
@@ -51,7 +50,7 @@ final class AccessManager
 		return false;
 	}
 	
-	public static function isBlockedRequest(): bool
+	public static function isRequestForbidden(): bool
 	{
 		$blockedRequests = new SplFileObject(self::BLOCKED_REQUESTS_FILENAME);
 		$blockedRequests->setFlags(SplFileObject::DROP_NEW_LINE);
@@ -65,7 +64,7 @@ final class AccessManager
 		return false;
 	}
 	
-	public static function isBlockedUserAgent(): bool
+	public static function isCurrentUserAgentBlocked(): bool
 	{
 		$blockedUserAgents = new SplFileObject(self::BLOCKED_USER_AGENTS_FILENAME);
 		$blockedUserAgents->setFlags(SplFileObject::DROP_NEW_LINE);
@@ -79,7 +78,7 @@ final class AccessManager
 		return false;
 	}
 	
-	public static function blockIp(): void
+	public static function blockCurrentIp(): void
 	{
 		$blockedIps = new SplFileObject(self::BLOCKED_IPS_FILENAME, 'a');
 		$blockedIps->fwrite($_SERVER['REMOTE_ADDR'].PHP_EOL);
