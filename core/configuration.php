@@ -3,11 +3,15 @@
 final class Configuration
 {
 	private static $settings = null;
-	private const USER_ROLES = ['visitor', 'violator', 'user', 'administrator'];
+	
+	private const USER_ROLES                = ['visitor', 'user', 'administrator'];
+	
+	private const ENVIRONMENT_FILENAME      = '.env';
+	private const MAINTENANCE_MODE_FILENAME = '.maintenance';
 	
 	public static function initialize(): void
 	{
-		self::$settings = parse_ini_file('.env', true);
+		self::$settings = parse_ini_file(self::ENVIRONMENT_FILENAME, true);
 	}
 	
 	public static function getPdo(string $userRole): PDO
@@ -38,5 +42,10 @@ final class Configuration
 	public static function getHashSettings(): array
 	{
 		return self::$settings['hash'];
+	}
+	
+	public static function getMaintenanceModeFileName(): string
+	{
+		return self::MAINTENANCE_MODE_FILENAME;
 	}
 }
