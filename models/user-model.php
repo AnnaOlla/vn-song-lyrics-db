@@ -1,8 +1,8 @@
 <?php
 
-require_once 'models/violator-model.php';
+require_once 'models/visitor-model.php';
 
-class UserModel extends ViolatorModel
+class UserModel extends VisitorModel
 {
 	public function __construct()
 	{

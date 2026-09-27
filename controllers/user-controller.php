@@ -1,8 +1,8 @@
 <?php
 
-require_once 'controllers/violator-controller.php';
+require_once 'controllers/visitor-controller.php';
 
-class UserController extends ViolatorController
+class UserController extends VisitorController
 {
 	public function __construct(string $language)
 	{

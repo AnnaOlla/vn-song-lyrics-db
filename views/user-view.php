@@ -1,8 +1,8 @@
 <?php
 
-require_once 'views/violator-view.php';
+require_once 'views/visitor-view.php';
 
-class UserView extends ViolatorView
+class UserView extends VisitorView
 {
 	protected const ACCEPTED_IMAGE_TYPES = '.jpg, .jpeg, .png, .webp';
 	
