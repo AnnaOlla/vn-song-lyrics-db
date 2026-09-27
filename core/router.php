@@ -649,6 +649,12 @@ final class Router
 			$parameters = [];
 		}
 		
+		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'switch-maintenance-mode')
+		{
+			$method = 'handleSwitchMaintenanceMode';
+			$parameters = [];
+		}
+		
 		//-------------------------//
 		//      Other Methods      //
 		//-------------------------//
@@ -726,7 +732,7 @@ final class Router
 			if (AccessManager::isCurrentIpBlocked() || AccessManager::isCurrentUserAgentBlocked())
 				throw new HttpForbidden403();
 			
-			if (AccessManager::isMaintenanceModeActive() && !Session::agentIsAdministrator())
+			if (AccessManager::isMaintenanceModeActive() && !AccessManager::isUserAdministrator())
 				throw new HttpServiceUnavailable503();
 			
 			if (AccessManager::isRateLimitExceeded())

@@ -17,7 +17,7 @@ class UserController extends VisitorController
 	
 	final public function handleAddGamePage(): void
 	{
-		if (Session::agentHasRightToAddGame() !== AccessState::Ok)
+		if (AccessManager::getStateForUserToAddGame() !== AccessState::Ok)
 			throw HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -127,7 +127,7 @@ class UserController extends VisitorController
 	
 	final public function handleAddAlbumPage(): void
 	{
-		if (Session::agentHasRightToAddAlbum() !== AccessState::Ok)
+		if (AccessManager::getStateForUserToAddAlbum() !== AccessState::Ok)
 			throw HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -228,7 +228,7 @@ class UserController extends VisitorController
 	
 	final public function handleAddArtistPage(): void
 	{
-		if (Session::agentHasRightToAddArtist() !== AccessState::Ok)
+		if (AccessManager::getStateForUserToAddArtist() !== AccessState::Ok)
 			throw HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -323,7 +323,7 @@ class UserController extends VisitorController
 	
 	final public function handleAddCharacterPage(): void
 	{
-		if (Session::agentHasRightToAddCharacter() !== AccessState::Ok)
+		if (AccessManager::getStateForUserToAddCharacter() !== AccessState::Ok)
 			throw HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -427,10 +427,10 @@ class UserController extends VisitorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToEditAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToEditAlbum($album) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		if ($songCount >= $album['song_count'])
@@ -553,13 +553,13 @@ class UserController extends VisitorController
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewSong($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToAddLyrics($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToAddLyrics($song) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		if (!$song['has_vocal'] || $song['lyrics'] || $song['original_song_id'])
@@ -713,19 +713,19 @@ class UserController extends VisitorController
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewSong($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewLyrics($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewLyrics($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
 		if (!$song['has_vocal'] || !$song['has_lyrics'] || $song['original_song_id'])
 			throw new HttpForbidden403();
 		
-		if (Session::agentHasRightToAddTranslation() !== AccessState::Ok)
+		if (AccessManager::getStateForUserToAddTranslation() !== AccessState::Ok)
 			throw HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -838,10 +838,10 @@ class UserController extends VisitorController
 		if (!$game)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewGame($game) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewGame($game) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToEditGame($game) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToEditGame($game) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -975,10 +975,10 @@ class UserController extends VisitorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToEditAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToEditAlbum($album) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1098,10 +1098,10 @@ class UserController extends VisitorController
 		if (!$artist)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewArtist($artist) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewArtist($artist) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToEditArtist($artist) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToEditArtist($artist) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1201,10 +1201,10 @@ class UserController extends VisitorController
 		if (!$character)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewCharacter($character) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewCharacter($character) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToEditCharacter($character) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToEditCharacter($character) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1316,10 +1316,10 @@ class UserController extends VisitorController
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToEditAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToEditAlbum($album) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1415,16 +1415,16 @@ class UserController extends VisitorController
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewSong($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewLyrics($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewLyrics($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToEditLyrics($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToEditLyrics($song) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		if (!$song['has_vocal'])
@@ -1621,19 +1621,19 @@ class UserController extends VisitorController
 		if (!$translation)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewSong($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewLyrics($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewLyrics($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewTranslation($translation) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewTranslation($translation) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToEditTranslation($translation) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToEditTranslation($translation) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		if (!$song['has_vocal'] || !$song['lyrics'] || $song['original_song_id'])
@@ -1713,10 +1713,10 @@ class UserController extends VisitorController
 		if (!$game)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewGame($game) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewGame($game) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToDeleteGame($game) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToDeleteGame($game) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1781,10 +1781,10 @@ class UserController extends VisitorController
 		if (!$album)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToDeleteAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToDeleteAlbum($album) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1846,10 +1846,10 @@ class UserController extends VisitorController
 		if (!$artist)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewArtist($artist) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewArtist($artist) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToDeleteArtist($artist) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToDeleteArtist($artist) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1914,10 +1914,10 @@ class UserController extends VisitorController
 		if (!$character)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewCharacter($character) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewCharacter($character) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToDeleteCharacter($character) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToDeleteCharacter($character) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -1986,22 +1986,22 @@ class UserController extends VisitorController
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToEditAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToEditAlbum($album) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
-		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewSong($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewLyrics($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewLyrics($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToDeleteSong($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToDeleteSong($song) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
-		if (Session::agentHasRightToDeleteLyrics($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToDeleteLyrics($song) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -2075,16 +2075,16 @@ class UserController extends VisitorController
 		if (!$song)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewSong($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewLyrics($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewLyrics($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToDeleteLyrics($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToDeleteLyrics($song) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		if (!$song['has_vocal'])
@@ -2159,19 +2159,19 @@ class UserController extends VisitorController
 		if (!$translation)
 			throw new HttpNotFound404();
 		
-		if (Session::agentHasRightToViewAlbum($album) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewAlbum($album) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewSong($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewSong($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewLyrics($song) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewLyrics($song) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToViewTranslation($translation) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToViewTranslation($translation) !== AccessState::Ok)
 			throw new HttpUnavailableForLegalReasons451();
 		
-		if (Session::agentHasRightToDeleteTranslation($translation) !== AccessState::Ok)
+		if (AccessManager::getStateForUserToDeleteTranslation($translation) !== AccessState::Ok)
 			throw new HttpForbidden403();
 		
 		if (!$song['has_vocal'] || !$song['lyrics'] || $song['original_song_id'])
@@ -2234,10 +2234,10 @@ class UserController extends VisitorController
 	{
 		$user = $this->model->getUserData(uri: $userUri);
 		
-		if (!Session::agentIs($user['id']) && !Session::agentIsAdministrator())
+		if (!AccessManager::isUser($user['id']) && !AccessManager::isUserAdministrator())
 			throw new HttpNotFound404();
 		
-		if (Session::agentIsViolator())
+		if (AccessManager::isUserViolator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -2287,7 +2287,7 @@ class UserController extends VisitorController
 		if (Validation::haveNullOrEmpty($newEmail, $currentPassword))
 			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
 		
-		if (!Session::agentIsAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
+		if (!AccessManager::isUserAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
 		{
 			$this->handleChangeEmailPageGet($user, InputError::IncorrectPassword);
 			return;
@@ -2307,7 +2307,7 @@ class UserController extends VisitorController
 		
 		$this->model->updateUserData($user['id'], newEmail: $newEmail);
 		
-		if (!Session::agentIsAdministrator())
+		if (!AccessManager::isUserAdministrator())
 		{
 			$user = $this->model->getUserData(id: $user['id']);
 			$this->createUserSession($user);
@@ -2322,10 +2322,10 @@ class UserController extends VisitorController
 	{
 		$user = $this->model->getUserData(uri: $userUri);
 		
-		if (!Session::agentIs($user['id']) && !Session::agentIsAdministrator())
+		if (!AccessManager::isUser($user['id']) && !AccessManager::isUserAdministrator())
 			throw new HttpNotFound404();
 		
-		if (Session::agentIsViolator())
+		if (AccessManager::isUserViolator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -2375,7 +2375,7 @@ class UserController extends VisitorController
 		if (Validation::haveNullOrEmpty($newUsername, $currentPassword))
 			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
 		
-		if (!Session::agentIsAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
+		if (!AccessManager::isUserAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
 		{
 			$this->handleChangeUsernamePageGet($user, InputError::IncorrectPassword);
 			return;
@@ -2407,7 +2407,7 @@ class UserController extends VisitorController
 		
 		$this->model->updateUserData($user['id'], newUsername: $newUsername);
 		
-		if (!Session::agentIsAdministrator())
+		if (!AccessManager::isUserAdministrator())
 		{
 			$user = $this->model->getUserData(id: $user['id']);
 			$this->createUserSession($user);
@@ -2420,10 +2420,10 @@ class UserController extends VisitorController
 	{
 		$user = $this->model->getUserData(uri: $userUri);
 		
-		if (!Session::agentIs($user['id']) && !Session::agentIsAdministrator())
+		if (!AccessManager::isUser($user['id']) && !AccessManager::isUserAdministrator())
 			throw new HttpNotFound404();
 		
-		if (Session::agentIsViolator())
+		if (AccessManager::isUserViolator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -2473,7 +2473,7 @@ class UserController extends VisitorController
 		if (Validation::haveNullOrEmpty($newPassword, $currentPassword))
 			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
 		
-		if (!Session::agentIsAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
+		if (!AccessManager::isUserAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
 		{
 			$this->handleChangePasswordPageGet($user, InputError::IncorrectPassword);
 			return;
@@ -2499,7 +2499,7 @@ class UserController extends VisitorController
 		
 		$this->model->updateUserData($user['id'], newPassword: $newPassword);
 		
-		if (!Session::agentIsAdministrator())
+		if (!AccessManager::isUserAdministrator())
 		{
 			$user = $this->model->getUserData(id: $user['id']);
 			$this->createUserSession($user);
@@ -2514,10 +2514,10 @@ class UserController extends VisitorController
 	{
 		$user = $this->model->getUserData(uri: $userUri, fetchMinInfo: false);
 		
-		if (!Session::agentIs($user['id']) && !Session::agentIsAdministrator())
+		if (!AccessManager::isUser($user['id']) && !AccessManager::isUserAdministrator())
 			throw new HttpNotFound404();
 		
-		if (Session::agentIsViolator())
+		if (AccessManager::isUserViolator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
@@ -2568,7 +2568,7 @@ class UserController extends VisitorController
 		
 		$this->model->updateUserData($user['id'], newAboutMe: $newAboutMe);
 		
-		if (!Session::agentIsAdministrator())
+		if (!AccessManager::isUserAdministrator())
 		{
 			$user = $this->model->getUserData(id: $user['id']);
 			$this->createUserSession($user);
@@ -2584,10 +2584,10 @@ class UserController extends VisitorController
 		if (!$user)
 			throw new HttpNotFound404();
 		
-		if (!Session::agentIs($user['id']) && !Session::agentIsAdministrator())
+		if (!AccessManager::isUser($user['id']) && !AccessManager::isUserAdministrator())
 			throw new HttpNotFound404();
 		
-		if (Session::agentIsViolator())
+		if (AccessManager::isUserViolator())
 			throw new HttpForbidden403();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
