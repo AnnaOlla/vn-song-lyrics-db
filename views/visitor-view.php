@@ -207,12 +207,17 @@ class VisitorView extends ErrorView
 					</section>
 				</form>
 			</section>
+		</article>
+		';
+		
+		/*
+		'
 			<section class="mobile-device-blocker">
 				<p>'.\Localization\Controls\PageDisabledForMobile1.'</p>
 				<p>'.\Localization\Controls\PageDisabledForMobile2.'</p>
 			</section>
-		</article>
 		';
+		*/
 		
 		$html[] = $this->endRender();
 		
@@ -271,10 +276,6 @@ class VisitorView extends ErrorView
 						'.$this->createSubmitButton().'
 					</section>
 				</form>
-			</section>
-			<section class="mobile-device-blocker">
-				<p>'.\Localization\Controls\PageDisabledForMobile1.'</p>
-				<p>'.\Localization\Controls\PageDisabledForMobile2.'</p>
 			</section>
 		</article>
 		';
@@ -2191,10 +2192,6 @@ class VisitorView extends ErrorView
 				<section>
 					<img id="captcha-solution" />
 				</section>
-			</section>
-			<section class="mobile-device-blocker">
-				<p>'.\Localization\Controls\PageDisabledForMobile1.'</p>
-				<p>'.\Localization\Controls\PageDisabledForMobile2.'</p>
 			</section>
 		</article>
 		';
