@@ -244,14 +244,21 @@ main > aside   > section > * {
 	}
 	
 	main h1 {
-		font-size: var(--font-size-h2);
+		font-size: var(--font-size-h3);
+		margin: 0;
 	}
 
 	main h2 {
 		font-size: var(--font-size-h3);
+		margin: 0;
 	}
 
 	main h3 {
 		font-size: var(--font-size-h3);
+		margin: 0;
+	}
+	
+	main p {
+		margin: 0;
 	}
 }

@@ -32,6 +32,7 @@ section.list-entity > img {
 	section.main-entity > img,
 	section.related-entity > img,
 	section.list-entity > img {
-		display: none;
+		width:  var(--image-size-tiny);
+		height: var(--image-size-tiny);
 	}
 }

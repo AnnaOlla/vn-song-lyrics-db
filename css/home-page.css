@@ -57,6 +57,27 @@ section.entity-container > a:hover > img {
 	border: var(--size-border-width) solid var(--color-button-body-hover);
 }
 
+section.search-elements {
+	display: flex;
+	gap: var(--element-gap-medium);
+}
+
+section.search-elements > input {
+	flex: 3;
+}
+
+section.search-elements > .custom-searchable-select {
+	flex: 1;
+}
+
+section.search-elements > button {
+	flex: 1;
+}
+
+section.search-elements > .custom-searchable-select > * {
+	text-align: center;
+}
+
 /* Mobile Devices */
 
 @media (max-width: 767px) {
