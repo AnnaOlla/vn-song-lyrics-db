@@ -286,7 +286,7 @@ class VisitorController extends ErrorController
 	final public function handleLogOutPage(): void
 	{
 		if (!Authorizer::isCurrentUserVisitor())
-			RoleManager::endSession();
+			Authorizer::endSession();
 		
 		$redirect = $_SERVER['HTTP_REFERER'] ?? Http::buildInternalPath($this->language);
 		
