@@ -523,13 +523,11 @@ class AdministratorModel extends ContributorModel
 	
 	final public function fetchDataFromVgmdbPage(array $album): array|null
 	{
-		$html = file_get_contents('.administering/.vgmdb-album-local-page.html');
+		$html = file_get_contents('.vgmdb-album-local-page.html');
 		
 		if (!$html)
 			throw new Exception(__METHOD__.': failed to fetch the vgmdb page for '.$album);
 		
-		// DOMDocument is outdated: https://www.php.net/manual/en/domdocument.loadhtml.php
-		// Errors must be turned off
 		$dom = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR);
 		
 		// Tracklist consists of:
@@ -588,18 +586,11 @@ class AdministratorModel extends ContributorModel
 			$localizationIndex++;
 		}
 		
-		// The tracklist was empty, like here: https://vgmdb.net/album/153150 (13.01.2026)
-		// The id='tracklist' has only plain text inside: "No tracklist found."
-		// This case works correctly, $discography is empty, no warnings/errors are raised
 		if (!$discography)
 			return null;
 		
-		// The problem now is that I need to rearrange the array
-		//
 		// Current index order:  localization -> disc -> track
 		// Required index order: disc -> track -> localization
-		//
-		// (it is how it is supposed to be shown on the page)
 		
 		$rearrangedDiscography = [];
 		
