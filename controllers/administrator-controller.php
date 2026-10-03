@@ -1,8 +1,8 @@
 <?php
 
-require_once 'controllers/user-controller.php';
+require_once 'controllers/contributor-controller.php';
 
-class AdministratorController extends UserController
+class AdministratorController extends ContributorController
 {
 	public function __construct(string $language)
 	{

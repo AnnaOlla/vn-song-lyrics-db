@@ -2,11 +2,11 @@
 
 require_once 'models/visitor-model.php';
 
-class UserModel extends VisitorModel
+class ContributorModel extends VisitorModel
 {
 	public function __construct()
 	{
-		$this->pdo = Configuration::getPdo('user');
+		$this->pdo = Configuration::getPdo('contributor');
 	}
 	
 	//------------------------------------//

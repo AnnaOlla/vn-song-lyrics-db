@@ -2,17 +2,17 @@
 
 require_once 'controllers/visitor-controller.php';
 
-class UserController extends VisitorController
+class ContributorController extends VisitorController
 {
 	public function __construct(string $language)
 	{
 		parent::__construct($language);
 		
-		require_once 'models/user-model.php';
-		require_once 'views/user-view.php';
+		require_once 'models/contributor-model.php';
+		require_once 'views/contributor-view.php';
 
-		$this->model = new UserModel;
-		$this->view = new UserView($language);
+		$this->model = new ContributorModel;
+		$this->view = new ContributorView($language);
 	}
 	
 	final public function handleAddGamePage(): void

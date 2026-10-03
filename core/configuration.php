@@ -4,7 +4,7 @@ final class Configuration
 {
 	private static $settings = null;
 	
-	private const USER_ROLES                = ['visitor', 'user', 'administrator'];
+	private const USER_ROLES                = ['visitor', 'contributor', 'administrator'];
 	
 	private const ENVIRONMENT_FILENAME      = '.env';
 	private const MAINTENANCE_MODE_FILENAME = '.maintenance';

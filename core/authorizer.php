@@ -123,7 +123,7 @@ final class Authorizer
 	
 	public static function isCurrentUserContributor(): bool
 	{
-		return $_SESSION['user']['role'] === 'user';
+		return $_SESSION['user']['role'] === 'contributor';
 	}
 	
 	public static function isCurrentUserAdministrator(): bool

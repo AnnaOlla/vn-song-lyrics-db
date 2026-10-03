@@ -1,8 +1,8 @@
 <?php
 
-require_once 'models/user-model.php';
+require_once 'models/contributor-model.php';
 
-class AdministratorModel extends UserModel
+class AdministratorModel extends ContributorModel
 {
 	private const SITEMAP_INDEX_NAME            = 'sitemap.xml';
 	private const SITEMAP_STATIC_PAGES_NAME     = 'sitemap-static-pages.xml';
