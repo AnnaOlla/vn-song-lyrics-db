@@ -794,10 +794,9 @@ class ContributorController extends VisitorController
 			userAddedUri: $_SESSION['user']['username']
 		);
 		
-		$allLanguages         = $this->model->getLanguageList();
-		$allLanguages         = array_column($allLanguages, 'id');
-		$forbiddenLanguages   = array_column($translationsByUser, 'language_id');
-		$forbiddenLanguages[] = $song['language_id'];
+		$allLanguages       = $this->model->getLanguageList();
+		$allLanguages       = array_column($allLanguages, 'id');
+		$forbiddenLanguages = array_column($translationsByUser, 'language_id');
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
 			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());

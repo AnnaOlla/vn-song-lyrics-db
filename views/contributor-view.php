@@ -1283,21 +1283,7 @@ class ContributorView extends VisitorView
 			$translationLyrics   = null;
 			$translationNotes    = null;
 			
-			// Forbidden languages:
-			// - language of the song
-			// - translations made by the user
-			
 			$forbiddenLanguages = [];
-			
-			$forbiddenLanguages[] = array_find
-			(
-				$languages,
-				function (array $language) use ($song)
-				{
-					return $language['id'] === $song['language_id'];
-				}
-			);
-			
 			foreach ($translationsByCurrentUser as $translationByCurrentUser)
 			{
 				$forbiddenLanguages[] = array_find
