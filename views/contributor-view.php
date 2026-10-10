@@ -1177,6 +1177,7 @@ class ContributorView extends VisitorView
 							selectedOption:         $song,
 							addEmptyOption:         true,
 							keyToShownValue:        \Localization\Functions\localizeLanguageKey(),
+							keysToShownHints:       ['language_own_name'],
 							keyToSentValue:         'language_id',
 							attributesForSentInput: ['name' => 'language-id', 'id' => 'language-select', 'required' => true]
 						).'
@@ -1302,6 +1303,7 @@ class ContributorView extends VisitorView
 				disabledOptions:        $forbiddenLanguages,
 				addEmptyOption:         true,
 				keyToShownValue:        \Localization\Functions\localizeLanguageKey(),
+				keysToShownHints:       ['language_own_name'],
 				keyToSentValue:         'id',
 				attributesForSentInput: ['name' => 'translation-language-id', 'required' => true, 'disabled' => !is_null($translation)]
 			);
