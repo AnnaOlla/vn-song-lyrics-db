@@ -39,7 +39,9 @@ final class Router
 	
 	public static function run(): void
 	{
-		$requestedPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		//$requestedPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		
+		$requestedPath = new Uri\Rfc3986\Uri($_SERVER['REQUEST_URI'])->getPath();
 		
 		if (self::isRequestMalformed($requestedPath))
 		{
