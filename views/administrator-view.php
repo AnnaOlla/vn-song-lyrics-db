@@ -11,7 +11,7 @@ class AdministratorView extends ContributorView
 	
 	final public function renderControlPanelPage(): void
 	{
-		$maintenance = RoleManager::isMaintenanceModeActive() ? 'Activate Maintenance Mode' : 'Deactivate Maintenance Mode';
+		$maintenance = Authorizer::isMaintenanceModeActive() ? 'Deactivate Maintenance Mode' : 'Activate Maintenance Mode';
 		
 		$html[] = $this->startRender(title: 'Control Panel');
 		
