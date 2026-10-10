@@ -23,6 +23,11 @@ final class Router
 		return ($requestedPath === '/');
 	}
 	
+	private static function isRequestMalformed(string $requestedPath): bool
+	{
+		return is_null($requestedPath);
+	}
+	
 	private static function isNonExistentFileRequested(string $requestedPath): bool
 	{
 		// If a file is requested then the route ends with "/name.extension"
@@ -35,6 +40,12 @@ final class Router
 	public static function run(): void
 	{
 		$requestedPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		
+		if (self::isRequestMalformed($requestedPath))
+		{
+			http_response_code(400);
+			exit;
+		}
 		
 		if (self::isNonExistentFileRequested($requestedPath))
 		{
