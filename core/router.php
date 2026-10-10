@@ -23,9 +23,9 @@ final class Router
 		return ($requestedPath === '/');
 	}
 	
-	private static function isRequestMalformed(string $requestedPath): bool
+	private static function isUriMalformed(mixed $uri): bool
 	{
-		return is_null($requestedPath);
+		return ($uri === null);
 	}
 	
 	private static function isNonExistentFileRequested(string $requestedPath): bool
@@ -39,15 +39,15 @@ final class Router
 	
 	public static function run(): void
 	{
-		//$requestedPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		$requestedUri = \Uri\Rfc3986\Uri::parse($_SERVER['REQUEST_URI']);
 		
-		$requestedPath = new Uri\Rfc3986\Uri($_SERVER['REQUEST_URI'])->getPath();
-		
-		if (self::isRequestMalformed($requestedPath))
+		if (self::isUriMalformed($requestedUri))
 		{
 			http_response_code(400);
 			exit;
 		}
+		
+		$requestedPath = $requestedUri->getPath();
 		
 		if (self::isNonExistentFileRequested($requestedPath))
 		{
