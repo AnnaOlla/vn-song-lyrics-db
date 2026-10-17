@@ -27,7 +27,7 @@ final class Logger
 				$function = $trace[$i]['function'];
 			
 			if (isset($trace[$i]['args']))
-				$args = PHP_EOL.'('.var_export($trace[$i]['args'], true).')';
+				$args = PHP_EOL.'('.print_r($trace[$i]['args'], true).')';
 			else
 				$args = '';
 			
@@ -36,9 +36,19 @@ final class Logger
 		
 		$log['datetime']   = date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME']);
 		$log['agentIp']    = $_SERVER['REMOTE_ADDR'];
+		$log['agentInfo']  = $_SERVER['HTTP_USER_AGENT'];
+		$log['request']    = $_SERVER['REQUEST_URI'];
+		$log['method']     = $_SERVER['REQUEST_METHOD'];
+		$log['httpCode']   = http_response_code();
 		$log['class']      = get_class($exception);
 		$log['message']    = $exception->getMessage();
-		$log['emptyLine']  = '';
+		$log['emptyLine1'] = '';
+		$log['get']        = '$_GET = ('.print_r($_GET, true).')';
+		$log['emptyLine2'] = '';
+		$log['post']       = '$_POST = ('.print_r($_POST, true).')';
+		$log['emptyLine3'] = '';
+		$log['files']      = '$_FILES = ('.print_r($_FILES, true).')';
+		$log['emptyLine4'] = '';
 		$log['stackTrace'] = implode(PHP_EOL, $stackTrace);
 		$log['separator']  = '----------------------------------------------------------';
 		
@@ -61,11 +71,11 @@ final class Logger
 		$log['method']     = $_SERVER['REQUEST_METHOD'];
 		$log['httpCode']   = http_response_code();
 		$log['emptyLine1'] = '';
-		$log['get']        = '$_GET = ('.var_export($_GET, true).')';
+		$log['get']        = '$_GET = ('.print_r($_GET, true).')';
 		$log['emptyLine2'] = '';
-		$log['post']       = '$_POST = ('.var_export($_POST, true).')';
+		$log['post']       = '$_POST = ('.print_r($_POST, true).')';
 		$log['emptyLine3'] = '';
-		$log['files']      = '$_FILES = ('.var_export($_FILES, true).')';
+		$log['files']      = '$_FILES = ('.print_r($_FILES, true).')';
 		$log['separator']  = '----------------------------------------------------------';
 		
 		foreach ($log as $part => $line)

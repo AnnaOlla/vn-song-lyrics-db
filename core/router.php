@@ -707,93 +707,93 @@ final class Router
 		}
 		catch (HttpBadRequest400 $e)
 		{
-			Logger::logError($e);
 			$controller->handleBadRequest400();
+			Logger::logError($e);
 		}
 		catch (HttpUnauthorized401 $e)
 		{
-			Logger::logError($e);
 			$controller->handleUnauthorized401();
+			Logger::logError($e);
 		}
 		catch (HttpPaymentRequired402 $e)
 		{
-			Logger::logError($e);
 			$controller->handlePaymentRequired402();
+			Logger::logError($e);
 		}
 		catch (HttpForbidden403 $e)
 		{
-			Logger::logError($e);
 			$controller->handleForbidden403();
+			Logger::logError($e);
 		}
 		catch (HttpNotFound404 $e)
 		{
-			Logger::logError($e);
 			$controller->handleNotFound404();
+			Logger::logError($e);
 		}
 		catch (HttpMethodNotAllowed405 $e)
 		{
-			Logger::logError($e);
 			$controller->handleMethodNotAllowed405();
+			Logger::logError($e);
 		}
 		catch (HttpNotAcceptable406 $e)
 		{
-			Logger::logError($e);
 			$controller->handleNotAcceptable406();
+			Logger::logError($e);
 		}
 		catch (HttpConflict409 $e)
 		{
-			Logger::logError($e);
 			$controller->handleConflict409();
+			Logger::logError($e);
 		}
 		catch (HttpContentTooLarge413 $e)
 		{
-			Logger::logError($e);
 			$controller->handleContentTooLarge413();
+			Logger::logError($e);
 		}
 		catch (HttpUnsupportedMediaType415 $e)
 		{
-			Logger::logError($e);
 			$controller->handleUnsupportedMediaType415();
+			Logger::logError($e);
 		}
 		catch (HttpUnprocessableEntity422 $e)
 		{
-			Logger::logError($e);
 			$controller->handleUnprocessableEntity422();
+			Logger::logError($e);
 		}
 		catch (HttpTooManyRequests429 $e)
 		{
-			Logger::logError($e);
 			$controller->handleTooManyRequests429();
+			Logger::logError($e);
 		}
 		catch (HttpUnavailableForLegalReasons451 $e)
 		{
-			Logger::logError($e);
 			$controller->handleUnavailableForLegalReasons451();
+			Logger::logError($e);
 		}
 		catch (HttpInternalServerError500 $e)
 		{
-			Logger::logError($e);
 			$controller->handleInternalServerError500();
+			Logger::logError($e);
 		}
 		catch (HttpNotImplemented501 $e)
 		{
-			Logger::logError($e);
 			$controller->handleNotImplemented501();
+			Logger::logError($e);
 		}
 		catch (HttpBadGateway502 $e)
 		{
-			Logger::logError($e);
 			$controller->handleBadGateway502();
+			Logger::logError($e);
 		}
 		catch (HttpServiceUnavailable503 $e)
 		{
-			Logger::logError($e);
 			$controller->handleServiceUnavailable503();
+			Logger::logError($e);
 		}
 		catch (Throwable $e)
 		{
-			Logger::logError($e);
 			$controller->handleInternalServerError500();
+			Logger::logError($e);
 		}
 		
 		Logger::logAccess();

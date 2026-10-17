@@ -4,20 +4,15 @@ abstract class CustomException extends Exception
 {
 	public function __construct(string $message = '', array $parameters = [], int $code = 0, ?Throwable $previous = null)
 	{
-		$message = 'User "'.($_SESSION['user']['username'] ?? '[null]').'"'.
-		           ' of role "'.($_SESSION['user']['role'] ?? '[null]').'"'.
+		$message = 'User "'             .($_SESSION['user']['username'] ?? '[null]').'"'.
+		           ' of role "'         .($_SESSION['user']['role']     ?? '[null]').'"'.
 		           ' encountered error '.$code.
-		           ' when requested '.$_SERVER['REQUEST_URI'].
-		           ' with '.$_SERVER['REQUEST_METHOD'].
-		           ' and parameters ('.$this->stringifyParameters($parameters).'): '.
-				   ($message !== '' ? $message : '[no details provided]');
+		           ' when requested '   .$_SERVER['REQUEST_URI'].
+		           ' with '             .$_SERVER['REQUEST_METHOD'].
+		           ' and parameters ('  .print_r($parameters, true).'): '.
+				                        ($message ?? '[no details provided]');
 		
 		parent::__construct($message, $code, $previous);
-	}
-	
-	private function stringifyParameters(mixed ...$parameters): string
-	{
-		return print_r($parameters, true);
 	}
 }
 
