@@ -76,6 +76,8 @@ final class Logger
 		$log['post']       = '$_POST = ('.print_r($_POST, true).')';
 		$log['emptyLine3'] = '';
 		$log['files']      = '$_FILES = ('.print_r($_FILES, true).')';
+		$log['emptyLine4'] = '';
+		$log['loadTime']   = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
 		$log['separator']  = '----------------------------------------------------------';
 		
 		foreach ($log as $part => $line)
