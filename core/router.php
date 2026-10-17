@@ -25,7 +25,7 @@ final class Router
 	
 	private static function isUriMalformed(mixed $uri): bool
 	{
-		return ($uri === null);
+		return ($uri === null || !str_contains($uri->getPath(), '/'));
 	}
 	
 	private static function isNonExistentFileRequested(string $requestedPath): bool
