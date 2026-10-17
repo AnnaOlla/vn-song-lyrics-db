@@ -796,6 +796,6 @@ final class Router
 			$controller->handleInternalServerError500();
 		}
 		
-		Logger::logRequest();
+		Logger::logAccess();
 	}
 }

@@ -49,7 +49,7 @@ final class Logger
 		error_log($exception);
 	}
 	
-	public static function logRequest(): void
+	public static function logAccess(): void
 	{
 		$currentDate = date("Y-m-d", $_SERVER['REQUEST_TIME']);
 		$logFilename = self::ACCESS_LOG_DIRNAME.'/.'.$currentDate.self::ACCESS_LOG_FILENAME;
