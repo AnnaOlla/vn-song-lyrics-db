@@ -846,7 +846,7 @@ HTML;
 				$language = $language.$number;
 			}
 			
-			if (!is_null($currentTranslation) && $translation['uri'] === $currentTranslation['uri'])
+			if ($currentTranslation !== null && $translation['uri'] === $currentTranslation['uri'])
 			{
 				// If the current translation is shown, then no need to do a link to it
 				$links[] = $language;
@@ -868,7 +868,7 @@ HTML;
 			}
 		}
 		
-		if ((Authorizer::isCurrentUserContributor() || Authorizer::isCurrentUserAdministrator()) && is_null($song['original_song_id']))
+		if (!Authorizer::isCurrentUserVisitor() && $song['original_song_id'] === null)
 		{
 			$href = Http::buildInternalPath
 			(
@@ -884,7 +884,7 @@ HTML;
 		}
 		
 		$links     = implode(\Localization\LyricsPage\ListElementSeparator, $links);
-		$paragraph = '<p>'.\Localization\LyricsPage\TranslationList.$links.'</p>';
+		$paragraph = $links ? '<p>'.\Localization\LyricsPage\TranslationList.$links.'</p>' : '';
 		
 		return $paragraph;
 	}
@@ -918,7 +918,7 @@ HTML;
 		}
 		
 		$links     = implode(\Localization\LyricsPage\ListElementSeparator, $parts);
-		$paragraph = '<p>'.\Localization\LyricsPage\PerformerList.$links.'</p>';
+		$paragraph = $links ? '<p>'.\Localization\LyricsPage\PerformerList.$links.'</p>' : '';
 		
 		return $paragraph;
 	}
@@ -941,16 +941,16 @@ HTML;
 		$html[] = $this->createHeading($headingText, 1);
 		$html[] = $this->createLyricsReferenceToAlbum($album);
 		
-		if (!is_null($translation))
+		if ($translation !== null)
 			$html[] = $this->createLyricsReferenceToCurrentSong($song);
 		
-		if (!is_null($performers))
+		if ($performers !== null)
 			$html[] = $this->createLyricsPerformerList($performers);
 		
-		if (!is_null($originalSong))
+		if ($originalSong !== null)
 			$html[] = $this->createLyricsReferenceToOriginalSong($originalSong);
 		
-		if (!is_null($translations))
+		if ($translations !== null)
 			$html[] = $this->createLyricsTranslationList($album, $song, $translation, $translations);
 		
 		$html[] = '</section></section>';
