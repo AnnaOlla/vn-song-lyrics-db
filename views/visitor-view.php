@@ -162,7 +162,7 @@ class VisitorView extends ErrorView
 		
 		$html[] = $this->endRender
 		(
-			jsScriptUris: ['/js/home-page.js']
+			// jsScriptUris: ['/js/home-page.js']
 		);
 		
 		$this->echoHtml($html);
