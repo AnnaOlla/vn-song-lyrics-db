@@ -1155,6 +1155,7 @@ namespace Localization\WritingGuidePage
 	const WidthOfCharacters   = '文字の幅';
 	const AsianLanguages      = '東洋語：';
 	const EuropeanLanguages   = '西洋語：';
+	const Punctuation         = '句読点';
 	
 	const HeadingFormatting      = 'マークアップの書き方';
 	const FormattingIntroduction = 'ウェッブサイトは書き方の機械があります：';
