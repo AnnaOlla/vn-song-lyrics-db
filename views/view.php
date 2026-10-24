@@ -464,7 +464,7 @@ HTML;
 		if ($username === null)
 			$username = \Localization\TimestampString\DeletedUser;
 		else
-			$username = $this->createLink(Http::buildUri($this->language, 'user', $uri), $username);
+			$username = $this->createLink(Http::buildPath($this->language, 'user', $uri), $username);
 		
 		return '<p>'.htmlspecialchars($status.\Localization\TimestampString\Delimeter.$timestamp.\Localization\TimestampString\By).$username.'</p>';
 	}
@@ -634,7 +634,7 @@ HTML;
 	{
 		if ($entity['is_image_uploaded'])
 		{
-			$source = Http::buildUri
+			$source = Http::buildPath
 			(
 				AssetFolder::Base->value,
 				$dynamicAssetFolder->value,
@@ -644,7 +644,7 @@ HTML;
 		}
 		else
 		{
-			$source = Http::buildUri
+			$source = Http::buildPath
 			(
 				AssetFolder::Base->value,
 				$staticReplacementFolder->value,
@@ -759,9 +759,9 @@ HTML;
 			$path[] = $entities[$i]['uri'];
 		}
 		
-		$editHref   = Http::buildUri($this->language, ...$path, ...[$editEntityPathPart]);
-		$deleteHref = Http::buildUri($this->language, ...$path, ...[$deleteEntityPathPart]);
-		$reportHref = Http::buildUri($this->language, ...$path, ...[$reportEntityPathPart]);
+		$editHref   = Http::buildPath($this->language, ...$path, ...[$editEntityPathPart]);
+		$deleteHref = Http::buildPath($this->language, ...$path, ...[$deleteEntityPathPart]);
+		$reportHref = Http::buildPath($this->language, ...$path, ...[$reportEntityPathPart]);
 		
 		$editAttributes   = ['href' => $editHref];
 		$deleteAttributes = ['href' => $deleteHref];
@@ -787,7 +787,7 @@ HTML;
 	
 	private function createLyricsReferenceToAlbum(array $album): string
 	{
-		$href      = Http::buildUri($this->language, 'album', $album['uri']);
+		$href      = Http::buildPath($this->language, 'album', $album['uri']);
 		$link      = $this->createLink($href, $album['transliterated_name']);
 		$paragraph = '<p>'.\Localization\LyricsPage\Album.$link.'</p>';
 		
@@ -796,7 +796,7 @@ HTML;
 	
 	private function createLyricsReferenceToCurrentSong(array $song): string
 	{
-		$href      = Http::buildUri($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
+		$href      = Http::buildPath($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
 		$link      = $this->createLink($href, $song['transliterated_name']);
 		$paragraph = '<p>'.\Localization\LyricsPage\ShowLyricsOnly.$link.'</p>';
 		
@@ -805,7 +805,7 @@ HTML;
 	
 	private function createLyricsReferenceToOriginalSong(array $originalSong): string
 	{
-		$href      = Http::buildUri($this->language, 'album', $originalSong['album_uri'], 'song', $originalSong['uri']);
+		$href      = Http::buildPath($this->language, 'album', $originalSong['album_uri'], 'song', $originalSong['uri']);
 		$link      = $this->createLink($href, $originalSong['transliterated_name']);
 		$paragraph = '<p>'.\Localization\LyricsPage\OriginalSong.$link.'</p>';
 		
@@ -853,7 +853,7 @@ HTML;
 			}
 			else
 			{
-				$href = Http::buildUri
+				$href = Http::buildPath
 				(
 					$this->language,
 					'album',
@@ -870,7 +870,7 @@ HTML;
 		
 		if (!Authorizer::isCurrentUserVisitor() && $song['original_song_id'] === null)
 		{
-			$href = Http::buildUri
+			$href = Http::buildPath
 			(
 				$this->language,
 				'album',
@@ -897,10 +897,10 @@ HTML;
 		{
 			if ($performers[$i]['character_uri'] !== null)
 			{
-				$hrefCharacter = Http::buildUri($this->language, 'character', $performers[$i]['character_uri']);
+				$hrefCharacter = Http::buildPath($this->language, 'character', $performers[$i]['character_uri']);
 				$linkCharacter = $this->createLink($hrefCharacter, $performers[$i]['character_transliterated_name']);
 				
-				$hrefArtist = Http::buildUri($this->language, 'artist', $performers[$i]['artist_uri']);
+				$hrefArtist = Http::buildPath($this->language, 'artist', $performers[$i]['artist_uri']);
 				$linkArtist = $this->createLink($hrefArtist, $performers[$i]['artist_transliterated_name']);
 				
 				$cvOpeningBracket = \Localization\LyricsPage\CvOpeningBracket;
@@ -910,7 +910,7 @@ HTML;
 			}
 			else
 			{
-				$hrefArtist = Http::buildUri($this->language, 'artist', $performers[$i]['artist_uri']);
+				$hrefArtist = Http::buildPath($this->language, 'artist', $performers[$i]['artist_uri']);
 				$linkArtist = $this->createLink($hrefArtist, $performers[$i]['artist_transliterated_name']);
 				
 				$parts[] = $linkArtist;
@@ -1688,7 +1688,14 @@ HTML;
 		
 		if ($fromLeft > $mostLeftPage)
 		{
-			$href = $pageLink.Http::buildPaginationParameters($limit, $mostLeftPage, $search);
+			$href = $pageLink.Http::buildQuery
+			(
+				[
+					'limit'  => $limit,
+					'page'   => $mostLeftPage,
+					'search' => $search
+				]
+			);
 			$html[] = $this->createPaginationButton($mostLeftPage, $href, 'enabled');
 		}
 		
@@ -1697,7 +1704,14 @@ HTML;
 		
 		for ($i = $fromLeft; $i <= $fromRight; $i++)
 		{
-			$href  = $pageLink.Http::buildPaginationParameters($limit, $i, $search);
+			$href  = $pageLink.Http::buildQuery
+			(
+				[
+					'limit'  => $limit,
+					'page'   => $i,
+					'search' => $search
+				]
+			);
 			$state = ($i === $currentPageIndex) ? 'current' : 'enabled';
 			
 			$html[] = $this->createPaginationButton($i, $href, $state);
@@ -1708,7 +1722,14 @@ HTML;
 		
 		if ($fromRight < $mostRightPage)
 		{
-			$href = $pageLink.Http::buildPaginationParameters($limit, $mostRightPage, $search);
+			$href = $pageLink.Http::buildQuery
+			(
+				[
+					'limit'  => $limit,
+					'page'   => $mostRightPage,
+					'search' => $search
+				]
+			);
 			$html[] = $this->createPaginationButton($mostRightPage, $href, 'enabled');
 		}
 		
@@ -1770,7 +1791,7 @@ HTML;
 		
 		foreach ($games as $game)
 		{
-			$href = Http::buildUri($this->language, 'game', $game['uri']);
+			$href = Http::buildPath($this->language, 'game', $game['uri']);
 			
 			$image        = $this->createGameImage($game);
 			$textEntities = [];
@@ -1806,7 +1827,7 @@ HTML;
 		
 		foreach ($albums as $album)
 		{
-			$href = Http::buildUri($this->language, 'album', $album['uri']);
+			$href = Http::buildPath($this->language, 'album', $album['uri']);
 			
 			$image        = $this->createAlbumImage($album);
 			$textEntities = [];
@@ -1842,7 +1863,7 @@ HTML;
 		
 		foreach ($artists as $artist)
 		{
-			$href = Http::buildUri($this->language, 'artist', $artist['uri']);
+			$href = Http::buildPath($this->language, 'artist', $artist['uri']);
 			
 			$image        = $this->createArtistImage($artist);
 			$textEntities = [];
@@ -1878,7 +1899,7 @@ HTML;
 		
 		foreach ($characters as $character)
 		{
-			$href = Http::buildUri($this->language, 'character', $character['uri']);
+			$href = Http::buildPath($this->language, 'character', $character['uri']);
 			
 			$image        = $this->createCharacterImage($character);
 			$textEntities = [];
@@ -1914,7 +1935,7 @@ HTML;
 		{
 			if ($songs[$i]['has_vocal'])
 			{
-				$href = Http::buildUri($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri']);
+				$href = Http::buildPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri']);
 				$transliteratedName = $this->createParagraphAsLink($songs[$i]['transliterated_name'], $href);
 			}
 			else
@@ -1923,13 +1944,13 @@ HTML;
 			$editLabel    = \Localization\AlbumPage\EditSong;
 			$editAccess   = RoleManager::getStateToEditAlbum($album);
 			$editAccess   = ($editAccess === AccessState::Ok) ? RoleManager::getStateToEditSong($songs[$i]) : $editAccess;
-			$editHref     = Http::buildUri($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'edit');
+			$editHref     = Http::buildPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'edit');
 			$editButton   = $this->createButtonAsRestrictedLink($editLabel, $editAccess, ['href' => $editHref]);
 			
 			$deleteLabel  = \Localization\AlbumPage\DeleteSong;
 			$deleteAccess = RoleManager::getStateToEditAlbum($album);
 			$deleteAccess = ($deleteAccess === AccessState::Ok) ? RoleManager::getStateToDeleteSong($songs[$i]) : $deleteAccess;
-			$deleteHref   = Http::buildUri($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'delete');
+			$deleteHref   = Http::buildPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'delete');
 			$deleteButton = $this->createButtonAsRestrictedLink($deleteLabel, $deleteAccess, ['href' => $deleteHref]);
 			
 			$cells                        = [];
@@ -1980,7 +2001,7 @@ HTML;
 		{
 			$addLabel  = \Localization\AlbumPage\AddSong;
 			$addAccess = RoleManager::getStateToEditAlbum($album);
-			$addHref   = Http::buildUri($this->language, 'album', $album['uri'], 'add-song');
+			$addHref   = Http::buildPath($this->language, 'album', $album['uri'], 'add-song');
 			$addButton = $this->createButtonAsRestrictedLink($addLabel, $addAccess, ['href' => $addHref]);
 			
 			$html[] =
@@ -1997,7 +2018,7 @@ HTML;
 		if (count($songs) === 0 && Authorizer::isCurrentUserAdministrator())
 		{
 			$title = \Localization\AlbumPage\FillAlbum;
-			$href  = Http::buildUri($this->language, 'album', $album['uri'], 'fill-album');
+			$href  = Http::buildPath($this->language, 'album', $album['uri'], 'fill-album');
 			
 			$html[] =
 			'
@@ -2042,7 +2063,7 @@ HTML;
 			
 			if ($song['has_vocal'])
 			{
-				$href = Http::buildUri($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
+				$href = Http::buildPath($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
 				$textEntities[] = $this->createHeadingAsLink($song['transliterated_name'], $headingLevel, $href, ['class' => ['entity-name']]);
 			}
 			else
@@ -2081,7 +2102,7 @@ HTML;
 			$image        = $this->createAlbumImage($album);
 			$textEntities = [];
 			
-			$href = Http::buildUri
+			$href = Http::buildPath
 			(
 				$this->language,
 				'album',
@@ -2144,7 +2165,7 @@ HTML;
 		
 		if ($artist['alias_of_transliterated_name'] && $artist['alias_of_uri'])
 		{
-			$href = Http::buildUri($this->language, 'artist', $artist['alias_of_uri']);
+			$href = Http::buildPath($this->language, 'artist', $artist['alias_of_uri']);
 			$text = $artist['alias_of_transliterated_name'];
 			
 			$textEntities[] = '<p>'.\Localization\ArtistPage\AliasOf.$this->createLink($href, $text).'</p>';

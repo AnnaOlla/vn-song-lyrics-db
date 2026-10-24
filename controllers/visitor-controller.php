@@ -48,7 +48,7 @@ class VisitorController extends ErrorController
 	{
 		if (!Authorizer::isCurrentUserVisitor())
 		{
-			$redirect = $_SERVER['HTTP_REFERER'] ?? Http::buildUri($this->language);
+			$redirect = $_SERVER['HTTP_REFERER'] ?? Http::buildPath($this->language);
 		
 			$this->handleRedirect($redirect);
 			return;
@@ -87,7 +87,7 @@ class VisitorController extends ErrorController
 		if (isset($_SERVER['HTTP_REFERER']))
 			$_SESSION['logInPage']['redirect'] = $_SERVER['HTTP_REFERER'];
 		else
-			$_SESSION['logInPage']['redirect'] = Http::buildUri($this->language);
+			$_SESSION['logInPage']['redirect'] = Http::buildPath($this->language);
 		
 		$_SESSION['logInPage']['nonce'] = Cryptography::generateNonce();
 		
@@ -140,7 +140,7 @@ class VisitorController extends ErrorController
 	{
 		if (!Authorizer::isCurrentUserVisitor())
 		{
-			$redirect = $_SERVER['HTTP_REFERER'] ?? Http::buildUri($this->language);
+			$redirect = $_SERVER['HTTP_REFERER'] ?? Http::buildPath($this->language);
 		
 			$this->handleRedirect($redirect);
 			return;
@@ -180,7 +180,7 @@ class VisitorController extends ErrorController
 		if (isset($_SERVER['HTTP_REFERER']))
 			$_SESSION['signUpPage']['redirect'] = $_SERVER['HTTP_REFERER'];
 		else
-			$_SESSION['signUpPage']['redirect'] = Http::buildUri($this->language);
+			$_SESSION['signUpPage']['redirect'] = Http::buildPath($this->language);
 		
 		$_SESSION['signUpPage']['nonce'] = Cryptography::generateNonce();
 		
@@ -288,7 +288,7 @@ class VisitorController extends ErrorController
 		if (!Authorizer::isCurrentUserVisitor())
 			Authorizer::endSession();
 		
-		$redirect = $_SERVER['HTTP_REFERER'] ?? Http::buildUri($this->language);
+		$redirect = $_SERVER['HTTP_REFERER'] ?? Http::buildPath($this->language);
 		
 		$this->handleRedirect($redirect);
 	}
@@ -1063,7 +1063,7 @@ class VisitorController extends ErrorController
 		}
 		
 		$this->model->addFeedback($senderId, $senderIp, $message);
-		$this->handleRedirect(Http::buildUri($this->language, 'feedback'));
+		$this->handleRedirect(Http::buildPath($this->language, 'feedback'));
 		
 		unset($_SESSION['feedbackPage']);
 	}
@@ -1143,7 +1143,7 @@ class VisitorController extends ErrorController
 	{
 		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
 		
-		$linkBack = Http::buildUri($this->language, 'game', $game['uri']);
+		$linkBack = Http::buildPath($this->language, 'game', $game['uri']);
 		$this->view->renderReportPage('game', $game['transliterated_name'], $linkBack);
 	}
 	
@@ -1188,7 +1188,7 @@ class VisitorController extends ErrorController
 	{
 		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
 		
-		$linkBack = Http::buildUri($this->language, 'album', $album['uri']);
+		$linkBack = Http::buildPath($this->language, 'album', $album['uri']);
 		$this->view->renderReportPage('album', $album['transliterated_name'], $linkBack);
 	}
 	
@@ -1233,7 +1233,7 @@ class VisitorController extends ErrorController
 	{
 		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
 		
-		$linkBack = Http::buildUri($this->language, 'artist', $artist['uri']);
+		$linkBack = Http::buildPath($this->language, 'artist', $artist['uri']);
 		$this->view->renderReportPage('artist', $artist['transliterated_name'], $linkBack);
 	}
 	
@@ -1278,7 +1278,7 @@ class VisitorController extends ErrorController
 	{
 		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
 		
-		$linkBack = Http::buildUri($this->language, 'character', $character['uri']);
+		$linkBack = Http::buildPath($this->language, 'character', $character['uri']);
 		$this->view->renderReportPage('character', $character['transliterated_name'], $linkBack);
 	}
 	
@@ -1339,7 +1339,7 @@ class VisitorController extends ErrorController
 	{
 		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
 		
-		$linkBack = Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri']);
+		$linkBack = Http::buildPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		$this->view->renderReportPage('lyrics', $song['transliterated_name'], $linkBack);
 	}
 	
@@ -1430,7 +1430,7 @@ class VisitorController extends ErrorController
 	{
 		$_SESSION['reportPage']['nonce'] = Cryptography::generateNonce();
 		
-		$linkBack = Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+		$linkBack = Http::buildPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		$this->view->renderReportPage('translation', $translation['name'], $linkBack);
 	}
 	

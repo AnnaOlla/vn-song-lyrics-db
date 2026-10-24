@@ -2,15 +2,15 @@
 
 final class Http
 {
-	public static function buildUri(string ...$uriParts): string
+	public static function buildPath(string ...$pathParts): string
 	{
-		for ($i = 0; $i < count($uriParts); $i++)
-			$uriParts[$i] = rawurlencode($uriParts[$i]);
+		for ($i = 0; $i < count($pathParts); $i++)
+			$pathParts[$i] = rawurlencode($pathParts[$i]);
 		
-		return '/'.implode('/', $uriParts);
+		return '/'.implode('/', $pathParts);
 	}
 	
-	public static function buildQueryParameters(array|null $keysToValues, bool $dropNullValues = true): string
+	public static function buildQuery(array|null $keysToValues, bool $dropNullValues = true): string
 	{
 		if ($dropNullValues)
 			$keysToValues = array_filter($keysToValues, function ($value) { return $value !== null; });
@@ -29,48 +29,21 @@ final class Http
 		if (!isset($_SERVER['HTTP_REFERER']))
 			return $fallback;
 		
-		$host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+		$referrer = \Uri\Rfc3986\Uri::parse($_SERVER['HTTP_REFERER']);
+		$request  = \Uri\Rfc3986\Uri::parse($_SERVER['REQUEST_URI']);
 		
-		if ($host === null || $host !== $_SERVER['HTTP_HOST'])
+		if ($referrer->getHost() !== $_SERVER['HTTP_HOST'])
 			return $fallback;
 		
-		$path = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
-		
-		if ($path === null)
+		if ($referrer->getPath() === null)
 			return $fallback;
 		
-		$currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-		
-		if ($path === $currentPath)
+		if ($referrer->getPath() === $request->getPath())
 			return $fallback;
 		
-		$query = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY);
+		if ($referrer->getQuery() === null)
+			return $referrer->getPath();
 		
-		if ($query === null)
-			return $path;
-		
-		return $path.'?'.$query;
-	}
-	
-	public static function buildPaginationParameters
-	(
-		int|null    $limit,
-		int|null    $page,
-		string|null $search
-	): string
-	{
-		$params = [];
-		
-		if ($limit !== null)
-			$params[] = 'limit='.$limit;
-		if ($page !== null)
-			$params[] = 'page='.$page;
-		if ($search !== null)
-			$params[] = 'search='.rawurlencode($search);
-		
-		if (count($params) === 0)
-			return '';
-		
-		return '?'.implode('&', $params);
+		return $referrer->getPath().'?'.$referrer->getQuery();
 	}
 }

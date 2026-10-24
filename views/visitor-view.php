@@ -18,7 +18,7 @@ class VisitorView extends ErrorView
 		$html[] = $this->startRender
 		(
 			title:        \Localization\HomePage\Heading,
-			canonicalUri: Http::buildUri($this->language),
+			canonicalUri: Http::buildPath($this->language),
 			cssSheetUris: ['/css/home-page.css']
 		);
 		
@@ -87,7 +87,7 @@ class VisitorView extends ErrorView
 		foreach ($albums as $album)
 		{
 			$headingLevel = 3;
-			$href = Http::buildUri($this->language, 'album', $album['uri']);
+			$href = Http::buildPath($this->language, 'album', $album['uri']);
 			
 			$image   = $this->createAlbumImage($album);
 			$heading = $this->createHeading($album['transliterated_name'], $headingLevel);
@@ -107,7 +107,7 @@ class VisitorView extends ErrorView
 		foreach ($lyrics as $lyric)
 		{
 			$headingLevel = 3;
-			$href = Http::buildUri($this->language, 'album', $lyric['album_uri'], 'song', $lyric['uri']);
+			$href = Http::buildPath($this->language, 'album', $lyric['album_uri'], 'song', $lyric['uri']);
 			
 			$album = [];
 			$album['transliterated_name'] = $lyric['album_transliterated_name'];
@@ -132,7 +132,7 @@ class VisitorView extends ErrorView
 		foreach ($translations as $translation)
 		{
 			$headingLevel = 3;
-			$href = Http::buildUri
+			$href = Http::buildPath
 			(
 				$this->language,
 				'album',
@@ -262,11 +262,11 @@ class VisitorView extends ErrorView
 					</section>
 					<section>
 						<p>'.\Localization\SignUpPage\Confirmation.'</p>
-							<a href="'.Http::buildUri($this->language, 'policy').'" target="_blank">'.\Localization\SignUpPage\Policy.'</a>'
+							<a href="'.Http::buildPath($this->language, 'policy').'" target="_blank">'.\Localization\SignUpPage\Policy.'</a>'
 							.\Localization\SignUpPage\Separator.
-							'<a href="'.Http::buildUri($this->language, 'rules').'" target="_blank">'.\Localization\SignUpPage\Rules.'</a>'
+							'<a href="'.Http::buildPath($this->language, 'rules').'" target="_blank">'.\Localization\SignUpPage\Rules.'</a>'
 							.\Localization\SignUpPage\Separator.
-							'<a href="'.Http::buildUri($this->language, 'writing-guide').'" target="_blank">'.\Localization\SignUpPage\WritingGuide.'</a>'
+							'<a href="'.Http::buildPath($this->language, 'writing-guide').'" target="_blank">'.\Localization\SignUpPage\WritingGuide.'</a>'
 							.\Localization\SignUpPage\FullStop.'
 						<p>'.\Localization\SignUpPage\Warning.'</p>
 					</section>
@@ -298,13 +298,13 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$buttonAttributes = ['href'  => Http::buildUri($this->language, 'add-game')];
+		$buttonAttributes = ['href'  => Http::buildPath($this->language, 'add-game')];
 		$buttonLabel      = \Localization\GameListPage\AddGame;
 		$buttonAccess     = RoleManager::getStateToAddGame();
 		
-		$hrefThisPage  = Http::buildUri($this->language, 'game-list');
+		$hrefThisPage  = Http::buildPath($this->language, 'game-list');
 		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
-		$queryThisPage = Http::buildQueryParameters($parameters);
+		$queryThisPage = Http::buildQuery($parameters);
 		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $gameCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
@@ -372,13 +372,13 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$buttonAttributes = ['href'  => Http::buildUri($this->language, 'add-album')];
+		$buttonAttributes = ['href'  => Http::buildPath($this->language, 'add-album')];
 		$buttonLabel      = \Localization\AlbumListPage\AddAlbum;
 		$buttonAccess     = RoleManager::getStateToAddAlbum();
 		
-		$hrefThisPage  = Http::buildUri($this->language, 'album-list');
+		$hrefThisPage  = Http::buildPath($this->language, 'album-list');
 		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
-		$queryThisPage = Http::buildQueryParameters($parameters);
+		$queryThisPage = Http::buildQuery($parameters);
 		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $albumCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
@@ -446,13 +446,13 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$buttonAttributes = ['href'  => Http::buildUri($this->language, 'add-artist')];
+		$buttonAttributes = ['href'  => Http::buildPath($this->language, 'add-artist')];
 		$buttonLabel      = \Localization\ArtistListPage\AddArtist;
 		$buttonAccess     = RoleManager::getStateToAddArtist();
 		
-		$hrefThisPage  = Http::buildUri($this->language, 'artist-list');
+		$hrefThisPage  = Http::buildPath($this->language, 'artist-list');
 		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
-		$queryThisPage = Http::buildQueryParameters($parameters);
+		$queryThisPage = Http::buildQuery($parameters);
 		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $artistCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
@@ -520,13 +520,13 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$buttonAttributes = ['href'  => Http::buildUri($this->language, 'add-character')];
+		$buttonAttributes = ['href'  => Http::buildPath($this->language, 'add-character')];
 		$buttonLabel      = \Localization\CharacterListPage\AddCharacter;
 		$buttonAccess     = RoleManager::getStateToAddCharacter();
 		
-		$hrefThisPage  = Http::buildUri($this->language, 'character-list');
+		$hrefThisPage  = Http::buildPath($this->language, 'character-list');
 		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
-		$queryThisPage = Http::buildQueryParameters($parameters);
+		$queryThisPage = Http::buildQuery($parameters);
 		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $characterCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
@@ -594,9 +594,9 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefThisPage  = Http::buildUri($this->language, 'song-list');
+		$hrefThisPage  = Http::buildPath($this->language, 'song-list');
 		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
-		$queryThisPage = Http::buildQueryParameters($parameters);
+		$queryThisPage = Http::buildQuery($parameters);
 		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $songCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
@@ -663,9 +663,9 @@ class VisitorView extends ErrorView
 		string|null $search
 	): void
 	{
-		$hrefThisPage  = Http::buildUri($this->language, 'translation-list');
+		$hrefThisPage  = Http::buildPath($this->language, 'translation-list');
 		$parameters    = ['limit' => $limit, 'page' => $page, 'search' => $search];
-		$queryThisPage = Http::buildQueryParameters($parameters);
+		$queryThisPage = Http::buildQuery($parameters);
 		
 		$paginationBlock   = $this->createPaginationBlock($page ?? 1, $limit, $search, $translationCount, $hrefThisPage);
 		$resultsLimitBlock = $this->createResultsLimitBlock($limit);
@@ -1028,7 +1028,7 @@ class VisitorView extends ErrorView
 					<p>'.\Localization\LyricsPage\NoLyricsAdded.'</p>
 		';
 		
-		$buttonAttributes = ['href'  => Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri'], 'add-lyrics')];
+		$buttonAttributes = ['href'  => Http::buildPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'add-lyrics')];
 		$buttonLabel      = \Localization\LyricsPage\AddLyrics;
 		$buttonAccess     = RoleManager::getStateToAddLyrics($song);
 		
@@ -1374,7 +1374,7 @@ class VisitorView extends ErrorView
 		}
 		
 		$heading = \Localization\ReportPage\Heading.$entityName.$entityType;
-		$reportLink = Http::buildUri($this->language, 'report');
+		$reportLink = Http::buildPath($this->language, 'report');
 		
 		$html[] = $this->startRender
 		(
@@ -1502,11 +1502,11 @@ class VisitorView extends ErrorView
 			$label4 = \Localization\UserPage\ChangePassword;
 			$label5 = \Localization\UserPage\DeleteAccount;
 			
-			$href1 = Http::buildUri($this->language, 'user', $userData['uri'], 'change-about-me');
-			$href2 = Http::buildUri($this->language, 'user', $userData['uri'], 'change-username');
-			//$href3 = Http::buildUri($this->language, 'user', $userData['uri'], 'change-email');
-			$href4 = Http::buildUri($this->language, 'user', $userData['uri'], 'change-password');
-			$href5 = Http::buildUri($this->language, 'user', $userData['uri'], 'delete-account');
+			$href1 = Http::buildPath($this->language, 'user', $userData['uri'], 'change-about-me');
+			$href2 = Http::buildPath($this->language, 'user', $userData['uri'], 'change-username');
+			//$href3 = Http::buildPath($this->language, 'user', $userData['uri'], 'change-email');
+			$href4 = Http::buildPath($this->language, 'user', $userData['uri'], 'change-password');
+			$href5 = Http::buildPath($this->language, 'user', $userData['uri'], 'delete-account');
 			
 			$attributes1 = ['href' => $href1];
 			$attributes2 = ['href' => $href2];

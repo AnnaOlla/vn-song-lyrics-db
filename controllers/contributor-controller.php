@@ -119,7 +119,7 @@ class ContributorController extends VisitorController
 		foreach ($characterIds as $characterId)
 			$this->model->addCharacterGameRelation($characterId, $gameId, $userAddedId);
 		
-		$link = Http::buildUri($this->language, 'game', $gameUri);
+		$link = Http::buildPath($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
 		
 		unset($_SESSION['addGamePage']);
@@ -220,7 +220,7 @@ class ContributorController extends VisitorController
 		foreach ($gameIds as $gameId)
 			$this->model->addGameAlbumRelation($gameId, $albumId, $userAddedId);
 		
-		$link = Http::buildUri($this->language, 'album', $albumUri);
+		$link = Http::buildPath($this->language, 'album', $albumUri);
 		$this->handleRedirect($link);
 		
 		unset($_SESSION['addAlbumPage']);
@@ -315,7 +315,7 @@ class ContributorController extends VisitorController
 			$userAddedId
 		);
 		
-		$link = Http::buildUri($this->language, 'artist', $artistUri);
+		$link = Http::buildPath($this->language, 'artist', $artistUri);
 		$this->handleRedirect($link);
 		
 		unset($_SESSION['addArtistPage']);
@@ -413,7 +413,7 @@ class ContributorController extends VisitorController
 		foreach ($gameIds as $gameId)
 			$this->model->addCharacterGameRelation($characterId, $gameId, $userAddedId);
 		
-		$link = Http::buildUri($this->language, 'character', $characterUri);
+		$link = Http::buildPath($this->language, 'character', $characterUri);
 		$this->handleRedirect($link);
 		
 		unset($_SESSION['addCharacterPage']);
@@ -535,9 +535,9 @@ class ContributorController extends VisitorController
 		$songCount++;
 		
 		if ($songCount === $album['song_count'])
-			$this->handleRedirect(Http::buildUri($this->language, 'album', $album['uri']));
+			$this->handleRedirect(Http::buildPath($this->language, 'album', $album['uri']));
 		else
-			$this->handleRedirect(Http::buildUri($this->language, 'album', $album['uri'], 'add-song'));
+			$this->handleRedirect(Http::buildPath($this->language, 'album', $album['uri'], 'add-song'));
 		
 		unset($_SESSION['addSongPage']);
 	}
@@ -696,7 +696,7 @@ class ContributorController extends VisitorController
 		foreach (array_combine($artistIds, $characterIds) as $artistId => $characterId)
 			$this->model->addSongArtistCharacterRelation($song['id'], $artistId, $characterId, $userAddedId);
 		
-		$link = Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri']);
+		$link = Http::buildPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		$this->handleRedirect($link);
 		
 		unset($_SESSION['addLyricsPage']);
@@ -824,7 +824,7 @@ class ContributorController extends VisitorController
 			$userAddedId
 		);
 		
-		$link = Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translationUri);
+		$link = Http::buildPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translationUri);
 		$this->handleRedirect($link);
 		
 		unset($_SESSION['addTranslationPage']);
@@ -961,7 +961,7 @@ class ContributorController extends VisitorController
 		foreach ($characterIdsToDelete as $characterId)
 			$this->model->deleteCharacterGameRelation($characterId, $gameId, 'unchecked');
 		
-		$link = Http::buildUri($this->language, 'game', $gameUri);
+		$link = Http::buildPath($this->language, 'game', $gameUri);
 		$this->handleRedirect($link);
 		
 		unset($_SESSION['editGamePage']);
@@ -1085,7 +1085,7 @@ class ContributorController extends VisitorController
 		foreach ($gameIdsToDelete as $gameId)
 			$this->model->deleteGameAlbumRelation($gameId, $albumId, 'unchecked');
 		
-		$this->handleRedirect(Http::buildUri($this->language, 'album', $albumUri));
+		$this->handleRedirect(Http::buildPath($this->language, 'album', $albumUri));
 		
 		unset($_SESSION['editAlbumPage']);
 	}
@@ -1188,7 +1188,7 @@ class ContributorController extends VisitorController
 			$userUpdatedId
 		);
 		
-		$this->handleRedirect(Http::buildUri($this->language, 'artist', $artistUri));
+		$this->handleRedirect(Http::buildPath($this->language, 'artist', $artistUri));
 		
 		unset($_SESSION['editArtistPage']);
 	}
@@ -1299,7 +1299,7 @@ class ContributorController extends VisitorController
 		foreach ($gameIdsToDelete as $gameId)
 			$this->model->deleteCharacterGameRelation($characterId, $gameId, 'unchecked');
 		
-		$this->handleRedirect(Http::buildUri($this->language, 'character', $characterUri));
+		$this->handleRedirect(Http::buildPath($this->language, 'character', $characterUri));
 		
 		unset($_SESSION['editCharacterPage']);
 	}
@@ -1392,7 +1392,7 @@ class ContributorController extends VisitorController
 			$userUpdatedId
 		);
 		
-		$this->handleRedirect(Http::buildUri($this->language, 'album', $album['uri']));
+		$this->handleRedirect(Http::buildPath($this->language, 'album', $album['uri']));
 		
 		unset($_SESSION['editSongPage']);
 	}
@@ -1600,7 +1600,7 @@ class ContributorController extends VisitorController
 		foreach ($performersToAdd as $performer)
 			$this->model->addSongArtistCharacterRelation($song['id'], $performer['artist_id'], $performer['character_id'], $userUpdatedId);
 		
-		$this->handleRedirect(Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri']));
+		$this->handleRedirect(Http::buildPath($this->language, 'album', $album['uri'], 'song', $song['uri']));
 		
 		unset($_SESSION['editLyricsPage']);
 	}
@@ -1699,7 +1699,7 @@ class ContributorController extends VisitorController
 			$userUpdatedId
 		);
 		
-		$link = Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+		$link = Http::buildPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		$this->handleRedirect($link);
 		
 		unset($_SESSION['editTranslationPage']);
@@ -1766,8 +1766,8 @@ class ContributorController extends VisitorController
 		
 		$this->model->deleteGame($game);
 		
-		$path  = Http::buildUri($this->language, 'game-list');
-		$query = Http::buildQueryParameters(self::ENTITY_LIST_DEFAULT_QUERY);
+		$path  = Http::buildPath($this->language, 'game-list');
+		$query = Http::buildQuery(self::ENTITY_LIST_DEFAULT_QUERY);
 		$this->handleRedirect($path.$query);
 		
 		unset($_SESSION['deleteGamePage']);
@@ -1831,8 +1831,8 @@ class ContributorController extends VisitorController
 		
 		$this->model->deleteAlbum($album);
 		
-		$path  = Http::buildUri($this->language, 'album-list');
-		$query = Http::buildQueryParameters(self::ENTITY_LIST_DEFAULT_QUERY);
+		$path  = Http::buildPath($this->language, 'album-list');
+		$query = Http::buildQuery(self::ENTITY_LIST_DEFAULT_QUERY);
 		$this->handleRedirect($path.$query);
 		
 		unset($_SESSION['deleteAlbumPage']);
@@ -1899,8 +1899,8 @@ class ContributorController extends VisitorController
 		
 		$this->model->deleteArtist($artist);
 		
-		$path  = Http::buildUri($this->language, 'artist-list');
-		$query = Http::buildQueryParameters(self::ENTITY_LIST_DEFAULT_QUERY);
+		$path  = Http::buildPath($this->language, 'artist-list');
+		$query = Http::buildQuery(self::ENTITY_LIST_DEFAULT_QUERY);
 		$this->handleRedirect($path.$query);
 		
 		unset($_SESSION['deleteArtistPage']);
@@ -1967,8 +1967,8 @@ class ContributorController extends VisitorController
 		
 		$this->model->deleteCharacter($character);
 		
-		$path  = Http::buildUri($this->language, 'character-list');
-		$query = Http::buildQueryParameters(self::ENTITY_LIST_DEFAULT_QUERY);
+		$path  = Http::buildPath($this->language, 'character-list');
+		$query = Http::buildQuery(self::ENTITY_LIST_DEFAULT_QUERY);
 		$this->handleRedirect($path.$query);
 		
 		unset($_SESSION['deleteCharacterPage']);
@@ -2051,7 +2051,7 @@ class ContributorController extends VisitorController
 		
 		$this->model->deleteSong($song);
 		
-		$path = Http::buildUri($this->language, 'album', $album['uri']);
+		$path = Http::buildPath($this->language, 'album', $album['uri']);
 		$this->handleRedirect($path);
 		
 		unset($_SESSION['deleteSongPage']);
@@ -2138,7 +2138,7 @@ class ContributorController extends VisitorController
 		$this->model->deleteLyrics($song);
 		$this->model->deleteSongArtistCharacterRelation(songId: $song['id']);
 		
-		$this->handleRedirect(Http::buildUri($this->language, 'album', $album['uri']));
+		$this->handleRedirect(Http::buildPath($this->language, 'album', $album['uri']));
 		
 		unset($_SESSION['deleteLyricsPage']);
 	}
@@ -2224,7 +2224,7 @@ class ContributorController extends VisitorController
 		
 		$this->model->deleteTranslation($translation);
 		
-		$this->handleRedirect(Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri']));
+		$this->handleRedirect(Http::buildPath($this->language, 'album', $album['uri'], 'song', $song['uri']));
 		
 		unset($_SESSION['deleteTranslationPage']);
 	}
@@ -2312,7 +2312,7 @@ class ContributorController extends VisitorController
 			$this->createUserSession($user);
 		}
 		
-		$this->handleRedirect(Http::buildUri($this->language, 'user', $user['uri']));
+		$this->handleRedirect(Http::buildPath($this->language, 'user', $user['uri']));
 		
 		unset($_SESSION['changeEmailPage']);
 	}
@@ -2412,7 +2412,7 @@ class ContributorController extends VisitorController
 			$this->createUserSession($user);
 		}
 		
-		$this->handleRedirect(Http::buildUri($this->language, 'user', $user['uri']));
+		$this->handleRedirect(Http::buildPath($this->language, 'user', $user['uri']));
 	}
 	
 	final public function handleChangePasswordPage(string $userUri): void
@@ -2504,7 +2504,7 @@ class ContributorController extends VisitorController
 			$this->createUserSession($user);
 		}
 		
-		$this->handleRedirect(Http::buildUri($this->language, 'user', $user['uri']));
+		$this->handleRedirect(Http::buildPath($this->language, 'user', $user['uri']));
 		
 		unset($_SESSION['changePasswordPage']);
 	}
@@ -2573,7 +2573,7 @@ class ContributorController extends VisitorController
 			$this->createUserSession($user);
 		}
 		
-		$this->handleRedirect(Http::buildUri($this->language, 'user', $user['uri']));
+		$this->handleRedirect(Http::buildPath($this->language, 'user', $user['uri']));
 	}
 	
 	final public function handleDeleteAccountPage(string $userUri): void
