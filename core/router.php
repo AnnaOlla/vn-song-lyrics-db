@@ -685,11 +685,14 @@ final class Router
 			require_once 'controllers/'.$_SESSION['user']['role'].'-controller.php';
 			$controller = new ($_SESSION['user']['role'].'controller')($language);
 			
-			if (Authorizer::isRequestForbidden() || Authorizer::isRateLimitExceededToBlock())
-				Authorizer::blockCurrentIp();
-			
 			if (Authorizer::isCurrentIpBlocked() || Authorizer::isCurrentUserAgentBlocked())
-				throw new HttpForbidden403();
+				$method = 'handleViolatorPage';
+			
+			else if (Authorizer::isRequestForbidden() || Authorizer::isRateLimitExceededToBlock())
+			{
+				Authorizer::blockCurrentIp();
+				$method = 'handleViolatorPage';
+			}
 			
 			if (Authorizer::isMaintenanceModeActive() && !Authorizer::isCurrentUserAdministrator())
 				throw new HttpServiceUnavailable503();

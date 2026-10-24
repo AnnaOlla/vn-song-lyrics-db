@@ -122,4 +122,10 @@ class ErrorController extends Controller
 		http_response_code(503);
 		$this->view->renderServiceUnavailable503();
 	}
+	
+	final public function handleViolatorPage(): void
+	{
+		http_response_code(403);
+		$this->view->renderViolatorPage();
+	}
 }
