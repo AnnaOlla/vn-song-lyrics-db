@@ -2,7 +2,7 @@
 
 final class Http
 {
-	public static function buildInternalPath(string ...$uriParts): string
+	public static function buildUri(string ...$uriParts): string
 	{
 		for ($i = 0; $i < count($uriParts); $i++)
 			$uriParts[$i] = rawurlencode($uriParts[$i]);

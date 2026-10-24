@@ -521,7 +521,7 @@ class AdministratorController extends ContributorController
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
 		
 		$this->model->addLanguage($ownName, $ruName, $enName, $jaName);
-		$this->handleRedirect(Http::buildInternalPath($this->language, 'control-panel'));
+		$this->handleRedirect(Http::buildUri($this->language, 'control-panel'));
 	}
 	
 	final public function handleReportListPage(): void
@@ -705,7 +705,7 @@ class AdministratorController extends ContributorController
 			$userAddedId
 		);
 		
-		$this->handleRedirect(Http::buildInternalPath($this->language, 'album', $album['uri']));
+		$this->handleRedirect(Http::buildUri($this->language, 'album', $album['uri']));
 	}
 	
 	final public function handleUncheckedGameListPage(): void
@@ -840,7 +840,7 @@ class AdministratorController extends ContributorController
 		$this->model->updateStaticPageSitemap();
 		$this->model->updateSitemapIndex();
 		
-		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$redirect = Http::buildUri($this->language, 'control-panel');
 		$this->handleRedirect($redirect);
 	}
 	
@@ -862,7 +862,7 @@ class AdministratorController extends ContributorController
 		$this->model->updateGameListSitemap();
 		$this->model->updateSitemapIndex();
 		
-		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$redirect = Http::buildUri($this->language, 'control-panel');
 		$this->handleRedirect($redirect);
 	}
 	
@@ -884,7 +884,7 @@ class AdministratorController extends ContributorController
 		$this->model->updateAlbumListSitemap();
 		$this->model->updateSitemapIndex();
 		
-		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$redirect = Http::buildUri($this->language, 'control-panel');
 		$this->handleRedirect($redirect);
 	}
 	
@@ -906,7 +906,7 @@ class AdministratorController extends ContributorController
 		$this->model->updateArtistListSitemap();
 		$this->model->updateSitemapIndex();
 		
-		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$redirect = Http::buildUri($this->language, 'control-panel');
 		$this->handleRedirect($redirect);
 	}
 	
@@ -928,7 +928,7 @@ class AdministratorController extends ContributorController
 		$this->model->updateCharacterListSitemap();
 		$this->model->updateSitemapIndex();
 		
-		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$redirect = Http::buildUri($this->language, 'control-panel');
 		$this->handleRedirect($redirect);
 	}
 	
@@ -950,7 +950,7 @@ class AdministratorController extends ContributorController
 		$this->model->updateSongListSitemap();
 		$this->model->updateSitemapIndex();
 		
-		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$redirect = Http::buildUri($this->language, 'control-panel');
 		$this->handleRedirect($redirect);
 	}
 	
@@ -972,7 +972,7 @@ class AdministratorController extends ContributorController
 		$this->model->updateTranslationListSitemap();
 		$this->model->updateSitemapIndex();
 		
-		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$redirect = Http::buildUri($this->language, 'control-panel');
 		$this->handleRedirect($redirect);
 	}
 	
@@ -993,7 +993,7 @@ class AdministratorController extends ContributorController
 	{
 		$this->model->switchMaintenanceMode();
 		
-		$redirect = Http::buildInternalPath($this->language, 'control-panel');
+		$redirect = Http::buildUri($this->language, 'control-panel');
 		$this->handleRedirect($redirect);
 	}
 }

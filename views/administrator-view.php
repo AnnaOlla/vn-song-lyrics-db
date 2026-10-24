@@ -77,7 +77,7 @@ class AdministratorView extends ContributorView
 			$jaName  = null;
 		}
 		
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'control-panel');
+		$defaultReturnLink = Http::buildUri($this->language, 'control-panel');
 		
 		$html[] = $this->startRender
 		(
@@ -139,7 +139,7 @@ class AdministratorView extends ContributorView
 	final public function renderReportListPage(array $reports): void
 	{
 		$heading = 'Report List';
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'control-panel');
+		$defaultReturnLink = Http::buildUri($this->language, 'control-panel');
 		
 		$html[] = $this->startRender
 		(
@@ -180,7 +180,7 @@ class AdministratorView extends ContributorView
 			
 			if ($report['username'] !== null)
 			{
-				$link = Http::buildInternalPath($this->language, 'user', $report['user_uri']);
+				$link = Http::buildUri($this->language, 'user', $report['user_uri']);
 				
 				$html[] =
 				'
@@ -238,7 +238,7 @@ class AdministratorView extends ContributorView
 	final public function renderUserListPage(array $users): void
 	{
 		$heading = 'User List';
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'control-panel');
+		$defaultReturnLink = Http::buildUri($this->language, 'control-panel');
 		
 		$html[] = $this->startRender
 		(
@@ -274,7 +274,7 @@ class AdministratorView extends ContributorView
 				$fingerprints[$i] = Cryptography::decryptData($fingerprints[$i]);
 			$fingerprints = implode(', ', $fingerprints);
 			
-			$link = Http::buildInternalPath($this->language, 'user', $user['uri']);
+			$link = Http::buildUri($this->language, 'user', $user['uri']);
 			
 			$html[] = 
 			'
@@ -309,7 +309,7 @@ class AdministratorView extends ContributorView
 	
 	final public function renderFillAlbumEditorPage(array $album, array $discography, string $heading): void
 	{
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'album', $album['uri']);
 		
 		$vocalOptions =
 		[

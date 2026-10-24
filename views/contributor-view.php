@@ -63,7 +63,7 @@ class ContributorView extends VisitorView
 			];
 		}
 		
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'game-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
+		$defaultReturnLink = Http::buildUri($this->language, 'game-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
 		
 		$html[] = $this->startRender
 		(
@@ -314,7 +314,7 @@ class ContributorView extends VisitorView
 			];
 		}
 		
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'album-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
+		$defaultReturnLink = Http::buildUri($this->language, 'album-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
 		
 		$html[] = $this->startRender
 		(
@@ -520,7 +520,7 @@ class ContributorView extends VisitorView
 			$originalArtist     = null;
 		}
 		
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'artist-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
+		$defaultReturnLink = Http::buildUri($this->language, 'artist-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
 		
 		$html[] = $this->startRender
 		(
@@ -695,7 +695,7 @@ class ContributorView extends VisitorView
 			];
 		}
 		
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'character-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
+		$defaultReturnLink = Http::buildUri($this->language, 'character-list').'?'.self::ENTITY_LIST_DEFAULT_QUERY;
 		
 		$html[] = $this->startRender
 		(
@@ -893,7 +893,7 @@ class ContributorView extends VisitorView
 			$numberButtonDisabled = false;
 		}
 		
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'album', $album['uri']);
 		
 		$vocalOptions =
 		[
@@ -1082,7 +1082,7 @@ class ContributorView extends VisitorView
 			}
 		);
 		
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		
 		$html[] = $this->startRender
 		(
@@ -1275,7 +1275,7 @@ class ContributorView extends VisitorView
 			
 			$languageSelect = $this->createTextInput(['value' => \Localization\Functions\localizeLanguageName($translation), 'disabled' => true]);
 			
-			$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+			$defaultReturnLink = Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		}
 		else
 		{
@@ -1308,7 +1308,7 @@ class ContributorView extends VisitorView
 				attributesForSentInput: ['name' => 'translation-language-id', 'required' => true, 'disabled' => $translation !== null]
 			);
 			
-			$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
+			$defaultReturnLink = Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		}
 		
 		$html[] = $this->startRender
@@ -1725,7 +1725,7 @@ class ContributorView extends VisitorView
 	final public function renderDeleteGamePage(array $game): void
 	{
 		$heading = \Localization\DeleteEntityPage\DeleteGame.$game['transliterated_name'];
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'game', $game['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'game', $game['uri']);
 		
 		$this->renderDeleteEntityPage
 		(
@@ -1738,7 +1738,7 @@ class ContributorView extends VisitorView
 	final public function renderDeleteAlbumPage(array $album): void
 	{
 		$heading           = \Localization\DeleteEntityPage\DeleteAlbum.$album['transliterated_name'];
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'album', $album['uri']);
 		
 		$this->renderDeleteEntityPage
 		(
@@ -1751,7 +1751,7 @@ class ContributorView extends VisitorView
 	final public function renderDeleteArtistPage(array $artist): void
 	{
 		$heading           = \Localization\DeleteEntityPage\DeleteArtist.$artist['transliterated_name'];
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'artist', $artist['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'artist', $artist['uri']);
 		
 		$this->renderDeleteEntityPage
 		(
@@ -1764,7 +1764,7 @@ class ContributorView extends VisitorView
 	final public function renderDeleteCharacterPage(array $character): void
 	{
 		$heading           = \Localization\DeleteEntityPage\DeleteCharacter.$character['transliterated_name'];
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'character', $character['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'character', $character['uri']);
 		
 		$this->renderDeleteEntityPage
 		(
@@ -1777,7 +1777,7 @@ class ContributorView extends VisitorView
 	final public function renderDeleteSongPage(array $album, array $song): void
 	{
 		$heading           = \Localization\DeleteEntityPage\DeleteSong.$song['transliterated_name'];
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'album', $album['uri']);
 		
 		$this->renderDeleteEntityPage
 		(
@@ -1790,7 +1790,7 @@ class ContributorView extends VisitorView
 	final public function renderDeleteLyricsPage(array $album, array $song): void
 	{
 		$heading           = \Localization\DeleteEntityPage\DeleteLyrics.$song['transliterated_name'];
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri']);
 		
 		$this->renderDeleteEntityPage
 		(
@@ -1803,7 +1803,7 @@ class ContributorView extends VisitorView
 	final public function renderDeleteTranslationPage(array $album, array $song, array $translation): void
 	{
 		$heading           = \Localization\DeleteEntityPage\DeleteTranslation.$song['transliterated_name'];
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'album', $album['uri'], 'song', $song['uri'], 'translation', $translation['uri']);
 		
 		$this->renderDeleteEntityPage
 		(
@@ -1816,7 +1816,7 @@ class ContributorView extends VisitorView
 	final public function renderChangeEmailPage(array $user, InputError $error = InputError::None)
 	{
 		$heading           = $user['username'].\Localization\ChangeEmailPage\Edit;
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'user', $user['uri']);
 		
 		$html[] = $this->startRender
 		(
@@ -1860,7 +1860,7 @@ class ContributorView extends VisitorView
 	final public function renderChangeUsernamePage(array $user, InputError $error = InputError::None)
 	{
 		$heading           = $user['username'].\Localization\ChangeUsernamePage\Edit;
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'user', $user['uri']);
 		
 		$html[] = $this->startRender
 		(
@@ -1904,7 +1904,7 @@ class ContributorView extends VisitorView
 	final public function renderChangePasswordPage(array $user, InputError $error = InputError::None)
 	{
 		$heading           = $user['username'].\Localization\ChangePasswordPage\Edit;
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'user', $user['uri']);
 		
 		$html[] = $this->startRender
 		(
@@ -1948,7 +1948,7 @@ class ContributorView extends VisitorView
 	final public function renderChangeAboutMePage(array $user, InputError $error = InputError::None)
 	{
 		$heading           = $user['username'].\Localization\ChangeAboutMePage\Edit;
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['uri']);
+		$defaultReturnLink = Http::buildUri($this->language, 'user', $user['uri']);
 		
 		$html[] = $this->startRender
 		(
@@ -1996,7 +1996,7 @@ class ContributorView extends VisitorView
 	final public function renderDeleteAccountPage(array $user, InputError $error = InputError::None)
 	{
 		$heading           = $user['username'].\Localization\DeleteAccountPage\Delete;
-		$defaultReturnLink = Http::buildInternalPath($this->language, 'user', $user['username']);
+		$defaultReturnLink = Http::buildUri($this->language, 'user', $user['username']);
 		
 		$html[] = $this->startRender
 		(
