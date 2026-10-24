@@ -178,7 +178,7 @@ class AdministratorView extends ContributorView
 								<td>'.htmlspecialchars($ipAddress).'</td>
 			';
 			
-			if (!is_null($report['username']))
+			if ($report['username'] !== null)
 			{
 				$link = Http::buildInternalPath($this->language, 'user', $report['user_uri']);
 				

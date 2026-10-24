@@ -56,14 +56,14 @@ abstract class View
 	
 	private function buildAttributes(array|null $attributes): string
 	{
-		if (is_null($attributes))
+		if ($attributes === null)
 			return '';
 		
 		$parts = [];
 		
 		foreach ($attributes as $key => $value)
 		{
-			if ($value === false || is_null($value))
+			if ($value === false || $value === null)
 				continue;
 			
 			if (is_array($value))
@@ -371,7 +371,7 @@ HTML;
 		string $entityFirstLetter
 	): string
 	{
-		if (is_null($entity['vndb_id']))
+		if ($entity['vndb_id'] === null)
 			return '';
 		
 		$href = htmlspecialchars('https://vndb.org/'.$entityFirstLetter.$entity['vndb_id']);
@@ -387,7 +387,7 @@ HTML;
 		string $entityName
 	): string
 	{
-		if (is_null($entity['vgmdb_id']))
+		if ($entity['vgmdb_id'] === null)
 			return '';
 		
 		$href = htmlspecialchars('https://vgmdb.net/'.$entityName.'/'.$entity['vgmdb_id']);
@@ -458,10 +458,10 @@ HTML;
 		string      $status
 	): string
 	{
-		if (is_null($timestamp))
+		if ($timestamp === null)
 			return '';
 		
-		if (is_null($username))
+		if ($username === null)
 			$username = \Localization\TimestampString\DeletedUser;
 		else
 			$username = $this->createLink(Http::buildInternalPath($this->language, 'user', $uri), $username);
@@ -895,7 +895,7 @@ HTML;
 		
 		for ($i = 0; $i < count($performers); $i++)
 		{
-			if (!is_null($performers[$i]['character_uri']))
+			if ($performers[$i]['character_uri'] !== null)
 			{
 				$hrefCharacter = Http::buildInternalPath($this->language, 'character', $performers[$i]['character_uri']);
 				$linkCharacter = $this->createLink($hrefCharacter, $performers[$i]['character_transliterated_name']);
@@ -1240,10 +1240,10 @@ HTML;
 		array|null $attributes      = null
 	): string
 	{
-		if (is_null($iteratedOptions))
+		if ($iteratedOptions === null)
 			$iteratedOptions = [];
 		
-		if (is_null($disabledOptions))
+		if ($disabledOptions === null)
 			$disabledOptions = [];
 		
 		$attributes['class'][] = 'custom-select';
@@ -1252,7 +1252,7 @@ HTML;
 		
 		$iterated = array_column($iteratedOptions, $keyToSentValue, $keyToShownValue);
 		$disabled = array_column($disabledOptions, $keyToSentValue);
-		$selected = is_null($selectedOption) ? null : $selectedOption[$keyToSentValue];
+		$selected = $selectedOption !== null ? $selectedOption[$keyToSentValue] : null;
 		
 		if ($addEmptyOption)
 			$iterated = ['' => ''] + $iterated;
@@ -1294,20 +1294,20 @@ HTML;
 		array|null  $attributesForSentInput  = null
 	): string
 	{
-		if (is_null($iteratedOptions))
+		if ($iteratedOptions === null)
 			$iteratedOptions = [];
 		
-		if (is_null($disabledOptions))
+		if ($disabledOptions === null)
 			$disabledOptions = [];
 		
-		if (is_null($selectedOption))
+		if ($selectedOption === null)
 		{
 			$selectedOption = [];
 			$selectedOption[$keyToShownValue] = '';
 			$selectedOption[$keyToSentValue] = '';
 		}
 		
-		if (is_null($keysToShownHints))
+		if ($keysToShownHints === null)
 			$keysToShownHints = [];
 		
 		if ($addEmptyOption)
@@ -1593,7 +1593,7 @@ HTML;
 		];
 		
 		// sort nulls last
-		if (!in_array($selectedOption, $options) && !is_null($limit))
+		if (!in_array($selectedOption, $options) && $limit !== null)
 		{
 			$options[] = $selectedOption;
 			usort
@@ -1660,7 +1660,7 @@ HTML;
 		string      $pageLink
 	): string
 	{
-		if (is_null($limit))
+		if ($limit === null)
 			$pageCount = 1;
 		else if ($entityCount > 0 && $entityCount % $limit === 0)
 			$pageCount = intdiv($entityCount, $limit);
@@ -1727,7 +1727,7 @@ HTML;
 		string|null $search
 	): string
 	{
-		if (!is_null($limit))
+		if ($limit !== null)
 		{
 			$limitInput  = '<input name="limit" type="hidden" value="'.htmlspecialchars($limit).'" />';
 			$pageInput   = '<input name="page" type="hidden" value="1" />';

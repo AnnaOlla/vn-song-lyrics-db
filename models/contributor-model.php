@@ -1707,7 +1707,7 @@ class ContributorModel extends VisitorModel
 		string|null $whereStatus = null
 	): void
 	{
-		if (is_null($gameId) && is_null($albumId))
+		if ($gameId === null && $albumId === null)
 			throw new HttpInternalServerError500(__METHOD__.' called without conditions', get_defined_vars());
 		
 		if (!in_array($whereStatus, [null, 'unchecked', 'checked', 'hidden'], true))
@@ -1716,19 +1716,19 @@ class ContributorModel extends VisitorModel
 		$where = [];
 		$binds = [];
 		
-		if (!is_null($whereStatus))
+		if ($whereStatus !== null)
 		{
 			$where[] = 'status = :status';
 			$binds[] = [':status',  $whereStatus, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($gameId))
+		if ($gameId !== null)
 		{
 			$where[] = 'game_id = :game_id';
 			$binds[] = [':game_id', $gameId, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($albumId))
+		if ($albumId !== null)
 		{
 			$where[] = 'album_id = :album_id';
 			$binds[] = [':album_id', $albumId, PDO::PARAM_INT];
@@ -1757,7 +1757,7 @@ class ContributorModel extends VisitorModel
 		string|null $whereStatus = null
 	): void
 	{
-		if (is_null($songId) && is_null($artistId) && is_null($characterId))
+		if ($songId === null && $artistId === null && $characterId === null)
 			throw new HttpInternalServerError500('Method called without conditions', get_defined_vars());
 		
 		if (!in_array($whereStatus, [null, 'unchecked', 'checked', 'hidden'], true))
@@ -1766,25 +1766,25 @@ class ContributorModel extends VisitorModel
 		$where = [];
 		$binds = [];
 		
-		if (!is_null($whereStatus))
+		if ($whereStatus !== null)
 		{
 			$where[] = 'status = :status';
 			$binds[] = [':status',  $whereStatus, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($songId))
+		if ($songId !== null)
 		{
 			$where[] = 'song_id = :song_id';
 			$binds[] = [':song_id', $songId, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($artistId))
+		if ($artistId !== null)
 		{
 			$where[] = 'artist_id = :artist_id';
 			$binds[] = [':artist_id', $artistId, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($characterId))
+		if ($characterId !== null)
 		{
 			$where[] = 'character_id = :character_id';
 			$binds[] = [':character_id', $characterId, PDO::PARAM_INT];
@@ -1812,7 +1812,7 @@ class ContributorModel extends VisitorModel
 		string|null $whereStatus = null
 	): void
 	{
-		if (is_null($characterId) && is_null($gameId))
+		if ($characterId === null && $gameId === null)
 			throw new HttpInternalServerError500('Method called without conditions', get_defined_vars());
 		
 		if (!in_array($whereStatus, [null, 'unchecked', 'checked', 'hidden'], true))
@@ -1821,19 +1821,19 @@ class ContributorModel extends VisitorModel
 		$where = [];
 		$binds = [];
 		
-		if (!is_null($whereStatus))
+		if ($whereStatus !== null)
 		{
 			$where[] = 'status = :status';
 			$binds[] = [':status',  $whereStatus, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($characterId))
+		if ($characterId !== null)
 		{
 			$where[] = 'character_id = :character_id';
 			$binds[] = [':character_id', $characterId, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($gameId))
+		if ($gameId !== null)
 		{
 			$where[] = 'game_id = :game_id';
 			$binds[] = [':game_id', $gameId, PDO::PARAM_INT];
@@ -1866,7 +1866,7 @@ class ContributorModel extends VisitorModel
 		$set  = [];
 		$binds = [[':id', $id, PDO::PARAM_INT]];
 		
-		if (!is_null($newUsername))
+		if ($newUsername !== null)
 		{
 			$set[]   = 'username = :username';
 			$binds[] = [':username', $newUsername, PDO::PARAM_STR];
@@ -1875,19 +1875,19 @@ class ContributorModel extends VisitorModel
 			$binds[] = [':uri', $this->buildUri($newUsername), PDO::PARAM_STR];
 		}
 		
-		if (!is_null($newEmail))
+		if ($newEmail !== null)
 		{
 			$set[]   = 'email = :email';
 			$binds[] = [':email', Cryptography::encryptData(mb_strtolower($newEmail)), PDO::PARAM_STR];
 		}
 		
-		if (!is_null($newPassword))
+		if ($newPassword !== null)
 		{
 			$set[]   = 'password = :password';
 			$binds[] = [':password', Cryptography::generatePasswordHash($newPassword), PDO::PARAM_STR];
 		}
 		
-		if (!is_null($newAboutMe))
+		if ($newAboutMe !== null)
 		{
 			$set[]   = 'about_me = :about_me';
 			$binds[] = [':about_me', $newAboutMe, PDO::PARAM_STR];

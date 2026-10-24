@@ -45,7 +45,7 @@ class VisitorModel extends Model
 	
 	final public function isEmailRegistered(string $email): bool
 	{
-		return !is_null($this->getUserIdWithEmail($email));
+		return ($this->getUserIdWithEmail($email) !== null);
 	}
 	
 	final public function isUsernameRegistered(string $username): bool
@@ -166,7 +166,7 @@ class VisitorModel extends Model
 		string|null $uri          = null
 	): array|null
 	{
-		if (is_null($id) && is_null($username) && is_null($uri))
+		if ($id === null && $username === null && $uri === null)
 			throw HttpInternalServerError500(__METHOD__.' was called without arguments');
 		
 		$select =
@@ -190,19 +190,19 @@ class VisitorModel extends Model
 			$select[] = 'u.about_me          AS about_me';
 		}
 		
-		if (!is_null($id))
+		if ($id !== null)
 		{
 			$where[] = 'u.id = :id';
 			$binds[] = [':id', $id, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($username))
+		if ($username !== null)
 		{
 			$where[] = 'u.username = :username';
 			$binds[] = [':username', $username, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($uri))
+		if ($uri !== null)
 		{
 			$where[] = 'u.uri = :uri';
 			$binds[] = [':uri', $uri, PDO::PARAM_STR];
@@ -340,7 +340,7 @@ class VisitorModel extends Model
 			$select[] = 'g.uri';
 		}
 		
-		if (!is_null($albumUri))
+		if ($albumUri !== null)
 		{
 			$select[] = 'gar.status AS game_album_relation_status';
 			$join[]   =
@@ -358,7 +358,7 @@ class VisitorModel extends Model
 			$binds[]  = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($characterUri))
+		if ($characterUri !== null)
 		{
 			$select[] = 'cgr.status AS character_game_relation_status';
 			$join[]   =
@@ -376,7 +376,7 @@ class VisitorModel extends Model
 			$binds[]  = [':character_uri', $characterUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]   =
 			'
@@ -389,13 +389,13 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($status))
+		if ($status !== null)
 		{
 			$where[]  = 'g.status = :status';
 			$binds[]  = [':status', $status, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($page) && !is_null($limit))
+		if ($page !== null && $limit !== null)
 		{
 			$offset = ($page - 1) * $limit;
 			$limits = 'LIMIT :limit OFFSET :offset';
@@ -404,7 +404,7 @@ class VisitorModel extends Model
 			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = '(REGEXP_REPLACE(g.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
@@ -468,7 +468,7 @@ class VisitorModel extends Model
 			$select[] = 'a.song_count';
 		}
 		
-		if (!is_null($gameUri))
+		if ($gameUri !== null)
 		{
 			$select[] = 'gar.status AS game_album_relation_status';
 			$join[]   =
@@ -486,7 +486,7 @@ class VisitorModel extends Model
 			$binds[]  = [':game_uri', $gameUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]   =
 			'
@@ -499,13 +499,13 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($status))
+		if ($status !== null)
 		{
 			$where[]  = 'a.status = :status';
 			$binds[]  = [':status', $status, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($page) && !is_null($limit))
+		if ($page !== null && $limit !== null)
 		{
 			$offset = ($page - 1) * $limit;
 			$limits = 'LIMIT :limit OFFSET :offset';
@@ -514,7 +514,7 @@ class VisitorModel extends Model
 			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = '(REGEXP_REPLACE(a.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
@@ -581,7 +581,7 @@ class VisitorModel extends Model
 			$select[] = 'a.status';
 		}
 		
-		if (!is_null($characterUri))
+		if ($characterUri !== null)
 		{
 			$distinct = 'DISTINCT';
 			$select[] = 'sar.status AS song_artist_character_relation_status';
@@ -600,7 +600,7 @@ class VisitorModel extends Model
 			$binds[]  = [':character_uri', $characterUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]   =
 			'
@@ -613,13 +613,13 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($status))
+		if ($status !== null)
 		{
 			$where[]  = 'a.status = :status';
 			$binds[]  = [':status', $status, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($aliasesOfId))
+		if ($aliasesOfId !== null)
 		{
 			$where[]  = 'a.alias_of_artist_id = :aliases_of_id';
 			$binds[]  = [':aliases_of_id', $aliasesOfId, PDO::PARAM_STR];
@@ -630,7 +630,7 @@ class VisitorModel extends Model
 			$where[]  = 'a.alias_of_artist_id IS NULL';
 		}
 		
-		if (!is_null($page) && !is_null($limit))
+		if ($page !== null && $limit !== null)
 		{
 			$offset = ($page - 1) * $limit;
 			$limits = 'LIMIT :limit OFFSET :offset';
@@ -639,7 +639,7 @@ class VisitorModel extends Model
 			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = '(REGEXP_REPLACE(a.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
@@ -704,7 +704,7 @@ class VisitorModel extends Model
 			$select[] = 'c.uri';
 		}
 		
-		if (!is_null($gameUri))
+		if ($gameUri !== null)
 		{
 			$select[] = 'cgr.status AS character_game_relation_status';
 			$join[]   =
@@ -722,7 +722,7 @@ class VisitorModel extends Model
 			$binds[]  = [':game_uri', $gameUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($artistUri))
+		if ($artistUri !== null)
 		{
 			$distinct = 'DISTINCT';
 			$select[] = 'sar.status AS song_artist_character_relation_status';
@@ -741,7 +741,7 @@ class VisitorModel extends Model
 			$binds[]  = [':artist_uri', $artistUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]   =
 			'
@@ -754,13 +754,13 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($status))
+		if ($status !== null)
 		{
 			$where[]  = 'c.status = :status';
 			$binds[]  = [':status', $status, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($page) && !is_null($limit))
+		if ($page !== null && $limit !== null)
 		{
 			$offset = ($page - 1) * $limit;
 			$limits = 'LIMIT :limit OFFSET :offset';
@@ -769,7 +769,7 @@ class VisitorModel extends Model
 			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = '(REGEXP_REPLACE(c.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
@@ -838,13 +838,13 @@ class VisitorModel extends Model
 			$select[] = 'ch.uri                 AS character_uri';
 		}
 		
-		if (!is_null($albumUri))
+		if ($albumUri !== null)
 		{
 			$where[] = 'al.uri = :album_uri';
 			$binds[] = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($songUri))
+		if ($songUri !== null)
 		{
 			$where[] = 'sn.uri = :song_uri';
 			$binds[] = [':song_uri', $songUri, PDO::PARAM_STR];
@@ -929,14 +929,14 @@ class VisitorModel extends Model
 			$select[] = 'al.is_image_uploaded';
 		}
 		
-		if (!is_null($albumUri))
+		if ($albumUri !== null)
 		{
 			$where[]  = 'al.id = sn.album_id';
 			$where[]  = 'al.uri = :album_uri';
 			$binds[]  = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($artistUri) || !is_null($characterUri))
+		if ($artistUri !== null || $characterUri !== null)
 		{
 			$select[] = 'sacr.status AS song_artist_character_relation_status';
 			$distinct = 'DISTINCT';
@@ -949,7 +949,7 @@ class VisitorModel extends Model
 			';
 		}
 		
-		if (!is_null($artistUri))
+		if ($artistUri !== null)
 		{
 			$join[]   = 
 			'
@@ -962,7 +962,7 @@ class VisitorModel extends Model
 			$binds[]  = [':artist_uri', $artistUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($characterUri))
+		if ($characterUri !== null)
 		{
 			$join[]   = 
 			'
@@ -975,7 +975,7 @@ class VisitorModel extends Model
 			$binds[]  = [':character_uri', $characterUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($hasVocal))
+		if ($hasVocal !== null)
 		{
 			$where[]  = 'sn.has_vocal = :has_vocal';
 			$binds[]  = [':has_vocal', $hasVocal, PDO::PARAM_BOOL];
@@ -992,19 +992,19 @@ class VisitorModel extends Model
 			$where[]  = 'sn.original_song_id IS NOT NULL';
 		}
 		
-		if (!is_null($hasVocal))
+		if ($hasVocal !== null)
 		{
 			$where[]  = 'sn.has_vocal = :has_vocal';
 			$binds[]  = [':has_vocal', $hasVocal, PDO::PARAM_BOOL];
 		}
 		
-		if (!is_null($excludeId))
+		if ($excludeId !== null)
 		{
 			$where[]  = 'sn.id <> :exclude_id';
 			$binds[]  = [':exclude_id', $excludeId, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]   = 
 			'
@@ -1017,7 +1017,7 @@ class VisitorModel extends Model
 			$binds[]  = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($status))
+		if ($status !== null)
 		{
 			$where[]  = 'sn.status = :status';
 			$binds[]  = [':status', $status, PDO::PARAM_STR];
@@ -1033,7 +1033,7 @@ class VisitorModel extends Model
 			$where[]  = 'sn.lyrics IS NULL';
 		}
 		
-		if (!is_null($page) && !is_null($limit))
+		if ($page !== null && $limit !== null)
 		{
 			$offset = ($page - 1) * $limit;
 			$limits = 'LIMIT :limit OFFSET :offset';
@@ -1042,7 +1042,7 @@ class VisitorModel extends Model
 			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = '(REGEXP_REPLACE(sn.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
@@ -1137,19 +1137,19 @@ class VisitorModel extends Model
 			$select[] = 'lg.ja_name             AS language_ja_name';
 		}
 		
-		if (!is_null($albumUri))
+		if ($albumUri !== null)
 		{
 			$where[] = 'al.uri = :album_uri';
 			$binds[] = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($songUri))
+		if ($songUri !== null)
 		{
 			$where[] = 'sn.uri = :song_uri';
 			$binds[] = [':song_uri', $songUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]  =
 			'
@@ -1162,13 +1162,13 @@ class VisitorModel extends Model
 			$binds[] = [':user_added_uri', $userAddedUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($status))
+		if ($status !== null)
 		{
 			$where[]  = 'tr.status = :status';
 			$binds[]  = [':status', $status, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($page) && !is_null($limit))
+		if ($page !== null && $limit !== null)
 		{
 			$offset = ($page - 1) * $limit;
 			$limits = 'LIMIT :limit OFFSET :offset';
@@ -1177,7 +1177,7 @@ class VisitorModel extends Model
 			$binds[]  = [':offset', $offset, PDO::PARAM_INT];
 		}
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = 'REGEXP_REPLACE(tr.name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")';
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
@@ -1275,7 +1275,7 @@ class VisitorModel extends Model
 		$where  = ['TRUE'];
 		$binds  = [];
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = '(REGEXP_REPLACE(g.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
@@ -1286,7 +1286,7 @@ class VisitorModel extends Model
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]  =
 			'
@@ -1332,7 +1332,7 @@ class VisitorModel extends Model
 		$where  = ['TRUE'];
 		$binds  = [];
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = '(REGEXP_REPLACE(a.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
@@ -1343,7 +1343,7 @@ class VisitorModel extends Model
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]  =
 			'
@@ -1389,7 +1389,7 @@ class VisitorModel extends Model
 		$where  = ['TRUE'];
 		$binds  = [];
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = '(REGEXP_REPLACE(a.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
@@ -1400,7 +1400,7 @@ class VisitorModel extends Model
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]  =
 			'
@@ -1446,7 +1446,7 @@ class VisitorModel extends Model
 		$where  = ['TRUE'];
 		$binds  = [];
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = '(REGEXP_REPLACE(c.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
@@ -1457,7 +1457,7 @@ class VisitorModel extends Model
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]  =
 			'
@@ -1505,7 +1505,7 @@ class VisitorModel extends Model
 		$where  = ['TRUE'];
 		$binds  = [];
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = '(REGEXP_REPLACE(s.original_name,       "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%")'.
 			            ' OR'.
@@ -1516,7 +1516,7 @@ class VisitorModel extends Model
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($hasVocal))
+		if ($hasVocal !== null)
 		{
 			$where[]  = 's.has_vocal = :has_vocal';
 			$binds[]  = [':has_vocal', $hasVocal, PDO::PARAM_BOOL];
@@ -1533,7 +1533,7 @@ class VisitorModel extends Model
 			$where[]  = 's.original_song_id IS NOT NULL';
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]  =
 			'
@@ -1579,13 +1579,13 @@ class VisitorModel extends Model
 		$where  = ['TRUE'];
 		$binds  = [];
 		
-		if (!is_null($search))
+		if ($search !== null)
 		{
 			$where[]  = '(REGEXP_REPLACE(t.name, "[^\\\\p{L}\\\\p{Nd}]", "") LIKE CONCAT("%", REGEXP_REPLACE(:search, "[^\\\\p{L}\\\\p{Nd}]", ""), "%"))';
 			$binds[]  = [':search', $search, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($userAddedUri))
+		if ($userAddedUri !== null)
 		{
 			$join[]  =
 			'
@@ -1855,20 +1855,20 @@ class VisitorModel extends Model
 		$where  = ['TRUE'];
 		$binds  = [];
 		
-		if (!is_null($albumUri))
+		if ($albumUri !== null)
 		{
 			$where[] = 'al.id = sn.album_id';
 			$where[] = 'al.uri = :album_uri';
 			$binds[] = [':album_uri', $albumUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($songUri))
+		if ($songUri !== null)
 		{
 			$where[] = 'sn.uri = :uri';
 			$binds[] = [':uri', $songUri, PDO::PARAM_STR];
 		}
 		
-		if (!is_null($songId))
+		if ($songId !== null)
 		{
 			$where[] = 'sn.id = :id';
 			$binds[] = [':id', $songId, PDO::PARAM_INT];

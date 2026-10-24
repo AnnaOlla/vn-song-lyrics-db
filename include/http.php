@@ -23,7 +23,7 @@ final class Http
 	
 	public static function getLastVisitedPage(string|null $fallback = null): string
 	{
-		if (is_null($fallback))
+		if ($fallback === null)
 			$fallback = '';
 		
 		if (!isset($_SERVER['HTTP_REFERER']))
@@ -31,12 +31,12 @@ final class Http
 		
 		$host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
 		
-		if (is_null($host) || $host !== $_SERVER['HTTP_HOST'])
+		if ($host === null || $host !== $_SERVER['HTTP_HOST'])
 			return $fallback;
 		
 		$path = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
 		
-		if (is_null($path))
+		if ($path === null)
 			return $fallback;
 		
 		$currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -46,7 +46,7 @@ final class Http
 		
 		$query = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY);
 		
-		if (is_null($query))
+		if ($query === null)
 			return $path;
 		
 		return $path.'?'.$query;
@@ -61,11 +61,11 @@ final class Http
 	{
 		$params = [];
 		
-		if (!is_null($limit))
+		if ($limit !== null)
 			$params[] = 'limit='.$limit;
-		if (!is_null($page))
+		if ($page !== null)
 			$params[] = 'page='.$page;
-		if (!is_null($search))
+		if ($search !== null)
 			$params[] = 'search='.rawurlencode($search);
 		
 		if (count($params) === 0)

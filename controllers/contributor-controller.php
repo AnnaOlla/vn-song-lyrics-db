@@ -2562,7 +2562,7 @@ class ContributorController extends VisitorController
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
 			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
 		
-		if (is_null($newAboutMe))
+		if ($newAboutMe === null)
 			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
 		
 		$this->model->updateUserData($user['id'], newAboutMe: $newAboutMe);

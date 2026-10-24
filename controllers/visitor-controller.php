@@ -368,7 +368,7 @@ class VisitorController extends ErrorController
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (is_null($limit) || is_null($page))
+		if ($limit === null || $page === null)
 			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getGameList(page: $page, limit: $limit, search: $search);
@@ -413,7 +413,7 @@ class VisitorController extends ErrorController
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (is_null($limit) || is_null($page))
+		if ($limit === null || $page === null)
 			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getAlbumList(page: $page, limit: $limit, search: $search);
@@ -458,7 +458,7 @@ class VisitorController extends ErrorController
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (is_null($limit) || is_null($page))
+		if ($limit === null || $page === null)
 			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getArtistList(page: $page, limit: $limit, search: $search);
@@ -503,7 +503,7 @@ class VisitorController extends ErrorController
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (is_null($limit) || is_null($page))
+		if ($limit === null || $page === null)
 			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getCharacterList(page: $page, limit: $limit, search: $search);
@@ -548,7 +548,7 @@ class VisitorController extends ErrorController
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (is_null($limit) || is_null($page))
+		if ($limit === null || $page === null)
 			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getSongList(page: $page, limit: $limit, search: $search, hasVocal: true);
@@ -593,7 +593,7 @@ class VisitorController extends ErrorController
 		$page   = Parsing::parseNullableInteger($page, 1);
 		$search = Parsing::trimNullableString($search);
 		
-		if (is_null($limit) || is_null($page))
+		if ($limit === null || $page === null)
 			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getTranslationList(page: $page, limit: $limit, search: $search);

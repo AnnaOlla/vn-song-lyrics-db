@@ -19,7 +19,7 @@ final class Parsing
 	
 	public static function getNullableFile(array|null $file): array|null
 	{
-		if (is_null($file))
+		if ($file === null)
 			return null;
 		
 		if ($file['error'] === UPLOAD_ERR_NO_FILE)
@@ -30,7 +30,7 @@ final class Parsing
 
 	public static function trimNullableString(string|null $value): string|null
 	{
-		if (is_null($value))
+		if ($value === null)
 			return null;
 		
 		$value = mb_trim($value);
@@ -51,7 +51,7 @@ final class Parsing
 
 	public static function trimNullableText(string|null $multilineString): string|null
 	{
-		if (is_null($multilineString))
+		if ($multilineString === null)
 			return null;
 		
 		// Use only '\n' as the line-break
@@ -79,7 +79,7 @@ final class Parsing
 
 	public static function parseNullableVndbId(string|null $link, string $entityFirstLetter): int|null
 	{
-		if (is_null($link))
+		if ($link === null)
 			return null;
 		
 		// A valid id has no leading zeros => starts with [1-9]
@@ -106,7 +106,7 @@ final class Parsing
 
 	public static function parseNullableVgmdbId(string|null $link, string $entityName): int|null
 	{
-		if (is_null($link))
+		if ($link === null)
 			return null;
 		
 		// A valid id has no leading zeros => starts with [1-9]
@@ -133,7 +133,7 @@ final class Parsing
 
 	public static function parseNullableInteger(string|null $value, int $min = PHP_INT_MIN, int $max = PHP_INT_MAX): int|null
 	{
-		if (is_null($value))
+		if ($value === null)
 			return null;
 		
 		return Parsing::convertToInteger($value, $min, $max);
@@ -154,7 +154,7 @@ final class Parsing
 
 	public static function cleanSearchString(string|null $string): string|null
 	{
-		if (is_null($string))
+		if ($string === null)
 			return null;
 		
 		// The user may enter a name that was transliterated

@@ -947,7 +947,7 @@ class ContributorView extends VisitorView
 						'.$this->createSearchableSelect
 						(
 							iteratedOptions:        $vocalOptions,
-							selectedOption:         is_null($hasVocal) ? null : $vocalOptions[$hasVocal],
+							selectedOption:         $hasVocal !== null ? $vocalOptions[$hasVocal] : null,
 							addEmptyOption:         true,
 							keyToShownValue:        'value',
 							keyToSentValue:         'id',
@@ -1305,7 +1305,7 @@ class ContributorView extends VisitorView
 				keyToShownValue:        \Localization\Functions\localizeLanguageKey(),
 				keysToShownHints:       ['language_own_name'],
 				keyToSentValue:         'id',
-				attributesForSentInput: ['name' => 'translation-language-id', 'required' => true, 'disabled' => !is_null($translation)]
+				attributesForSentInput: ['name' => 'translation-language-id', 'required' => true, 'disabled' => $translation !== null]
 			);
 			
 			$defaultReturnLink = Http::buildInternalPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
