@@ -96,7 +96,7 @@ class VisitorController extends ErrorController
 	
 	private function handleLogInPagePost(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$email       = $_POST['email']                 ?? null;
@@ -194,7 +194,7 @@ class VisitorController extends ErrorController
 	
 	private function handleSignUpPagePost(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$username      = $_POST['username']                 ?? null;
@@ -357,7 +357,7 @@ class VisitorController extends ErrorController
 	
 	private function handleGameListPageGet(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_GET))
+		if (!Validation::isDataEncodedInUtf8($_GET))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
@@ -402,7 +402,7 @@ class VisitorController extends ErrorController
 	
 	private function handleAlbumListPageGet(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_GET))
+		if (!Validation::isDataEncodedInUtf8($_GET))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
@@ -447,7 +447,7 @@ class VisitorController extends ErrorController
 	
 	private function handleArtistListPageGet(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_GET))
+		if (!Validation::isDataEncodedInUtf8($_GET))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
@@ -492,7 +492,7 @@ class VisitorController extends ErrorController
 	
 	private function handleCharacterListPageGet(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_GET))
+		if (!Validation::isDataEncodedInUtf8($_GET))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
@@ -537,7 +537,7 @@ class VisitorController extends ErrorController
 	
 	private function handleSongListPageGet(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_GET))
+		if (!Validation::isDataEncodedInUtf8($_GET))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
@@ -582,7 +582,7 @@ class VisitorController extends ErrorController
 	
 	private function handleTranslationListPageGet(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_GET))
+		if (!Validation::isDataEncodedInUtf8($_GET))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
@@ -1037,7 +1037,7 @@ class VisitorController extends ErrorController
 	
 	private function handleFeedbackPagePost(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$senderId      = $_SESSION['user']['id']              ?? null;
@@ -1070,7 +1070,7 @@ class VisitorController extends ErrorController
 	
 	private function handleReportPost(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$senderId    = $_SESSION['user']['id']          ?? null;

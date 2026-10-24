@@ -618,7 +618,7 @@ class AdministratorController extends ContributorController
 	
 	private function handleFillAlbumPagePost(array $album): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$discNumbers         = $_POST['disc-number']         ?? [];

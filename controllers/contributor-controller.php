@@ -56,7 +56,7 @@ class ContributorController extends VisitorController
 	
 	private function handleAddGamePagePost(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName       = $_POST['original-name']           ?? null;
@@ -165,7 +165,7 @@ class ContributorController extends VisitorController
 	
 	private function handleAddAlbumPagePost(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName       = $_POST['original-name']            ?? null;
@@ -266,7 +266,7 @@ class ContributorController extends VisitorController
 	
 	private function handleAddArtistPagePost(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName       = $_POST['original-name']             ?? null;
@@ -361,7 +361,7 @@ class ContributorController extends VisitorController
 	
 	private function handleAddCharacterPagePost(): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName       = $_POST['original-name']                ?? null;
@@ -474,7 +474,7 @@ class ContributorController extends VisitorController
 	
 	private function handleAddSongPagePost(array $album, int $songCount): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$discNumber         = $_POST['disc-number']             ?? null;
@@ -618,7 +618,7 @@ class ContributorController extends VisitorController
 	
 	private function handleAddLyricsPagePost(array $album, array $song): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$artistIds         = $_POST['artist-ids']                ?? [];
@@ -770,7 +770,7 @@ class ContributorController extends VisitorController
 	
 	private function handleAddTranslationPagePost(array $album, array $song): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$languageId           = $_POST['translation-language-id']        ?? null;
@@ -888,7 +888,7 @@ class ContributorController extends VisitorController
 	
 	private function handleEditGamePagePost(array $game): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName         = $_POST['original-name']            ?? null;
@@ -1023,7 +1023,7 @@ class ContributorController extends VisitorController
 	
 	private function handleEditAlbumPagePost(array $album): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName        = $_POST['original-name']             ?? null;
@@ -1138,7 +1138,7 @@ class ContributorController extends VisitorController
 	
 	private function handleEditArtistPagePost(array $artist): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName        = $_POST['original-name']              ?? null;
@@ -1242,7 +1242,7 @@ class ContributorController extends VisitorController
 	
 	private function handleEditCharacterPagePost(array $character): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName        = $_POST['original-name']                 ?? null;
@@ -1354,7 +1354,7 @@ class ContributorController extends VisitorController
 	
 	private function handleEditSongPagePost(array $album, array $song): void
 	{	
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName       = $_POST['original-name']            ?? null;
@@ -1489,7 +1489,7 @@ class ContributorController extends VisitorController
 	
 	private function handleEditLyricsPagePost(array $album, array $song): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$artistIds            = $_POST['artist-ids']                 ?? [];
@@ -1671,7 +1671,7 @@ class ContributorController extends VisitorController
 	
 	private function handleEditTranslationPagePost(array $album, array $song, array $translation): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$name          = $_POST['translation-name']                ?? null;
@@ -1751,7 +1751,7 @@ class ContributorController extends VisitorController
 	
 	private function handleDeleteGamePagePost(array $game): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']               ?? null;
@@ -1819,7 +1819,7 @@ class ContributorController extends VisitorController
 	
 	private function handleDeleteAlbumPagePost(array $album): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                ?? null;
@@ -1884,7 +1884,7 @@ class ContributorController extends VisitorController
 	
 	private function handleDeleteArtistPagePost(array $artist): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                 ?? null;
@@ -1952,7 +1952,7 @@ class ContributorController extends VisitorController
 	
 	private function handleDeleteCharacterPagePost(array $character): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                    ?? null;
@@ -2036,7 +2036,7 @@ class ContributorController extends VisitorController
 	
 	private function handleDeleteSongPagePost(array $album, array $song): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']               ?? null;
@@ -2122,7 +2122,7 @@ class ContributorController extends VisitorController
 	
 	private function handleDeleteLyricsPagePost(array $album, array $song): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                 ?? null;
@@ -2209,7 +2209,7 @@ class ContributorController extends VisitorController
 	
 	private function handleDeleteTranslationPagePost(array $album, array $song, array $translation): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                      ?? null;
@@ -2272,7 +2272,7 @@ class ContributorController extends VisitorController
 	
 	private function handleChangeEmailPagePost(array $user): void
 	{	
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$newEmail        = $_POST['email']                       ?? null;
@@ -2360,7 +2360,7 @@ class ContributorController extends VisitorController
 	
 	private function handleChangeUsernamePagePost(array $user): void
 	{	
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$newUsername     = $_POST['username']                       ?? null;
@@ -2458,7 +2458,7 @@ class ContributorController extends VisitorController
 	
 	private function handleChangePasswordPagePost(array $user): void
 	{	
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$newPassword     = $_POST['password']                       ?? null;
@@ -2552,7 +2552,7 @@ class ContributorController extends VisitorController
 	
 	private function handleChangeAboutMePagePost(array $user): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$newAboutMe  = $_POST['about-me']                      ?? null;
@@ -2622,7 +2622,7 @@ class ContributorController extends VisitorController
 	
 	private function handleDeleteAccountPagePost(array $user): void
 	{
-		if (!Validation::isDataEncodedInUTF8($_POST))
+		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$password    = $_POST['password']                      ?? null;

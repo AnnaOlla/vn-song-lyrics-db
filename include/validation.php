@@ -62,7 +62,7 @@ final class Validation
 		return mb_strtoupper($captchaA) === mb_strtoupper($captchaB);
 	}
 	
-	public static function isDataEncodedInUTF8(string|array $data): bool
+	public static function isDataEncodedInUtf8(string|array $data): bool
 	{
 		return mb_check_encoding($data, 'UTF-8');
 	}
