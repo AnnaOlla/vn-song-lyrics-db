@@ -738,7 +738,7 @@ class VisitorView extends ErrorView
 		$html[] = 
 		'
 		<article>
-			'.$this->createGame($game, 1).'
+			'.$this->createGamePageHeading($game, 1).'
 		';
 		
 		if ($characters)
@@ -802,7 +802,7 @@ class VisitorView extends ErrorView
 		$html[] = 
 		'
 		<article>
-			'.$this->createAlbum($album, 1).'
+			'.$this->createAlbumPageHeading($album, 1).'
 		';
 		
 		$html[] = $this->createAlbumSongList($album, $songs, 2);
@@ -861,7 +861,7 @@ class VisitorView extends ErrorView
 		$html[] = 
 		'
 		<article>
-			'.$this->createArtist($artist, 1).'
+			'.$this->createArtistPageHeading($artist, 1).'
 		';
 		
 		if ($aliases)
@@ -942,7 +942,7 @@ class VisitorView extends ErrorView
 		$html[] = 
 		'
 		<article>
-			'.$this->createCharacter($character, 1).'
+			'.$this->createCharacterPageHeading($character, 1).'
 		';
 		
 		if ($games)

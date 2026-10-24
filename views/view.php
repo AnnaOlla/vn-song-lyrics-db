@@ -2140,7 +2140,7 @@ HTML;
 	//----- Single Entity -----//
 	//-------------------------//
 	
-	final protected function createGame(array $game, int $headingLevel): string
+	final protected function createGamePageHeading(array $game, int $headingLevel): string
 	{
 		$image        = $this->createGameImage($game);
 		$textEntities = [];
@@ -2153,7 +2153,7 @@ HTML;
 		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
 	}
 	
-	final protected function createAlbum(array $album, int $headingLevel): string
+	final protected function createAlbumPageHeading(array $album, int $headingLevel): string
 	{
 		$image        = $this->createAlbumImage($album);
 		$textEntities = [];
@@ -2167,7 +2167,7 @@ HTML;
 		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
 	}
 	
-	final protected function createArtist(array $artist, int $headingLevel): string
+	final protected function createArtistPageHeading(array $artist, int $headingLevel): string
 	{
 		$image        = $this->createArtistImage($artist);
 		$textEntities = [];
@@ -2188,7 +2188,7 @@ HTML;
 		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
 	}
 	
-	final protected function createCharacter(array $character, int $headingLevel): string
+	final protected function createCharacterPageHeading(array $character, int $headingLevel): string
 	{
 		$image        = $this->createCharacterImage($character);
 		$textEntities = [];
