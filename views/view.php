@@ -923,41 +923,6 @@ HTML;
 		return $paragraph;
 	}
 	
-	final protected function createLyricsPageHeading
-	(
-		string     $headingText,
-		array      $album,
-		array      $song,
-		array|null $translation,
-		array|null $performers,
-		array|null $translations,
-		array|null $originalSong
-	): string
-	{
-		$html[] = '<section class="main-entity">';
-		$html[] = $this->createAlbumImage($album);
-		
-		$html[] = '<section>';
-		$html[] = $this->createHeading($headingText, 1);
-		$html[] = $this->createLyricsReferenceToAlbum($album);
-		
-		if ($translation !== null)
-			$html[] = $this->createLyricsReferenceToCurrentSong($song);
-		
-		if ($performers !== null)
-			$html[] = $this->createLyricsPerformerList($performers);
-		
-		if ($originalSong !== null)
-			$html[] = $this->createLyricsReferenceToOriginalSong($originalSong);
-		
-		if ($translations !== null)
-			$html[] = $this->createLyricsTranslationList($album, $song, $translation, $translations);
-		
-		$html[] = '</section></section>';
-		
-		return implode($html);
-	}
-	
 	final protected function createLyricsControls(): string
 	{
 		return
@@ -2199,5 +2164,40 @@ HTML;
 		$textEntities[] = $this->createVndbLinkParagraph(\Localization\CharacterPage\Details, $character, 'c');
 		
 		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
+	}
+	
+	final protected function createLyricsPageHeading
+	(
+		string     $headingText,
+		array      $album,
+		array      $song,
+		array|null $translation,
+		array|null $performers,
+		array|null $translations,
+		array|null $originalSong
+	): string
+	{
+		$html[] = '<section class="main-entity">';
+		$html[] = $this->createAlbumImage($album);
+		
+		$html[] = '<section>';
+		$html[] = $this->createHeading($headingText, 1);
+		$html[] = $this->createLyricsReferenceToAlbum($album);
+		
+		if ($translation !== null)
+			$html[] = $this->createLyricsReferenceToCurrentSong($song);
+		
+		if ($performers !== null)
+			$html[] = $this->createLyricsPerformerList($performers);
+		
+		if ($originalSong !== null)
+			$html[] = $this->createLyricsReferenceToOriginalSong($originalSong);
+		
+		if ($translations !== null)
+			$html[] = $this->createLyricsTranslationList($album, $song, $translation, $translations);
+		
+		$html[] = '</section></section>';
+		
+		return implode($html);
 	}
 }
