@@ -147,30 +147,14 @@ final class Router
 		self::addRoute('/{language}/album/{albumUri}/fill-album',           'handleFillAlbumPage');
 	}
 	
-	private static function isUserAgentSearchEngineCrawler(): bool
+	private static function isRootRequested(string $path): bool
 	{
-		// Crawlers do not like redirections from the root
-		// The fix is to allow them use the root as the homepage
-		
-		$mainCrawlers = ['Googlebot', 'Bingbot', 'DuckDuckBot', 'Baiduspider', 'YandexBot', 'Slurp'];
-		
-		foreach ($mainCrawlers as $mainCrawler)
-		{
-			if (str_contains($_SERVER['HTTP_USER_AGENT'], $mainCrawler))
-				return true;
-		}
-		
-		return false;
-	}
-	
-	private static function isRootRequested(string $requestedPath): bool
-	{
-		return ($requestedPath === '/');
+		return $path === '/';
 	}
 	
 	private static function isUriMalformed(mixed $uri): bool
 	{
-		return ($uri === null || !str_contains($uri->getPath(), '/'));
+		return $uri === null || !str_contains($uri->getPath(), '/');
 	}
 	
 	public static function run(): void
@@ -185,7 +169,7 @@ final class Router
 		
 		$path = $uri->getPath();
 		
-		if (self::isRootRequested($path) && !self::isUserAgentSearchEngineCrawler())
+		if (self::isRootRequested($path))
 		{
 			$languages = Localizer::detectUserLanguages();
 			$language  = Localizer::getSuitableLanguage($languages);
@@ -194,9 +178,6 @@ final class Router
 			header('Location: /'.$language);
 			exit;
 		}
-		
-		if (self::isRootRequested($path) && self::isUserAgentSearchEngineCrawler())
-			$path = '/en';
 		
 		try
 		{
