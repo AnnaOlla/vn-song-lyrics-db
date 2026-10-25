@@ -98,6 +98,14 @@ final class HttpUnsupportedMediaType415 extends HttpException
 	}
 }
 
+final class HttpPermanentlyBlocked418 extends HttpException
+{
+	public function __construct(string $message = '', array $variables = [], ?Throwable $previous = null)
+	{
+		parent::__construct($message, $variables, 418, $previous);
+	}
+}
+
 final class HttpUnprocessableEntity422 extends HttpException
 {
 	public function __construct(string $message = '', array $variables = [], ?Throwable $previous = null)

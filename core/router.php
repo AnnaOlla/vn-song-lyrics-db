@@ -233,17 +233,10 @@ final class Router
 				$controller = new ($_SESSION['user']['role'].'controller')(Localizer::DEFAULT_LANGUAGE);
 			
 			if (Authorizer::isCurrentIpBlocked() || Authorizer::isCurrentUserAgentBlocked())
-			{
-				$method = 'handleViolatorPage';
-				$parameters = [];
-			}
+				throw new HttpPermanentlyBlocked418();
 			
-			else if (Authorizer::isRequestForbidden() || Authorizer::isRateLimitExceededToBlock())
-			{
+			if (Authorizer::isRequestForbidden() || Authorizer::isRateLimitExceededToBlock())
 				Authorizer::blockCurrentIp();
-				$method = 'handleViolatorPage';
-				$parameters = [];
-			}
 			
 			if (Authorizer::isMaintenanceModeActive() && !Authorizer::isCurrentUserAdministrator())
 				throw new HttpServiceUnavailable503();
@@ -307,6 +300,11 @@ final class Router
 		catch (HttpUnsupportedMediaType415 $e)
 		{
 			$controller->handleUnsupportedMediaType415();
+			Logger::logError($e);
+		}
+		catch (HttpPermanentlyBlocked418 $e)
+		{
+			$controller->handlePermanentlyBlocked418();
 			Logger::logError($e);
 		}
 		catch (HttpUnprocessableEntity422 $e)

@@ -81,6 +81,12 @@ class ErrorController extends Controller
 		$this->view->renderUnsupportedMediaType415();
 	}
 	
+	final public function handlePermanentlyBlocked418(): void
+	{
+		header($_SERVER['SERVER_PROTOCOL'].' 418 Permanently Blocked');
+		$this->view->renderPermanentlyBlocked418();
+	}
+	
 	final public function handleUnprocessableEntity422(): void
 	{
 		http_response_code(422);
@@ -121,11 +127,5 @@ class ErrorController extends Controller
 	{
 		http_response_code(503);
 		$this->view->renderServiceUnavailable503();
-	}
-	
-	final public function handleViolatorPage(): void
-	{
-		http_response_code(403);
-		$this->view->renderViolatorPage();
 	}
 }

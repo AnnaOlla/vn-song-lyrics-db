@@ -203,7 +203,7 @@ class ErrorView extends View
 		);
 	}
 	
-	final public function renderViolatorPage(): void
+	final public function renderPermanentlyBlocked418(): void
 	{
 		echo
 		'
@@ -239,7 +239,7 @@ class ErrorView extends View
 	<body>
 		<section>
 			<h1>Access Denied</h1>
-			<p>You have been permanently banned for malicious behavior.</p>
+			<p>You have been permanently blocked for malicious behavior.</p>
 			<p>If you see this message in error, contact us at support@vn-song-lyrics-db.ru.</p>
 			<p>In this case, include the information below.</p>
 			<p>Current time: '.date("Y-m-d H:i:s").', UTC+3.</p>
