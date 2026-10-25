@@ -2,6 +2,151 @@
 
 final class Router
 {
+	private static $routes = [];
+	
+	private static function addRoute(string $path, string $method): void
+	{
+		self::$routes[] =
+		[
+			'regex'  => '#^'.preg_replace('/\{([a-zA-Z0-9_-]+)\}/', '(?P<$1>[a-zA-Z0-9_-]+)', $path).'$#',
+			'method' => $method
+		];
+	}
+	
+	private static function findRoute(string $path): array
+	{
+		foreach (self::$routes as $route)
+		{
+			$matches = [];
+			
+			if (preg_match($route['regex'], $path, $matches))
+			{
+				$parameters = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+				$language   = array_shift($parameters);
+				
+				return
+				[
+					'method'     => $route['method'],
+					'language'   => $language,
+					'parameters' => $parameters
+				];
+			}
+		}
+		
+		return
+		[
+			'method'     => '',
+			'language'   => explode('/', $path, 3)[1] ?? '',
+			'parameters' => []
+		];
+	}
+	
+	private static function initializeRouteArray(): void
+	{
+		self::addRoute('/{language}',                'handleHomePage');
+		self::addRoute('/{language}/about',          'handleAboutPage');
+		self::addRoute('/{language}/policy',         'handlePolicyPage');
+		self::addRoute('/{language}/rules',          'handleRulesPage');
+		self::addRoute('/{language}/writing-guide',  'handleWritingGuidePage');
+		self::addRoute('/{language}/lyrics-example', 'handleLyricsExamplePage');
+		self::addRoute('/{language}/admin',          'handleFakeAdminPage');
+		
+		self::addRoute('/{language}/feedback',           'handleFeedbackPage');
+		self::addRoute('/{language}/add-feedback-reply', 'handleAddFeedbackReply');
+		self::addRoute('/{language}/delete-feedback',    'handleDeleteFeedback');
+		
+		self::addRoute('/{language}/log-in',  'handleLogInPage');
+		self::addRoute('/{language}/sign-up', 'handleSignUpPage');
+		self::addRoute('/{language}/log-out', 'handleLogOutPage');
+		
+		self::addRoute('/{language}/user/{userUri}',                 'handleUserPage');
+		// self::addRoute('/{language}/user/{userUri}/change-email',    'handleChangeEmailPage');
+		self::addRoute('/{language}/user/{userUri}/change-password', 'handleChangePasswordPage');
+		self::addRoute('/{language}/user/{userUri}/change-username', 'handleChangeUsernamePage');
+		self::addRoute('/{language}/user/{userUri}/change-about-me', 'handleChangeAboutMePage');
+		self::addRoute('/{language}/user/{userUri}/delete-account',  'handleDeleteAccountPage');
+		
+		self::addRoute('/{language}/game-list',        'handleGameListPage');
+		self::addRoute('/{language}/album-list',       'handleAlbumListPage');
+		self::addRoute('/{language}/artist-list',      'handleArtistListPage');
+		self::addRoute('/{language}/character-list',   'handleCharacterListPage');
+		self::addRoute('/{language}/song-list',        'handleSongListPage');
+		self::addRoute('/{language}/translation-list', 'handleTranslationListPage');
+		
+		self::addRoute('/{language}/game/{gameUri}',                                               'handleGamePage');
+		self::addRoute('/{language}/album/{albumUri}',                                             'handleAlbumPage');
+		self::addRoute('/{language}/artist/{artistUri}',                                           'handleArtistPage');
+		self::addRoute('/{language}/character/{characterUri}',                                     'handleCharacterPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}',                              'handleLyricsPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/translation/{translationUri}', 'handleTranslationPage');
+		
+		self::addRoute('/{language}/add-game',                                        'handleAddGamePage');
+		self::addRoute('/{language}/add-album',                                       'handleAddAlbumPage');
+		self::addRoute('/{language}/add-artist',                                      'handleAddArtistPage');
+		self::addRoute('/{language}/add-character',                                   'handleAddCharacterPage');
+		self::addRoute('/{language}/album/{albumUri}/add-song',                       'handleAddSongPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/add-lyrics',      'handleAddLyricsPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/add-translation', 'handleAddTranslationPage');
+		
+		self::addRoute('/{language}/game/{gameUri}/edit',                                               'handleEditGamePage');
+		self::addRoute('/{language}/album/{albumUri}/edit',                                             'handleEditAlbumPage');
+		self::addRoute('/{language}/artist/{artistUri}/edit',                                           'handleEditArtistPage');
+		self::addRoute('/{language}/character/{characterUri}/edit',                                     'handleEditCharacterPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/edit',                              'handleEditSongPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/edit-lyrics',                       'handleEditLyricsPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/translation/{translationUri}/edit', 'handleEditTranslationPage');
+		
+		self::addRoute('/{language}/game/{gameUri}/delete',                                               'handleDeleteGamePage');
+		self::addRoute('/{language}/album/{albumUri}/delete',                                             'handleDeleteAlbumPage');
+		self::addRoute('/{language}/artist/{artistUri}/delete',                                           'handleDeleteArtistPage');
+		self::addRoute('/{language}/character/{characterUri}/delete',                                     'handleDeleteCharacterPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/delete',                              'handleDeleteSongPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/delete-lyrics',                       'handleDeleteLyricsPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/translation/{translationUri}/delete', 'handleDeleteTranslationPage');
+		
+		self::addRoute('/{language}/game/{gameUri}/report',                                               'handleReportGamePage');
+		self::addRoute('/{language}/album/{albumUri}/report',                                             'handleReportAlbumPage');
+		self::addRoute('/{language}/artist/{artistUri}/report',                                           'handleReportArtistPage');
+		self::addRoute('/{language}/character/{characterUri}/report',                                     'handleReportCharacterPage');
+		// self::addRoute('/{language}/album/{albumUri}/song/{songUri}/report',                              'handleDeleteSongPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/report-lyrics',                       'handleReportLyricsPage');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/translation/{translationUri}/report', 'handleReportTranslationPage');
+		
+		self::addRoute('/{language}/game/{gameUri}/change-status',                                               'handleChangeGameStatus');
+		self::addRoute('/{language}/album/{albumUri}/change-status',                                             'handleChangeAlbumStatus');
+		self::addRoute('/{language}/artist/{artistUri}/change-status',                                           'handleChangeArtistStatus');
+		self::addRoute('/{language}/character/{characterUri}/change-status',                                     'handleChangeCharacterStatus');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/change-status',                              'handleChangeSongStatus');
+		self::addRoute('/{language}/album/{albumUri}/song/{songUri}/translation/{translationUri}/change-status', 'handleChangeTranslationStatus');
+		self::addRoute('/{language}/game-album-relation/{gameUri}/{albumUri}/change-status',                     'handleChangeGameAlbumRelationStatus');
+		self::addRoute('/{language}/album-game-relation/{albumUri}/{gameUri}/change-status',                     'handleChangeGameAlbumRelationStatus');
+		self::addRoute('/{language}/character-game-relation/{characterUri}/{gameUri}/change-status',             'handleChangeCharacterGameRelationStatus');
+		self::addRoute('/{language}/game-character-relation/{gameUri}/{characterUri}/change-status',             'handleChangeCharacterGameRelationStatus');
+		
+		self::addRoute('/{language}/control-panel',                             'handleControlPanelPage');
+		self::addRoute('/{language}/control-panel/report-list',                 'handleReportListPage');
+		self::addRoute('/{language}/control-panel/user-list',                   'handleUserListPage');
+		self::addRoute('/{language}/control-panel/unchecked-game-list',         'handleUncheckedGameListPage');
+		self::addRoute('/{language}/control-panel/unchecked-album-list',        'handleUncheckedAlbumListPage');
+		self::addRoute('/{language}/control-panel/unchecked-artist-list',       'handleUncheckedArtistListPage');
+		self::addRoute('/{language}/control-panel/unchecked-character-list',    'handleUncheckedCharacterListPage');
+		self::addRoute('/{language}/control-panel/unchecked-song-list',         'handleUncheckedSongListPage');
+		self::addRoute('/{language}/control-panel/unchecked-translation-list',  'handleUncheckedTranslationListPage');
+		
+		self::addRoute('/{language}/control-panel/update-static-pages-sitemap',     'handleUpdateStaticPageSitemap');
+		self::addRoute('/{language}/control-panel/update-game-list-sitemap',        'handleUpdateGameListSitemap');
+		self::addRoute('/{language}/control-panel/update-album-list-sitemap',       'handleUpdateAlbumListSitemap');
+		self::addRoute('/{language}/control-panel/update-artist-list-sitemap',      'handleUpdateArtistListSitemap');
+		self::addRoute('/{language}/control-panel/update-character-list-sitemap',   'handleUpdateCharacterListSitemap');
+		self::addRoute('/{language}/control-panel/update-song-list-sitemap',        'handleUpdateSongListSitemap');
+		self::addRoute('/{language}/control-panel/update-translation-list-sitemap', 'handleUpdateTranslationListSitemap');
+		
+		self::addRoute('/{language}/control-panel/add-language',            'handleAddLanguagePage');
+		self::addRoute('/{language}/control-panel/switch-maintenance-mode', 'handleSwitchMaintenanceMode');
+		self::addRoute('/{language}/report/change-status',                  'handleReportStatus');
+		self::addRoute('/{language}/album/{albumUri}/fill-album',           'handleFillAlbumPage');
+	}
+	
 	private static function isUserAgentSearchEngineCrawler(): bool
 	{
 		// Crawlers do not like redirections from the root
@@ -39,23 +184,23 @@ final class Router
 	
 	public static function run(): void
 	{
-		$requestedUri = \Uri\Rfc3986\Uri::parse($_SERVER['REQUEST_URI']);
+		$uri = \Uri\Rfc3986\Uri::parse($_SERVER['REQUEST_URI']);
 		
-		if (self::isUriMalformed($requestedUri))
+		if (self::isUriMalformed($uri))
 		{
 			http_response_code(400);
 			exit;
 		}
 		
-		$requestedPath = $requestedUri->getPath();
+		$path = $uri->getPath();
 		
-		if (self::isNonExistentFileRequested($requestedPath))
+		if (self::isNonExistentFileRequested($path))
 		{
 			http_response_code(404);
 			exit;
 		}
 		
-		if (self::isRootRequested($requestedPath) && !self::isUserAgentSearchEngineCrawler())
+		if (self::isRootRequested($path) && !self::isUserAgentSearchEngineCrawler())
 		{
 			$languages = Localizer::detectUserLanguages();
 			$language  = Localizer::getSuitableLanguage($languages);
@@ -65,633 +210,39 @@ final class Router
 			exit;
 		}
 		
-		if (self::isRootRequested($requestedPath) && self::isUserAgentSearchEngineCrawler())
-			$requestedPath = '/en';
-		
-		$routes     = explode('/', $requestedPath);
-		$routeCount = count($routes);
-		
-		for ($i = 0; $i < $routeCount; $i++)
-			$routes[$i] = rawurldecode($routes[$i]);
-		
-		$requestedLanguage = $routes[1];
-		
-		//-------------------//
-		//      Routing      //
-		//-------------------//
-		
-		if ($routeCount === 2)
-		{
-			$method = 'handleHomePage';
-			$parameters = [];
-		}
-		
-		//---------------------------------------//
-		//      Methods related to accounts      //
-		//---------------------------------------//
-		
-		else if ($routeCount === 3 && $routes[2] === 'log-in')
-		{
-			$method = 'handleLogInPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'sign-up')
-		{
-			$method = 'handleSignUpPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'log-out')
-		{
-			$method = 'handleLogOutPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'user')
-		{
-			$method = 'handleUserPage';
-			$parameters = ['userUri' => $routes[3]];
-		}
-		
-		/* Disabled: prevent hiding the first input
-		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'change-email')
-		{
-			$method = 'handleChangeEmailPage';
-			$parameters = ['userUri' => $routes[3]];
-		}
-		*/
-		
-		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'change-password')
-		{
-			$method = 'handleChangePasswordPage';
-			$parameters = ['userUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'change-username')
-		{
-			$method = 'handleChangeUsernamePage';
-			$parameters = ['userUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'change-about-me')
-		{
-			$method = 'handleChangeAboutMePage';
-			$parameters = ['userUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'user' && $routes[4] === 'delete-account')
-		{
-			$method = 'handleDeleteAccountPage';
-			$parameters = ['userUri' => $routes[3]];
-		}
-		
-		//----------------------------------------------------------//
-		//      Methods related to viewing general information      //
-		//----------------------------------------------------------//
-		
-		else if ($routeCount === 3 && $routes[2] === 'game-list')
-		{
-			$method = 'handleGameListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'artist-list')
-		{
-			$method = 'handleArtistListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'character-list')
-		{
-			$method = 'handleCharacterListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'album-list')
-		{
-			$method = 'handleAlbumListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'song-list')
-		{
-			$method = 'handleSongListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'translation-list')
-		{
-			$method = 'handleTranslationListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'feedback')
-		{
-			$method = 'handleFeedbackPage';
-			$parameters = [];
-		}
-		
-		//-----------------------------------------------------------//
-		//      Methods related to viewing detailed information      //
-		//-----------------------------------------------------------//
-		
-		else if ($routeCount === 4 && $routes[2] === 'game')
-		{
-			$method = 'handleGamePage';
-			$parameters = ['gameUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'artist')
-		{
-			$method = 'handleArtistPage';
-			$parameters = ['artistUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'character')
-		{
-			$method = 'handleCharacterPage';
-			$parameters = ['characterUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'album')
-		{
-			$method = 'handleAlbumPage';
-			$parameters = ['albumUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 6 && $routes[2] === 'album' && $routes[4] === 'song')
-		{
-			$method = 'handleLyricsPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5]];
-		}
-		
-		else if ($routeCount === 8 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'translation')
-		{
-			$method = 'handleTranslationPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5], 'translationUri' => $routes[7]];
-		}
-		
-		//-------------------------------------------------//
-		//      Methods related to adding information      //
-		//-------------------------------------------------//
-		
-		else if ($routeCount === 3 && $routes[2] === 'add-game')
-		{
-			$method = 'handleAddGamePage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'add-album')
-		{
-			$method = 'handleAddAlbumPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'add-artist')
-		{
-			$method = 'handleAddArtistPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'add-character')
-		{
-			$method = 'handleAddCharacterPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'album' && $routes[4] === 'add-song')
-		{
-			$method = 'handleAddSongPage';
-			$parameters = ['albumUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 7 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'add-lyrics')
-		{
-			$method = 'handleAddLyricsPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5]];
-		}
-		
-		else if ($routeCount === 7 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'add-translation')
-		{
-			$method = 'handleAddTranslationPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'album' && $routes[4] === 'fill-album')
-		{
-			$method = 'handleFillAlbumPage';
-			$parameters = ['albumUri' => $routes[3]];
-		}
-		
-		//--------------------------------------------------//
-		//      Methods related to editing information      //
-		//--------------------------------------------------//
-		
-		else if ($routeCount === 5 && $routes[2] === 'game' && $routes[4] === 'edit')
-		{
-			$method = 'handleEditGamePage';
-			$parameters = ['gameUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'album' && $routes[4] === 'edit')
-		{
-			$method = 'handleEditAlbumPage';
-			$parameters = ['albumUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'artist' && $routes[4] === 'edit')
-		{
-			$method = 'handleEditArtistPage';
-			$parameters = ['artistUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'character' && $routes[4] === 'edit')
-		{
-			$method = 'handleEditCharacterPage';
-			$parameters = ['characterUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 7 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'edit')
-		{
-			$method = 'handleEditSongPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5]];
-		}
-		
-		else if ($routeCount === 7 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'edit-lyrics')
-		{
-			$method = 'handleEditLyricsPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5]];
-		}
-		
-		else if ($routeCount === 9 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'translation' && $routes[8] === 'edit')
-		{
-			$method = 'handleEditTranslationPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5], 'translationUri' => $routes[7]];
-		}
-		
-		//---------------------------------------------------//
-		//      Methods related to deleting information      //
-		//---------------------------------------------------//
-		
-		else if ($routeCount === 5 && $routes[2] === 'game' && $routes[4] === 'delete')
-		{
-			$method = 'handleDeleteGamePage';
-			$parameters = ['gameUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'album' && $routes[4] === 'delete')
-		{
-			$method = 'handleDeleteAlbumPage';
-			$parameters = ['albumUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'artist' && $routes[4] === 'delete')
-		{
-			$method = 'handleDeleteArtistPage';
-			$parameters = ['artistUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'character' && $routes[4] === 'delete')
-		{
-			$method = 'handleDeleteCharacterPage';
-			$parameters = ['characterUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 7 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'delete')
-		{
-			$method = 'handleDeleteSongPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5]];
-		}
-		
-		else if ($routeCount === 7 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'delete-lyrics')
-		{
-			$method = 'handleDeleteLyricsPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5]];
-		}
-		
-		else if ($routeCount === 9 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'translation' && $routes[8] === 'delete')
-		{
-			$method = 'handleDeleteTranslationPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5], 'translationUri' => $routes[7]];
-		}
-		
-		//----------------------------------------//
-		//      Methods related to reporting      //
-		//----------------------------------------//
-		
-		else if ($routeCount === 5 && $routes[2] === 'game' && $routes[4] === 'report')
-		{
-			$method = 'handleReportGamePage';
-			$parameters = ['gameUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'album' && $routes[4] === 'report')
-		{
-			$method = 'handleReportAlbumPage';
-			$parameters = ['albumUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'artist' && $routes[4] === 'report')
-		{
-			$method = 'handleReportArtistPage';
-			$parameters = ['artistUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'character' && $routes[4] === 'report')
-		{
-			$method = 'handleReportCharacterPage';
-			$parameters = ['characterUri' => $routes[3]];
-		}
-		
-		/*
-		else if ($routeCount === 6 && $routes[1] === 'album' && $routes[3] === 'song' && $routes[5] === 'report')
-		{
-			$method = 'handleReportSongPage';
-			$parameters = ['albumUri' => $routes[2], 'songUri' => $routes[4]];
-		}
-		*/
-		
-		else if ($routeCount === 7 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'report-lyrics')
-		{
-			$method = 'handleReportLyricsPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5]];
-		}
-		
-		else if ($routeCount === 9 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'translation' && $routes[8] === 'report')
-		{
-			$method = 'handleReportTranslationPage';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5], 'translationUri' => $routes[7]];
-		}
-		
-		//-----------------------------------------//
-		//      Methods related to moderation      //
-		//-----------------------------------------//
-		
-		else if ($routeCount === 5 && $routes[2] === 'game' && $routes[4] === 'change-status')
-		{
-			$method = 'handleChangeGameStatus';
-			$parameters = ['gameUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'album' && $routes[4] === 'change-status')
-		{
-			$method = 'handleChangeAlbumStatus';
-			$parameters = ['albumUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'artist' && $routes[4] === 'change-status')
-		{
-			$method = 'handleChangeArtistStatus';
-			$parameters = ['artistUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 5 && $routes[2] === 'character' && $routes[4] === 'change-status')
-		{
-			$method = 'handleChangeCharacterStatus';
-			$parameters = ['characterUri' => $routes[3]];
-		}
-		
-		else if ($routeCount === 7 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'change-status')
-		{
-			$method = 'handleChangeSongStatus';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5]];
-		}
-		
-		else if ($routeCount === 9 && $routes[2] === 'album' && $routes[4] === 'song' && $routes[6] === 'translation' && $routes[8] === 'change-status')
-		{
-			$method = 'handleChangeTranslationStatus';
-			$parameters = ['albumUri' => $routes[3], 'songUri' => $routes[5], 'translationUri' => $routes[7]];
-		}
-		
-		else if ($routeCount === 6 && $routes[2] === 'game-album-relation' && $routes[5] === 'change-status')
-		{
-			$method = 'handleChangeGameAlbumRelationStatus';
-			$parameters = ['gameUri' => $routes[3], 'albumUri' => $routes[4]];
-		}
-		
-		else if ($routeCount === 6 && $routes[2] === 'album-game-relation' && $routes[5] === 'change-status')
-		{
-			$method = 'handleChangeGameAlbumRelationStatus';
-			$parameters = ['albumUri' => $routes[3], 'gameUri' => $routes[4]];
-		}
-		
-		else if ($routeCount === 6 && $routes[2] === 'character-game-relation' && $routes[5] === 'change-status')
-		{
-			$method = 'handleChangeCharacterGameRelationStatus';
-			$parameters = ['characterUri' => $routes[3], 'gameUri' => $routes[4]];
-		}
-		
-		else if ($routeCount === 6 && $routes[2] === 'game-character-relation' && $routes[5] === 'change-status')
-		{
-			$method = 'handleChangeCharacterGameRelationStatus';
-			$parameters = ['gameUri' => $routes[3], 'characterUri' => $routes[4]];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'add-feedback-reply')
-		{
-			$method = 'handleAddFeedbackReply';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'delete-feedback')
-		{
-			$method = 'handleDeleteFeedback';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'report' && $routes[3] === 'change-status')
-		{
-			$method = 'handleReportStatus';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'control-panel')
-		{
-			$method = 'handleControlPanelPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'report-list')
-		{
-			$method = 'handleReportListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'add-language')
-		{
-			$method = 'handleAddLanguagePage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'user-list')
-		{
-			$method = 'handleUserListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-game-list')
-		{
-			$method = 'handleUncheckedGameListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-album-list')
-		{
-			$method = 'handleUncheckedAlbumListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-artist-list')
-		{
-			$method = 'handleUncheckedArtistListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-character-list')
-		{
-			$method = 'handleUncheckedCharacterListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-song-list')
-		{
-			$method = 'handleUncheckedSongListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'unchecked-translation-list')
-		{
-			$method = 'handleUncheckedTranslationListPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-static-pages-sitemap')
-		{
-			$method = 'handleUpdateStaticPageSitemap';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-game-list-sitemap')
-		{
-			$method = 'handleUpdateGameListSitemap';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-album-list-sitemap')
-		{
-			$method = 'handleUpdateAlbumListSitemap';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-artist-list-sitemap')
-		{
-			$method = 'handleUpdateArtistListSitemap';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-character-list-sitemap')
-		{
-			$method = 'handleUpdateCharacterListSitemap';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-song-list-sitemap')
-		{
-			$method = 'handleUpdateSongListSitemap';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'update-translation-list-sitemap')
-		{
-			$method = 'handleUpdateTranslationListSitemap';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 4 && $routes[2] === 'control-panel' && $routes[3] === 'switch-maintenance-mode')
-		{
-			$method = 'handleSwitchMaintenanceMode';
-			$parameters = [];
-		}
-		
-		//-------------------------//
-		//      Other Methods      //
-		//-------------------------//
-		
-		else if ($routeCount === 3 && $routes[2] === 'about')
-		{
-			$method = 'handleAboutPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'policy')
-		{
-			$method = 'handlePolicyPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'rules')
-		{
-			$method = 'handleRulesPage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'writing-guide')
-		{
-			$method = 'handleWritingGuidePage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount === 3 && $routes[2] === 'lyrics-example')
-		{
-			$method = 'handleLyricsExamplePage';
-			$parameters = [];
-		}
-		
-		else if ($routeCount >= 3 && $routes[2] === 'admin')
-		{
-			$method = 'handleFakeAdminPage';
-			$parameters = [];
-		}
-		
-		/*
-		else if ($routeCount == 3 && $routes[2] === 'font-test')
-		{
-			echo file_get_contents('.administering/.font-tests/font-test-page.html');
-			exit;
-		}
-		*/
-		
-		else
-		{
-			$method = '';
-			$parameters = [];
-		}
-		
-		//-------------------------------//
-		//      Calling the handler      //
-		//-------------------------------//
+		if (self::isRootRequested($path) && self::isUserAgentSearchEngineCrawler())
+			$path = '/en';
 		
 		try
 		{
 			Authorizer::startSession();
 			Authorizer::updateRateLimit();
 			
-			if (Localizer::isAcceptedLanguage($requestedLanguage))
-				$language = $requestedLanguage;
-			else
-				$language = Localizer::DEFAULT_LANGUAGE;
+			self::initializeRouteArray();
+			[
+				'method'     => $method,
+				'language'   => $language,
+				'parameters' => $parameters
+			] = self::findRoute($path);
 			
 			require_once 'controllers/'.$_SESSION['user']['role'].'-controller.php';
-			$controller = new ($_SESSION['user']['role'].'controller')($language);
+			
+			if (Localizer::isAcceptedLanguage($language))
+				$controller = new ($_SESSION['user']['role'].'controller')($language);
+			else
+				$controller = new ($_SESSION['user']['role'].'controller')(Localizer::DEFAULT_LANGUAGE);
 			
 			if (Authorizer::isCurrentIpBlocked() || Authorizer::isCurrentUserAgentBlocked())
+			{
 				$method = 'handleViolatorPage';
+				$parameters = [];
+			}
 			
 			else if (Authorizer::isRequestForbidden() || Authorizer::isRateLimitExceededToBlock())
 			{
 				Authorizer::blockCurrentIp();
 				$method = 'handleViolatorPage';
+				$parameters = [];
 			}
 			
 			if (Authorizer::isMaintenanceModeActive() && !Authorizer::isCurrentUserAdministrator())
@@ -700,7 +251,7 @@ final class Router
 			if (Authorizer::isRateLimitExceeded())
 				throw new HttpTooManyRequests429();
 			
-			if (!Localizer::isAcceptedLanguage($requestedLanguage))
+			if (!Localizer::isAcceptedLanguage($language))
 				throw new HttpNotAcceptable406();
 			
 			if (!method_exists($controller, $method))
