@@ -173,15 +173,6 @@ final class Router
 		return ($uri === null || !str_contains($uri->getPath(), '/'));
 	}
 	
-	private static function isNonExistentFileRequested(string $requestedPath): bool
-	{
-		// If a file is requested then the route ends with "/name.extension"
-		$dot   = mb_strrpos($requestedPath, '.');
-		$slash = mb_strrpos($requestedPath, '/');
-		
-		return ($dot > $slash);
-	}
-	
 	public static function run(): void
 	{
 		$uri = \Uri\Rfc3986\Uri::parse($_SERVER['REQUEST_URI']);
@@ -193,12 +184,6 @@ final class Router
 		}
 		
 		$path = $uri->getPath();
-		
-		if (self::isNonExistentFileRequested($path))
-		{
-			http_response_code(404);
-			exit;
-		}
 		
 		if (self::isRootRequested($path) && !self::isUserAgentSearchEngineCrawler())
 		{
