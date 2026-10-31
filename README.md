@@ -6,7 +6,7 @@ The website is available at [vn-song-lyrics-db.ru](https://vn-song-lyrics-db.ru)
 
 ## Requirements
 General modules that were tested:
-* PHP 8.4.11-8.5.8
+* PHP 8.4.11-8.5.12
 * Apache 2.4 or nginx 1.30.1
 * MySQL 8.0.44 or MariaDB 10.11.18
 
@@ -38,49 +38,81 @@ Automated setup is not available. Follow the steps:
         * `CustomLog "{absolute_path_to_any_folder_you_want_to_use}/access.log" common`
     * Run the server with the following command:
         * `"{absolute_path_to_apache_folder}\bin\httpd.exe" -k runservice`
+* Create users in the database for "visitor", "user" and "administrator" roles.
+  * Grant SELECT, UPDATE, INSERT and DELETE permissions for "user" and "administrator"
+  * Grant SELECT, UPDATE, INSERT for "visitor".
+  * Granting permissions only for certain columns also works when done according to the logic in the model files.
 
 ## Project Structure
 By initial design, the website was supposed to use MVC. However, the Controller is used rather as the validator of incoming requests and included data. The Model uses only clean data.
 
 All MVC parts are divided into roles. Each higher role inherits all the functional of the lower.
 
-Main parts:
+Following folders and files must exist:
 * **assets**
-    * all images uploaded to the website or used by it statically
+  * **album-covers**
+    * Empty by default.
+  * **artist-photos**
+    * Empty by default.
+  * **character-images**
+    * Empty by default.
+  * **game-logos**
+    * Empty by default.
+  * **static-images**
+    * Required files are included in this repository.
+* **blockings**
+  * **.blocked-ips.txt**
+    * Empty by default. Filled by Authorizer in the process of running the service or by the user at their discretion.
+  * **.blocked-requests.txt**
+    * Empty by default. Filled by the user at their discretion.
+  * **.blocked-user-agents.txt**
+    * Empty by default. Filled by the user at their discretion.
 * **controllers**
-    * methods that accept requests and bind models and views together
+  * Methods that accept requests and bind models and views together.
 * **core**
-    * router for the requested path, boot to include all required files, config for connecting to the database
+  * Main files that manage request recipience
 * **css**
-    * **core**
-        * general settings used across all pages
-    * **custom-inputs**
-        * design of input fields across all pages
-    * **moderation**
-        * design of admin elements and pages
-    * **shared**
-        * elements shared by several pages
-    * other files are used by separate pages
+  * **core**
+    * General settings used across all pages
+  * **custom-inputs**
+    * Design of input fields across all pages
+  * **moderation**
+    * Design of admin elements and pages
+  * **shared**
+    * Elements shared by several pages
+  * Other files are used by separate pages
+* **fonts**
+  * Fonts used in the design
 * **include**
-    * all functions that does not belong to the MVC pattern
+    * All functions that does not belong to the classic MVC pattern
 * **js**
-    * **core**
-        * general settings used across all pages
-    * **custom-inputs**
-        * design of input fields across all pages
-    * **moderation**
-        * design of admin elements and pages
-    * **shared**
-        * elements shared by several pages
-    * other files are used by separate pages
+  * **core**
+    * General settings used across all pages
+  * **custom-inputs**
+    * Design of input fields across all pages
+  * **moderation**
+    * Design of admin elements and pages
+  * **shared**
+    * Elements shared by several pages
+  * Other files are used by separate pages
 * **localization**
-    * strings used by views to show localized pages
+  * Strings used by views to show localized pages
+* **logs**
+  * **access-logs**
+    * Access logs are stored in this folder
+  * **error-logs**
+    * Error logs are stored in this folder
 * **models**
-    * methods that process requests and return data
+  * Methods that process requests and return data
 * **views**
-    * methods that return the result of the request to the user
+  * Methods that return the result of the request to the user
 * **index.php**
-    * the entry point of the website
+  * The entry point of the website
+* **.htaccess**
+  * Must route all non-file requests to `index.php`
+* **.env**
+  * Must have data corresponding to `configuration.php`
+* Other files like robots.txt and logos as images.
 
 General pipeline of the code execution:
 
@@ -90,13 +122,4 @@ General pipeline of the code execution:
 At the moment, following roles are available:
 * visitor: any unregistered user, granted automatically
 * user: registered user, granted after signing-up or logging-in
-* violator: read-only registered user, granted manually
 * administrator: only the owner of the website, granted manually
-
-## Missing Files
-At the moment, following files are not included due to security reasons:
-* .htaccess (all requests that do not point to files, should be sent to index.php)
-* .administering/* (see router.php for details)
-* SQL-file for creating roles in database
-* core/boot.php should be filled with database info from the list item above
-* include/cryptography.php does not implement methods
