@@ -145,6 +145,8 @@ final class Router
 		self::addRoute('/{language}/control-panel/switch-maintenance-mode', 'handleSwitchMaintenanceMode');
 		self::addRoute('/{language}/report/change-status',                  'handleReportStatus');
 		self::addRoute('/{language}/album/{albumUri}/fill-album',           'handleFillAlbumPage');
+		
+		self::addRoute('/{language}/ikuinen-este-kiitos', 'handleBotTrapPage');
 	}
 	
 	private static function isRootRequested(string $path): bool
@@ -202,7 +204,10 @@ final class Router
 				throw new HttpPermanentlyBlocked418();
 			
 			if (Authorizer::isRequestForbidden() || Authorizer::isRateLimitExceededToBlock())
+			{
 				Authorizer::blockCurrentIp();
+				throw new HttpPermanentlyBlocked418();
+			}
 			
 			if (Authorizer::isMaintenanceModeActive() && !Authorizer::isCurrentUserAdministrator())
 				throw new HttpServiceUnavailable503();

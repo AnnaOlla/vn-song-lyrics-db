@@ -3,6 +3,9 @@
 User-agent: Amazonbot
 Disallow: /
 
+User-agent: Amzn-SearchBot
+Disallow: /
+
 User-agent: anthropic-ai
 Disallow: /
 
@@ -61,36 +64,20 @@ User-agent: YouBot
 Disallow: /
 
 User-agent: *
+Disallow: /en/ikuinen-este-kiitos
+Disallow: /ru/ikuinen-este-kiitos
+Disallow: /ja/ikuinen-este-kiitos
+Disallow: /*/log-in
+Disallow: /*/sign-up
 Disallow: /*/log-out
-Disallow: /*/game/*/report
-Disallow: /*/album/*/report
-Disallow: /*/artist/*/report
-Disallow: /*/character/*/report
-Disallow: /*/album/*/song/*/report
-Disallow: /*/album/*/song/*/report-lyrics
-Disallow: /*/album/*/song/*/translation/*/report
-Disallow: /*/add-game
-Disallow: /*/add-album
-Disallow: /*/add-artist
-Disallow: /*/add-character
-Disallow: /*/album/*/add-song
-Disallow: /*/album/*/song/*/add-lyrics
-Disallow: /*/album/*/song/*/add-translation
-Disallow: /*/album/*/fill-album
-Disallow: /*/game/*/edit
-Disallow: /*/album/*/edit
-Disallow: /*/artist/*/edit
-Disallow: /*/character/*/edit
-Disallow: /*/album/*/song/*/edit
-Disallow: /*/album/*/song/*/edit-lyrics
-Disallow: /*/album/*/song/*/translation/*/edit
-Disallow: /*/game/*/delete
-Disallow: /*/album/*/delete
-Disallow: /*/artist/*/delete
-Disallow: /*/character/*/delete
-Disallow: /*/album/*/song/*/delete
-Disallow: /*/album/*/song/*/delete-lyrics
-Disallow: /*/album/*/song/*/translation/*/delete
+Disallow: /*/add
+Disallow: /*/add-lyrics
+Disallow: /*/edit
+Disallow: /*/edit-lyrics
+Disallow: /*/delete
+Disallow: /*/delete-lyrics
+Disallow: /*/report
+Disallow: /*/report-lyrics
 Disallow: /*/user/*
 Disallow: /*/admin
 Disallow: /*/feedback

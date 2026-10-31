@@ -1711,4 +1711,10 @@ class VisitorController extends ErrorController
 	{
 		throw new HttpPaymentRequired402();
 	}
+	
+	final public function handleBotTrapPage(): void
+	{
+		Authorizer::blockCurrentIp();
+		throw new HttpPermanentlyBlocked418();
+	}
 }
