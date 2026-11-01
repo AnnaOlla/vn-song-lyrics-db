@@ -80,15 +80,15 @@ class ContributorView extends VisitorView
 					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\GameEditorPage\OriginalName, 2, true).'
-						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => '蒼の彼方のフォーリズム', 'value' => $originalName, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'original_name', 'placeholder' => '蒼の彼方のフォーリズム', 'value' => $originalName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						'.$this->createHeadingForInput(\Localization\GameEditorPage\TransliteratedName, 2, true).'
-						'.$this->createTextInput(['name' => 'transliterated-name', 'placeholder' => 'Ao no Kanata no Foo Rizumu', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
+						'.$this->createTextInput(['name' => 'transliterated_name', 'placeholder' => 'Ao no Kanata no Foo Rizumu', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						'.$this->createHeadingForInput(\Localization\GameEditorPage\LocalizedName, 2, false).'
-						'.$this->createTextInput(['name' => 'localized-name', 'placeholder' => 'Aokana - Four Rhythms Across the Blue', 'value' => $localizedName]).'
+						'.$this->createTextInput(['name' => 'localized_name', 'placeholder' => 'Aokana - Four Rhythms Across the Blue', 'value' => $localizedName]).'
 					</section>
 		';
 		
@@ -121,7 +121,7 @@ class ContributorView extends VisitorView
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						'.$this->createHeadingForInput(\Localization\GameEditorPage\VndbLink, 2, false).'
-						'.$this->createUrlInput(['name' => 'vndb-link', 'placeholder' => 'https://vndb.org/v12849', 'pattern' => 'https:\/\/vndb\.org\/v\d+', 'value' => $vndbLink]).'
+						'.$this->createUrlInput(['name' => 'vndb_link', 'placeholder' => 'https://vndb.org/v12849', 'pattern' => 'https:\/\/vndb\.org\/v\d+', 'value' => $vndbLink]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="8">
 						'.$this->createHeadingForInput(\Localization\GameEditorPage\RelatedAlbums, 2, false).'
@@ -142,7 +142,7 @@ class ContributorView extends VisitorView
 								keyToShownValue:         'transliterated_name',
 								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
-								attributesForSentInput:  ['name' => 'album-ids[]', 'disabled' => $disabled],
+								attributesForSentInput:  ['name' => 'album_ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
 								                              'placeholder'             => \Localization\Controls\SelectOption,
 															  'data-placeholder-select' => \Localization\Controls\SelectOption,
@@ -184,7 +184,7 @@ class ContributorView extends VisitorView
 								keyToShownValue:         'transliterated_name',
 								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
-								attributesForSentInput:  ['name' => 'character-ids[]', 'disabled' => $disabled],
+								attributesForSentInput:  ['name' => 'character_ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
 								                              'placeholder'             => \Localization\Controls\SelectOption,
 															  'data-placeholder-select' => \Localization\Controls\SelectOption,
@@ -331,15 +331,15 @@ class ContributorView extends VisitorView
 					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\OriginalName, 2, true).'
-						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => '蒼の彼方のフォーリズム サウンドトラックCD vol.1', 'value' => $originalName, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'original_name', 'placeholder' => '蒼の彼方のフォーリズム サウンドトラックCD vol.1', 'value' => $originalName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\TransliteratedName, 2, true).'
-						'.$this->createTextInput(['name' => 'transliterated-name', 'placeholder' => 'Ao no Kanata no Foo Rizumu Saundotorakku CD VOL.1', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
+						'.$this->createTextInput(['name' => 'transliterated_name', 'placeholder' => 'Ao no Kanata no Foo Rizumu Saundotorakku CD VOL.1', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\LocalizedName, 2, false).'
-						'.$this->createTextInput(['name' => 'localized-name', 'placeholder' => 'FOUR RHYTHM ACROSS THE BLUE SOUND TRACK CD VOL.01', 'value' => $localizedName]).'
+						'.$this->createTextInput(['name' => 'localized_name', 'placeholder' => 'FOUR RHYTHM ACROSS THE BLUE SOUND TRACK CD VOL.01', 'value' => $localizedName]).'
 					</section>
 		';
 		
@@ -372,7 +372,7 @@ class ContributorView extends VisitorView
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\VgmdbLink, 2, false).'
-						'.$this->createUrlInput(['name' => 'vgmdb-link', 'placeholder' => 'https://vgmdb.net/album/56642', 'pattern' => 'https:\/\/vgmdb\.net\/album\/\d+', 'value' => $vgmdbLink]).'
+						'.$this->createUrlInput(['name' => 'vgmdb_link', 'placeholder' => 'https://vgmdb.net/album/56642', 'pattern' => 'https:\/\/vgmdb\.net\/album\/\d+', 'value' => $vgmdbLink]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="8">
 						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\RelatedGames, 2, false).'
@@ -393,7 +393,7 @@ class ContributorView extends VisitorView
 								keyToShownValue:         'transliterated_name',
 								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
-								attributesForSentInput:  ['name' => 'game-ids[]', 'disabled' => $disabled],
+								attributesForSentInput:  ['name' => 'game_ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
 								                              'placeholder'             => \Localization\Controls\SelectOption,
 															  'data-placeholder-select' => \Localization\Controls\SelectOption,
@@ -419,7 +419,7 @@ class ContributorView extends VisitorView
 					</section>
 					<section class="has-tooltip" tooltip-id="9">
 						'.$this->createHeadingForInput(\Localization\AlbumEditorPage\SongCount, 2, true).'
-						'.$this->createTextInput(['name' => 'song-count', 'placeholder' => '28', 'pattern' => '\d+', 'value' => $songCount, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'song_count', 'placeholder' => '28', 'pattern' => '\d+', 'value' => $songCount, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="10">
 						<section class="page-controls">
@@ -537,15 +537,15 @@ class ContributorView extends VisitorView
 					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\OriginalName, 2, true).'
-						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => 'いとうかなこ', 'value' => $originalName, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'original_name', 'placeholder' => 'いとうかなこ', 'value' => $originalName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\TransliteratedName, 2, true).'
-						'.$this->createTextInput(['name' => 'transliterated-name', 'placeholder' => 'Itou Kanako', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
+						'.$this->createTextInput(['name' => 'transliterated_name', 'placeholder' => 'Itou Kanako', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\LocalizedName, 2, false).'
-						'.$this->createTextInput(['name' => 'localized-name', 'placeholder' => 'Kanako Ito', 'value' => $localizedName]).'
+						'.$this->createTextInput(['name' => 'localized_name', 'placeholder' => 'Kanako Ito', 'value' => $localizedName]).'
 					</section>
 		';
 		
@@ -578,7 +578,7 @@ class ContributorView extends VisitorView
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\VgmdbLink, 2, false).'
-						'.$this->createUrlInput(['name' => 'vgmdb-link', 'placeholder' => 'https://vgmdb.net/artist/69', 'pattern' => 'https:\/\/vgmdb\.net\/artist\/\d+', 'value' => $vgmdbLink]).'
+						'.$this->createUrlInput(['name' => 'vgmdb_link', 'placeholder' => 'https://vgmdb.net/artist/69', 'pattern' => 'https:\/\/vgmdb\.net\/artist\/\d+', 'value' => $vgmdbLink]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="8">
 						'.$this->createHeadingForInput(\Localization\ArtistEditorPage\OriginalArtist, 2, false).'
@@ -712,15 +712,15 @@ class ContributorView extends VisitorView
 					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $nonce]).'
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\OriginalName, 2, true).'
-						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => '桐生萌郁', 'value' => $originalName, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'original_name', 'placeholder' => '桐生萌郁', 'value' => $originalName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\TransliteratedName, 2, true).'
-						'.$this->createTextInput(['name' => 'transliterated-name', 'placeholder' => 'Kiryuu Moeka', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
+						'.$this->createTextInput(['name' => 'transliterated_name', 'placeholder' => 'Kiryuu Moeka', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\LocalizedName, 2, false).'
-						'.$this->createTextInput(['name' => 'localized-name', 'placeholder' => 'Moeka Kiryu', 'value' => $localizedName]).'
+						'.$this->createTextInput(['name' => 'localized_name', 'placeholder' => 'Moeka Kiryu', 'value' => $localizedName]).'
 					</section>
 		';
 		
@@ -753,7 +753,7 @@ class ContributorView extends VisitorView
 		'
 					<section class="has-tooltip" tooltip-id="7">
 						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\VndbLink, 2, false).'
-						'.$this->createUrlInput(['name' => 'vndb-link', 'placeholder' => 'https://vndb.org/c6496', 'pattern' => 'https:\/\/vndb\.org\/c\d+', 'value' => $vndbLink]).'
+						'.$this->createUrlInput(['name' => 'vndb_link', 'placeholder' => 'https://vndb.org/c6496', 'pattern' => 'https:\/\/vndb\.org\/c\d+', 'value' => $vndbLink]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="8">
 						'.$this->createHeadingForInput(\Localization\CharacterEditorPage\RelatedGames, 2, false).'
@@ -774,7 +774,7 @@ class ContributorView extends VisitorView
 								keyToShownValue:         'transliterated_name',
 								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
-								attributesForSentInput:  ['name' => 'game-ids[]', 'disabled' => $disabled],
+								attributesForSentInput:  ['name' => 'game_ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
 								                              'placeholder'             => \Localization\Controls\SelectOption,
 															  'data-placeholder-select' => \Localization\Controls\SelectOption,
@@ -924,23 +924,23 @@ class ContributorView extends VisitorView
 					<section class="has-tooltip" tooltip-id="1">
 						'.$this->createHeadingForInput(\Localization\SongEditorPage\DiscAndTrack, 2, true).'
 						<section class="disc-track-controls">
-							'.$this->createTextInput(['name' => 'disc-number', 'id' => 'disc-number', 'value' => $discNumber, 'readonly' => true, 'required' => true]).'
-							'.$this->createTextInput(['name' => 'track-number', 'id' => 'track-number', 'value' => $trackNumber, 'readonly' => true, 'required' => true]).'
+							'.$this->createTextInput(['name' => 'disc_number', 'id' => 'disc-number', 'value' => $discNumber, 'readonly' => true, 'required' => true]).'
+							'.$this->createTextInput(['name' => 'track_number', 'id' => 'track-number', 'value' => $trackNumber, 'readonly' => true, 'required' => true]).'
 							'.$this->createButton(\Localization\SongEditorPage\NextDisc, ['id' => 'next-disc', 'disabled' => $numberButtonDisabled]).'
 							'.$this->createButton(\Localization\SongEditorPage\PreviousDisc, ['id' => 'previous-disc', 'disabled' => $numberButtonDisabled]).'
 						</section>
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						'.$this->createHeadingForInput(\Localization\SongEditorPage\OriginalName, 2, true).'
-						'.$this->createTextInput(['name' => 'original-name', 'placeholder' => '星たちの歌', 'value' => $originalName, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'original_name', 'placeholder' => '星たちの歌', 'value' => $originalName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						'.$this->createHeadingForInput(\Localization\SongEditorPage\TransliteratedName, 2, true).'
-						'.$this->createTextInput(['name' => 'transliterated-name', 'placeholder' => 'Hoshitachi no Uta', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
+						'.$this->createTextInput(['name' => 'transliterated_name', 'placeholder' => 'Hoshitachi no Uta', 'value' => $transliteratedName, 'required' => true, 'pattern' => '[ -~]+']).'
 					</section>
 					<section class="has-tooltip" tooltip-id="4">
 						'.$this->createHeadingForInput(\Localization\SongEditorPage\LocalizedName, 2, false).'
-						'.$this->createTextInput(['name' => 'localized-name', 'placeholder' => 'Song of the Stars', 'value' => $localizedName]).'
+						'.$this->createTextInput(['name' => 'localized_name', 'placeholder' => 'Song of the Stars', 'value' => $localizedName]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
 						'.$this->createHeadingForInput(\Localization\SongEditorPage\HasVocal, 2, true).'
@@ -951,7 +951,7 @@ class ContributorView extends VisitorView
 							addEmptyOption:         true,
 							keyToShownValue:        'value',
 							keyToSentValue:         'id',
-							attributesForSentInput: ['name' => 'has-vocal']
+							attributesForSentInput: ['name' => 'has_vocal']
 						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="6">
@@ -1116,7 +1116,7 @@ class ContributorView extends VisitorView
 								keyToShownValue:         'artist_transliterated_name',
 								keysToShownHints:        ['artist_original_name', 'artist_localized_name'],
 								keyToSentValue:          'artist_id',
-								attributesForSentInput:  ['name' => 'artist-ids[]', 'disabled' => $disabled],
+								attributesForSentInput:  ['name' => 'artist_ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
 								                              'placeholder'             => \Localization\Controls\SelectOption,
 															  'data-placeholder-select' => \Localization\Controls\SelectOption,
@@ -1133,7 +1133,7 @@ class ContributorView extends VisitorView
 								keyToShownValue:         'character_transliterated_name',
 								keysToShownHints:        ['character_original_name', 'character_localized_name'],
 								keyToSentValue:          'character_id',
-								attributesForSentInput:  ['name' => 'character-ids[]', 'disabled' => $disabled],
+								attributesForSentInput:  ['name' => 'character_ids[]', 'disabled' => $disabled],
 								attributesForShownInput: [
 								                              'placeholder'             => \Localization\Controls\SelectOption,
 															  'data-placeholder-select' => \Localization\Controls\SelectOption,
@@ -1166,7 +1166,7 @@ class ContributorView extends VisitorView
 							keyToShownValue:        'transliterated_name',
 							keysToShownHints:       ['original_name', 'localized_name'],
 							keyToSentValue:         'id',
-							attributesForSentInput: ['name' => 'original-song-id', 'id' => 'original-song-select']
+							attributesForSentInput: ['name' => 'original_song_id', 'id' => 'original-song-select']
 						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
@@ -1179,7 +1179,7 @@ class ContributorView extends VisitorView
 							keyToShownValue:        \Localization\Functions\localizeLanguageKey(),
 							keysToShownHints:       ['language_own_name'],
 							keyToSentValue:         'language_id',
-							attributesForSentInput: ['name' => 'language-id', 'id' => 'language-select', 'required' => true]
+							attributesForSentInput: ['name' => 'language_id', 'id' => 'language-select', 'required' => true]
 						).'
 					</section>
 					<section class="has-tooltip lyrics-textarea" tooltip-id="4">
@@ -1305,7 +1305,7 @@ class ContributorView extends VisitorView
 				keyToShownValue:        \Localization\Functions\localizeLanguageKey(),
 				keysToShownHints:       ['language_own_name'],
 				keyToSentValue:         'id',
-				attributesForSentInput: ['name' => 'translation-language-id', 'required' => true, 'disabled' => $translation !== null]
+				attributesForSentInput: ['name' => 'translation_language_id', 'required' => true, 'disabled' => $translation !== null]
 			);
 			
 			$defaultReturnLink = Http::buildPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
@@ -1330,15 +1330,15 @@ class ContributorView extends VisitorView
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\TranslationName, 2, true).'
-						'.$this->createTextInput(['name' => 'translation-name', 'value' => $translationName, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'translation_name', 'value' => $translationName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\TranslationLyrics, 2, true).'
-						'.$this->createTextarea($translationLyrics, ['name' => 'translation-lyrics', 'placeholder' => \Localization\Controls\Textarea, 'required' => true]).'
+						'.$this->createTextarea($translationLyrics, ['name' => 'translation_lyrics', 'placeholder' => \Localization\Controls\Textarea, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="4">
 						'.$this->createHeadingForInput(\Localization\TranslationEditorPage\TranslationNotes, 2, false).'
-						'.$this->createTextarea($translationLyrics, ['name' => 'translation-notes', 'placeholder' => \Localization\Controls\Textarea, 'required' => false]).'
+						'.$this->createTextarea($translationLyrics, ['name' => 'translation_notes', 'placeholder' => \Localization\Controls\Textarea, 'required' => false]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
 						<section class="page-controls">
@@ -1473,7 +1473,7 @@ class ContributorView extends VisitorView
 			$albums,
 			$characters,
 			\Localization\GameEditorPage\HeadingAdd,
-			$_SESSION['addGamePage']['nonce']
+			$_SESSION['add_game_page']['nonce']
 		);
 	}
 	
@@ -1490,7 +1490,7 @@ class ContributorView extends VisitorView
 			null,
 			$games,
 			\Localization\AlbumEditorPage\HeadingAdd,
-			$_SESSION['addAlbumPage']['nonce']
+			$_SESSION['add_album_page']['nonce']
 		);
 	}
 	
@@ -1504,7 +1504,7 @@ class ContributorView extends VisitorView
 			null,
 			$originalArtists,
 			\Localization\ArtistEditorPage\HeadingAdd,
-			$_SESSION['addArtistPage']['nonce']
+			$_SESSION['add_artist_page']['nonce']
 		);
 	}
 	
@@ -1519,7 +1519,7 @@ class ContributorView extends VisitorView
 			null,
 			$games,
 			\Localization\CharacterEditorPage\HeadingAdd,
-			$_SESSION['addCharacterPage']['nonce']
+			$_SESSION['add_character_page']['nonce']
 		);
 	}
 	
@@ -1539,7 +1539,7 @@ class ContributorView extends VisitorView
 			$trackNumber,
 			$isLastSong,
 			$album['transliterated_name'].\Localization\SongEditorPage\HeadingAdd,
-			$_SESSION['addSongPage']['nonce']
+			$_SESSION['add_song_page']['nonce']
 		);
 	}
 	
@@ -1563,7 +1563,7 @@ class ContributorView extends VisitorView
 			$originalSongs,
 			$languages,
 			\Localization\LyricsEditorPage\HeadingAdd.$song['transliterated_name'],
-			$_SESSION['addLyricsPage']['nonce']
+			$_SESSION['add_lyrics_page']['nonce']
 		);
 	}
 
@@ -1583,7 +1583,7 @@ class ContributorView extends VisitorView
 			$languages,
 			$translationsByCurrentUser,
 			\Localization\TranslationEditorPage\HeadingAdd,
-			$_SESSION['addTranslationPage']['nonce']
+			$_SESSION['add_translation_page']['nonce']
 		);
 	}
 	
@@ -1604,7 +1604,7 @@ class ContributorView extends VisitorView
 			$albums,
 			$characters,
 			\Localization\GameEditorPage\HeadingEdit.$game['transliterated_name'],
-			$_SESSION['editGamePage']['nonce']
+			$_SESSION['edit_game_page']['nonce']
 		);
 	}
 	
@@ -1624,7 +1624,7 @@ class ContributorView extends VisitorView
 			$currentSongCount,
 			$games,
 			\Localization\AlbumEditorPage\HeadingEdit.$album['transliterated_name'],
-			$_SESSION['editAlbumPage']['nonce']
+			$_SESSION['edit_album_page']['nonce']
 		);
 	}
 	
@@ -1639,7 +1639,7 @@ class ContributorView extends VisitorView
 			$artist,
 			$originalArtists,
 			\Localization\ArtistEditorPage\HeadingEdit.$artist['transliterated_name'],
-			$_SESSION['editArtistPage']['nonce']
+			$_SESSION['edit_artist_page']['nonce']
 		);
 	}
 	
@@ -1656,7 +1656,7 @@ class ContributorView extends VisitorView
 			$relatedGames,
 			$games,
 			\Localization\CharacterEditorPage\HeadingEdit.$character['transliterated_name'],
-			$_SESSION['editCharacterPage']['nonce']
+			$_SESSION['edit_character_page']['nonce']
 		);
 	}
 	
@@ -1674,7 +1674,7 @@ class ContributorView extends VisitorView
 			null,
 			null,
 			\Localization\SongEditorPage\HeadingEdit.$song['transliterated_name'],
-			$_SESSION['editSongPage']['nonce']
+			$_SESSION['edit_song_page']['nonce']
 		);
 	}
 	
@@ -1699,7 +1699,7 @@ class ContributorView extends VisitorView
 			$originalSongs,
 			$languages,
 			\Localization\LyricsEditorPage\HeadingEdit.$song['transliterated_name'],
-			$_SESSION['editLyricsPage']['nonce']
+			$_SESSION['edit_lyrics_page']['nonce']
 		);
 	}
 	
@@ -1718,7 +1718,7 @@ class ContributorView extends VisitorView
 			[],
 			[],
 			\Localization\TranslationEditorPage\HeadingEdit,
-			$_SESSION['editTranslationPage']['nonce']
+			$_SESSION['edit_translation_page']['nonce']
 		);
 	}
 	
@@ -1731,7 +1731,7 @@ class ContributorView extends VisitorView
 		(
 			$heading,
 			$defaultReturnLink,
-			$_SESSION['deleteGamePage']['nonce']
+			$_SESSION['delete_game_page']['nonce']
 		);
 }
 	
@@ -1744,7 +1744,7 @@ class ContributorView extends VisitorView
 		(
 			$heading,
 			$defaultReturnLink,
-			$_SESSION['deleteAlbumPage']['nonce']
+			$_SESSION['delete_album_page']['nonce']
 		);
 	}
 	
@@ -1757,7 +1757,7 @@ class ContributorView extends VisitorView
 		(
 			$heading,
 			$defaultReturnLink,
-			$_SESSION['deleteArtistPage']['nonce']
+			$_SESSION['delete_artist_page']['nonce']
 		);
 	}
 	
@@ -1770,7 +1770,7 @@ class ContributorView extends VisitorView
 		(
 			$heading,
 			$defaultReturnLink,
-			$_SESSION['deleteCharacterPage']['nonce']
+			$_SESSION['delete_character_page']['nonce']
 		);
 	}
 	
@@ -1783,7 +1783,7 @@ class ContributorView extends VisitorView
 		(
 			$heading,
 			$defaultReturnLink,
-			$_SESSION['deleteSongPage']['nonce']
+			$_SESSION['delete_song_page']['nonce']
 		);
 	}
 	
@@ -1796,7 +1796,7 @@ class ContributorView extends VisitorView
 		(
 			$heading,
 			$defaultReturnLink,
-			$_SESSION['deleteLyricsPage']['nonce']
+			$_SESSION['delete_lyrics_page']['nonce']
 		);
 	}
 	
@@ -1809,7 +1809,7 @@ class ContributorView extends VisitorView
 		(
 			$heading,
 			$defaultReturnLink,
-			$_SESSION['deleteTranslationPage']['nonce']
+			$_SESSION['delete_translation_page']['nonce']
 		);
 	}
 	
@@ -1833,14 +1833,14 @@ class ContributorView extends VisitorView
 			<section>
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
-					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['changeEmailPage']['nonce']]).'
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['change_email_page']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\ChangeEmailPage\Email, 3, true).'
 						'.$this->createEmailInput(['name' => 'email', 'value' => Cryptography::decryptData($user['email']), 'placeholder' => \Localization\SignUpPage\HintEmail, 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createHeadingForInput(\Localization\ChangeEmailPage\Password, 3, true).'
-						'.$this->createPasswordInput(['name' => 'current-password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
+						'.$this->createPasswordInput(['name' => 'current_password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createReturnButton($defaultReturnLink).'
@@ -1877,14 +1877,14 @@ class ContributorView extends VisitorView
 			<section>
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
-					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['changeUsernamePage']['nonce']]).'
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['change_username_page']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\ChangeUsernamePage\Username, 3, true).'
 						'.$this->createUsernameInput(['name' => 'username', 'value' => $user['username'], 'placeholder' => \Localization\SignUpPage\HintUsername, 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createHeadingForInput(\Localization\ChangeUsernamePage\Password, 3, true).'
-						'.$this->createPasswordInput(['name' => 'current-password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
+						'.$this->createPasswordInput(['name' => 'current_password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createReturnButton($defaultReturnLink).'
@@ -1921,14 +1921,14 @@ class ContributorView extends VisitorView
 			<section>
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
-					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['changePasswordPage']['nonce']]).'
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['change_password_page']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\ChangePasswordPage\NewPassword, 3, true).'
 						'.$this->createPasswordInput(['name' => 'password', 'placeholder' => \Localization\SignUpPage\HintPassword, 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createHeadingForInput(\Localization\ChangePasswordPage\Password, 3, true).'
-						'.$this->createPasswordInput(['name' => 'current-password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
+						'.$this->createPasswordInput(['name' => 'current_password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createReturnButton($defaultReturnLink).'
@@ -1965,7 +1965,7 @@ class ContributorView extends VisitorView
 			<section>
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
-					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['changeAboutMePage']['nonce']]).'
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['change_about_me_page']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\ChangeAboutMePage\AboutMe, 3, false).'
 						'.$this->createTextarea
@@ -1973,7 +1973,7 @@ class ContributorView extends VisitorView
 							value: htmlspecialchars($user['about_me'] ?? ''),
 							attributes:
 							[
-								'name' => 'about-me',
+								'name' => 'about_me',
 								'placeholder' => \Localization\Controls\Textarea
 							]
 						).'
@@ -2016,7 +2016,7 @@ class ContributorView extends VisitorView
 				'.$this->createParagraph(\Localization\DeleteAccountPage\Warning4).'
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
-					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['deleteAccountPage']['nonce']]).'
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['delete_account_page']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\DeleteAccountPage\Password, 3, true).'
 						'.$this->createPasswordInput(['name' => 'password', 'placeholder' => \Localization\LogInPage\HintPassword, 'required' => true]).'

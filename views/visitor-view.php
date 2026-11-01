@@ -193,7 +193,7 @@ class VisitorView extends ErrorView
 			<section>
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
-					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['logInPage']['nonce']]).'
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['log_in_page']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\LogInPage\Email, 3, true).'
 						'.$this->createEmailInput(['name' => 'email', 'value' => $email, 'placeholder' => \Localization\LogInPage\HintEmail, 'required' => true]).'
@@ -247,7 +247,7 @@ class VisitorView extends ErrorView
 			<section>
 				'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 				<form method="POST">
-					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['signUpPage']['nonce']]).'
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['sign_up_page']['nonce']]).'
 					<section>
 						'.$this->createHeadingForInput(\Localization\SignUpPage\Username, 3, true).'
 						'.$this->createUsernameInput(['name' => 'username', 'value' => $username, 'placeholder' => \Localization\SignUpPage\HintUsername, 'required' => true]).'
@@ -1254,7 +1254,7 @@ class VisitorView extends ErrorView
 				'.$this->createParagraph(\Localization\FeedbackPage\AboutAnswer).'
 				'.$this->createParagraph(\Localization\FeedbackPage\SymbolLimit).'
 				<form method="POST">
-					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['feedbackPage']['nonce']]).'
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['feedback_page']['nonce']]).'
 					'.$this->createTextarea(attributes: ['name' => 'message', 'maxlength' => self::FEEDBACK_MAX_LENGTH, 'placeholder' => \Localization\Controls\Textarea, 'required' => true]).'
 					'.$this->createParagraph(\Localization\Functions\localizeInputError($error)).'
 					<section>
@@ -1394,12 +1394,12 @@ class VisitorView extends ErrorView
 				'.$this->createParagraph(\Localization\ReportPage\AboutReportContent).'
 				'.$this->createParagraph(\Localization\ReportPage\ReplyOpportunity).'
 				<form method="POST" autocomplete="off">
-					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['reportPage']['nonce']]).'
+					'.$this->createHiddenInput(['name' => 'nonce', 'value' => $_SESSION['report_page']['nonce']]).'
 					'.$this->createTextarea
 					(
 						attributes:
 						[
-							'name'        => 'report-text',
+							'name'        => 'report_text',
 							'maxlength'   => self::REPORT_MAX_LENGTH,
 							'placeholder' => \Localization\Controls\Textarea,
 							'required'    => true,
@@ -1409,7 +1409,7 @@ class VisitorView extends ErrorView
 						'.$this->createReturnButton($entityLink).'
 						'.$this->createFillerSection().'
 						'.$this->createSubmitButton().'
-						'.$this->createHiddenInput(['name' => 'entity-uri', 'value' => $entityLink]).'
+						'.$this->createHiddenInput(['name' => 'entity_uri', 'value' => $entityLink]).'
 					</section>
 				</form>
 			</section>

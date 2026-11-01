@@ -556,12 +556,12 @@ HTML;
 		
 		$statuses =
 		[
-			['toSend' => 'unchecked', 'toShow' => \Localization\ModerationStatus\Unchecked],
-			['toSend' => 'checked',   'toShow' => \Localization\ModerationStatus\Checked],
-			['toSend' => 'hidden',    'toShow' => \Localization\ModerationStatus\Hidden]
+			['to_send' => 'unchecked', 'to_show' => \Localization\ModerationStatus\Unchecked],
+			['to_send' => 'checked',   'to_show' => \Localization\ModerationStatus\Checked],
+			['to_send' => 'hidden',    'to_show' => \Localization\ModerationStatus\Hidden]
 		];
 		
-		$currentStatusIndex = array_search($entity[$keyToStatus], array_column($statuses, 'toSend'));
+		$currentStatusIndex = array_search($entity[$keyToStatus], array_column($statuses, 'to_send'));
 		$currentStatus      = $statuses[$currentStatusIndex];
 		
 		return
@@ -573,8 +573,8 @@ HTML;
 					iteratedOptions:         $statuses,
 					selectedOption:          $currentStatus,
 					addEmptyOption:          false,
-					keyToShownValue:         'toShow',
-					keyToSentValue:          'toSend',
+					keyToShownValue:         'to_show',
+					keyToSentValue:          'to_send',
 					attributesForSentInput:  ['class' => ['status-select'], 'data-entity-uri' => $dataEntityUri],
 					attributesForShownInput: ['readonly' => true]
 				).
@@ -827,9 +827,9 @@ HTML;
 			$language = \Localization\Functions\localizeLanguageName($translation);
 			
 			if (array_key_exists($language, $translationCount))
-				$translationCount[$language]['totalCount']++;
+				$translationCount[$language]['total_count']++;
 			else
-				$translationCount[$language] = ['currentCount' => 0, 'totalCount' => 1];
+				$translationCount[$language] = ['current_count' => 0, 'total_count' => 1];
 		}
 		
 		$links = [];
@@ -838,11 +838,11 @@ HTML;
 		{
 			$language = \Localization\Functions\localizeLanguageName($translation);
 			
-			if ($translationCount[$language]['totalCount'] !== 1)
+			if ($translationCount[$language]['total_count'] !== 1)
 			{
-				$translationCount[$language]['currentCount']++;
+				$translationCount[$language]['current_count']++;
 				
-				$number = \Localization\Functions\localizeTranslationNumber($translationCount[$language]['currentCount']);
+				$number = \Localization\Functions\localizeTranslationNumber($translationCount[$language]['current_count']);
 				$language = $language.$number;
 			}
 			
@@ -1457,7 +1457,7 @@ HTML;
 	): string
 	{
 		$attributes['type']        = 'text';
-		$attributes['name'][]      = 'captcha-code';
+		$attributes['name'][]      = 'captcha_code';
 		$attributes['class'][]     = 'custom-input';
 		$attributes['class'][]     = 'captcha-input';
 		$attributes['placeholder'] = 'code:';
@@ -1581,15 +1581,15 @@ HTML;
 	
 	final protected function createResultsLimitBlock(int|null $limit): string
 	{
-		$selectedOption = ['toShow' => $limit, 'toSend' => $limit];
+		$selectedOption = ['to_show' => $limit, 'to_send' => $limit];
 		
 		$options =
 		[
-			['toShow' => 10,  'toSend' => 10],
-			['toShow' => 15,  'toSend' => 15],
-			['toShow' => 20,  'toSend' => 20],
-			['toShow' => 25,  'toSend' => 25],
-			['toShow' => 30,  'toSend' => 30]
+			['to_show' => 10,  'to_send' => 10],
+			['to_show' => 15,  'to_send' => 15],
+			['to_show' => 20,  'to_send' => 20],
+			['to_show' => 25,  'to_send' => 25],
+			['to_show' => 30,  'to_send' => 30]
 		];
 		
 		// sort nulls last
@@ -1615,8 +1615,8 @@ HTML;
 			iteratedOptions:         $options,
 			selectedOption:          $selectedOption,
 			addEmptyOption:          false,
-			keyToShownValue:         'toShow',
-			keyToSentValue:          'toSend',
+			keyToShownValue:         'to_show',
+			keyToSentValue:          'to_send',
 			attributesForSentInput:  ['id' => 'limit-result-count-bar'],
 			attributesForShownInput: [
 										 'data-placeholder-filter' => \Localization\Controls\SelectOption,

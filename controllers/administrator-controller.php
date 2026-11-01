@@ -364,8 +364,8 @@ class AdministratorController extends ContributorController
 			return;
 		}
 		
-		$feedbackId  = $_POST['feedback-id']   ?? null;
-		$replyText   = $_POST['reply-text']    ?? null;
+		$feedbackId  = $_POST['feedback_id']   ?? null;
+		$replyText   = $_POST['reply_text']    ?? null;
 		$moderatorId = $_SESSION['user']['id'];
 		
 		if (!$feedbackId || !$replyText)
@@ -403,7 +403,7 @@ class AdministratorController extends ContributorController
 			return;
 		}
 		
-		$feedbackId = $_POST['feedback-id'] ?? null;
+		$feedbackId = $_POST['feedback_id'] ?? null;
 		
 		if (!$feedbackId)
 		{
@@ -512,10 +512,10 @@ class AdministratorController extends ContributorController
 	
 	private function handleAddLanguagePagePost(): void
 	{
-		$ownName = $_POST['own-name'] ?? null;
-		$ruName  = $_POST['ru-name']  ?? null;
-		$enName  = $_POST['en-name']  ?? null;
-		$jaName  = $_POST['ja-name']  ?? null;
+		$ownName = $_POST['own_name'] ?? null;
+		$ruName  = $_POST['ru_name']  ?? null;
+		$enName  = $_POST['en_name']  ?? null;
+		$jaName  = $_POST['ja_name']  ?? null;
 		
 		if (Validation::haveNullOrEmpty($ownName, $ruName, $enName, $jaName))
 			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
@@ -621,12 +621,12 @@ class AdministratorController extends ContributorController
 		if (!Validation::isDataEncodedInUtf8($_POST))
 			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
 		
-		$discNumbers         = $_POST['disc-number']         ?? [];
-		$trackNumbers        = $_POST['track-number']        ?? [];
-		$originalNames       = $_POST['original-name']       ?? [];
-		$transliteratedNames = $_POST['transliterated-name'] ?? [];
-		$localizedNames      = $_POST['localized-name']      ?? [];
-		$hasVocal            = $_POST['has-vocal']           ?? [];
+		$discNumbers         = $_POST['disc_number']         ?? [];
+		$trackNumbers        = $_POST['track_number']        ?? [];
+		$originalNames       = $_POST['original_name']       ?? [];
+		$transliteratedNames = $_POST['transliterated_name'] ?? [];
+		$localizedNames      = $_POST['localized_name']      ?? [];
+		$hasVocal            = $_POST['has_vocal']           ?? [];
 		$userAddedId         = $_SESSION['user']['id'];
 		
 		$originalNames       = Parsing::trimNullableStringArray($originalNames);

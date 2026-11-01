@@ -17,8 +17,8 @@ final class Authorizer
 		if (!isset($_SESSION['user']))
 			$_SESSION['user']['role'] = 'visitor';
 
-		if (!isset($_SESSION['rateLimit']))
-			$_SESSION['rateLimit'] = new SplDoublyLinkedList();
+		if (!isset($_SESSION['rate_limit']))
+			$_SESSION['rate_limit'] = new SplDoublyLinkedList();
 	}
 	
 	public static function endSession(): void
@@ -86,21 +86,21 @@ final class Authorizer
 	{
 		$now = time();
 		
-		while (!$_SESSION['rateLimit']->isEmpty() && $now - $_SESSION['rateLimit']->bottom() >= self::RATE_LIMIT_WINDOW)
-			$_SESSION['rateLimit']->shift();
+		while (!$_SESSION['rate_limit']->isEmpty() && $now - $_SESSION['rate_limit']->bottom() >= self::RATE_LIMIT_WINDOW)
+			$_SESSION['rate_limit']->shift();
 		
 		if (!self::isCurrentUserAdministrator())
-			$_SESSION['rateLimit']->push($now);
+			$_SESSION['rate_limit']->push($now);
 	}
 	
 	public static function isRateLimitExceeded(): bool
 	{
-		return $_SESSION['rateLimit']->count() > self::RATE_LIMIT_COUNT;
+		return $_SESSION['rate_limit']->count() > self::RATE_LIMIT_COUNT;
 	}
 	
 	public static function isRateLimitExceededToBlock(): bool
 	{
-		return $_SESSION['rateLimit']->count() > self::RATE_LIMIT_COUNT_TO_BLOCK;
+		return $_SESSION['rate_limit']->count() > self::RATE_LIMIT_COUNT_TO_BLOCK;
 	}
 	
 	public static function isCurrentUser(int|null $id): bool

@@ -93,19 +93,19 @@ class AdministratorView extends ContributorView
 				<form method="POST" enctype="multipart/form-data" autocomplete="off">
 					<section>
 						'.$this->createHeadingForInput('Own Name', 2, true).'
-						'.$this->createTextInput(['name' => 'own-name', 'value' => $ownName, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'own_name', 'value' => $ownName, 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createHeadingForInput('Name in Russian', 2, true).'
-						'.$this->createTextInput(['name' => 'ru-name', 'value' => $ruName, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'ru_name', 'value' => $ruName, 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createHeadingForInput('Name in English', 2, true).'
-						'.$this->createTextInput(['name' => 'en-name', 'value' => $enName, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'en_name', 'value' => $enName, 'required' => true]).'
 					</section>
 					<section>
 						'.$this->createHeadingForInput('Name in Japanese', 2, true).'
-						'.$this->createTextInput(['name' => 'ja-name', 'value' => $jaName, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'ja_name', 'value' => $jaName, 'required' => true]).'
 					</section>
 					<section>
 						<section class="page-controls">
@@ -323,7 +323,7 @@ class AdministratorView extends ContributorView
 			selectedOption:  $vocalOptions[0],
 			keyToShownValue: 'value',
 			keyToSentValue:  'id',
-			attributes:      ['name' => 'has-vocal[]', 'required' => true]
+			attributes:      ['name' => 'has_vocal[]', 'required' => true]
 		);
 		
 		$html[] = $this->startRender
@@ -358,9 +358,9 @@ class AdministratorView extends ContributorView
 								<th>
 									<select class="name-type-select custom-select" data-column="'.$i.'">
 										<option data-type=""                      class="custom-select-option" data-required="false"></option>
-										<option data-type="original-name[]"       class="custom-select-option" data-required="true" >'.\Localization\FillAlbumEditorPage\OriginalName.'</option>
-										<option data-type="transliterated-name[]" class="custom-select-option" data-required="true" >'.\Localization\FillAlbumEditorPage\TransliteratedName.'</option>
-										<option data-type="localized-name[]"      class="custom-select-option" data-required="false">'.\Localization\FillAlbumEditorPage\LocalizedName.'</option>
+										<option data-type="original_name[]"       class="custom-select-option" data-required="true" >'.\Localization\FillAlbumEditorPage\OriginalName.'</option>
+										<option data-type="transliterated_name[]" class="custom-select-option" data-required="true" >'.\Localization\FillAlbumEditorPage\TransliteratedName.'</option>
+										<option data-type="localized_name[]"      class="custom-select-option" data-required="false">'.\Localization\FillAlbumEditorPage\LocalizedName.'</option>
 									</select>
 									<section class="custom-select-filler"></section>
 								</th>
@@ -380,8 +380,8 @@ class AdministratorView extends ContributorView
 				$html[] = 
 				'
 							<tr>
-								<td><input class="custom-input" type="text" name="disc-number[]" value="'.($i + 1).'" readonly/></td>
-								<td><input class="custom-input" type="text" name="track-number[]" value="'.($j + 1).'" readonly/></td>
+								<td><input class="custom-input" type="text" name="disc_number[]" value="'.($i + 1).'" readonly/></td>
+								<td><input class="custom-input" type="text" name="track_number[]" value="'.($j + 1).'" readonly/></td>
 				';
 				
 				for ($k = 0; $k < count($discography[$i][$j]) || $k < $LOCALIZATION_MIN_COUNT; $k++)
@@ -441,6 +441,7 @@ class AdministratorView extends ContributorView
 		'.$tooltipContents.'
 		';
 		*/
+		
 		$html[] = $this->endRender
 		(
 			[
