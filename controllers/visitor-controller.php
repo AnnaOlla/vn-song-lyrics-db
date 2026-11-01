@@ -184,10 +184,10 @@ class VisitorController extends ErrorController
 		
 		$_SESSION['sign_up_page']['nonce'] = Cryptography::generateNonce();
 		
-		$captchaData = $this->model->getRandomCaptcha(6, 3);
-		
-		$_SESSION['sign_up_page']['captcha'] = $captchaData['solution'];
-		$captchaBase64Image                  = $captchaData['base64_image'];
+		[
+			'solution'     => $_SESSION['sign_up_page']['captcha'],
+			'base64_image' => $captchaBase64Image
+		] = $this->model->getRandomCaptcha(6, 3);
 		
 		$this->view->renderSignUpPage($username, $email, $error, $captchaBase64Image);
 	}
@@ -1024,10 +1024,10 @@ class VisitorController extends ErrorController
 		InputError  $error   = InputError::None
 	): void
 	{
-		$captchaData = $this->model->getRandomCaptcha(4, 0);
-		
-		$_SESSION['feedback_page']['captcha'] = $captchaData['solution'];
-		$captchaBase64Image                   = $captchaData['base64_image'];
+		[
+			'solution'     => $_SESSION['feedback_page']['captcha'],
+			'base64_image' => $captchaBase64Image
+		] = $this->model->getRandomCaptcha(4, 0);
 		
 		$_SESSION['feedback_page']['nonce'] = Cryptography::generateNonce();
 		
