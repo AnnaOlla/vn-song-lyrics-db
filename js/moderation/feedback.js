@@ -9,7 +9,7 @@ async function deleteFeedback(e) {
 	const feedbackId = thisFeedback.getAttribute('data-id');
 	
 	const formData = new FormData();
-	formData.append('feedback-id', feedbackId);
+	formData.append('feedback_id', feedbackId);
 	
 	const response = await fetch(url, {
 		method: "POST",
@@ -37,8 +37,8 @@ async function sendReply(e) {
 	const replyText  = thisTextarea.value;
 	
 	const formData = new FormData();
-	formData.append('feedback-id', feedbackId);
-	formData.append('reply-text', replyText);
+	formData.append('feedback_id', feedbackId);
+	formData.append('reply_text', replyText);
 	
 	const response = await fetch(url, {
 		method: "POST",
