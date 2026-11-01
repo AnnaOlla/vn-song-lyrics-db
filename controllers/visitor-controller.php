@@ -186,8 +186,8 @@ class VisitorController extends ErrorController
 		
 		$captchaData = $this->model->getRandomCaptcha(6, 3);
 		
-		$_SESSION['sign_up_page']['captcha'] = $captchaData[0];
-		$captchaBase64Image                = $captchaData[1];
+		$_SESSION['sign_up_page']['captcha'] = $captchaData['solution'];
+		$captchaBase64Image                  = $captchaData['base64_image'];
 		
 		$this->view->renderSignUpPage($username, $email, $error, $captchaBase64Image);
 	}
@@ -201,7 +201,7 @@ class VisitorController extends ErrorController
 		$email         = $_POST['email']                      ?? null;
 		$password      = $_POST['password']                   ?? null;
 		$ipAddress     = $_SERVER['REMOTE_ADDR']              ?? null;
-		$userCaptcha   = $_POST['captcha_code']               ?? null;
+		$userCaptcha   = $_POST['captcha']                    ?? null;
 		$serverCaptcha = $_SESSION['sign_up_page']['captcha'] ?? null;
 		$userNonce     = $_POST['nonce']                      ?? null;
 		$serverNonce   = $_SESSION['sign_up_page']['nonce']   ?? null;
@@ -1026,8 +1026,8 @@ class VisitorController extends ErrorController
 	{
 		$captchaData = $this->model->getRandomCaptcha(4, 0);
 		
-		$_SESSION['feedback_page']['captcha'] = $captchaData[0];
-		$captchaBase64Image                   = $captchaData[1];
+		$_SESSION['feedback_page']['captcha'] = $captchaData['solution'];
+		$captchaBase64Image                   = $captchaData['base64_image'];
 		
 		$_SESSION['feedback_page']['nonce'] = Cryptography::generateNonce();
 		
@@ -1043,7 +1043,7 @@ class VisitorController extends ErrorController
 		$senderId      = $_SESSION['user']['id']               ?? null;
 		$senderIp      = $_SERVER['REMOTE_ADDR']               ?? null;
 		$message       = $_POST['message']                     ?? null;
-		$userCaptcha   = $_POST['captcha_code']                ?? null;
+		$userCaptcha   = $_POST['captcha']                     ?? null;
 		$serverCaptcha = $_SESSION['feedback_page']['captcha'] ?? null;
 		$userNonce     = $_POST['nonce']                       ?? null;
 		$serverNonce   = $_SESSION['feedback_page']['nonce']   ?? null;
