@@ -330,6 +330,13 @@ final class Router
 		}
 		catch (Throwable $e)
 		{
+			// Happens if the server fails to create an instance of M, V or C
+			
+			if (Localizer::isAcceptedLanguage($language))
+				$controller = new ErrorController($language);
+			else
+				$controller = new ErrorController(Localizer::DEFAULT_LANGUAGE);
+			
 			$controller->handleInternalServerError500();
 			Logger::logError($e);
 		}
