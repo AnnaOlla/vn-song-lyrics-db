@@ -159,6 +159,15 @@ final class Router
 		return $uri === null || !str_contains($uri->getPath(), '/');
 	}
 	
+	private static function isNonexistentFileRequested(string $requestedPath): bool
+	{
+		// If a file is requested then the route ends with "/name.extension"
+		$dot   = mb_strrpos($requestedPath, '.');
+		$slash = mb_strrpos($requestedPath, '/');
+		
+		return ($dot > $slash);
+	}
+	
 	public static function run(): void
 	{
 		$uri = \Uri\Rfc3986\Uri::parse($_SERVER['REQUEST_URI']);
@@ -178,6 +187,12 @@ final class Router
 			
 			http_response_code(302);
 			header('Location: /'.$language);
+			exit;
+		}
+		
+		if (self::isNonexistentFileRequested($path))
+		{
+			http_response_code(404);
 			exit;
 		}
 		
