@@ -591,7 +591,7 @@ class ContributorView extends VisitorView
 							keyToShownValue:        'transliterated_name',
 							keysToShownHints:       ['original_name', 'localized_name'],
 							keyToSentValue:         'id',
-							attributesForSentInput: ['name' => 'original-artist-id']
+							attributesForSentInput: ['name' => 'original_artist_id']
 						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="9">
