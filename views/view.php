@@ -36,6 +36,12 @@ abstract class View
 			echo $html;
 	}
 	
+	private getTimestamp(string $path)
+	{
+		// Heredoc does not support operator ::
+		return Http::getTimestamp($path);
+	}
+	
 	//----------------------------//
 	//      Page Base Blocks      //
 	//----------------------------//
@@ -134,7 +140,7 @@ HTML;
 		{
 			$html[] =
 <<<HTML
-	<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={Http::getTimestamp($cssSheetUri)}" nonce="{$this->nonce}"/>
+	<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={$this->getTimestamp($cssSheetUri)}" nonce="{$this->nonce}"/>
 
 HTML;
 		}
@@ -143,7 +149,7 @@ HTML;
 		{
 			$html[] =
 <<<HTML
-	<script src="{$jsScriptUri}?v={Http::getTimestamp($jsScriptUri)}" nonce="{$this->nonce}"/></script>
+	<script src="{$jsScriptUri}?v={$this->getTimestamp($jsScriptUri)}" nonce="{$this->nonce}"/></script>
 
 HTML;
 		}
@@ -292,7 +298,7 @@ HTML;
 		{
 			$html[] =
 <<<HTML
-	<script src="{$jsScriptUri}?v={Http::getTimestamp($jsScriptUri)}" nonce="{$this->nonce}"/></script>
+	<script src="{$jsScriptUri}?v={$this->getTimestamp($jsScriptUri)}" nonce="{$this->nonce}"/></script>
 
 HTML;
 		}
@@ -576,7 +582,7 @@ HTML;
 		string $alt = ""
 	): string
 	{
-		return '<img src="'.htmlspecialchars($src).'?v='.Http::getTimestamp($src).'" alt="'.htmlspecialchars($alt).'"/>';
+		return '<img src="'.htmlspecialchars($src).'?v='.$this->getTimestamp($src).'" alt="'.htmlspecialchars($alt).'"/>';
 	}
 	
 	private function createEntityImage
