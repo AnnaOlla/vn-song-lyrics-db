@@ -36,7 +36,7 @@ abstract class View
 			echo $html;
 	}
 	
-	private getTimestamp(string $path)
+	private function getTimestamp(string $path): int
 	{
 		// Heredoc does not support operator ::
 		return Http::getTimestamp($path);

@@ -52,7 +52,7 @@ final class Http
 		return implode('/', $parts);
 	}
 	
-	public static function getTimestamp(string $path)
+	public static function getTimestamp(string $path): int
 	{
 		/* The file should be delivered with the forwarding slash
 		   to tell the browser that the path to the file starts at the root
