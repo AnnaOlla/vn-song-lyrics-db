@@ -25,17 +25,6 @@ abstract class View
 		$this->nonce    = Cryptography::generateNonce();
 	}
 	
-	final protected function getTimestamp(string $path)
-	{
-		/* The file should be delivered with the forwarding slash
-		   to tell the browser that the path to the file starts at the root
-		   
-		   PHP fails to find the folder in this case,
-		   so the slash must be stripped */
-		
-		return filemtime(mb_ltrim($path, '/'));
-	}
-	
 	final protected function echoHtml(string|array $html): void
 	{
 		if (is_array($html))
@@ -45,37 +34,6 @@ abstract class View
 		}
 		else
 			echo $html;
-	}
-	
-	private function changeUriLocale(string $uri, string $newCode): string
-	{
-		$parts = explode('/', $uri, 3);
-		$parts[1] = $newCode;
-		return implode('/', $parts);
-	}
-	
-	private function buildAttributes(array|null $attributes): string
-	{
-		if ($attributes === null)
-			return '';
-		
-		$parts = [];
-		
-		foreach ($attributes as $key => $value)
-		{
-			if ($value === false || $value === null)
-				continue;
-			
-			if (is_array($value))
-				$value = implode(' ', $value);
-			
-			if ($value === true || $value === '')
-				$parts[] = htmlspecialchars($key ?? '');
-			else
-				$parts[] = htmlspecialchars($key ?? '').'="'.htmlspecialchars($value ?? '').'"';
-		}
-		
-		return implode(' ', $parts);
 	}
 	
 	//----------------------------//
@@ -100,9 +58,9 @@ abstract class View
 		$requestUri     = htmlspecialchars(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 		$currentUrl     = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$requestUri);
 		$canonicalUrl   = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].($canonicalUri ?? $requestUri));
-		$alternateRefEn = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale(($canonicalUri ?? $requestUri), 'en'));
-		$alternateRefRu = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale(($canonicalUri ?? $requestUri), 'ru'));
-		$alternateRefJa = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].$this->changeUriLocale(($canonicalUri ?? $requestUri), 'ja'));
+		$alternateRefEn = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].Http::changeUriLocale(($canonicalUri ?? $requestUri), 'en'));
+		$alternateRefRu = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].Http::changeUriLocale(($canonicalUri ?? $requestUri), 'ru'));
+		$alternateRefJa = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].Http::changeUriLocale(($canonicalUri ?? $requestUri), 'ja'));
 		
 		$ogUrl          = htmlspecialchars($currentUrl);
 		$ogImageUrl     = htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].($ogImageUri ?? '/assets/static-images/wee-hagana-og.webp'));
@@ -176,7 +134,7 @@ HTML;
 		{
 			$html[] =
 <<<HTML
-	<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={$this->getTimestamp($cssSheetUri)}" nonce="{$this->nonce}"/>
+	<link type="text/css" rel="stylesheet" href="{$cssSheetUri}?v={Http::getTimestamp($cssSheetUri)}" nonce="{$this->nonce}"/>
 
 HTML;
 		}
@@ -185,7 +143,7 @@ HTML;
 		{
 			$html[] =
 <<<HTML
-	<script src="{$jsScriptUri}?v={$this->getTimestamp($jsScriptUri)}" nonce="{$this->nonce}"/></script>
+	<script src="{$jsScriptUri}?v={Http::getTimestamp($jsScriptUri)}" nonce="{$this->nonce}"/></script>
 
 HTML;
 		}
@@ -201,9 +159,9 @@ HTML;
 	
 	private function createHeader(): string
 	{
-		$enLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'en');
-		$ruLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'ru');
-		$jaLink = $this->changeUriLocale($_SERVER['REQUEST_URI'], 'ja');
+		$enLink = Http::changeUriLocale($_SERVER['REQUEST_URI'], 'en');
+		$ruLink = Http::changeUriLocale($_SERVER['REQUEST_URI'], 'ru');
+		$jaLink = Http::changeUriLocale($_SERVER['REQUEST_URI'], 'ja');
 		
 		if (Authorizer::isCurrentUserVisitor())
 		{
@@ -334,7 +292,7 @@ HTML;
 		{
 			$html[] =
 <<<HTML
-	<script src="{$jsScriptUri}?v={$this->getTimestamp($jsScriptUri)}" nonce="{$this->nonce}"/></script>
+	<script src="{$jsScriptUri}?v={Http::getTimestamp($jsScriptUri)}" nonce="{$this->nonce}"/></script>
 
 HTML;
 		}
@@ -361,7 +319,7 @@ HTML;
 	{
 		$attributes['href'] = $href;
 		
-		return '<a '.$this->buildAttributes($attributes).'>'.htmlspecialchars($content).'</a>';
+		return '<a '.Http::buildAttributes($attributes).'>'.htmlspecialchars($content).'</a>';
 	}
 	
 	final protected function createVndbLinkParagraph
@@ -403,7 +361,7 @@ HTML;
 		array|null $attributes = null
 	): string
 	{
-		return '<h'.$level.' '.$this->buildAttributes($attributes).'>'.htmlspecialchars($heading).'</h'.$level.'>';
+		return '<h'.$level.' '.Http::buildAttributes($attributes).'>'.htmlspecialchars($heading).'</h'.$level.'>';
 	}
 	
 	final protected function createHeadingAsLink
@@ -414,7 +372,7 @@ HTML;
 		array|null $attributes = null
 	): string
 	{
-		return '<h'.$level.' '.$this->buildAttributes($attributes).'>'.$this->createLink($href, $heading, $attributes).'</h'.$level.'>';
+		return '<h'.$level.' '.Http::buildAttributes($attributes).'>'.$this->createLink($href, $heading, $attributes).'</h'.$level.'>';
 	}
 	
 	final protected function createHeadingForInput
@@ -426,9 +384,9 @@ HTML;
 	): string
 	{
 		if ($isRequired)
-			return '<h'.$level.' '.$this->buildAttributes($attributes).'>'.htmlspecialchars($string).'<span class="required-input"> *</span></h'.$level.'>';
+			return '<h'.$level.' '.Http::buildAttributes($attributes).'>'.htmlspecialchars($string).'<span class="required-input"> *</span></h'.$level.'>';
 		else
-			return '<h'.$level.' '.$this->buildAttributes($attributes).'>'.htmlspecialchars($string).'</h'.$level.'>';
+			return '<h'.$level.' '.Http::buildAttributes($attributes).'>'.htmlspecialchars($string).'</h'.$level.'>';
 	}
 	
 	final protected function createParagraph
@@ -437,7 +395,7 @@ HTML;
 		array|null  $attributes = null
 	): string
 	{
-		return '<p '.$this->buildAttributes($attributes).'>'.htmlspecialchars($string ?? '').'</p>';
+		return '<p '.Http::buildAttributes($attributes).'>'.htmlspecialchars($string ?? '').'</p>';
 	}
 	
 	final protected function createParagraphAsLink
@@ -447,7 +405,7 @@ HTML;
 		array|null $attributes = null
 	): string
 	{
-		return '<p '.$this->buildAttributes($attributes).'>'.$this->createLink($href, $string).'</p>';
+		return '<p '.Http::buildAttributes($attributes).'>'.$this->createLink($href, $string).'</p>';
 	}
 	
 	private function createTimestamp
@@ -590,7 +548,7 @@ HTML;
 	{
 		$attributes['class'][] = 'custom-button';
 		
-		return '<a '.$this->buildAttributes($attributes).'>'.htmlspecialchars($label ?? '').'</a>';
+		return '<a '.Http::buildAttributes($attributes).'>'.htmlspecialchars($label ?? '').'</a>';
 	}
 	
 	final protected function createButtonAsRestrictedLink
@@ -618,7 +576,7 @@ HTML;
 		string $alt = ""
 	): string
 	{
-		return '<img src="'.htmlspecialchars($src).'?v='.$this->getTimestamp($src).'" alt="'.htmlspecialchars($alt).'"/>';
+		return '<img src="'.htmlspecialchars($src).'?v='.Http::getTimestamp($src).'" alt="'.htmlspecialchars($alt).'"/>';
 	}
 	
 	private function createEntityImage
@@ -1186,7 +1144,7 @@ HTML;
 		else
 			$span = '';
 		
-		$input = '<span class="custom-checkbox-button">　</span><input '.$this->buildAttributes($attributes).' />';
+		$input = '<span class="custom-checkbox-button">　</span><input '.Http::buildAttributes($attributes).' />';
 		
 		if ($isLabelBefore)
 			return '<label class="custom-checkbox">'.$span.$input.'</label>';
@@ -1204,7 +1162,7 @@ HTML;
 			'placeholder' => \Localization\Controls\FilterPage
 		];
 		
-		return '<input '.$this->buildAttributes($attributes).' />';
+		return '<input '.Http::buildAttributes($attributes).' />';
 	}
 	
 	final protected function createFileupload(array|null $attributes = null): string
@@ -1223,8 +1181,8 @@ HTML;
 		return
 		'
 		<label class="custom-fileupload">
-			<input '.$this->buildAttributes($attributes).' />
-			<section '.$this->buildAttributes($attributes2).' tabindex="0">'.\Localization\Controls\ChooseFile.'</section>
+			<input '.Http::buildAttributes($attributes).' />
+			<section '.Http::buildAttributes($attributes2).' tabindex="0">'.\Localization\Controls\ChooseFile.'</section>
 		</label>
 		';
 	}
@@ -1248,7 +1206,7 @@ HTML;
 		
 		$attributes['class'][] = 'custom-select';
 		
-		$html[] = '<select '.$this->buildAttributes($attributes).'>';
+		$html[] = '<select '.Http::buildAttributes($attributes).'>';
 		
 		$iterated = array_column($iteratedOptions, $keyToSentValue, $keyToShownValue);
 		$disabled = array_column($disabledOptions, $keyToSentValue);
@@ -1269,7 +1227,7 @@ HTML;
 			
 			$attributes['value'] = $sent;
 			
-			$html[] = '<option class="custom-select-option" '.$this->buildAttributes($attributes).'>'.htmlspecialchars($shown ?? '').'</option>';
+			$html[] = '<option class="custom-select-option" '.Http::buildAttributes($attributes).'>'.htmlspecialchars($shown ?? '').'</option>';
 		}
 		
 		$html[] = '</select><section class="custom-select-filler"></section>';
@@ -1334,8 +1292,8 @@ HTML;
 		$html[] = 
 		'
 			<label class="custom-searchable-select">
-				<input '.$this->buildAttributes($attributesForSentInput).' />
-				<input '.$this->buildAttributes($attributesForShownInput).' />
+				<input '.Http::buildAttributes($attributesForSentInput).' />
+				<input '.Http::buildAttributes($attributesForShownInput).' />
 				<ul class="custom-searchable-select-option-container" tabindex="-1">
 		';
 		
@@ -1381,7 +1339,7 @@ HTML;
 		$attributes['type']    = 'button';
 		$attributes['class'][] = 'custom-button';
 		
-		return '<button '.$this->buildAttributes($attributes).'>'.htmlspecialchars($label).'</button>';
+		return '<button '.Http::buildAttributes($attributes).'>'.htmlspecialchars($label).'</button>';
 	}
 	
 	final protected function createAddRowButton
@@ -1427,7 +1385,7 @@ HTML;
 		$attributes['value']   = $label;
 		$attributes['class'][] = 'custom-button';
 		
-		return '<input '.$this->buildAttributes($attributes).'/>';
+		return '<input '.Http::buildAttributes($attributes).'/>';
 	}
 	
 	final protected function createHiddenInput
@@ -1437,7 +1395,7 @@ HTML;
 	{
 		$attributes['type'] = 'hidden';
 		
-		return '<input '.$this->buildAttributes($attributes).'/>';
+		return '<input '.Http::buildAttributes($attributes).'/>';
 	}
 	
 	final protected function createTextarea
@@ -1448,7 +1406,7 @@ HTML;
 	{
 		$attributes['class'][] = 'custom-textarea';
 		
-		return '<textarea '.$this->buildAttributes($attributes).'>'.htmlspecialchars($value ?? '').'</textarea>';
+		return '<textarea '.Http::buildAttributes($attributes).'>'.htmlspecialchars($value ?? '').'</textarea>';
 	}
 	
 	final protected function createCaptchaInput
@@ -1457,12 +1415,12 @@ HTML;
 	): string
 	{
 		$attributes['type']        = 'text';
-		$attributes['name'][]      = 'captcha_code';
+		$attributes['name'][]      = 'captcha';
 		$attributes['class'][]     = 'custom-input';
 		$attributes['class'][]     = 'captcha-input';
 		$attributes['placeholder'] = 'code:';
 		
-		return '<input '.$this->buildAttributes($attributes).' />';
+		return '<input '.Http::buildAttributes($attributes).' />';
 	}
 	
 	final protected function createCaptchaImage
@@ -1475,7 +1433,7 @@ HTML;
 		$attributes['alt']     = 'captcha';
 		$attributes['class'][] = 'captcha-image';
 		
-		return '<img '.$this->buildAttributes($attributes).' />';
+		return '<img '.Http::buildAttributes($attributes).' />';
 	}
 	
 	final protected function createTextInput
@@ -1486,7 +1444,7 @@ HTML;
 		$attributes['type']    = 'text';
 		$attributes['class'][] = 'custom-input';
 		
-		return '<input '.$this->buildAttributes($attributes).' />';
+		return '<input '.Http::buildAttributes($attributes).' />';
 	}
 	
 	final protected function createUsernameInput
@@ -1500,7 +1458,7 @@ HTML;
 		$attributes['maxlength'] = self::ACCOUNT_DATA_MAX_LENGTH;
 		$attributes['class'][]   = 'custom-input';
 		
-		return '<input '.$this->buildAttributes($attributes).' />';
+		return '<input '.Http::buildAttributes($attributes).' />';
 	}
 	
 	final protected function createPasswordInput
@@ -1514,7 +1472,7 @@ HTML;
 		$attributes['maxlength'] = self::ACCOUNT_DATA_MAX_LENGTH;
 		$attributes['class'][]   = 'custom-input';
 		
-		return '<input '.$this->buildAttributes($attributes).' />';
+		return '<input '.Http::buildAttributes($attributes).' />';
 	}
 	
 	final protected function createEmailInput
@@ -1527,7 +1485,7 @@ HTML;
 		$attributes['maxlength'] = self::ACCOUNT_DATA_MAX_LENGTH;
 		$attributes['class'][]   = 'custom-input';
 		
-		return '<input '.$this->buildAttributes($attributes).' />';
+		return '<input '.Http::buildAttributes($attributes).' />';
 	}
 	
 	final protected function createUrlInput
@@ -1538,7 +1496,7 @@ HTML;
 		$attributes['type']    = 'url';
 		$attributes['class'][] = 'custom-input';
 		
-		return '<input '.$this->buildAttributes($attributes).' />';
+		return '<input '.Http::buildAttributes($attributes).' />';
 	}
 	
 	final protected function createFillerSection(): string
@@ -1565,7 +1523,7 @@ HTML;
 		array|null $attributes = null
 	): string
 	{
-		$html[] = '<datalist '.$this->buildAttributes($attributes).'>';
+		$html[] = '<datalist '.Http::buildAttributes($attributes).'>';
 		
 		foreach ($options as $option)
 			$html[] = '<option>'.$option.'</option>';

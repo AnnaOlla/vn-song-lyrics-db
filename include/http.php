@@ -21,6 +21,48 @@ final class Http
 		return '?'.http_build_query($keysToValues);
 	}
 	
+	public static function buildAttributes(array|null $attributes): string
+	{
+		if ($attributes === null)
+			return '';
+		
+		$parts = [];
+		
+		foreach ($attributes as $key => $value)
+		{
+			if ($value === false || $value === null)
+				continue;
+			
+			if (is_array($value))
+				$value = implode(' ', $value);
+			
+			if ($value === true || $value === '')
+				$parts[] = htmlspecialchars($key ?? '');
+			else
+				$parts[] = htmlspecialchars($key ?? '').'="'.htmlspecialchars($value ?? '').'"';
+		}
+		
+		return implode(' ', $parts);
+	}
+	
+	public static function changeUriLocale(string $uri, string $newLanguageCode): string
+	{
+		$parts = explode('/', $uri, 3);
+		$parts[1] = $newLanguageCode;
+		return implode('/', $parts);
+	}
+	
+	public static function getTimestamp(string $path)
+	{
+		/* The file should be delivered with the forwarding slash
+		   to tell the browser that the path to the file starts at the root
+		   
+		   PHP fails to find the folder in this case,
+		   so the slash must be stripped */
+		
+		return filemtime(mb_ltrim($path, '/'));
+	}
+	
 	public static function getLastVisitedPage(string|null $fallback = null): string
 	{
 		if ($fallback === null)
