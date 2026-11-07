@@ -1,8 +1,8 @@
 <?php
 
-require_once 'controllers/controller.php';
+require_once 'controllers/base-controller.php';
 
-class ErrorController extends Controller
+class ErrorController extends BaseController
 {
 	public function __construct(string $language)
 	{

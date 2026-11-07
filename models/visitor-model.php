@@ -2,7 +2,7 @@
 
 require_once 'models/error-model.php';
 
-class VisitorModel extends Model
+class VisitorModel extends ErrorModel
 {
 	protected PDO $pdo;
 	

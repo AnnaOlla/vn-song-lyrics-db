@@ -1,6 +1,6 @@
 <?php
 
-abstract class Controller
+abstract class BaseController
 {
 	protected const ENTITY_LIST_DEFAULT_QUERY = ['limit' => 10, 'page' => 1];
 	
