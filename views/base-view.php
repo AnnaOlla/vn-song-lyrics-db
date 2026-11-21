@@ -2,7 +2,7 @@
 
 abstract class BaseView
 {
-	protected const ENTITY_LIST_DEFAULT_QUERY = 'limit=10&page=1';
+	protected const ENTITY_LIST_DEFAULT_QUERY = ['limit' => 10, 'page' => 1];
 	
 	protected const ACCOUNT_DATA_MIN_LENGTH = 4;
 	protected const ACCOUNT_DATA_MAX_LENGTH = 32;
@@ -14,15 +14,10 @@ abstract class BaseView
 	
 	public function __construct(string $language)
 	{
-		$localizationFilePath = 'localization/'.$language.'-localization.php';
-		
-		if (!file_exists($localizationFilePath))
-			throw new HttpNotAcceptable406();
-		
-		require_once $localizationFilePath;
-		
 		$this->language = $language;
 		$this->nonce    = Cryptography::generateNonce();
+		
+		Localizer::setLocale($language);
 	}
 	
 	final protected function echoHtml(string|array $html): void
@@ -171,8 +166,8 @@ HTML;
 		
 		if (Authorizer::isCurrentUserVisitor())
 		{
-			$logIn    = '<a href="/'.$this->language.'/log-in">'.\Localization\Header\LogIn.'</a>';
-			$signUp   = '<a href="/'.$this->language.'/sign-up">'.\Localization\Header\SignUp.'</a>';
+			$logIn    = '<a href="/'.$this->language.'/log-in">'.__('base.header.log_in').'</a>';
+			$signUp   = '<a href="/'.$this->language.'/sign-up">'.__('base.header.sign_up').'</a>';
 			$logOut   = '';
 			$username = '';
 		}
@@ -180,7 +175,7 @@ HTML;
 		{
 			$logIn    = '';
 			$signUp   = '';
-			$logOut   = '<a href="/'.$this->language.'/log-out">'.\Localization\Header\LogOut.'</a>';
+			$logOut   = '<a href="/'.$this->language.'/log-out">'.__('base.header.log_out').'</a>';
 			$username = '<a href="/'.$this->language.'/user/'.htmlspecialchars($_SESSION['user']['uri']).'">'.htmlspecialchars($_SESSION['user']['username']).'</a>';
 		}
 		
@@ -189,21 +184,21 @@ HTML;
 	<header>
 		<nav>
 			<section class="home-page">
-				<a href="/'.$this->language.'">'.\Localization\Header\HomePage.'</a>
+				<a href="/'.$this->language.'">'.__('base.header.home_page').'</a>
 			</section>
 			<section class="main-pages">
-				<a href="/'.$this->language.'/game-list?limit=10&page=1">'.\Localization\Header\GameList.'</a>
-				<a href="/'.$this->language.'/album-list?limit=10&page=1">'.\Localization\Header\AlbumList.'</a>
-				<a href="/'.$this->language.'/artist-list?limit=10&page=1">'.\Localization\Header\ArtistList.'</a>
-				<a href="/'.$this->language.'/character-list?limit=10&page=1">'.\Localization\Header\CharacterList.'</a>
-				<a href="/'.$this->language.'/song-list?limit=10&page=1">'.\Localization\Header\SongList.'</a>
-				<a href="/'.$this->language.'/feedback">'.\Localization\Header\Feedback.'</a>
+				<a href="/'.$this->language.'/game-list?limit=10&page=1">'.__('base.header.game_list').'</a>
+				<a href="/'.$this->language.'/album-list?limit=10&page=1">'.__('base.header.album_list').'</a>
+				<a href="/'.$this->language.'/artist-list?limit=10&page=1">'.__('base.header.artist_list').'</a>
+				<a href="/'.$this->language.'/character-list?limit=10&page=1">'.__('base.header.character_list').'</a>
+				<a href="/'.$this->language.'/song-list?limit=10&page=1">'.__('base.header.song_list').'</a>
+				<a href="/'.$this->language.'/feedback">'.__('base.header.feedback').'</a>
 			</section>
 			<section class="filler"><span></span></section>
 			<section class="localization">
-				<a href="'.$enLink.'">EN</a>
-				<a href="'.$ruLink.'">RU</a>
-				<a href="'.$jaLink.'">JA</a>
+				<a href="'.$enLink.'">'.__('base.header.language_en').'</a>
+				<a href="'.$ruLink.'">'.__('base.header.language_ru').'</a>
+				<a href="'.$jaLink.'">'.__('base.header.language_ja').'</a>
 			</section>
 			<section class="filler"><span></span></section>
 			<section class="authorization">
@@ -254,16 +249,16 @@ HTML;
 		<nav>
 			<section class="filler"><span></span></section>
 			<section class="contacts">
-				<span>AnnaOlla, 2026</span>
+				<span>'.__('base.footer.author').'</span>
 			</section>
 			<section class="links">
-				<a href="/'.$this->language.'/about">'.\Localization\Footer\About.'</a>
-				<a href="/'.$this->language.'/policy">'.\Localization\Footer\Policy.'</a>
-				<a href="/'.$this->language.'/rules">'.\Localization\Footer\BehaviorRules.'</a>
-				<a href="/'.$this->language.'/writing-guide">'.\Localization\Footer\WritingGuide.'</a>
+				<a href="/'.$this->language.'/about">'.__('base.footer.about').'</a>
+				<a href="/'.$this->language.'/policy">'.__('base.footer.policy').'</a>
+				<a href="/'.$this->language.'/rules">'.__('base.footer.rules').'</a>
+				<a href="/'.$this->language.'/writing-guide">'.__('base.footer.guide').'</a>
 			</section>
 			<section class="contacts">
-				<span>support@vn-song-lyrics-db.ru</span>
+				<span>'.__('base.footer.email').'</span>
 			</section>
 			<section class="filler"><span></span></section>
 		</nav>
@@ -419,18 +414,18 @@ HTML;
 		string|null $timestamp,
 		string|null $username,
 		string|null $uri,
-		string      $status
+		string      $action
 	): string
 	{
 		if ($timestamp === null)
 			return '';
 		
 		if ($username === null)
-			$username = \Localization\TimestampString\DeletedUser;
+			$username = __('base.timestamp.deleted_user');
 		else
 			$username = $this->createLink(Http::buildPath($this->language, 'user', $uri), $username);
 		
-		return '<p>'.htmlspecialchars($status.\Localization\TimestampString\Delimeter.$timestamp.\Localization\TimestampString\By).$username.'</p>';
+		return '<p>'.__('base.timestamp.string', ['action' => $action, 'timestamp' => $timestamp, 'username' => $username]).'</p>';
 	}
 	
 	final protected function createTimestampAdded
@@ -440,7 +435,7 @@ HTML;
 		string|null $uri
 	): string
 	{
-		return $this->createTimestamp($timestamp, $username, $uri, \Localization\TimestampString\Added);
+		return $this->createTimestamp($timestamp, $username, $uri, __('base.timestamp.added'));
 	}
 	
 	final protected function createTimestampUpdated
@@ -450,7 +445,7 @@ HTML;
 		string|null $uri
 	): string
 	{
-		return $this->createTimestamp($timestamp, $username, $uri, \Localization\TimestampString\Updated);
+		return $this->createTimestamp($timestamp, $username, $uri, __('base.timestamp.updated'));
 	}
 	
 	final protected function createTimestampReviewed
@@ -460,7 +455,7 @@ HTML;
 		string|null $uri
 	): string
 	{
-		return $this->createTimestamp($timestamp, $username, $uri, \Localization\TimestampString\Reviewed);
+		return $this->createTimestamp($timestamp, $username, $uri, __('base.timestamp.reviewed'));
 	}
 	
 	final protected function createStatus
@@ -469,30 +464,14 @@ HTML;
 		bool   $isRelation = false
 	): string
 	{
-		switch ($status)
-		{
-			case 'unchecked':
-				$status = \Localization\ModerationStatus\Unchecked;
-				break;
-			
-			case 'checked':
-				$status = \Localization\ModerationStatus\Checked;
-				break;
-			
-			case 'hidden':
-				$status = \Localization\ModerationStatus\Hidden;
-				break;
-				
-			default:
-				throw new HttpInternalServerError500(__METHOD__.' received unknown status');
-		}
+		$status = __('base.moderation_status.'.$status);
 		
 		if ($isRelation)
-			$prefix = \Localization\ModerationStatus\RelationStatus;
+			$prefix = __('base.moderation_status.relation_status', ['status' => $status]);
 		else
-			$prefix = \Localization\ModerationStatus\Status;
+			$prefix = __('base.moderation_status.status', ['status' => $status]);
 		
-		return $this->createParagraph($prefix.$status);
+		return $this->createParagraph($prefix);
 	}
 	
 	final protected function createStatusSelect
@@ -509,20 +488,22 @@ HTML;
 			
 			$keyToStatus      = $relationKey;
 			$dataEntityUri    = $relationHref;
-			$prefix           = \Localization\ModerationStatus\RelationStatus;
+			$status           = __('base.moderation_status.'.$entity[$keyToStatus]);
+			$prefix           = __('base.moderation_status.relation_status', ['status' => $status]);
 		}
 		else
 		{
 			$keyToStatus      = 'status';
 			$dataEntityUri    = '';
-			$prefix           = \Localization\ModerationStatus\Status;
+			$status           = __('base.moderation_status.'.$entity[$keyToStatus]);
+			$prefix           = __('base.moderation_status.status', ['status' => $status]);
 		}
 		
 		$statuses =
 		[
-			['to_send' => 'unchecked', 'to_show' => \Localization\ModerationStatus\Unchecked],
-			['to_send' => 'checked',   'to_show' => \Localization\ModerationStatus\Checked],
-			['to_send' => 'hidden',    'to_show' => \Localization\ModerationStatus\Hidden]
+			['to_send' => 'unchecked', 'to_show' => __('base.moderation_status.unchecked')],
+			['to_send' => 'checked',   'to_show' => __('base.moderation_status.checked')],
+			['to_send' => 'hidden',    'to_show' => __('base.moderation_status.hidden')]
 		];
 		
 		$currentStatusIndex = array_search($entity[$keyToStatus], array_column($statuses, 'to_send'));
@@ -559,18 +540,18 @@ HTML;
 	
 	final protected function createButtonAsRestrictedLink
 	(
-		string|null $label      = null,
-		AccessState $access     = AccessState::Ok,
-		array|null  $attributes = null
+		string|null $label       = null,
+		AccessState $accessState = AccessState::Ok,
+		array|null  $attributes  = null
 	): string
 	{
-		if ($access !== AccessState::Ok)
+		if ($accessState !== AccessState::Ok)
 		{
 			if (isset($attributes['href']))
 				unset($attributes['href']);
 			
 			$attributes['class'][] = 'disabled';
-			$attributes['title']   = \Localization\Functions\localizeAccessState($access);
+			$attributes['title']   = __("base.access_state.{$accessState->value}");
 		}
 		
 		return $this->createButtonAsLink($label, $attributes);
@@ -625,10 +606,10 @@ HTML;
 			$game,
 			AssetFolder::Games,
 			$game['uri'],
-			\Localization\ImageAltText\GameLogoOf.$game['transliterated_name'],
+			__('base.image_alt_text.game', ['game' => $game['transliterated_name']]),
 			AssetFolder::Static,
 			StaticAsset::NoGame->value,
-			\Localization\ImageAltText\NoGameLogo
+			__('base.image_alt_text.no_game')
 		);
 	}
 	
@@ -639,10 +620,10 @@ HTML;
 			$album,
 			AssetFolder::Albums,
 			$album['uri'],
-			\Localization\ImageAltText\AlbumCoverOf.$album['transliterated_name'],
+			__('base.image_alt_text.album', ['album' => $album['transliterated_name']]),
 			AssetFolder::Static,
 			StaticAsset::NoAlbum->value,
-			\Localization\ImageAltText\NoAlbumCover
+			__('base.image_alt_text.no_album')
 		);
 	}
 	
@@ -653,10 +634,10 @@ HTML;
 			$artist,
 			AssetFolder::Artists,
 			$artist['uri'],
-			\Localization\ImageAltText\ArtistPhotoOf.$artist['transliterated_name'],
+			__('base.image_alt_text.artist', ['artist' => $artist['transliterated_name']]),
 			AssetFolder::Static,
 			StaticAsset::NoArtist->value,
-			\Localization\ImageAltText\NoArtistPhoto
+			__('base.image_alt_text.no_artist')
 		);
 	}
 	
@@ -667,10 +648,10 @@ HTML;
 			$character,
 			AssetFolder::Characters,
 			$character['uri'],
-			\Localization\ImageAltText\CharacterImageOf.$character['transliterated_name'],
+			__('base.image_alt_text.character', ['character' => $character['transliterated_name']]),
 			AssetFolder::Static,
 			StaticAsset::NoCharacter->value,
-			\Localization\ImageAltText\NoCharacterImage
+			__('base.image_alt_text.no_character')
 		);
 	}
 	
@@ -706,9 +687,12 @@ HTML;
 		array  $entitiesNames,
 		array  $currentEntity,
 		string $currentEntityName,
-		string $editEntityPathPart   = 'edit',
-		string $deleteEntityPathPart = 'delete',
-		string $reportEntityPathPart = 'report'
+		string $editEntityPathPart,
+		string $deleteEntityPathPart,
+		string $reportEntityPathPart,
+		string $editEntityLocalization,
+		string $deleteEntityLocalization,
+		string $reportEntityLocalization
 	): string
 	{
 		$entityCount     = count($entities);
@@ -735,9 +719,9 @@ HTML;
 		$deleteAccess = ('RoleManager::getStateToDelete'.$currentEntityName)($currentEntity);
 		$reportAccess = ('RoleManager::getStateToReport'.$currentEntityName)($currentEntity);
 		
-		$editButton   = $this->createButtonAsRestrictedLink(\Localization\Controls\Edit,   $editAccess,   $editAttributes);
-		$deleteButton = $this->createButtonAsRestrictedLink(\Localization\Controls\Delete, $deleteAccess, $deleteAttributes);
-		$reportButton = $this->createButtonAsRestrictedLink(\Localization\Controls\Report, $reportAccess, $reportAttributes);
+		$editButton   = $this->createButtonAsRestrictedLink($editEntityLocalization,   $editAccess,   $editAttributes);
+		$deleteButton = $this->createButtonAsRestrictedLink($deleteEntityLocalization, $deleteAccess, $deleteAttributes);
+		$reportButton = $this->createButtonAsRestrictedLink($reportEntityLocalization, $reportAccess, $reportAttributes);
 		
 		return
 		'
@@ -745,374 +729,6 @@ HTML;
 				'.$editButton.'
 				'.$deleteButton.'
 				'.$reportButton.'
-			</section>
-		';
-	}
-	
-	private function createLyricsReferenceToAlbum(array $album): string
-	{
-		$href      = Http::buildPath($this->language, 'album', $album['uri']);
-		$link      = $this->createLink($href, $album['transliterated_name']);
-		$paragraph = '<p>'.\Localization\LyricsPage\Album.$link.'</p>';
-		
-		return $paragraph;
-	}
-	
-	private function createLyricsReferenceToCurrentSong(array $song): string
-	{
-		$href      = Http::buildPath($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
-		$link      = $this->createLink($href, $song['transliterated_name']);
-		$paragraph = '<p>'.\Localization\LyricsPage\ShowLyricsOnly.$link.'</p>';
-		
-		return $paragraph;
-	}
-	
-	private function createLyricsReferenceToOriginalSong(array $originalSong): string
-	{
-		$href      = Http::buildPath($this->language, 'album', $originalSong['album_uri'], 'song', $originalSong['uri']);
-		$link      = $this->createLink($href, $originalSong['transliterated_name']);
-		$paragraph = '<p>'.\Localization\LyricsPage\OriginalSong.$link.'</p>';
-		
-		return $paragraph;
-	}
-	
-	private function createLyricsTranslationList
-	(
-		array      $album,
-		array      $song,
-		array|null $currentTranslation,
-		array      $translations
-	): string
-	{
-		$translationCount = [];
-		
-		foreach ($translations as $translation)
-		{
-			$language = \Localization\Functions\localizeLanguageName($translation);
-			
-			if (array_key_exists($language, $translationCount))
-				$translationCount[$language]['total_count']++;
-			else
-				$translationCount[$language] = ['current_count' => 0, 'total_count' => 1];
-		}
-		
-		$links = [];
-		
-		foreach ($translations as $translation)
-		{
-			$language = \Localization\Functions\localizeLanguageName($translation);
-			
-			if ($translationCount[$language]['total_count'] !== 1)
-			{
-				$translationCount[$language]['current_count']++;
-				
-				$number = \Localization\Functions\localizeTranslationNumber($translationCount[$language]['current_count']);
-				$language = $language.$number;
-			}
-			
-			if ($currentTranslation !== null && $translation['uri'] === $currentTranslation['uri'])
-			{
-				// If the current translation is shown, then no need to do a link to it
-				$links[] = $language;
-			}
-			else
-			{
-				$href = Http::buildPath
-				(
-					$this->language,
-					'album',
-					$album['uri'],
-					'song',
-					$song['uri'],
-					'translation',
-					$translation['uri']
-				);
-				
-				$links[] = $this->createLink($href, $language);
-			}
-		}
-		
-		if (!Authorizer::isCurrentUserVisitor() && $song['original_song_id'] === null)
-		{
-			$href = Http::buildPath
-			(
-				$this->language,
-				'album',
-				$song['album_uri'],
-				'song',
-				$song['uri'],
-				'add-translation'
-			);
-			
-			$links[] = $this->createLink($href, \Localization\LyricsPage\AddTranslation);
-		}
-		
-		$links     = implode(\Localization\LyricsPage\ListElementSeparator, $links);
-		$paragraph = $links ? '<p>'.\Localization\LyricsPage\TranslationList.$links.'</p>' : '';
-		
-		return $paragraph;
-	}
-	
-	private function createLyricsPerformerList(array $performers): string
-	{
-		$parts = [];
-		
-		for ($i = 0; $i < count($performers); $i++)
-		{
-			if ($performers[$i]['character_uri'] !== null)
-			{
-				$hrefCharacter = Http::buildPath($this->language, 'character', $performers[$i]['character_uri']);
-				$linkCharacter = $this->createLink($hrefCharacter, $performers[$i]['character_transliterated_name']);
-				
-				$hrefArtist = Http::buildPath($this->language, 'artist', $performers[$i]['artist_uri']);
-				$linkArtist = $this->createLink($hrefArtist, $performers[$i]['artist_transliterated_name']);
-				
-				$cvOpeningBracket = \Localization\LyricsPage\CvOpeningBracket;
-				$cvClosingBracket = \Localization\LyricsPage\CvClosingBracket;
-				
-				$parts[] = $linkCharacter.$cvOpeningBracket.$linkArtist.$cvClosingBracket;
-			}
-			else
-			{
-				$hrefArtist = Http::buildPath($this->language, 'artist', $performers[$i]['artist_uri']);
-				$linkArtist = $this->createLink($hrefArtist, $performers[$i]['artist_transliterated_name']);
-				
-				$parts[] = $linkArtist;
-			}
-		}
-		
-		$links     = implode(\Localization\LyricsPage\ListElementSeparator, $parts);
-		$paragraph = $links ? '<p>'.\Localization\LyricsPage\PerformerList.$links.'</p>' : '';
-		
-		return $paragraph;
-	}
-	
-	final protected function createLyricsControls(): string
-	{
-		return
-		'
-		<section class="lyrics-controls">
-			<section>
-				<section>
-					<span>'.\Localization\LyricsPage\PageSettingsFontSize.'</span>
-				</section>
-					<section>
-					'.$this->createSearchableSelect
-					(
-						iteratedOptions:         [
-											          [0 => \Localization\LyricsPage\PageSettingsFontSize1, 1 => -4],
-											          [0 => \Localization\LyricsPage\PageSettingsFontSize2, 1 => -2],
-											          [0 => \Localization\LyricsPage\PageSettingsFontSize3, 1 =>  0],
-											          [0 => \Localization\LyricsPage\PageSettingsFontSize4, 1 => +2],
-											          [0 => \Localization\LyricsPage\PageSettingsFontSize5, 1 => +4]
-										         ],
-						selectedOption:          [0 => \Localization\LyricsPage\PageSettingsFontSize3, 1 => 0],
-						addEmptyOption:          false,
-						keyToShownValue:         0,
-						keyToSentValue:          1,
-						attributesForSentInput:  ['id' => 'font-size-select'],
-						attributesForShownInput: [
-						                             'readonly' => true,
-													 'data-placeholder-filter' => \Localization\Controls\SelectOption
-												 ]
-					).'
-				</section>
-			</section>
-			<section>
-				<section>
-					<span>'.\Localization\LyricsPage\PageSettingsFurigana.'</span>
-				</section>
-				<section>
-					'.$this->createSearchableSelect
-					(
-						iteratedOptions:         [
-											          [0 => \Localization\LyricsPage\PageSettingsShowFurigana, 1 => 1],
-											          [0 => \Localization\LyricsPage\PageSettingsHideFurigana, 1 => 0]
-										         ],
-						selectedOption:          [0 => \Localization\LyricsPage\PageSettingsShowFurigana, 1 => 1],
-						addEmptyOption:          false,
-						keyToShownValue:         0,
-						keyToSentValue:          1,
-						attributesForSentInput:  ['id' => 'show-furigana-select'],
-						attributesForShownInput: [
-						                              'readonly' => true,
-													  'data-placeholder-filter' => \Localization\Controls\SelectOption
-												 ]
-					).'
-				</section>
-			</section>
-			<section>
-				<section>
-					<span>'.\Localization\LyricsPage\PageSettingsNotes.'</span>
-				</section>
-				<section>
-					'.$this->createSearchableSelect
-					(
-						iteratedOptions:         [
-											          [0 => \Localization\LyricsPage\PageSettingsShowNotes, 1 => 1],
-											          [0 => \Localization\LyricsPage\PageSettingsHideNotes, 1 => 0]
-										         ],
-						selectedOption:          [0 => \Localization\LyricsPage\PageSettingsShowNotes, 1 => 1],
-						addEmptyOption:          false,
-						keyToShownValue:         0,
-						keyToSentValue:          1,
-						attributesForSentInput:  ['id' => 'show-notes-select'],
-						attributesForShownInput: [
-						                              'readonly' => true,
-													  'data-placeholder-filter' => \Localization\Controls\SelectOption
-												 ]
-					).'
-				</section>
-			</section>
-			<section>
-				<section>
-					<span>'.\Localization\LyricsPage\PageSettingsColors.'</span>
-				</section>
-				<section>
-					'.$this->createSearchableSelect
-					(
-						iteratedOptions:         [
-											         [0 => \Localization\LyricsPage\PageSettingsShowColors, 1 => 1],
-											         [0 => \Localization\LyricsPage\PageSettingsHideColors, 1 => 0]
-										         ],
-						selectedOption:          [0 => \Localization\LyricsPage\PageSettingsShowColors, 1 => 1],
-						addEmptyOption:          false,
-						keyToShownValue:         0,
-						keyToSentValue:          1,
-						attributesForSentInput:  ['id' => 'show-colors-select'],
-					    attributesForShownInput: [
-						                             'readonly' => true,
-													 'data-placeholder-filter' => \Localization\Controls\SelectOption
-												 ]
-					).'
-				</section>
-			</section>
-		</section>
-		';
-	}
-	
-	final protected function createMarkupLine
-	(
-		string $line,
-		string $noteId,
-		string $noteName,
-		string $noteClass,
-	): string
-	{
-		// Ideal solution (maybe):
-		
-		// Look the string from the start and add opening pseudotags onto the stack
-		// When we find a closing tag, we compare it with the top of the stack
-		// If they are the same, replace both with HTML
-		// If they are not, the markup is invalid, don't do anything
-		
-		// But the current solution works too, so who cares?
-		// If the markup is invalid, working parts are replaced and broken are not.
-		
-		// Combined these two examples to allow nested markup:
-		//
-		// https://www.php.net/manual/en/function.preg-replace-callback.php
-		// https://www.php.net/manual/en/function.preg-replace-callback-array.php
-		
-		// u = unicode, U = ungreedy, (...) - capture and reuse in ${N}
-		
-		$patterns = 
-		[
-			'/{nt}(\d+){\/nt}/uU' =>
-			function (array $x) use ($noteName, $noteId, $noteClass)
-			{
-				return '<a href="#'.$noteName.$x[1].'" class="'.$noteClass.'" id="'.$noteId.$x[1].'">['.$x[1].']</a>';
-			},
-			
-			'/{kj}(.+){fg}(.+){\/fg}/uU' =>
-			function (array $x)
-			{
-				return '<ruby>'.$x[1].'<rt>'.$x[2].'</rt></ruby>';
-			},
-			
-			'/{cl (#[0-9A-Fa-f]{6})}(.+){\/cl}/uU' =>
-			function (array $x)
-			{
-				return '<span style="color: '.$x[1].'">'.$x[2].'</span>';
-			}
-		];
-		
-		$line = htmlspecialchars($line);
-		
-		do
-		{
-			$line = preg_replace_callback_array($patterns, $line, -1, $count);
-		}
-		while ($count > 0);
-		
-		return $line;
-	}
-	
-	private function createMarkupText
-	(
-		string $lyrics,
-		string $noteFrom,
-		string $noteTo,
-		string $noteClass
-	): string
-	{
-		$html = [];
-		
-		$lines = explode("\n", $lyrics);
-		
-		foreach ($lines as $line)
-		{
-			if ($line !== '')
-				$html[] = '<span class="text-line">'.$this->createMarkupLine($line, $noteFrom, $noteTo, $noteClass).'</span>';
-			else
-				$html[] = '<br/>';
-		}
-		
-		return implode($html);
-	}
-	
-	final protected function createSongLyrics(array $song): string
-	{
-		return
-		'
-			<section>
-				'.$this->createHeading($song['original_name'], 2).'
-				'.$this->createHeading(\Localization\Functions\localizeLanguageName($song), 3).'
-				'.$this->createMarkupText($song['lyrics'], 'lyrics-reference-', 'lyrics-note-', 'note-small').'
-			</section>
-		';
-	}
-	
-	final protected function createSongNotes(array $song): string
-	{
-		return
-		'
-			<section>
-				'.$this->createHeading(\Localization\LyricsPage\LyricsNotes, 2).'
-				'.$this->createMarkupText($song['notes'] ?? \Localization\LyricsPage\LyricsNoNotes, 'lyrics-note-', 'lyrics-reference-', 'note-big').'
-			</section>
-		';
-	}
-	
-	final protected function createTranslationLyrics(array $translation): string
-	{
-		return
-		'
-			<section>
-				'.$this->createHeading($translation['name'], 2).'
-				'.$this->createHeading(\Localization\Functions\localizeLanguageName($translation), 3).'
-				'.$this->createMarkupText($translation['lyrics'], 'translation-reference-', 'translation-note-', 'note-small').'
-			</section>
-		';
-	}
-	
-	final protected function createTranslationNotes(array $translation): string
-	{
-		return
-		'
-			<section>
-				'.$this->createHeading(\Localization\LyricsPage\TranslationNotes, 2).'
-				'.$this->createMarkupText($translation['notes'] ?? \Localization\LyricsPage\TranslationNoNotes, 'translation-note-', 'translation-reference-', 'note-big').'
 			</section>
 		';
 	}
@@ -1158,6 +774,7 @@ HTML;
 			return '<label class="custom-checkbox">'.$input.$span.'</label>';
 	}
 	
+	/*
 	final protected function createFilterBar(): string
 	{
 		$attributes =
@@ -1170,8 +787,12 @@ HTML;
 		
 		return '<input '.Http::buildAttributes($attributes).' />';
 	}
+	*/
 	
-	final protected function createFileupload(array|null $attributes = null): string
+	final protected function createFileupload
+	(
+		array|null $attributes = null
+	): string
 	{
 		$attributes['type']     = 'file';
 		$attributes['class'][]  = 'custom-fileupload-input';
@@ -1180,15 +801,16 @@ HTML;
 		$attributes2 =
 		[
 			'class'                  => 'custom-fileupload-button',
-			'text-file-not-selected' => \Localization\Controls\ChooseFile,
-			'text-file-too-big'      => \Localization\Controls\FileTooBig
+			'text-file-not-selected' => __('base.controls.fileupload.hint_idle'),
+			'text-file-too-big'      => __('base.controls.fileupload.hint_size_exceeded'),
+			'tabindex'               => '0'
 		];
 		
 		return
 		'
 		<label class="custom-fileupload">
 			<input '.Http::buildAttributes($attributes).' />
-			<section '.Http::buildAttributes($attributes2).' tabindex="0">'.\Localization\Controls\ChooseFile.'</section>
+			<section '.Http::buildAttributes($attributes2).'>'.__('base.controls.fileupload.hint_idle').'</section>
 		</label>
 		';
 	}
@@ -1247,14 +869,10 @@ HTML;
 		array|null  $disabledOptions         = null,
 		array|null  $selectedOption          = null,
 		bool        $addEmptyOption          = true,
-		string      $keyToShownValue         = 'description',
+		string      $keyToShownValue         = '',
 		array|null  $keysToShownHints        = null,
-		string      $keyToSentValue          = 'id',
-		array|null  $attributesForShownInput = [
-		                                           'placeholder'             => \Localization\Controls\SelectOption,
-												   'data-placeholder-select' => \Localization\Controls\SelectOption,
-												   'data-placeholder-filter' => \Localization\Controls\SelectFilter
-											   ],
+		string      $keyToSentValue          = '',
+		array|null  $attributesForShownInput = null,
 		array|null  $attributesForSentInput  = null
 	): string
 	{
@@ -1370,25 +988,25 @@ HTML;
 	
 	final protected function createReturnButton
 	(
-		string|null $fallbackHref = null,
-		string      $label        = \Localization\Controls\Cancel,
+		string|null $fallbackHref,
+		string      $label,
 		array|null  $attributes   = null
 	): string
 	{
 		$attributes['href']    = Http::getLastVisitedPage($fallbackHref);
 		$attributes['class'][] = 'custom-button';
 		
-		return $this->createButtonAsLink($label, $attributes);
+		return $this->createButtonAsLink(__($label), $attributes);
 	}
 	
 	final protected function createSubmitButton
 	(
-		string     $label      = \localization\Controls\Submit,
+		string     $label,
 		array|null $attributes = null
 	): string
 	{
 		$attributes['type']    = 'submit';
-		$attributes['value']   = $label;
+		$attributes['value']   = __($label);
 		$attributes['class'][] = 'custom-button';
 		
 		return '<input '.Http::buildAttributes($attributes).'/>';
@@ -1510,19 +1128,6 @@ HTML;
 		return '<section class="filler"></section>';
 	}
 	
-	final protected function createTooltipWindow(): string
-	{
-		return
-		'
-		<aside>
-			<section id="tooltip-window">
-				<h3>'.\Localization\TooltipWindow\DefaultHeading.'</h3>
-				<section>'.\Localization\TooltipWindow\DefaultContent.'</section>
-			</section>
-		</aside>
-		';
-	}
-	
 	final protected function createDatalist
 	(
 		array|null $options    = null,
@@ -1535,653 +1140,6 @@ HTML;
 			$html[] = '<option>'.$option.'</option>';
 		
 		$html[] = '</datalist>';
-		
-		return implode($html);
-	}
-	
-	//---------------------------------------//
-	//       Content Pages: Pagination       //
-	//---------------------------------------//
-	
-	final protected function createResultsLimitBlock(int|null $limit): string
-	{
-		$selectedOption = ['to_show' => $limit, 'to_send' => $limit];
-		
-		$options =
-		[
-			['to_show' => 10,  'to_send' => 10],
-			['to_show' => 15,  'to_send' => 15],
-			['to_show' => 20,  'to_send' => 20],
-			['to_show' => 25,  'to_send' => 25],
-			['to_show' => 30,  'to_send' => 30]
-		];
-		
-		// sort nulls last
-		if (!in_array($selectedOption, $options) && $limit !== null)
-		{
-			$options[] = $selectedOption;
-			usort
-			(
-				$options,
-				function($a, $b)
-				{
-					if ($a === null)
-						return +1;
-					if ($b === null)
-						return -1;
-					return $a <=> $b;
-				}
-			);
-		}
-		
-		$select = $this->createSearchableSelect
-		(
-			iteratedOptions:         $options,
-			selectedOption:          $selectedOption,
-			addEmptyOption:          false,
-			keyToShownValue:         'to_show',
-			keyToSentValue:          'to_send',
-			attributesForSentInput:  ['id' => 'limit-result-count-bar'],
-			attributesForShownInput: [
-										 'data-placeholder-filter' => \Localization\Controls\SelectOption,
-										 'readonly' => true
-									 ]
-		);
-		
-		return
-		'
-			<section>'.\Localization\Controls\LimitHeading.'</section>
-			<section class="results-limit">
-				'.$select.'
-			</section>
-		';
-	}
-	
-	final protected function createPaginationButton
-	(
-		string      $text,
-		string|null $href,
-		string      $state
-	): string
-	{
-		$text = htmlspecialchars($text ?? '');
-		$href = htmlspecialchars($href ?? '');
-		
-		if ($state === 'disabled')
-			return '<a class="pagination-button disabled">'.$text.'</a>';
-		else if ($state === 'current')
-			return '<a class="pagination-button current">'.$text.'</a>';
-		else
-			return '<a href="'.$href.'" class="pagination-button">'.$text.'</a>';
-	}
-	
-	final protected function createPaginationBlock
-	(
-		int         $currentPageIndex,
-		int|null    $limit,
-		string|null $search,
-		int         $entityCount,
-		string      $pageLink
-	): string
-	{
-		if ($limit === null)
-			$pageCount = 1;
-		else if ($entityCount > 0 && $entityCount % $limit === 0)
-			$pageCount = intdiv($entityCount, $limit);
-		else
-			$pageCount = intdiv($entityCount, $limit) + 1;
-		
-		// If you change it,
-		// then change the divisor of pagination.button in search-filter-section.css
-		$mostLeftPage       = 1;
-		$pageCountFromLeft  = 2;
-		$pageCountfromRight = 2;
-		$mostRightPage      = $pageCount;
-		
-		$fromLeft = $currentPageIndex - $pageCountFromLeft;
-		$fromLeft = $fromLeft > $mostLeftPage ? $fromLeft : $mostLeftPage;
-		
-		$fromRight = $currentPageIndex + $pageCountfromRight;
-		$fromRight = $fromRight < $mostRightPage ? $fromRight : $mostRightPage;
-		
-		$html[] =
-		'
-			<section>'.\Localization\Controls\PageHeading.'</section>
-			<section class="pagination">
-		';
-		
-		if ($fromLeft > $mostLeftPage)
-		{
-			$href = $pageLink.Http::buildQuery
-			(
-				[
-					'limit'  => $limit,
-					'page'   => $mostLeftPage,
-					'search' => $search
-				]
-			);
-			$html[] = $this->createPaginationButton($mostLeftPage, $href, 'enabled');
-		}
-		
-		if ($fromLeft > $mostLeftPage + 1)
-			$html[] = $this->createPaginationButton('…', null, 'disabled');
-		
-		for ($i = $fromLeft; $i <= $fromRight; $i++)
-		{
-			$href  = $pageLink.Http::buildQuery
-			(
-				[
-					'limit'  => $limit,
-					'page'   => $i,
-					'search' => $search
-				]
-			);
-			$state = ($i === $currentPageIndex) ? 'current' : 'enabled';
-			
-			$html[] = $this->createPaginationButton($i, $href, $state);
-		}
-		
-		if ($fromRight < $mostRightPage - 1)
-			$html[] = $this->createPaginationButton('…', null, 'disabled');
-		
-		if ($fromRight < $mostRightPage)
-		{
-			$href = $pageLink.Http::buildQuery
-			(
-				[
-					'limit'  => $limit,
-					'page'   => $mostRightPage,
-					'search' => $search
-				]
-			);
-			$html[] = $this->createPaginationButton($mostRightPage, $href, 'enabled');
-		}
-		
-		$html[] = 
-		'
-			</section>
-		';
-		
-		return implode($html);
-	}
-	
-	final protected function createSearchBarBlock
-	(
-		int|null    $limit,
-		int|null    $page,
-		string|null $search
-	): string
-	{
-		if ($limit !== null)
-		{
-			$limitInput  = '<input name="limit" type="hidden" value="'.htmlspecialchars($limit).'" />';
-			$pageInput   = '<input name="page" type="hidden" value="1" />';
-			
-		}
-		else
-		{
-			$limitInput = '';
-			$pageInput  = '';
-		}
-		
-		$searchInput = '<input class="custom-input" name="search" type="search" id="search-bar" value="'.htmlspecialchars($search ?? '').'" placeholder="'.\Localization\Controls\SearchPlaceholder.'" required />';
-		
-		return
-		'
-		<section>'.\Localization\Controls\SearchHeading.'</section>
-		<section class="search-elements">
-			'.$limitInput.'
-			'.$pageInput.'
-			'.$searchInput.'
-			<button class="custom-button" id="search-bar-button">'.\Localization\Controls\SearchButton.'</button>
-		</section>
-		';
-	}
-	
-	//---------------------------------------//
-	//      Content Pages: Entity Lists      //
-	//---------------------------------------//
-	
-	final protected function createGameList
-	(
-		array       $games,
-		int         $headingLevel,
-		string      $entityClass,
-		string|null $relationKey         = null,
-		bool        $statusChangeAllowed = true
-	): array
-	{
-		$html = [];
-		
-		foreach ($games as $game)
-		{
-			$href = Http::buildPath($this->language, 'game', $game['uri']);
-			
-			$image        = $this->createGameImage($game);
-			$textEntities = [];
-			
-			$textEntities[] = $this->createHeadingAsLink($game['transliterated_name'], $headingLevel, $href, ['class' => ['entity-name']]);
-			$textEntities[] = $this->createParagraph($game['original_name'], ['class' => ['entity-name']]);
-			$textEntities[] = $this->createParagraph($game['localized_name'], ['class' => ['entity-name']]);
-			
-			if ($relationKey)
-			{
-				if (Authorizer::isCurrentUserAdministrator() && $statusChangeAllowed)
-					$textEntities[] = $this->createStatusSelect($game, $relationKey, $href);
-				else
-					$textEntities[] = $this->createStatus($game[$relationKey], true);
-			}
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	final protected function createAlbumList
-	(
-		array       $albums,
-		int         $headingLevel,
-		string      $entityClass,
-		string|null $relationKey         = null,
-		bool        $statusChangeAllowed = true
-	): array
-	{
-		$html = [];
-		
-		foreach ($albums as $album)
-		{
-			$href = Http::buildPath($this->language, 'album', $album['uri']);
-			
-			$image        = $this->createAlbumImage($album);
-			$textEntities = [];
-			
-			$textEntities[] = $this->createHeadingAsLink($album['transliterated_name'], $headingLevel, $href, ['class' => ['entity-name']]);
-			$textEntities[] = $this->createParagraph($album['original_name'], ['class' => ['entity-name']]);
-			$textEntities[] = $this->createParagraph($album['localized_name'], ['class' => ['entity-name']]);
-			
-			if ($relationKey)
-			{
-				if (Authorizer::isCurrentUserAdministrator()&& $statusChangeAllowed)
-					$textEntities[] = $this->createStatusSelect($album, $relationKey, $href);
-				else
-					$textEntities[] = $this->createStatus($album[$relationKey], true);
-			}
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	final protected function createArtistList
-	(
-		array       $artists,
-		int         $headingLevel,
-		string      $entityClass,
-		string|null $relationKey         = null,
-		bool        $statusChangeAllowed = true
-	): array
-	{
-		$html = [];
-		
-		foreach ($artists as $artist)
-		{
-			$href = Http::buildPath($this->language, 'artist', $artist['uri']);
-			
-			$image        = $this->createArtistImage($artist);
-			$textEntities = [];
-			
-			$textEntities[] = $this->createHeadingAsLink($artist['transliterated_name'], $headingLevel, $href, ['class' => ['entity-name']]);
-			$textEntities[] = $this->createParagraph($artist['original_name'], ['class' => ['entity-name']]);
-			$textEntities[] = $this->createParagraph($artist['localized_name'], ['class' => ['entity-name']]);
-			
-			if ($relationKey)
-			{
-				if (Authorizer::isCurrentUserAdministrator() && $statusChangeAllowed)
-					$textEntities[] = $this->createStatusSelect($artist, $relationKey, $href);
-				else
-					$textEntities[] = $this->createStatus($artist[$relationKey], true);
-			}
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	final protected function createCharacterList
-	(
-		array       $characters,
-		int         $headingLevel,
-		string      $entityClass,
-		string|null $relationKey         = null,
-		bool        $statusChangeAllowed = true
-	): array
-	{
-		$html = [];
-		
-		foreach ($characters as $character)
-		{
-			$href = Http::buildPath($this->language, 'character', $character['uri']);
-			
-			$image        = $this->createCharacterImage($character);
-			$textEntities = [];
-			
-			$textEntities[] = $this->createHeadingAsLink($character['transliterated_name'], $headingLevel, $href, ['class' => ['entity-name']]);
-			$textEntities[] = $this->createParagraph($character['original_name'], ['class' => ['entity-name']]);
-			$textEntities[] = $this->createParagraph($character['localized_name'], ['class' => ['entity-name']]);
-			
-			if ($relationKey)
-			{
-				if (Authorizer::isCurrentUserAdministrator() && $statusChangeAllowed)
-					$textEntities[] = $this->createStatusSelect($character, $relationKey, $href);
-				else
-					$textEntities[] = $this->createStatus($character[$relationKey], true);
-			}
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	final protected function createAlbumSongList
-	(
-		array $album,
-		array $songs,
-		int   $headingLevel
-	): array
-	{
-		$rows = [];
-		
-		for ($i = 0; $i < count($songs); $i++)
-		{
-			if ($songs[$i]['has_vocal'])
-			{
-				$href = Http::buildPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri']);
-				$transliteratedName = $this->createParagraphAsLink($songs[$i]['transliterated_name'], $href);
-			}
-			else
-				$transliteratedName = $this->createParagraph($songs[$i]['transliterated_name']);
-			
-			$editLabel    = \Localization\AlbumPage\EditSong;
-			$editAccess   = RoleManager::getStateToEditAlbum($album);
-			$editAccess   = ($editAccess === AccessState::Ok) ? RoleManager::getStateToEditSong($songs[$i]) : $editAccess;
-			$editHref     = Http::buildPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'edit');
-			$editButton   = $this->createButtonAsRestrictedLink($editLabel, $editAccess, ['href' => $editHref]);
-			
-			$deleteLabel  = \Localization\AlbumPage\DeleteSong;
-			$deleteAccess = RoleManager::getStateToEditAlbum($album);
-			$deleteAccess = ($deleteAccess === AccessState::Ok) ? RoleManager::getStateToDeleteSong($songs[$i]) : $deleteAccess;
-			$deleteHref   = Http::buildPath($this->language, 'album', $album['uri'], 'song', $songs[$i]['uri'], 'delete');
-			$deleteButton = $this->createButtonAsRestrictedLink($deleteLabel, $deleteAccess, ['href' => $deleteHref]);
-			
-			$cells                        = [];
-			$cells['disc_number']         = htmlspecialchars($songs[$i]['disc_number']);
-			$cells['track_number']        = htmlspecialchars($songs[$i]['track_number']);
-			$cells['transliterated_name'] = $transliteratedName;
-			$cells['original_name']       = $this->createParagraph($songs[$i]['original_name']);
-			$cells['localized_name']      = $this->createParagraph($songs[$i]['localized_name']);
-			$cells['edit_button']         = $editButton;
-			$cells['delete_button']       = $deleteButton;
-			
-			$rows[] = $cells;
-		}
-		
-		$html[] =
-		'
-		<section>
-			'.$this->createHeading(\Localization\AlbumPage\SongList, 2).'
-			<table>
-				<tbody>
-					<tr>
-						<th>'.\Localization\AlbumPage\DiscNumber.'</th>
-						<th>'.\Localization\AlbumPage\TrackNumber.'</th>
-						<th>'.\Localization\AlbumPage\SongName.'</th>
-						<th></th>
-						<th></th>
-		';
-		
-		foreach ($rows as $row)
-		{
-			$html[] =
-			'
-					<tr>
-						<td>'.$row['disc_number'].'</td>
-						<td>'.$row['track_number'].'</td>
-						<td>
-							'.$row['transliterated_name'].'
-							'.$row['original_name'].'
-							'.$row['localized_name'].'
-						</td>
-						<td>'.$row['edit_button'].'</td>
-						<td>'.$row['delete_button'].'</td>
-					</tr>
-			';
-		}
-		
-		if (count($songs) < $album['song_count'])
-		{
-			$addLabel  = \Localization\AlbumPage\AddSong;
-			$addAccess = RoleManager::getStateToEditAlbum($album);
-			$addHref   = Http::buildPath($this->language, 'album', $album['uri'], 'add-song');
-			$addButton = $this->createButtonAsRestrictedLink($addLabel, $addAccess, ['href' => $addHref]);
-			
-			$html[] =
-			'
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td colspan="2">'.$addButton.'</td>
-					</tr>
-			';
-		}
-		
-		if (count($songs) === 0 && Authorizer::isCurrentUserAdministrator())
-		{
-			$title = \Localization\AlbumPage\FillAlbum;
-			$href  = Http::buildPath($this->language, 'album', $album['uri'], 'fill-album');
-			
-			$html[] =
-			'
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td colspan="2">'.$this->createButtonAsLink($title, ['href' => $href]).'</td>
-					</tr>
-			';
-		}
-		
-		$html[] =
-		'
-				</tbody>
-			</table>
-		</section>
-		';
-		
-		return $html;
-	}
-	
-	final protected function createSongList
-	(
-		array       $songs,
-		int         $headingLevel,
-		string      $entityClass,
-		string|null $relationKey = null
-	): array
-	{
-		$html = [];
-		
-		foreach ($songs as $song)
-		{
-			$album = [];
-			$album['transliterated_name'] = $song['album_transliterated_name'];
-			$album['uri']                 = $song['album_uri'];
-			$album['is_image_uploaded']   = $song['is_image_uploaded'];
-			
-			$image        = $this->createAlbumImage($album);
-			$textEntities = [];
-			
-			if ($song['has_vocal'])
-			{
-				$href = Http::buildPath($this->language, 'album', $song['album_uri'], 'song', $song['uri']);
-				$textEntities[] = $this->createHeadingAsLink($song['transliterated_name'], $headingLevel, $href, ['class' => ['entity-name']]);
-			}
-			else
-				$textEntities[] = $this->createHeading($song['transliterated_name'], $headingLevel, ['class' => ['entity-name']]);
-			
-			$textEntities[] = $this->createParagraph($song['original_name'], ['class' => ['entity-name']]);
-			$textEntities[] = $this->createParagraph($song['localized_name'], ['class' => ['entity-name']]);
-			
-			if ($relationKey)
-				$textEntities[] = $this->createStatus($song['song_artist_character_relation_status'], true);
-			else
-				$textEntities[] = '';
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	final protected function createTranslationList
-	(
-		array  $translations,
-		int    $headingLevel,
-		string $entityClass
-	): array
-	{
-		$html = [];
-		
-		foreach ($translations as $translation)
-		{
-			$album = [];
-			$album['transliterated_name'] = $translation['album_transliterated_name'];
-			$album['uri']                 = $translation['album_uri'];
-			$album['is_image_uploaded']   = $translation['is_image_uploaded'];
-			
-			$image        = $this->createAlbumImage($album);
-			$textEntities = [];
-			
-			$href = Http::buildPath
-			(
-				$this->language,
-				'album',
-				$translation['album_uri'],
-				'song',
-				$translation['song_uri'],
-				'translation',
-				$translation['uri']
-			);
-			
-			$textEntities[] = $this->createHeadingAsLink($translation['name'], $headingLevel, $href, ['class' => ['entity-name']]);
-			$textEntities[] = $this->createParagraph(\Localization\Functions\localizeLanguageName($translation));
-			
-			$html[] = $this->createInfoBlockWithImage($image, $textEntities, $entityClass);
-		}
-		
-		return $html;
-	}
-	
-	//-------------------------//
-	//----- Single Entity -----//
-	//-------------------------//
-	
-	final protected function createGamePageHeading(array $game, int $headingLevel): string
-	{
-		$image        = $this->createGameImage($game);
-		$textEntities = [];
-		
-		$textEntities[] = $this->createHeading($game['transliterated_name'], $headingLevel);
-		$textEntities[] = $this->createParagraph($game['original_name']);
-		$textEntities[] = $this->createParagraph($game['localized_name']);
-		$textEntities[] = $this->createVndbLinkParagraph(\Localization\GamePage\Details, $game, 'v');
-		
-		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
-	}
-	
-	final protected function createAlbumPageHeading(array $album, int $headingLevel): string
-	{
-		$image        = $this->createAlbumImage($album);
-		$textEntities = [];
-		
-		$textEntities[] = $this->createHeading($album['transliterated_name'], $headingLevel);
-		$textEntities[] = $this->createParagraph($album['original_name']);
-		$textEntities[] = $this->createParagraph($album['localized_name']);
-		$textEntities[] = $this->createVgmdbLinkParagraph(\Localization\AlbumPage\Details, $album, 'album');
-		$textEntities[] = $this->createParagraph(\Localization\AlbumPage\SongCount.$album['song_count']);
-		
-		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
-	}
-	
-	final protected function createArtistPageHeading(array $artist, int $headingLevel): string
-	{
-		$image        = $this->createArtistImage($artist);
-		$textEntities = [];
-		
-		$textEntities[] = $this->createHeading($artist['transliterated_name'], $headingLevel);
-		$textEntities[] = $this->createParagraph($artist['original_name']);
-		$textEntities[] = $this->createParagraph($artist['localized_name']);
-		$textEntities[] = $this->createVgmdbLinkParagraph(\Localization\ArtistPage\Details, $artist, 'artist');
-		
-		if ($artist['alias_of_transliterated_name'] && $artist['alias_of_uri'])
-		{
-			$href = Http::buildPath($this->language, 'artist', $artist['alias_of_uri']);
-			$text = $artist['alias_of_transliterated_name'];
-			
-			$textEntities[] = '<p>'.\Localization\ArtistPage\AliasOf.$this->createLink($href, $text).'</p>';
-		}
-		
-		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
-	}
-	
-	final protected function createCharacterPageHeading(array $character, int $headingLevel): string
-	{
-		$image        = $this->createCharacterImage($character);
-		$textEntities = [];
-		
-		$textEntities[] = $this->createHeading($character['transliterated_name'], $headingLevel);
-		$textEntities[] = $this->createParagraph($character['original_name']);
-		$textEntities[] = $this->createParagraph($character['localized_name']);
-		$textEntities[] = $this->createVndbLinkParagraph(\Localization\CharacterPage\Details, $character, 'c');
-		
-		return $this->createInfoBlockWithImage($image, $textEntities, 'main-entity');
-	}
-	
-	final protected function createLyricsPageHeading
-	(
-		string     $headingText,
-		array      $album,
-		array      $song,
-		array|null $translation,
-		array|null $performers,
-		array|null $translations,
-		array|null $originalSong
-	): string
-	{
-		$html[] = '<section class="main-entity">';
-		$html[] = $this->createAlbumImage($album);
-		
-		$html[] = '<section>';
-		$html[] = $this->createHeading($headingText, 1);
-		$html[] = $this->createLyricsReferenceToAlbum($album);
-		
-		if ($translation !== null)
-			$html[] = $this->createLyricsReferenceToCurrentSong($song);
-		
-		if ($performers !== null)
-			$html[] = $this->createLyricsPerformerList($performers);
-		
-		if ($originalSong !== null)
-			$html[] = $this->createLyricsReferenceToOriginalSong($originalSong);
-		
-		if ($translations !== null)
-			$html[] = $this->createLyricsTranslationList($album, $song, $translation, $translations);
-		
-		$html[] = '</section></section>';
 		
 		return implode($html);
 	}

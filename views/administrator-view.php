@@ -11,7 +11,10 @@ class AdministratorView extends ContributorView
 	
 	final public function renderControlPanelPage(): void
 	{
-		$maintenance = Authorizer::isMaintenanceModeActive() ? 'Deactivate Maintenance Mode' : 'Activate Maintenance Mode';
+		if (Authorizer::isMaintenanceModeActive())
+			$maintenance = __('administrator.control_panel.maintenance.switch_off');
+		else
+			$maintenance = __('administrator.control_panel.maintenance.switch_on');
 		
 		$html[] = $this->startRender(title: 'Control Panel');
 		
@@ -19,38 +22,38 @@ class AdministratorView extends ContributorView
 		'
 		<article>
 			<section>
-				<h1>Control Panel</h1>
+				<h1>'.__('administrator.control_panel.heading').'</h1>
 				
-				<h2>Maintenance</h2>
+				<h2>'.__('administrator.control_panel.maintenance.heading').'</h2>
 				<p><a href="/en/control-panel/switch-maintenance-mode">'.$maintenance.'</a></p>
 				<br/>
 				
-				<h2>Add Data</h2>
-				<p><a href="/en/control-panel/add-language">Add Language</a></p>
+				<h2>'.__('administrator.control_panel.add.heading').'</h2>
+				<p><a href="/en/control-panel/add-language">'.__('administrator.control_panel.add.language').'</a></p>
 				<br/>
 				
-				<h2>View Data</h2>
-				<p><a href="/en/control-panel/report-list">Report List</a></p>
-				<p><a href="/en/control-panel/user-list">User List</a></p>
+				<h2>'.__('administrator.control_panel.view.heading').'</h2>
+				<p><a href="/en/control-panel/report-list">'.__('administrator.control_panel.view.report_list').'</a></p>
+				<p><a href="/en/control-panel/user-list">'.__('administrator.control_panel.view.user_list').'</a></p>
 				<br/>
 				
-				<h2>Check Data</h2>
-				<p><a href="/en/control-panel/unchecked-game-list">Unchecked Game List</a></p>
-				<p><a href="/en/control-panel/unchecked-album-list">Unchecked Album List</a></p>
-				<p><a href="/en/control-panel/unchecked-artist-list">Unchecked Artist List</a></p>
-				<p><a href="/en/control-panel/unchecked-character-list">Unchecked Character List</a></p>
-				<p><a href="/en/control-panel/unchecked-song-list">Unchecked Song List</a></p>
-				<p><a href="/en/control-panel/unchecked-translation-list">Unchecked Translation List</a></p>
+				<h2>'.__('administrator.control_panel.check.heading').'</h2>
+				<p><a href="/en/control-panel/unchecked-game-list">'.__('administrator.control_panel.check.game_list').'</a></p>
+				<p><a href="/en/control-panel/unchecked-album-list">'.__('administrator.control_panel.check.album_list').'</a></p>
+				<p><a href="/en/control-panel/unchecked-artist-list">'.__('administrator.control_panel.check.artist_list').'</a></p>
+				<p><a href="/en/control-panel/unchecked-character-list">'.__('administrator.control_panel.check.character_list').'</a></p>
+				<p><a href="/en/control-panel/unchecked-song-list">'.__('administrator.control_panel.check.song_list').'</a></p>
+				<p><a href="/en/control-panel/unchecked-translation-list">'.__('administrator.control_panel.check.translation_list').'</a></p>
 				<br/>
 				
-				<h2>Update Sitemap</h2>
-				<p><a href="/en/control-panel/update-static-pages-sitemap">Static Pages</a></p>
-				<p><a href="/en/control-panel/update-game-list-sitemap">Games</a></p>
-				<p><a href="/en/control-panel/update-album-list-sitemap">Albums</a></p>
-				<p><a href="/en/control-panel/update-artist-list-sitemap">Artists</a></p>
-				<p><a href="/en/control-panel/update-character-list-sitemap">Characters</a></p>
-				<p><a href="/en/control-panel/update-song-list-sitemap">Songs</a></p>
-				<p><a href="/en/control-panel/update-translation-list-sitemap">Translations</a></p>
+				<h2>'.__('administrator.control_panel.update_sitemap.heading').'</h2>
+				<p><a href="/en/control-panel/update-static-pages-sitemap">'.__('administrator.control_panel.update_sitemap.static_list').'</a></p>
+				<p><a href="/en/control-panel/update-game-list-sitemap">'.__('administrator.control_panel.update_sitemap.game_list').'</a></p>
+				<p><a href="/en/control-panel/update-album-list-sitemap">'.__('administrator.control_panel.update_sitemap.album_list').'</a></p>
+				<p><a href="/en/control-panel/update-artist-list-sitemap">'.__('administrator.control_panel.update_sitemap.artist_list').'</a></p>
+				<p><a href="/en/control-panel/update-character-list-sitemap">'.__('administrator.control_panel.update_sitemap.character_list').'</a></p>
+				<p><a href="/en/control-panel/update-song-list-sitemap">'.__('administrator.control_panel.update_sitemap.song_list').'</a></p>
+				<p><a href="/en/control-panel/update-translation-list-sitemap">'.__('administrator.control_panel.update_sitemap.translation_list').'</a></p>
 			</section>
 		</article>
 		';
@@ -109,9 +112,9 @@ class AdministratorView extends ContributorView
 					</section>
 					<section>
 						<section class="page-controls">
-							'.$this->createReturnButton($defaultReturnLink).'
+							'.$this->createReturnButton($defaultReturnLink, __('base.controls.button.return')).'
 							'.$this->createFillerSection().'
-							'.$this->createSubmitButton().'
+							'.$this->createSubmitButton(__('base.controls.button.submit')).'
 						</section>
 					</section>
 				</form>
@@ -138,12 +141,11 @@ class AdministratorView extends ContributorView
 	
 	final public function renderReportListPage(array $reports): void
 	{
-		$heading = 'Report List';
 		$defaultReturnLink = Http::buildPath($this->language, 'control-panel');
 		
 		$html[] = $this->startRender
 		(
-			title: $heading,
+			title: __('administrator.report_list.heading'),
 			cssSheetUris: ['/css/moderation/table-page.css']
 		);
 		
@@ -151,19 +153,19 @@ class AdministratorView extends ContributorView
 		'
 		<article>
 			<section>
-				'.$this->createHeading($heading, 1).'
+				'.$this->createHeading(__('administrator.report_list.heading'), 1).'
 				<section class="table-wrapper">
 					<table>
 						<tbody>
 							<tr>
-								<th>Id</th>
-								<th>Sender Ip</th>
-								<th>Sender Username</th>
-								<th>Message</th>
-								<th>Request Uri</th>
-								<th>User Agent</th>
-								<th>Timestamp Sent</th>
-								<th>Status</th>
+								<th>'.__('administrator.report_list.user_id').'</th>
+								<th>'.__('administrator.report_list.user_ip').'</th>
+								<th>'.__('administrator.report_list.username').'</th>
+								<th>'.__('administrator.report_list.report_text').'</th>
+								<th>'.__('administrator.report_list.entity_uri').'</th>
+								<th>'.__('administrator.report_list.user_agent').'</th>
+								<th>'.__('administrator.report_list.timestamp').'</th>
+								<th>'.__('administrator.report_list.status').'</th>
 							</tr>
 		';
 		
@@ -192,7 +194,7 @@ class AdministratorView extends ContributorView
 			{
 				$html[] =
 				'
-								<td>[Anonymous]</td>
+								<td>'.__('administrator.report_list.anonymous').'</td>
 								<td>
 				';
 			}
@@ -218,7 +220,7 @@ class AdministratorView extends ContributorView
 					</table>
 				</section>
 				<section>
-					'.$this->createReturnButton($defaultReturnLink).'
+					'.$this->createReturnButton($defaultReturnLink, __('base.controls.button.return')).'
 				</section>
 			</section>
 		</article>
@@ -237,12 +239,11 @@ class AdministratorView extends ContributorView
 	
 	final public function renderUserListPage(array $users): void
 	{
-		$heading = 'User List';
 		$defaultReturnLink = Http::buildPath($this->language, 'control-panel');
 		
 		$html[] = $this->startRender
 		(
-			title: $heading,
+			title: __('administrator.user_list.heading'),
 			cssSheetUris: ['/css/moderation/table-page.css']
 		);
 		
@@ -250,18 +251,18 @@ class AdministratorView extends ContributorView
 		'
 		<article>
 			<section>
-				'.$this->createHeading($heading, 1).'
+				'.$this->createHeading(__('administrator.user_list.heading'), 1).'
 				<section class="table-wrapper">
 					<table>
 						<tbody>
 							<tr>
-								<th>Id</th>
-								<th>Role</th>
-								<th>Username</th>
-								<th>Email</th>
-								<th>Created</th>
-								<th>Last Log-In</th>
-								<th>Fingerprints</th>
+								<th>'.__('administrator.user_list.id').'</th>
+								<th>'.__('administrator.user_list.role').'</th>
+								<th>'.__('administrator.user_list.username').'</th>
+								<th>'.__('administrator.user_list.email').'</th>
+								<th>'.__('administrator.user_list.signed_up').'</th>
+								<th>'.__('administrator.user_list.logged_in').'</th>
+								<th>'.__('administrator.user_list.fingerprints').'</th>
 							</tr>
 		';
 		
@@ -296,7 +297,7 @@ class AdministratorView extends ContributorView
 					</table>
 				</section>
 				<section>
-					'.$this->createReturnButton($defaultReturnLink).'
+					'.$this->createReturnButton($defaultReturnLink, __('base.controls.button.return')).'
 				</section>
 			</section>
 		</article>
@@ -313,8 +314,8 @@ class AdministratorView extends ContributorView
 		
 		$vocalOptions =
 		[
-			['id' => 0, 'value' => \Localization\SongEditorPage\HasVocalFalse],
-			['id' => 1, 'value' => \Localization\SongEditorPage\HasVocalTrue],
+			['id' => 0, 'value' => __('administrator.fill_album.has_lyrics_false')],
+			['id' => 1, 'value' => __('administrator.fill_album.has_lyrics_true')],
 		];
 		
 		$selectVocal = $this->createSelect
@@ -344,8 +345,8 @@ class AdministratorView extends ContributorView
 					<table class="has-tooltip" tooltip-id="1">
 						<tbody>
 							<tr>
-								<th>'.\Localization\FillAlbumEditorPage\DiscNumber.'</th>
-								<th>'.\Localization\FillAlbumEditorPage\TrackNumber.'</th>
+								<th>'.__('administrator.fill_album.disc_number').'</th>
+								<th>'.__('administrator.fill_album.track_number').'</th>
 		';
 		
 		for ($i = 0; $i < count($discography[0][0]) || $i < $LOCALIZATION_MIN_COUNT; $i++)
@@ -358,9 +359,9 @@ class AdministratorView extends ContributorView
 								<th>
 									<select class="name-type-select custom-select" data-column="'.$i.'">
 										<option data-type=""                      class="custom-select-option" data-required="false"></option>
-										<option data-type="original_name[]"       class="custom-select-option" data-required="true" >'.\Localization\FillAlbumEditorPage\OriginalName.'</option>
-										<option data-type="transliterated_name[]" class="custom-select-option" data-required="true" >'.\Localization\FillAlbumEditorPage\TransliteratedName.'</option>
-										<option data-type="localized_name[]"      class="custom-select-option" data-required="false">'.\Localization\FillAlbumEditorPage\LocalizedName.'</option>
+										<option data-type="original_name[]"       class="custom-select-option" data-required="true" >'.__('administrator.fill_album.original_name').'</option>
+										<option data-type="transliterated_name[]" class="custom-select-option" data-required="true" >'.__('administrator.fill_album.transliterated_name').'</option>
+										<option data-type="localized_name[]"      class="custom-select-option" data-required="false">'.__('administrator.fill_album.localized_title').'</option>
 									</select>
 									<section class="custom-select-filler"></section>
 								</th>
@@ -369,7 +370,7 @@ class AdministratorView extends ContributorView
 		
 		$html[] = 
 		'
-								<th>'.\Localization\FillAlbumEditorPage\HasVocal.'</th>
+								<th>'.__('administrator.fill_album.has_lyrics').'</th>
 							</tr>
 		';
 		
@@ -409,9 +410,9 @@ class AdministratorView extends ContributorView
 					</table>
 					<section class="has-tooltip" tooltip-id="2">
 						<section class="page-controls">
-							'.$this->createReturnButton($defaultReturnLink).'
+							'.$this->createReturnButton($defaultReturnLink, __('base.controls.button.return')).'
 							'.$this->createFillerSection().'
-							'.$this->createSubmitButton().'
+							'.$this->createSubmitButton(__('base.controls.button.submit')).'
 						</section>
 					</section>
 				</form>
@@ -463,7 +464,7 @@ class AdministratorView extends ContributorView
 		(
 			$album,
 			$discography,
-			\Localization\FillAlbumEditorPage\Heading.$album['transliterated_name']
+			__('administrator.fill_album.heading', ['name' => $album['transliterated_name']])
 		);
 	}
 }

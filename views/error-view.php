@@ -38,8 +38,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'400 Bad Request',
-			\Localization\ErrorPage\BadRequest400\Reason,
-			\Localization\ErrorPage\BadRequest400\Hint
+			__('error.400.reason'),
+			__('error.400.hint')
 		);
 	}
 	
@@ -48,8 +48,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'401 Unauthorized',
-			\Localization\ErrorPage\Unauthorized401\Reason,
-			\Localization\ErrorPage\Unauthorized401\Hint
+			__('error.401.reason'),
+			__('error.401.hint')
 		);
 	}
 	
@@ -58,8 +58,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'402 Payment Required',
-			\Localization\ErrorPage\PaymentRequired402\Reason,
-			\Localization\ErrorPage\PaymentRequired402\Hint
+			__('error.402.reason'),
+			__('error.402.hint')
 		);
 	}
 	
@@ -68,8 +68,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'403 Forbidden',
-			\Localization\ErrorPage\Forbidden403\Reason,
-			\Localization\ErrorPage\Forbidden403\Hint
+			__('error.403.reason'),
+			__('error.403.hint')
 		);
 	}
 	
@@ -78,8 +78,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'404 Not Found',
-			\Localization\ErrorPage\NotFound404\Reason,
-			\Localization\ErrorPage\NotFound404\Hint
+			__('error.404.reason'),
+			__('error.404.hint')
 		);
 	}
 	
@@ -88,8 +88,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'405 Method Not Allowed',
-			\Localization\ErrorPage\MethodNotAllowed405\Reason,
-			\Localization\ErrorPage\MethodNotAllowed405\Hint
+			__('error.405.reason'),
+			__('error.405.hint')
 		);
 	}
 	
@@ -98,8 +98,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'406 Not Acceptable',
-			\Localization\ErrorPage\NotAcceptable406\Reason,
-			\Localization\ErrorPage\NotAcceptable406\Hint
+			__('error.406.reason'),
+			__('error.406.hint')
 		);
 	}
 	
@@ -108,8 +108,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'409 Conflict',
-			\Localization\ErrorPage\Conflict409\Reason,
-			\Localization\ErrorPage\Conflict409\Hint
+			__('error.409.reason'),
+			__('error.409.hint')
 		);
 	}
 	
@@ -118,8 +118,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'413 Content Too Large',
-			\Localization\ErrorPage\ContentTooLarge413\Reason,
-			\Localization\ErrorPage\ContentTooLarge413\Hint
+			__('error.413.reason'),
+			__('error.413.hint')
 		);
 	}
 	
@@ -128,8 +128,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'415 Unsupported Media Type',
-			\Localization\ErrorPage\UnsupportedMediaType415\Reason,
-			\Localization\ErrorPage\UnsupportedMediaType415\Hint
+			__('error.415.reason'),
+			__('error.415.hint')
 		);
 	}
 	
@@ -138,8 +138,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'422 Unprocessable Entity',
-			\Localization\ErrorPage\UnprocessableEntity422\Reason,
-			\Localization\ErrorPage\UnprocessableEntity422\Hint
+			__('error.422.reason'),
+			__('error.422.hint')
 		);
 	}
 	
@@ -148,8 +148,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'429 Too Many Requests',
-			\Localization\ErrorPage\TooManyRequests429\Reason,
-			\Localization\ErrorPage\TooManyRequests429\Hint
+			__('error.429.reason'),
+			__('error.429.hint')
 		);
 	}
 	
@@ -158,8 +158,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'451 Unavailable For Legal Reasons',
-			\Localization\ErrorPage\UnavailableForLegalReasons451\Reason,
-			\Localization\ErrorPage\UnavailableForLegalReasons451\Hint
+			__('error.451.reason'),
+			__('error.451.hint')
 		);
 	}
 	
@@ -168,8 +168,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'500 Internal Server Error',
-			\Localization\ErrorPage\InternalServerError500\Reason,
-			\Localization\ErrorPage\InternalServerError500\Hint
+			__('error.500.reason'),
+			__('error.500.hint')
 		);
 	}
 	
@@ -178,8 +178,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'501 Not Implemented',
-			\Localization\ErrorPage\NotImplemented501\Reason,
-			\Localization\ErrorPage\NotImplemented501\Hint
+			__('error.501.reason'),
+			__('error.501.hint')
 		);
 	}
 	
@@ -188,8 +188,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'502 Bad Gateway',
-			\Localization\ErrorPage\BadGateway502\Reason,
-			\Localization\ErrorPage\BadGateway502\Hint
+			__('error.502.reason'),
+			__('error.502.hint')
 		);
 	}
 	
@@ -198,8 +198,8 @@ class ErrorView extends BaseView
 		$this->renderError
 		(
 			'503 Service Unavailable',
-			\Localization\ErrorPage\ServiceUnavailable503\Reason,
-			\Localization\ErrorPage\ServiceUnavailable503\Hint
+			__('error.503.reason'),
+			__('error.503.hint')
 		);
 	}
 	

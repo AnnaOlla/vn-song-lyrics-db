@@ -20,3 +20,8 @@ if (file_exists('include/.cryptography-production.php'))
 	require_once 'include/.cryptography-production.php';
 else
 	require_once 'include/cryptography-development.php';
+
+function __($key, $replacements = []): string
+{
+	return Localizer::localize($key, $replacements);
+}
