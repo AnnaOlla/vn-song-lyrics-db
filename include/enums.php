@@ -18,38 +18,31 @@ enum StaticAsset: string
 	case NoCharacter = 'no-character';
 }
 
-enum InputError
+enum InputError: string
 {
-	case None;
-	
-	case CaptchaInvalid;
-	
-	case EmailNotFound;
-	case EmailInvalid;
-	case EmailTaken;
-	
-	case UsernameForbiddenSymbols;
-	case UsernameLengthIncorrect;
-	case UsernameTaken;
-	
-	case IncorrectPassword;
-	case PasswordForbiddenSymbols;
-	case PasswordLengthIncorrect;
+	case None                     = 'none';
+	case CaptchaInvalid           = 'captcha_invalid';
+	case EmailNotFound            = 'email_not_found';
+	case EmailInvalid             = 'email_invalid';
+	case EmailTaken               = 'email_taken';
+	case UsernameForbiddenSymbols = 'username_forbidden_symbols';
+	case UsernameLengthIncorrect  = 'username_forbidden_length';
+	case UsernameTaken            = 'username_taken';
+	case IncorrectPassword        = 'password_incorrect';
+	case PasswordForbiddenSymbols = 'password_forbidden_symbols';
+	case PasswordLengthIncorrect  = 'password_forbidden_length';
 }
 
-enum AccessState
+enum AccessState: string
 {
-	case Ok;
-	
-	case AgentIsVisitorError;
-	case AgentIsViolatorError;
-	case AgentIsNotAuthorError;
-	
-	case EntityIsHiddenError;
-	case EntityIsCheckedError;
-	
-	case SongHasTranslationsError;
-	case LyricsAreNotOriginalError;
-	case LyricsUseSameLanguageError;
-	case AgentUsedSameLanguageError;
+	case Ok                         = 'ok';
+	case AgentIsVisitorError        = 'user_is_visitor';
+	case AgentIsViolatorError       = 'user_is_violator';
+	case AgentIsNotAuthorError      = 'user_is_not_author';
+	case EntityIsHiddenError        = 'entity_is_hidden';
+	case EntityIsCheckedError       = 'entity_is_checked';
+	case SongHasTranslationsError   = 'song_has_translations';
+	case LyricsAreNotOriginalError  = 'lyrics_not_original';
+	case LyricsUseSameLanguageError = 'lyrics_use_same_language';
+	case AgentUsedSameLanguageError = 'user_used_same_language';
 }
