@@ -1,7 +1,5 @@
 <?php
 
-require_once 'views/error-view.php';
-
 class VisitorView extends ErrorView
 {
 	public function __construct(string $language)

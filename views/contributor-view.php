@@ -1,7 +1,5 @@
 <?php
 
-require_once 'views/visitor-view.php';
-
 class ContributorView extends VisitorView
 {
 	protected const ACCEPTED_IMAGE_TYPES = '.jpg, .jpeg, .png, .webp';

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'models/error-model.php';
-
 class VisitorModel extends ErrorModel
 {
 	protected PDO $pdo;

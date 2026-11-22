@@ -1,16 +1,11 @@
 <?php
 
-require_once 'controllers/visitor-controller.php';
-
 class ContributorController extends VisitorController
 {
 	public function __construct(string $language)
 	{
 		parent::__construct($language);
 		
-		require_once 'models/contributor-model.php';
-		require_once 'views/contributor-view.php';
-
 		$this->model = new ContributorModel;
 		$this->view = new ContributorView($language);
 	}

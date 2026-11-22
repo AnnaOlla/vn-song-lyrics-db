@@ -1,16 +1,11 @@
 <?php
 
-require_once 'controllers/contributor-controller.php';
-
 class AdministratorController extends ContributorController
 {
 	public function __construct(string $language)
 	{
 		parent::__construct($language);
 		
-		require_once 'models/administrator-model.php';
-		require_once 'views/administrator-view.php';
-
 		$this->model = new AdministratorModel;
 		$this->view = new AdministratorView($language);
 	}

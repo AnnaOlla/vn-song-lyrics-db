@@ -1,7 +1,5 @@
 <?php
 
-require_once 'views/contributor-view.php';
-
 class AdministratorView extends ContributorView
 {
 	public function __construct(string $language)

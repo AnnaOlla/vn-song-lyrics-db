@@ -1,7 +1,5 @@
 <?php
 
-require_once 'controllers/error-controller.php';
-
 class VisitorController extends ErrorController
 {
 	protected const ACCOUNT_DATA_MIN_LENGTH = 4;
@@ -13,9 +11,6 @@ class VisitorController extends ErrorController
 	{
 		parent::__construct($language);
 		
-		require_once 'models/visitor-model.php';
-		require_once 'views/visitor-view.php';
-
 		$this->model = new VisitorModel;
 		$this->view = new VisitorView($language);
 	}

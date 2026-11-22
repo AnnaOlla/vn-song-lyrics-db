@@ -1,7 +1,5 @@
 <?php
 
-require_once 'models/contributor-model.php';
-
 class AdministratorModel extends ContributorModel
 {
 	private const SITEMAP_INDEX_NAME            = 'sitemap.xml';

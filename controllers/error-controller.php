@@ -1,16 +1,11 @@
 <?php
 
-require_once 'controllers/base-controller.php';
-
 class ErrorController extends BaseController
 {
 	public function __construct(string $language)
 	{
 		parent::__construct($language);
 		
-		require_once 'models/error-model.php';
-		require_once 'views/error-view.php';
-
 		$this->model = new ErrorModel;
 		$this->view = new ErrorView($language);
 	}

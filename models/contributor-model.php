@@ -1,7 +1,5 @@
 <?php
 
-require_once 'models/visitor-model.php';
-
 class ContributorModel extends VisitorModel
 {
 	public function __construct()

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'views/base-view.php';
-
 class ErrorView extends BaseView
 {
 	public function __construct(string $language)

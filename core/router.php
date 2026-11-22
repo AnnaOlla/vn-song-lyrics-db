@@ -210,12 +210,10 @@ final class Router
 				'parameters' => $parameters
 			] = self::findRoute($path);
 			
-			require_once 'controllers/'.$_SESSION['user']['role'].'-controller.php';
-			
 			if (Localizer::isAcceptedLanguage($language))
-				$controller = new ($_SESSION['user']['role'].'controller')($language);
+				$controller = new ($_SESSION['user']['role'].'Controller')($language);
 			else
-				$controller = new ($_SESSION['user']['role'].'controller')(Localizer::DEFAULT_LANGUAGE);
+				$controller = new ($_SESSION['user']['role'].'Controller')(Localizer::DEFAULT_LANGUAGE);
 			
 			if (Authorizer::isCurrentIpBlocked() || Authorizer::isCurrentUserAgentBlocked())
 				throw HttpStatus::PermanentlyBlocked->exception();
@@ -242,10 +240,10 @@ final class Router
 		}
 		catch (HttpException $e)
 		{
-			$name = $e->getStatus()->name;
-			$code = $e->getStatus()->value;
+			$errorName = $e->getStatus()->name;
+			$errorCode = $e->getStatus()->value;
 			
-			$method = 'handle'.$name.$code;
+			$method = 'handle'.$errorName.$errorCode;
 			
 			$controller->$method();
 			Logger::logError($e);
