@@ -501,7 +501,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -518,7 +518,7 @@ class AdministratorController extends ContributorController
 		$jaName  = $_POST['ja_name']  ?? null;
 		
 		if (Validation::haveNullOrEmpty($ownName, $ruName, $enName, $jaName))
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		$this->model->addLanguage($ownName, $ruName, $enName, $jaName);
 		$this->handleRedirect(Http::buildPath($this->language, 'control-panel'));
@@ -533,7 +533,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -552,7 +552,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -568,19 +568,19 @@ class AdministratorController extends ContributorController
 		$currentSongCount = $this->model->getSongCurrentCount($albumUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if ($album['status'] === 'hidden' && !Authorizer::isCurrentUserAdministrator())
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if ($album['status'] === 'checked' && !Authorizer::isCurrentUserAdministrator())
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (!Authorizer::isCurrentUser($album['user_added_id']) && !Authorizer::isCurrentUserAdministrator())
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if ($currentSongCount !== 0)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -592,17 +592,8 @@ class AdministratorController extends ContributorController
 				$this->handleFillAlbumPagePost($album);
 				break;
 			
-			case 'CONNECT':
-			case 'DELETE':
-			case 'HEAD':
-			case 'OPTIONS':
-			case 'PATCH':
-			case 'PUT':
-			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
-			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -611,7 +602,7 @@ class AdministratorController extends ContributorController
 		$discography = $this->model->fetchDataFromVgmdbPage($album);
 		
 		if (!$discography)
-			throw new HttpBadRequest400();
+			throw HttpStatus::BadRequest->exception();
 		
 		$this->view->renderFillAlbumPage($album, $discography);
 	}
@@ -619,7 +610,7 @@ class AdministratorController extends ContributorController
 	private function handleFillAlbumPagePost(array $album): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$discNumbers         = $_POST['disc_number']         ?? [];
 		$trackNumbers        = $_POST['track_number']        ?? [];
@@ -647,15 +638,15 @@ class AdministratorController extends ContributorController
 		);
 		
 		if (!$haveArraysSameLength)
-			throw new HttpBadRequest400('Arrays did not have same length', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Arrays did not have same length', get_defined_vars());
 		
 		if (count($discNumbers) === 0)
-			throw new HttpBadRequest400('Discs were not found', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Discs were not found', get_defined_vars());
 		
 		foreach ($transliteratedNames as $transliteratedName)
 		{
 			if (!Validation::isPrintableAscii($transliteratedName))
-				throw new HttpBadRequest400('One of transliteratedName was not ASCII', get_defined_vars());
+				throw HttpStatus::BadRequest->exception('One of transliteratedName was not ASCII', get_defined_vars());
 		}
 		
 		$isNullPresent = Validation::haveNullOrEmpty
@@ -668,10 +659,10 @@ class AdministratorController extends ContributorController
 		);
 		
 		if ($isNullPresent)
-			throw new HttpBadRequest400('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!($discNumbers[0] === 1 && $trackNumbers[0] === 1))
-			throw new HttpBadRequest400('Disc 1 and Track 1 were not first', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Disc 1 and Track 1 were not first', get_defined_vars());
 		
 		for ($i = 1; $i < count($discNumbers); $i++)
 		{
@@ -690,7 +681,7 @@ class AdministratorController extends ContributorController
 			);
 			
 			if (!$isNextDiscFirstTrack && !$isSameDiscNextTrack)
-				throw new HttpBadRequest400('Order of discs and tracks was incorrect', get_defined_vars());
+				throw HttpStatus::BadRequest->exception('Order of discs and tracks was incorrect', get_defined_vars());
 		}
 		
 		$this->model->fillAlbum
@@ -717,7 +708,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -736,7 +727,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -755,7 +746,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -774,7 +765,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -793,7 +784,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -812,7 +803,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -831,7 +822,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -853,7 +844,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -875,7 +866,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -897,7 +888,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -919,7 +910,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -941,7 +932,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -963,7 +954,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	
@@ -985,7 +976,7 @@ class AdministratorController extends ContributorController
 				break;
 			
 			default:
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 		}
 	}
 	

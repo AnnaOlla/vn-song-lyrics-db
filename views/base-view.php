@@ -699,7 +699,7 @@ HTML;
 		$entityNameCount = count($entitiesNames);
 		
 		if ($entityCount !== $entityNameCount || $entityCount === 0 || $entityNameCount === 0)
-			throw new HttpInternalServerError500(__METHOD__.' was called incorrectly', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception(__METHOD__.' was called incorrectly', get_defined_vars());
 		
 		for ($i = 0; $i < $entityCount; $i++)
 		{

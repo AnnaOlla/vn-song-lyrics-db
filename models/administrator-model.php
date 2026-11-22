@@ -526,7 +526,7 @@ class AdministratorModel extends ContributorModel
 		$html = file_get_contents('.vgmdb-album-local-page.html');
 		
 		if (!$html)
-			throw new Exception(__METHOD__.': failed to fetch the vgmdb page for '.$album);
+			throw Exception(__METHOD__.': failed to fetch the vgmdb page for '.$album);
 		
 		$dom = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR);
 		
@@ -537,7 +537,7 @@ class AdministratorModel extends ContributorModel
 		$trackList = $dom->getElementById('tracklist');
 		
 		if (!$trackList)
-			throw new Exception('Tracklist for '.$album['uri'].' was not found');
+			throw Exception('Tracklist for '.$album['uri'].' was not found');
 		
 		$localizations = [];
 		
@@ -644,7 +644,7 @@ class AdministratorModel extends ContributorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500(__METHOD__.': album update failed for '.$albumUri);
+			throw HttpStatus::InternalServerError->exception(__METHOD__.': album update failed for '.$albumUri);
 		
 		$albumId = $this->pdo->lastInsertId();
 		
@@ -713,7 +713,7 @@ class AdministratorModel extends ContributorModel
 		$stmt->execute($values);
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500(__METHOD__.': song insert failed for '.$albumUri);
+			throw HttpStatus::InternalServerError->exception(__METHOD__.': song insert failed for '.$albumUri);
 		
 		$this->pdo->commit();
 	}
@@ -1042,6 +1042,6 @@ class AdministratorModel extends ContributorModel
 			$result = touch($fileName);
 		
 		if (!$result)
-			throw new HttpInternalServerError500();
+			throw HttpStatus::InternalServerError->exception();
 	}
 }

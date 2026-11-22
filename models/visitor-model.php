@@ -167,7 +167,7 @@ class VisitorModel extends ErrorModel
 	): array|null
 	{
 		if ($id === null && $username === null && $uri === null)
-			throw HttpInternalServerError500(__METHOD__.' was called without arguments');
+			throw HttpStatus::InternalServerError->exception(__METHOD__.' was called without arguments');
 		
 		$select =
 		[

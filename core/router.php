@@ -218,122 +218,40 @@ final class Router
 				$controller = new ($_SESSION['user']['role'].'controller')(Localizer::DEFAULT_LANGUAGE);
 			
 			if (Authorizer::isCurrentIpBlocked() || Authorizer::isCurrentUserAgentBlocked())
-				throw new HttpPermanentlyBlocked418();
+				throw HttpStatus::PermanentlyBlocked->exception();
 			
 			if (Authorizer::isRequestForbidden() || Authorizer::isRateLimitExceededToBlock())
 			{
 				Authorizer::blockCurrentIp();
-				throw new HttpPermanentlyBlocked418();
+				throw HttpStatus::PermanentlyBlocked->exception();
 			}
 			
 			if (Authorizer::isMaintenanceModeActive() && !Authorizer::isCurrentUserAdministrator())
-				throw new HttpServiceUnavailable503();
+				throw HttpStatus::ServiceUnavailable->exception();
 			
 			if (Authorizer::isRateLimitExceeded())
-				throw new HttpTooManyRequests429();
+				throw HttpStatus::TooManyRequests->exception();
 			
 			if (!Localizer::isAcceptedLanguage($language))
-				throw new HttpNotAcceptable406();
+				throw HttpStatus::NotAcceptable->exception();
 			
 			if (!method_exists($controller, $method))
-				throw new HttpNotFound404();
+				throw HttpStatus::NotFound->exception();
 			
 			$controller->$method(...$parameters);
 		}
-		catch (HttpBadRequest400 $e)
+		catch (HttpException $e)
 		{
-			$controller->handleBadRequest400();
-			Logger::logError($e);
-		}
-		catch (HttpUnauthorized401 $e)
-		{
-			$controller->handleUnauthorized401();
-			Logger::logError($e);
-		}
-		catch (HttpPaymentRequired402 $e)
-		{
-			$controller->handlePaymentRequired402();
-			Logger::logError($e);
-		}
-		catch (HttpForbidden403 $e)
-		{
-			$controller->handleForbidden403();
-			Logger::logError($e);
-		}
-		catch (HttpNotFound404 $e)
-		{
-			$controller->handleNotFound404();
-			Logger::logError($e);
-		}
-		catch (HttpMethodNotAllowed405 $e)
-		{
-			$controller->handleMethodNotAllowed405();
-			Logger::logError($e);
-		}
-		catch (HttpNotAcceptable406 $e)
-		{
-			$controller->handleNotAcceptable406();
-			Logger::logError($e);
-		}
-		catch (HttpConflict409 $e)
-		{
-			$controller->handleConflict409();
-			Logger::logError($e);
-		}
-		catch (HttpContentTooLarge413 $e)
-		{
-			$controller->handleContentTooLarge413();
-			Logger::logError($e);
-		}
-		catch (HttpUnsupportedMediaType415 $e)
-		{
-			$controller->handleUnsupportedMediaType415();
-			Logger::logError($e);
-		}
-		catch (HttpPermanentlyBlocked418 $e)
-		{
-			$controller->handlePermanentlyBlocked418();
-			Logger::logError($e);
-		}
-		catch (HttpUnprocessableEntity422 $e)
-		{
-			$controller->handleUnprocessableEntity422();
-			Logger::logError($e);
-		}
-		catch (HttpTooManyRequests429 $e)
-		{
-			$controller->handleTooManyRequests429();
-			Logger::logError($e);
-		}
-		catch (HttpUnavailableForLegalReasons451 $e)
-		{
-			$controller->handleUnavailableForLegalReasons451();
-			Logger::logError($e);
-		}
-		catch (HttpInternalServerError500 $e)
-		{
-			$controller->handleInternalServerError500();
-			Logger::logError($e);
-		}
-		catch (HttpNotImplemented501 $e)
-		{
-			$controller->handleNotImplemented501();
-			Logger::logError($e);
-		}
-		catch (HttpBadGateway502 $e)
-		{
-			$controller->handleBadGateway502();
-			Logger::logError($e);
-		}
-		catch (HttpServiceUnavailable503 $e)
-		{
-			$controller->handleServiceUnavailable503();
+			$name = $e->getStatus()->name;
+			$code = $e->getStatus()->value;
+			
+			$method = 'handle'.$name.$code;
+			
+			$controller->$method();
 			Logger::logError($e);
 		}
 		catch (Throwable $e)
 		{
-			// Happens if the server fails to create an instance of M, V or C
-			
 			if (Localizer::isAcceptedLanguage($language))
 				$controller = new ErrorController($language);
 			else

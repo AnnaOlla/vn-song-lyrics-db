@@ -183,7 +183,7 @@ final class JuliamoCaptcha
 			case 'wbmp': $convert = 'imagewbmp'; $type = image_type_to_mime_type(IMAGETYPE_WBMP); break;
 			case 'webp': $convert = 'imagewebp'; $type = image_type_to_mime_type(IMAGETYPE_WEBP); break;
 			case 'xbm':  $convert = 'imagexbm';  $type = image_type_to_mime_type(IMAGETYPE_XBM);  break;
-			default:     throw new Exception(__CLASS__.'::'.__METHOD__.': '.$outputFormat.' is not supported');
+			default:     throw Exception(__CLASS__.'::'.__METHOD__.': '.$outputFormat.' is not supported');
 		}
 		
 		// 5. Save image

@@ -54,7 +54,7 @@ final class Localizer
 	public static function setLocale(string $language): void
 	{
 		if (!in_array($language, self::ACCEPTED_LANGUAGES, true))
-			throw new HttpNotAcceptable406('Language '.$language.' is not supported');
+			throw HttpStatus::NotAcceptable->exception('Language '.$language.' is not supported');
 		
 		self::$language = $language;
 	}

@@ -71,10 +71,10 @@ class VisitorController extends ErrorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -97,7 +97,7 @@ class VisitorController extends ErrorController
 	private function handleLogInPagePost(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$email       = $_POST['email']                   ?? null;
 		$password    = $_POST['password']                ?? null;
@@ -106,10 +106,10 @@ class VisitorController extends ErrorController
 		$serverNonce = $_SESSION['log_in_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($email, $password, $ipAddress))
-			throw new HttpBadRequest400('Log-in data was not sent', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Log-in data was not sent', get_defined_vars());
 		
 		if (!$this->model->isEmailRegistered($email))
 		{
@@ -163,10 +163,10 @@ class VisitorController extends ErrorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -195,7 +195,7 @@ class VisitorController extends ErrorController
 	private function handleSignUpPagePost(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$username      = $_POST['username']                   ?? null;
 		$email         = $_POST['email']                      ?? null;
@@ -207,10 +207,10 @@ class VisitorController extends ErrorController
 		$serverNonce   = $_SESSION['sign_up_page']['nonce']   ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($username, $email, $password, $ipAddress))
-			throw new HttpBadRequest400('Sign-up data was not sent', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Sign-up data was not sent', get_defined_vars());
 		
 		if (!Validation::areCaptchasEqual($serverCaptcha, $userCaptcha))
 		{
@@ -313,10 +313,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -348,17 +348,17 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
 	private function handleGameListPageGet(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_GET))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
@@ -369,7 +369,7 @@ class VisitorController extends ErrorController
 		$search = Parsing::trimNullableString($search);
 		
 		if ($limit === null || $page === null)
-			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getGameList(page: $page, limit: $limit, search: $search);
 		$count = $this->model->getGameCount(search: $search);
@@ -393,17 +393,17 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
 	private function handleAlbumListPageGet(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_GET))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
@@ -414,7 +414,7 @@ class VisitorController extends ErrorController
 		$search = Parsing::trimNullableString($search);
 		
 		if ($limit === null || $page === null)
-			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getAlbumList(page: $page, limit: $limit, search: $search);
 		$count = $this->model->getAlbumCount(search: $search);
@@ -438,17 +438,17 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
 	private function handleArtistListPageGet(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_GET))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
@@ -459,7 +459,7 @@ class VisitorController extends ErrorController
 		$search = Parsing::trimNullableString($search);
 		
 		if ($limit === null || $page === null)
-			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getArtistList(page: $page, limit: $limit, search: $search);
 		$count = $this->model->getArtistCount(search: $search);
@@ -483,17 +483,17 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
 	private function handleCharacterListPageGet(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_GET))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
@@ -504,7 +504,7 @@ class VisitorController extends ErrorController
 		$search = Parsing::trimNullableString($search);
 		
 		if ($limit === null || $page === null)
-			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getCharacterList(page: $page, limit: $limit, search: $search);
 		$count = $this->model->getCharacterCount(search: $search);
@@ -528,17 +528,17 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
 	private function handleSongListPageGet(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_GET))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
@@ -549,7 +549,7 @@ class VisitorController extends ErrorController
 		$search = Parsing::trimNullableString($search);
 		
 		if ($limit === null || $page === null)
-			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getSongList(page: $page, limit: $limit, search: $search, hasVocal: true);
 		$count = $this->model->getSongCount(search: $search, hasVocal: true);
@@ -573,17 +573,17 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
 	private function handleTranslationListPageGet(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_GET))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$limit  = $_GET['limit']  ?? null;
 		$page   = $_GET['page']   ?? null;
@@ -594,7 +594,7 @@ class VisitorController extends ErrorController
 		$search = Parsing::trimNullableString($search);
 		
 		if ($limit === null || $page === null)
-			throw new HttpBadRequest400('Limit or page were not set', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Limit or page were not set', get_defined_vars());
 		
 		$list  = $this->model->getTranslationList(page: $page, limit: $limit, search: $search);
 		$count = $this->model->getTranslationCount(search: $search);
@@ -607,10 +607,10 @@ class VisitorController extends ErrorController
 		$game = $this->model->getGame($gameUri);
 		
 		if (!$game)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewGame($game) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -626,10 +626,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -646,10 +646,10 @@ class VisitorController extends ErrorController
 		$album = $this->model->getAlbum($albumUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -665,10 +665,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -689,10 +689,10 @@ class VisitorController extends ErrorController
 		$artist = $this->model->getArtist($artistUri);
 		
 		if (!$artist)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewArtist($artist) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -708,10 +708,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -729,10 +729,10 @@ class VisitorController extends ErrorController
 		$character = $this->model->getCharacter($characterUri);
 		
 		if (!$character)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewCharacter($character) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -748,10 +748,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -794,31 +794,31 @@ class VisitorController extends ErrorController
 		}
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewSong($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewLyrics($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if ($originalAlbum && RoleManager::getStateToViewAlbum($originalAlbum) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if ($originalSong && RoleManager::getStateToViewSong($originalSong) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if ($originalSong && RoleManager::getStateToViewLyrics($originalSong) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (!$song['has_vocal'])
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -842,10 +842,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -907,37 +907,37 @@ class VisitorController extends ErrorController
 		}
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if ($song['original_song_id'] && !$originalSong)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$translation)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewSong($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewLyrics($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if ($originalAlbum && RoleManager::getStateToViewAlbum($originalAlbum) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if ($originalSong && RoleManager::getStateToViewSong($originalSong) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if ($originalSong && RoleManager::getStateToViewLyrics($originalSong) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewTranslation($translation) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -962,10 +962,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1011,10 +1011,10 @@ class VisitorController extends ErrorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1038,7 +1038,7 @@ class VisitorController extends ErrorController
 	private function handleFeedbackPagePost(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$senderId      = $_SESSION['user']['id']               ?? null;
 		$senderIp      = $_SERVER['REMOTE_ADDR']               ?? null;
@@ -1051,10 +1051,10 @@ class VisitorController extends ErrorController
 		$message       = Parsing::trimNullableString($message);
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::isNullOrEmpty($senderIp, $message))
-			throw new HttpUnprocessableEntity422('Feedback data was not sent');
+			throw HttpStatus::UnprocessableEntity->exception('Feedback data was not sent');
 		
 		if (!Validation::areCaptchasEqual($serverCaptcha, $userCaptcha))
 		{
@@ -1071,7 +1071,7 @@ class VisitorController extends ErrorController
 	private function handleReportPost(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$senderId    = $_SESSION['user']['id']           ?? null;
 		$ipAddress   = $_SERVER['REMOTE_ADDR']           ?? null;
@@ -1083,10 +1083,10 @@ class VisitorController extends ErrorController
 		$serverNonce = $_SESSION['report_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($ipAddress, $message, $entityUri, $userAgent))
-			throw new HttpUnprocessableEntity422('Null or empty submitted', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Null or empty submitted', get_defined_vars());
 		
 		$this->model->addReport
 		(
@@ -1107,13 +1107,13 @@ class VisitorController extends ErrorController
 		$game = $this->model->getGame($gameUri);
 		
 		if (!$game)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewGame($game) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToReportGame($game) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1132,10 +1132,10 @@ class VisitorController extends ErrorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1152,13 +1152,13 @@ class VisitorController extends ErrorController
 		$album = $this->model->getAlbum($albumUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToReportAlbum($album) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1177,10 +1177,10 @@ class VisitorController extends ErrorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1197,13 +1197,13 @@ class VisitorController extends ErrorController
 		$artist = $this->model->getArtist($artistUri);
 		
 		if (!$artist)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewArtist($artist) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToReportArtist($artist) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1222,10 +1222,10 @@ class VisitorController extends ErrorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1242,13 +1242,13 @@ class VisitorController extends ErrorController
 		$character = $this->model->getCharacter($characterUri);
 		
 		if (!$character)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewCharacter($character) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToReportCharacter($character) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1267,10 +1267,10 @@ class VisitorController extends ErrorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1288,28 +1288,28 @@ class VisitorController extends ErrorController
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToReportAlbum($album) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (RoleManager::getStateToViewSong($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToReportSong($song) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (RoleManager::getStateToViewLyrics($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToReportLyrics($song) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1328,10 +1328,10 @@ class VisitorController extends ErrorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1370,37 +1370,37 @@ class VisitorController extends ErrorController
 		}
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToReportAlbum($album) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewSong($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToReportSong($song) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (RoleManager::getStateToViewLyrics($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToReportLyrics($song) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (!$translation)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewTranslation($translation) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToReportTranslation($translation) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1419,10 +1419,10 @@ class VisitorController extends ErrorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1440,107 +1440,107 @@ class VisitorController extends ErrorController
 	
 	public function handleAddGamePage(): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleAddAlbumPage(): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleAddArtistPage(): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleAddCharacterPage(): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleAddSongPage(string $albumUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleAddLyricsPage(string $albumUri, string $songUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleAddTranslationPage(string $albumUri, string $songUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleEditGamePage(string $gameUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleEditAlbumPage(string $albumUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleEditArtistPage(string $artistUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleEditCharacterPage(string $characterUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleEditSongPage(string $albumUri, string $songUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleEditLyricsPage(string $albumUri, string $songUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleEditTranslationPage(string $albumUri, string $songUri, string $translationUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleDeleteGamePage(string $gameUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleDeleteAlbumPage(string $albumUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleDeleteArtistPage(string $artistUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleDeleteCharacterPage(string $characterUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleDeleteSongPage(string $albumUri, string $songUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleDeleteLyricsPage(string $albumUri, string $songUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	public function handleDeleteTranslationPage(string $albumUri, string $songUri, string $translationUri): void
 	{
-		throw new HttpUnauthorized401();
+		throw HttpStatus::Unauthorized->exception();
 	}
 	
 	final public function handleUserPage(string $userUri): void
@@ -1548,7 +1548,7 @@ class VisitorController extends ErrorController
 		$user = $this->model->getUserData(uri: $userUri, fetchMinInfo: false);
 		
 		if (!$user)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1564,10 +1564,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1608,10 +1608,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1631,10 +1631,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1654,10 +1654,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1677,10 +1677,10 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1700,21 +1700,21 @@ class VisitorController extends ErrorController
 			case 'POST':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
 	final public function handleFakeAdminPage(): void
 	{
-		throw new HttpPaymentRequired402();
+		throw HttpStatus::PaymentRequired->exception();
 	}
 	
 	final public function handleBotTrapPage(): void
 	{
 		Authorizer::blockCurrentIp();
-		throw new HttpPermanentlyBlocked418();
+		throw HttpStatus::PermanentlyBlocked->exception();
 	}
 }

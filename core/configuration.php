@@ -17,7 +17,7 @@ final class Configuration
 	public static function getPdo(string $userRole): PDO
 	{
 		if (!in_array($userRole, self::USER_ROLES, true))
-			throw HttpInternalServerError500('Database connection problem', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Database connection problem', get_defined_vars());
 		
 		$type     = self::$settings['database']['type'];
 		$name     = self::$settings['database']['name'];

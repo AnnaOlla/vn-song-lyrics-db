@@ -54,28 +54,28 @@ class ContributorModel extends VisitorModel
 	final protected function saveUploadedImage(array $file, string $fullPath): void
 	{
 		if (!$this->isFileUploaded($file))
-			throw new HttpContentTooLarge413('File upload failed', get_defined_vars());
+			throw HttpStatus::ContentTooLarge->exception('File upload failed', get_defined_vars());
 		
 		if (!$this->isImageExtensionAllowed($file))
-			throw new HttpUnsupportedMediaType415('File extension not allowed', get_defined_vars());
+			throw HttpStatus::UnsupportedMediaType->exception('File extension not allowed', get_defined_vars());
 		
 		if (!$this->isImageFormatAllowed($file))
-			throw new HttpUnsupportedMediaType415('File format not allowed', get_defined_vars());
+			throw HttpStatus::UnsupportedMediaType->exception('File format not allowed', get_defined_vars());
 		
 		if (!ImageProcession::readUploadedImage($file))
-			throw new HttpUnsupportedMediaType415('Failed to read image', get_defined_vars());
+			throw HttpStatus::UnsupportedMediaType->exception('Failed to read image', get_defined_vars());
 		
 		if (!ImageProcession::convertImageToTrueColor($file))
-			throw new HttpUnsupportedMediaType415('Failed to convert image to TrueColor', get_defined_vars());
+			throw HttpStatus::UnsupportedMediaType->exception('Failed to convert image to TrueColor', get_defined_vars());
 		
 		if (!ImageProcession::scaleDownImage($file))
-			throw new HttpUnsupportedMediaType415('Failed to scale down image', get_defined_vars());
+			throw HttpStatus::UnsupportedMediaType->exception('Failed to scale down image', get_defined_vars());
 		
 		if (!ImageProcession::applyBlurredBackdropToImage($file))
-			throw new HttpUnsupportedMediaType415('Failed to apply blurred backdrop to image', get_defined_vars());
+			throw HttpStatus::UnsupportedMediaType->exception('Failed to apply blurred backdrop to image', get_defined_vars());
 		
 		if (!ImageProcession::saveUploadedImage($file, $fullPath))
-			throw new HttpInternalServerError500('File move failed', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('File move failed', get_defined_vars());
 	}
 	
 	final protected function deleteUploadedFile(string $fullPath): void
@@ -84,7 +84,7 @@ class ContributorModel extends VisitorModel
 			return;
 		
 		if (!unlink($fullPath))
-			throw new HttpInternalServerError500('File delete failed', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('File delete failed', get_defined_vars());
 	}
 	
 	final protected function renameUploadedFile(string $oldFullPath, string $newFullPath): void
@@ -93,7 +93,7 @@ class ContributorModel extends VisitorModel
 			return;
 		
 		if (!rename($oldFullPath, $newFullPath))
-			throw new HttpInternalServerError500('File rename failed', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('File rename failed', get_defined_vars());
 	}
 	
 	//------------------------------------------//
@@ -773,7 +773,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to add lyrics to a song', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to add lyrics to a song', get_defined_vars());
 	}
 	
 	final public function addTranslation
@@ -1024,7 +1024,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to update game', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to update game', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -1119,7 +1119,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to update album', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to update album', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -1214,7 +1214,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to update artist', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to update artist', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -1306,7 +1306,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to update character', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to update character', get_defined_vars());
 		
 		if ($isImageUploaded)
 		{
@@ -1385,7 +1385,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to update song', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to update song', get_defined_vars());
 		
 		$id = $this->pdo->lastInsertId();
 		
@@ -1443,7 +1443,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to update lyrics', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to update lyrics', get_defined_vars());
 		
 		$id = $this->pdo->lastInsertId();
 		
@@ -1510,7 +1510,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to update translation', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to update translation', get_defined_vars());
 		
 		$id = $this->pdo->lastInsertId();
 		
@@ -1538,7 +1538,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to delete game', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to delete game', get_defined_vars());
 		
 		if ($game['is_image_uploaded'])
 		{
@@ -1567,7 +1567,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to delete album', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to delete album', get_defined_vars());
 		
 		if ($album['is_image_uploaded'])
 		{
@@ -1596,7 +1596,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to delete artist', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to delete artist', get_defined_vars());
 		
 		if ($artist['is_image_uploaded'])
 		{
@@ -1625,7 +1625,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to delete character', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to delete character', get_defined_vars());
 		
 		if ($character['is_image_uploaded'])
 		{
@@ -1652,7 +1652,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to delete song', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to delete song', get_defined_vars());
 	}
 	
 	final public function deleteLyrics(array $song): void
@@ -1679,7 +1679,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to delete lyrics', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to delete lyrics', get_defined_vars());
 	}
 	
 	final public function deleteTranslation(array $translation): void
@@ -1697,7 +1697,7 @@ class ContributorModel extends VisitorModel
 		$stmt->execute();
 		
 		if ($stmt->rowCount() === 0)
-			throw new HttpInternalServerError500('Failed to delete translation', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Failed to delete translation', get_defined_vars());
 	}
 	
 	final public function deleteGameAlbumRelation
@@ -1708,10 +1708,10 @@ class ContributorModel extends VisitorModel
 	): void
 	{
 		if ($gameId === null && $albumId === null)
-			throw new HttpInternalServerError500(__METHOD__.' called without conditions', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception(__METHOD__.' called without conditions', get_defined_vars());
 		
 		if (!in_array($whereStatus, [null, 'unchecked', 'checked', 'hidden'], true))
-			throw new HttpInternalServerError500(__METHOD__.' called with incorrect status', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception(__METHOD__.' called with incorrect status', get_defined_vars());
 		
 		$where = [];
 		$binds = [];
@@ -1758,10 +1758,10 @@ class ContributorModel extends VisitorModel
 	): void
 	{
 		if ($songId === null && $artistId === null && $characterId === null)
-			throw new HttpInternalServerError500('Method called without conditions', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Method called without conditions', get_defined_vars());
 		
 		if (!in_array($whereStatus, [null, 'unchecked', 'checked', 'hidden'], true))
-			throw new HttpInternalServerError500(__METHOD__.' called with incorrect status', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception(__METHOD__.' called with incorrect status', get_defined_vars());
 		
 		$where = [];
 		$binds = [];
@@ -1813,10 +1813,10 @@ class ContributorModel extends VisitorModel
 	): void
 	{
 		if ($characterId === null && $gameId === null)
-			throw new HttpInternalServerError500('Method called without conditions', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception('Method called without conditions', get_defined_vars());
 		
 		if (!in_array($whereStatus, [null, 'unchecked', 'checked', 'hidden'], true))
-			throw new HttpInternalServerError500(__METHOD__.' called with incorrect status', get_defined_vars());
+			throw HttpStatus::InternalServerError->exception(__METHOD__.' called with incorrect status', get_defined_vars());
 		
 		$where = [];
 		$binds = [];

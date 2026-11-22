@@ -18,7 +18,7 @@ class ContributorController extends VisitorController
 	final public function handleAddGamePage(): void
 	{
 		if (RoleManager::getStateToAddGame() !== AccessState::Ok)
-			throw HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -37,10 +37,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -57,7 +57,7 @@ class ContributorController extends VisitorController
 	private function handleAddGamePagePost(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName       = $_POST['original_name']             ?? null;
 		$transliteratedName = $_POST['transliterated_name']       ?? null;
@@ -86,22 +86,22 @@ class ContributorController extends VisitorController
 		$allCharacterIds    = array_column($allCharacterIds, 'id');
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpUnprocessableEntity422('Transliterated name was not ASCII', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Transliterated name was not ASCII', get_defined_vars());
 		
 		if (array_diff($albumIds, $allAlbumIds))
-			throw new HttpUnprocessableEntity422('At least one of albumIds was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of albumIds was invalid', get_defined_vars());
 		
 		if (array_diff($characterIds, $allCharacterIds))
-			throw new HttpUnprocessableEntity422('At least one of characterIds was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of characterIds was invalid', get_defined_vars());
 		
 		if ($this->model->gameExists($originalName, $transliteratedName))
-			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
+			throw HttpStatus::Conflict->exception('A duplicate was sent', get_defined_vars());
 		
 		[$gameId, $gameUri] = $this->model->addGame
 		(
@@ -128,7 +128,7 @@ class ContributorController extends VisitorController
 	final public function handleAddAlbumPage(): void
 	{
 		if (RoleManager::getStateToAddAlbum() !== AccessState::Ok)
-			throw HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -147,10 +147,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -166,7 +166,7 @@ class ContributorController extends VisitorController
 	private function handleAddAlbumPagePost(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName       = $_POST['original_name']              ?? null;
 		$transliteratedName = $_POST['transliterated_name']        ?? null;
@@ -192,19 +192,19 @@ class ContributorController extends VisitorController
 		$allGameIds         = array_column($allGameIds, 'id');
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $songCount))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpUnprocessableEntity422('Transliterated name was not ASCII', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Transliterated name was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-			throw new HttpUnprocessableEntity422('At least one of gameIds was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of gameIds was invalid', get_defined_vars());
 		
 		if ($this->model->albumExists($originalName, $transliteratedName))
-			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
+			throw HttpStatus::Conflict->exception('A duplicate was sent', get_defined_vars());
 		
 		[$albumId, $albumUri] = $this->model->addAlbum
 		(
@@ -229,7 +229,7 @@ class ContributorController extends VisitorController
 	final public function handleAddArtistPage(): void
 	{
 		if (RoleManager::getStateToAddArtist() !== AccessState::Ok)
-			throw HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -248,10 +248,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -267,7 +267,7 @@ class ContributorController extends VisitorController
 	private function handleAddArtistPagePost(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName       = $_POST['original_name']               ?? null;
 		$transliteratedName = $_POST['transliterated_name']         ?? null;
@@ -290,19 +290,19 @@ class ContributorController extends VisitorController
 		$originalArtists    = array_column($originalArtists, 'id');
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpUnprocessableEntity422('Transliterated name was not ASCII', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Transliterated name was not ASCII', get_defined_vars());
 		
 		if ($aliasOfId && !in_array($aliasOfId, $originalArtists))
-			throw new HttpUnprocessableEntity422('aliasOfId was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('aliasOfId was invalid', get_defined_vars());
 		
 		if ($this->model->artistExists($originalName, $transliteratedName))
-			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
+			throw HttpStatus::Conflict->exception('A duplicate was sent', get_defined_vars());
 		
 		[$artistId, $artistUri] = $this->model->addArtist
 		(
@@ -324,7 +324,7 @@ class ContributorController extends VisitorController
 	final public function handleAddCharacterPage(): void
 	{
 		if (RoleManager::getStateToAddCharacter() !== AccessState::Ok)
-			throw HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -343,10 +343,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -362,7 +362,7 @@ class ContributorController extends VisitorController
 	private function handleAddCharacterPagePost(): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName       = $_POST['original_name']                  ?? null;
 		$transliteratedName = $_POST['transliterated_name']            ?? null;
@@ -386,19 +386,19 @@ class ContributorController extends VisitorController
 		$allGameIds         = array_column($allGameIds, 'id');
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpUnprocessableEntity422('Transliterated name was not ASCII', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Transliterated name was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-			throw new HttpUnprocessableEntity422('At least one of gameIds was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of gameIds was invalid', get_defined_vars());
 		
 		if ($this->model->characterExists($originalName, $transliteratedName))
-			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
+			throw HttpStatus::Conflict->exception('A duplicate was sent', get_defined_vars());
 		
 		[$characterId, $characterUri] = $this->model->addCharacter
 		(
@@ -425,16 +425,16 @@ class ContributorController extends VisitorController
 		$songCount = $this->model->getSongCurrentCount($albumUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToEditAlbum($album) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if ($songCount >= $album['song_count'])
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -453,10 +453,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -475,7 +475,7 @@ class ContributorController extends VisitorController
 	private function handleAddSongPagePost(array $album, int $songCount): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$discNumber         = $_POST['disc_number']             ?? null;
 		$trackNumber        = $_POST['track_number']            ?? null;
@@ -506,19 +506,19 @@ class ContributorController extends VisitorController
 		$isFirstDiscFirstTrack = ($isFirstDisc && $isFirstTrack);
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($discNumber, $trackNumber, $originalName, $transliteratedName, $hasVocal))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpUnprocessableEntity422('Transliterated name was not ASCII', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Transliterated name was not ASCII', get_defined_vars());
 		
 		if (!$isSameDiscNextTrack && !$isNextDiscFirstTrack && !$isFirstDiscFirstTrack)
-			throw new HttpUnprocessableEntity422('Track number or disk number was incorrect', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Track number or disk number was incorrect', get_defined_vars());
 		
 		if ($this->model->songExists($album['uri'], $originalName, $transliteratedName))
-			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
+			throw HttpStatus::Conflict->exception('A duplicate was sent', get_defined_vars());
 		
 		$this->model->addSong
 		(
@@ -548,22 +548,22 @@ class ContributorController extends VisitorController
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewSong($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToAddLyrics($song) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (!$song['has_vocal'] || $song['lyrics'] || $song['original_song_id'])
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -582,10 +582,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -619,7 +619,7 @@ class ContributorController extends VisitorController
 	private function handleAddLyricsPagePost(array $album, array $song): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$artistIds         = $_POST['artist_ids']                  ?? [];
 		$characterIds      = $_POST['character_ids']               ?? [];
@@ -656,31 +656,31 @@ class ContributorController extends VisitorController
 		$allOriginalIds[]  = null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (count($artistIds) === 0)
-			throw new HttpUnprocessableEntity422('Artists were not provided', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Artists were not provided', get_defined_vars());
 		
 		if (count($artistIds) !== count($characterIds))
-			throw new HttpUnprocessableEntity422('Artist count was not equal to character count', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Artist count was not equal to character count', get_defined_vars());
 		
 		if (array_diff($artistIds, $allArtistIds))
-			throw new HttpUnprocessableEntity422('One of artistIds was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('One of artistIds was invalid', get_defined_vars());
 		
 		if (array_diff($characterIds, $allCharacterIds))
-			throw new HttpUnprocessableEntity422('One of characterIds was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('One of characterIds was invalid', get_defined_vars());
 		
 		if ($originalSongId && ($languageId || $lyrics || $notes))
-			throw new HttpUnprocessableEntity422('originalSongId was set along with language, lyrics, notes', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('originalSongId was set along with language, lyrics, notes', get_defined_vars());
 		
 		if (!$originalSongId && (!$languageId || !$lyrics))
-			throw new HttpUnprocessableEntity422('None of originalSongId, languageId, lyrics was set', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('None of originalSongId, languageId, lyrics was set', get_defined_vars());
 		
 		if ($originalSongId && !in_array($originalSongId, $allOriginalIds))
-			throw new HttpUnprocessableEntity422('originalSongId was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('originalSongId was invalid', get_defined_vars());
 		
 		if ($languageId && !in_array($languageId, $allLanguages))
-			throw new HttpUnprocessableEntity422('languageId was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('languageId was invalid', get_defined_vars());
 		
 		$this->model->addLyrics
 		(
@@ -708,25 +708,25 @@ class ContributorController extends VisitorController
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewSong($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewLyrics($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (!$song['has_vocal'] || !$song['has_lyrics'] || $song['original_song_id'])
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (RoleManager::getStateToAddTranslation() !== AccessState::Ok)
-			throw HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -745,10 +745,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -771,7 +771,7 @@ class ContributorController extends VisitorController
 	private function handleAddTranslationPagePost(array $album, array $song): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$languageId           = $_POST['translation_language_id']          ?? null;
 		$name                 = $_POST['translation_name']                 ?? null;
@@ -799,19 +799,19 @@ class ContributorController extends VisitorController
 		$forbiddenLanguages = array_column($translationsByUser, 'language_id');
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($name, $lyrics, $languageId))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!in_array($languageId, $allLanguages))
-			throw new HttpUnprocessableEntity422('languageId was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('languageId was invalid', get_defined_vars());
 		
 		if (in_array($languageId, $forbiddenLanguages))
-			throw new HttpUnprocessableEntity422('languageId was forbidden', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('languageId was forbidden', get_defined_vars());
 		
 		if ($this->model->translationExists($album['uri'], $song['uri'], $languageId, $userAddedId))
-			throw new HttpConflict409('A duplicate was sent', get_defined_vars());
+			throw HttpStatus::Conflict->exception('A duplicate was sent', get_defined_vars());
 		
 		[$translationId, $translationUri] = $this->model->addTranslation
 		(
@@ -835,13 +835,13 @@ class ContributorController extends VisitorController
 		$game = $this->model->getGame($gameUri);
 		
 		if (!$game)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewGame($game) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToEditGame($game) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -860,10 +860,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -889,7 +889,7 @@ class ContributorController extends VisitorController
 	private function handleEditGamePagePost(array $game): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName         = $_POST['original_name']              ?? null;
 		$transliteratedName   = $_POST['transliterated_name']        ?? null;
@@ -927,16 +927,16 @@ class ContributorController extends VisitorController
 		$characterIdsToDelete = array_diff($currentCharacterIds, $characterIds);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($albumIds, $allAlbumIds))
-			throw new HttpUnprocessableEntity422('languageId was forbidden', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('languageId was forbidden', get_defined_vars());
 		
 		if (array_diff($characterIds, $allCharacterIds))
-			throw new HttpUnprocessableEntity422('At least one of characterIds was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of characterIds was invalid', get_defined_vars());
 		
 		[$gameId, $gameUri] = $this->model->updateGame
 		(
@@ -972,13 +972,13 @@ class ContributorController extends VisitorController
 		$album = $this->model->getAlbum($albumUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToEditAlbum($album) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -997,10 +997,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1024,7 +1024,7 @@ class ContributorController extends VisitorController
 	private function handleEditAlbumPagePost(array $album): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName        = $_POST['original_name']               ?? null;
 		$transliteratedName  = $_POST['transliterated_name']         ?? null;
@@ -1056,16 +1056,16 @@ class ContributorController extends VisitorController
 		$currentSongCount    = $this->model->getSongCurrentCount($album['uri']);
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $songCount))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-			throw new HttpUnprocessableEntity422('At least one of gameIds was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of gameIds was invalid', get_defined_vars());
 		
 		if ($songCount < $currentSongCount)
-			throw new HttpUnprocessableEntity422('New song count was less than current', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('New song count was less than current', get_defined_vars());
 		
 		[$albumId, $albumUri] = $this->model->updateAlbum
 		(
@@ -1095,13 +1095,13 @@ class ContributorController extends VisitorController
 		$artist = $this->model->getArtist($artistUri);
 		
 		if (!$artist)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewArtist($artist) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToEditArtist($artist) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1120,10 +1120,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1139,7 +1139,7 @@ class ContributorController extends VisitorController
 	private function handleEditArtistPagePost(array $artist): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName        = $_POST['original_name']                ?? null;
 		$transliteratedName  = $_POST['transliterated_name']          ?? null;
@@ -1162,19 +1162,19 @@ class ContributorController extends VisitorController
 		$originalArtists     = array_column($originalArtists, 'id');
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('transliteratedName was not ASCII', get_defined_vars());
 		
 		if ($aliasOfId && !in_array($aliasOfId, $originalArtists))
-			throw new HttpUnprocessableEntity422('aliasOfId was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('aliasOfId was invalid', get_defined_vars());
 		
 		if ($aliasOfId === $artist['id'])
-			throw new HttpUnprocessableEntity422('aliasOfId caused self-reference', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('aliasOfId caused self-reference', get_defined_vars());
 		
 		[$artistId, $artistUri] = $this->model->updateArtist
 		(
@@ -1198,13 +1198,13 @@ class ContributorController extends VisitorController
 		$character = $this->model->getCharacter($characterUri);
 		
 		if (!$character)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewCharacter($character) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToEditCharacter($character) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1223,10 +1223,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1243,7 +1243,7 @@ class ContributorController extends VisitorController
 	private function handleEditCharacterPagePost(array $character): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName        = $_POST['original_name']                   ?? null;
 		$transliteratedName  = $_POST['transliterated_name']             ?? null;
@@ -1271,16 +1271,16 @@ class ContributorController extends VisitorController
 		$gameIdsToDelete     = array_diff($currentGameIds, $gameIds);
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('transliteratedName was not ASCII', get_defined_vars());
 		
 		if (array_diff($gameIds, $allGameIds))
-			throw new HttpUnprocessableEntity422('At least one of gameIds was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of gameIds was invalid', get_defined_vars());
 		
 		[$characterId, $characterUri] = $this->model->updateCharacter
 		(
@@ -1310,16 +1310,16 @@ class ContributorController extends VisitorController
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToEditAlbum($album) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1338,10 +1338,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1355,7 +1355,7 @@ class ContributorController extends VisitorController
 	private function handleEditSongPagePost(array $album, array $song): void
 	{	
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$originalName       = $_POST['original_name']              ?? null;
 		$transliteratedName = $_POST['transliterated_name']        ?? null;
@@ -1371,13 +1371,13 @@ class ContributorController extends VisitorController
 		$hasVocal           = Parsing::parseNullableInteger($hasVocal, 0, 1);
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($originalName, $transliteratedName, $hasVocal))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		if (!Validation::isPrintableAscii($transliteratedName))
-			throw new HttpUnprocessableEntity422('transliteratedName was not ASCII', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('transliteratedName was not ASCII', get_defined_vars());
 		
 		$this->model->updateSong
 		(
@@ -1409,25 +1409,25 @@ class ContributorController extends VisitorController
 		);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewSong($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewLyrics($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToEditLyrics($song) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (!$song['has_vocal'])
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1446,10 +1446,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1490,7 +1490,7 @@ class ContributorController extends VisitorController
 	private function handleEditLyricsPagePost(array $album, array $song): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$artistIds            = $_POST['artist_ids']                   ?? [];
 		$characterIds         = $_POST['character_ids']                ?? [];
@@ -1560,28 +1560,28 @@ class ContributorController extends VisitorController
 		);
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (count($artistIds) !== count($characterIds))
-			throw new HttpUnprocessableEntity422('Artist count was not equal to character count', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Artist count was not equal to character count', get_defined_vars());
 		
 		if (array_diff($artistIds, $allArtistIds))
-			throw new HttpUnprocessableEntity422('One of artistIds was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('One of artistIds was invalid', get_defined_vars());
 		
 		if (array_diff($characterIds, $allCharacterIds))
-			throw new HttpUnprocessableEntity422('One of characterIds was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('One of characterIds was invalid', get_defined_vars());
 		
 		if ($originalSongId && ($languageId || $lyrics || $notes))
-			throw new HttpUnprocessableEntity422('originalSongId was set along with language, lyrics, notes', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('originalSongId was set along with language, lyrics, notes', get_defined_vars());
 		
 		if (!$originalSongId && (!$languageId || !$lyrics))
-			throw new HttpUnprocessableEntity422('None of originalSongId, languageId, lyrics was set', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('None of originalSongId, languageId, lyrics was set', get_defined_vars());
 		
 		if ($originalSongId && !in_array($originalSongId, $allOriginalIds))
-			throw new HttpUnprocessableEntity422('originalSongId was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('originalSongId was invalid', get_defined_vars());
 		
 		if ($languageId && !in_array($languageId, $allLanguages))
-			throw new HttpUnprocessableEntity422('languageId was invalid', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('languageId was invalid', get_defined_vars());
 		
 		$this->model->updateLyrics
 		(
@@ -1612,31 +1612,31 @@ class ContributorController extends VisitorController
 		$translation = $this->model->getTranslation($albumUri, $songUri, $translationUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$translation)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewSong($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewLyrics($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewTranslation($translation) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToEditTranslation($translation) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (!$song['has_vocal'] || !$song['lyrics'] || $song['original_song_id'])
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1655,10 +1655,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1672,7 +1672,7 @@ class ContributorController extends VisitorController
 	private function handleEditTranslationPagePost(array $album, array $song, array $translation): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$name          = $_POST['translation_name']                  ?? null;
 		$lyrics        = $_POST['translation_lyrics']                ?? null;
@@ -1686,7 +1686,7 @@ class ContributorController extends VisitorController
 		$notes         = Parsing::trimNullableText($notes);
 		
 		if (Validation::haveNullOrEmpty($name, $lyrics))
-			throw new HttpUnprocessableEntity422('At least one of not-null values was null/empty', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('At least one of not-null values was null/empty', get_defined_vars());
 		
 		$this->model->updateTranslation
 		(
@@ -1710,13 +1710,13 @@ class ContributorController extends VisitorController
 		$game = $this->model->getGame($gameUri);
 		
 		if (!$game)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewGame($game) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToDeleteGame($game) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1735,10 +1735,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1752,17 +1752,17 @@ class ContributorController extends VisitorController
 	private function handleDeleteGamePagePost(array $game): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                 ?? null;
 		$userNonce        = $_POST['nonce']                        ?? null;
 		$serverNonce      = $_SESSION['delete_game_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
-			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteGame($game);
 		
@@ -1778,13 +1778,13 @@ class ContributorController extends VisitorController
 		$album = $this->model->getAlbum($albumUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToDeleteAlbum($album) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1803,10 +1803,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1820,14 +1820,14 @@ class ContributorController extends VisitorController
 	private function handleDeleteAlbumPagePost(array $album): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                  ?? null;
 		$userNonce        = $_POST['nonce']                         ?? null;
 		$serverNonce      = $_SESSION['delete_album_page']['nonce'] ?? null;
 		
 		if (!$requestConfirmed)
-			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteAlbum($album);
 		
@@ -1843,13 +1843,13 @@ class ContributorController extends VisitorController
 		$artist = $this->model->getArtist($artistUri);
 		
 		if (!$artist)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewArtist($artist) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToDeleteArtist($artist) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1868,10 +1868,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1885,17 +1885,17 @@ class ContributorController extends VisitorController
 	private function handleDeleteArtistPagePost(array $artist): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                   ?? null;
 		$userNonce        = $_POST['nonce']                          ?? null;
 		$serverNonce      = $_SESSION['delete_artist_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
-			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteArtist($artist);
 		
@@ -1911,13 +1911,13 @@ class ContributorController extends VisitorController
 		$character = $this->model->getCharacter($characterUri);
 		
 		if (!$character)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewCharacter($character) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToDeleteCharacter($character) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -1936,10 +1936,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -1953,17 +1953,17 @@ class ContributorController extends VisitorController
 	private function handleDeleteCharacterPagePost(array $character): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                      ?? null;
 		$userNonce        = $_POST['nonce']                             ?? null;
 		$serverNonce      = $_SESSION['delete_character_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
-			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteCharacter($character);
 		
@@ -1980,28 +1980,28 @@ class ContributorController extends VisitorController
 		$song  = $this->model->getSong($albumUri, $songUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToEditAlbum($album) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (RoleManager::getStateToViewSong($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewLyrics($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToDeleteSong($song) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (RoleManager::getStateToDeleteLyrics($song) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -2020,10 +2020,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -2037,17 +2037,17 @@ class ContributorController extends VisitorController
 	private function handleDeleteSongPagePost(array $album, array $song): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                 ?? null;
 		$userNonce        = $_POST['nonce']                        ?? null;
 		$serverNonce      = $_SESSION['delete_song_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
-			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteSong($song);
 		
@@ -2069,25 +2069,25 @@ class ContributorController extends VisitorController
 		);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewSong($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewLyrics($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToDeleteLyrics($song) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (!$song['has_vocal'])
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -2106,10 +2106,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -2123,17 +2123,17 @@ class ContributorController extends VisitorController
 	private function handleDeleteLyricsPagePost(array $album, array $song): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                   ?? null;
 		$userNonce        = $_POST['nonce']                          ?? null;
 		$serverNonce      = $_SESSION['delete_lyrics_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
-			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteLyrics($song);
 		$this->model->deleteSongArtistCharacterRelation(songId: $song['id']);
@@ -2150,31 +2150,31 @@ class ContributorController extends VisitorController
 		$translation = $this->model->getTranslation($albumUri, $songUri, $translationUri);
 		
 		if (!$album)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$song)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!$translation)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (RoleManager::getStateToViewAlbum($album) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewSong($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewLyrics($song) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToViewTranslation($translation) !== AccessState::Ok)
-			throw new HttpUnavailableForLegalReasons451();
+			throw HttpStatus::UnavailableForLegalReasons->exception();
 		
 		if (RoleManager::getStateToDeleteTranslation($translation) !== AccessState::Ok)
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		if (!$song['has_vocal'] || !$song['lyrics'] || $song['original_song_id'])
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -2193,10 +2193,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -2210,17 +2210,17 @@ class ContributorController extends VisitorController
 	private function handleDeleteTranslationPagePost(array $album, array $song, array $translation): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$requestConfirmed = $_POST['confirmation']                        ?? null;
 		$userNonce        = $_POST['nonce']                               ?? null;
 		$serverNonce      = $_SESSION['delete_translation_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (!$requestConfirmed)
-			throw new HttpUnprocessableEntity422('Request was not confirmed', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('Request was not confirmed', get_defined_vars());
 		
 		$this->model->deleteTranslation($translation);
 		
@@ -2234,10 +2234,10 @@ class ContributorController extends VisitorController
 		$user = $this->model->getUserData(uri: $userUri);
 		
 		if (!Authorizer::isCurrentUser($user['id']) && !Authorizer::isCurrentUserAdministrator())
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (Authorizer::isCurrentUserViolator())
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -2256,10 +2256,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -2273,7 +2273,7 @@ class ContributorController extends VisitorController
 	private function handleChangeEmailPagePost(array $user): void
 	{	
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$newEmail        = $_POST['email']                         ?? null;
 		$currentPassword = $_POST['current_password']              ?? null;
@@ -2281,10 +2281,10 @@ class ContributorController extends VisitorController
 		$serverNonce     = $_SESSION['change_email_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($newEmail, $currentPassword))
-			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('User data was not sent', get_defined_vars());
 		
 		if (!Authorizer::isCurrentUserAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
 		{
@@ -2322,10 +2322,10 @@ class ContributorController extends VisitorController
 		$user = $this->model->getUserData(uri: $userUri);
 		
 		if (!Authorizer::isCurrentUser($user['id']) && !Authorizer::isCurrentUserAdministrator())
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (Authorizer::isCurrentUserViolator())
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -2344,10 +2344,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -2361,7 +2361,7 @@ class ContributorController extends VisitorController
 	private function handleChangeUsernamePagePost(array $user): void
 	{	
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$newUsername     = $_POST['username']                         ?? null;
 		$currentPassword = $_POST['current_password']                 ?? null;
@@ -2369,10 +2369,10 @@ class ContributorController extends VisitorController
 		$serverNonce     = $_SESSION['change_username_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($newUsername, $currentPassword))
-			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('User data was not sent', get_defined_vars());
 		
 		if (!Authorizer::isCurrentUserAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
 		{
@@ -2420,10 +2420,10 @@ class ContributorController extends VisitorController
 		$user = $this->model->getUserData(uri: $userUri);
 		
 		if (!Authorizer::isCurrentUser($user['id']) && !Authorizer::isCurrentUserAdministrator())
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (Authorizer::isCurrentUserViolator())
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -2442,10 +2442,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -2459,7 +2459,7 @@ class ContributorController extends VisitorController
 	private function handleChangePasswordPagePost(array $user): void
 	{	
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$newPassword     = $_POST['password']                         ?? null;
 		$currentPassword = $_POST['current_password']                 ?? null;
@@ -2467,10 +2467,10 @@ class ContributorController extends VisitorController
 		$serverNonce     = $_SESSION['change_password_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (Validation::haveNullOrEmpty($newPassword, $currentPassword))
-			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('User data was not sent', get_defined_vars());
 		
 		if (!Authorizer::isCurrentUserAdministrator() && !$this->model->isPasswordCorrect($user['id'], $currentPassword))
 		{
@@ -2514,10 +2514,10 @@ class ContributorController extends VisitorController
 		$user = $this->model->getUserData(uri: $userUri, fetchMinInfo: false);
 		
 		if (!Authorizer::isCurrentUser($user['id']) && !Authorizer::isCurrentUserAdministrator())
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (Authorizer::isCurrentUserViolator())
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -2536,10 +2536,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -2553,17 +2553,17 @@ class ContributorController extends VisitorController
 	private function handleChangeAboutMePagePost(array $user): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$newAboutMe  = $_POST['about_me']                         ?? null;
 		$userNonce   = $_POST['nonce']                            ?? null;
 		$serverNonce = $_SESSION['change_about_me_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if ($newAboutMe === null)
-			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('User data was not sent', get_defined_vars());
 		
 		$this->model->updateUserData($user['id'], newAboutMe: $newAboutMe);
 		
@@ -2581,13 +2581,13 @@ class ContributorController extends VisitorController
 		$user = $this->model->getUserData(username: $userUri);
 		
 		if (!$user)
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (!Authorizer::isCurrentUser($user['id']) && !Authorizer::isCurrentUserAdministrator())
-			throw new HttpNotFound404();
+			throw HttpStatus::NotFound->exception();
 		
 		if (Authorizer::isCurrentUserViolator())
-			throw new HttpForbidden403();
+			throw HttpStatus::Forbidden->exception();
 		
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
@@ -2606,10 +2606,10 @@ class ContributorController extends VisitorController
 			case 'PATCH':
 			case 'PUT':
 			case 'TRACE':
-				throw new HttpMethodNotAllowed405();
+				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw new HttpNotImplemented501();
+				throw HttpNotImplemented501();
 		}
 	}
 	
@@ -2623,17 +2623,17 @@ class ContributorController extends VisitorController
 	private function handleDeleteAccountPagePost(array $user): void
 	{
 		if (!Validation::isDataEncodedInUtf8($_POST))
-			throw new HttpBadRequest400('Data was sent in incorrect encoding', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Data was sent in incorrect encoding', get_defined_vars());
 		
 		$password    = $_POST['password']                        ?? null;
 		$userNonce   = $_POST['nonce']                           ?? null;
 		$serverNonce = $_SESSION['delete_account_page']['nonce'] ?? null;
 		
 		if (!Validation::areNoncesEqual($serverNonce, $userNonce))
-			throw new HttpBadRequest400('Nonce was incorrect', get_defined_vars());
+			throw HttpStatus::BadRequest->exception('Nonce was incorrect', get_defined_vars());
 		
 		if (!$password)
-			throw new HttpUnprocessableEntity422('User data was not sent', get_defined_vars());
+			throw HttpStatus::UnprocessableEntity->exception('User data was not sent', get_defined_vars());
 		
 		if (!$this->model->isPasswordCorrect($user['id'], $password))
 		{
