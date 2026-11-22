@@ -1,5 +1,7 @@
 <?php
 
+use Uri\Rfc3986\Uri;
+
 final class Router
 {
 	private static $routes = [];
@@ -154,9 +156,9 @@ final class Router
 		return $path === '/';
 	}
 	
-	private static function isUriMalformed(mixed $uri): bool
+	private static function isUriMalformed(Uri|null $uri): bool
 	{
-		return $uri === null || !str_contains($uri->getPath(), '/');
+		return $uri === null || !str_starts_with($uri->getPath(), '/');
 	}
 	
 	private static function isNonexistentFileRequested(string $requestedPath): bool
@@ -170,7 +172,7 @@ final class Router
 	
 	public static function run(): void
 	{
-		$uri = \Uri\Rfc3986\Uri::parse($_SERVER['REQUEST_URI']);
+		$uri = Uri::parse($_SERVER['REQUEST_URI']);
 		
 		if (self::isUriMalformed($uri))
 		{
