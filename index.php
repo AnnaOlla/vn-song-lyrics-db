@@ -2,9 +2,10 @@
 
 try
 {
+	define('ROOT_DIR', rtrim(__DIR__, '/\\'));
 	require_once 'core/boot.php';
 	
-	Config::initialize();
+	Configuration::initialize();
 	Router::run();
 }
 catch (Throwable $e)
