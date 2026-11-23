@@ -1345,11 +1345,11 @@ class ContributorView extends VisitorView
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						'.$this->createHeadingForInput(__('contributor.edit.translation.target_lyrics'), 2, true).'
-						'.$this->createTextarea($translationLyrics, ['name' => 'translation_lyrics', 'placeholder' => \Localization\Controls\Textarea, 'required' => true]).'
+						'.$this->createTextarea($translationLyrics, ['name' => 'translation_lyrics', 'placeholder' => __('base.controls.textarea.hint'), 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="4">
 						'.$this->createHeadingForInput(__('contributor.edit.translation.target_notes'), 2, false).'
-						'.$this->createTextarea($translationLyrics, ['name' => 'translation_notes', 'placeholder' => \Localization\Controls\Textarea, 'required' => false]).'
+						'.$this->createTextarea($translationLyrics, ['name' => 'translation_notes', 'placeholder' => __('base.controls.textarea.hint'), 'required' => false]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="5">
 						<section class="page-controls">
@@ -1365,7 +1365,7 @@ class ContributorView extends VisitorView
 				<section class="form-replacement">
 					<section>
 						'.$this->createHeadingForInput(__('contributor.edit.translation.source_language'), 2, false).'
-						'.$this->createTextInput(['value' => \Localization\Functions\localizeLanguageName($song), 'disabled' => true]).'
+						'.$this->createTextInput(['value' => Localizer::localizeLanguageName($song), 'disabled' => true]).'
 					</section>
 					<section>
 						'.$this->createHeadingForInput(__('contributor.edit.translation.source_name'), 2, false).'
