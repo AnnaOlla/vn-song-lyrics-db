@@ -154,12 +154,13 @@ class ContributorView extends VisitorView
 								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'album_ids[]', 'disabled' => $disabled],
-								attributesForShownInput: [
-								                              'placeholder'             => __('base.controls.select.hint_idle'),
-															  'data-placeholder-select' => __('base.controls.select.hint_idle'),
-															  'data-placeholder-filter' => __('base.controls.select.hint_filter'),
-															  'disabled'                => $disabled
-														 ]
+								attributesForShownInput:
+								[
+									'placeholder'             => __('base.controls.select.hint_idle'),
+									'data-placeholder-select' => __('base.controls.select.hint_idle'),
+									'data-placeholder-filter' => __('base.controls.select.hint_filter'),
+									'disabled'                => $disabled
+								]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -196,12 +197,13 @@ class ContributorView extends VisitorView
 								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'character_ids[]', 'disabled' => $disabled],
-								attributesForShownInput: [
-								                              'placeholder'             => __('base.controls.select.hint_idle'),
-															  'data-placeholder-select' => __('base.controls.select.hint_idle'),
-															  'data-placeholder-filter' => __('base.controls.select.hint_filter'),
-															  'disabled'                => $disabled
-														 ]
+								attributesForShownInput:
+								[
+									'placeholder'             => __('base.controls.select.hint_idle'),
+									'data-placeholder-select' => __('base.controls.select.hint_idle'),
+									'data-placeholder-filter' => __('base.controls.select.hint_filter'),
+									'disabled'                => $disabled
+								]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -405,12 +407,13 @@ class ContributorView extends VisitorView
 								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'game_ids[]', 'disabled' => $disabled],
-								attributesForShownInput: [
-								                              'placeholder'             => __('base.controls.select.hint_idle'),
-															  'data-placeholder-select' => __('base.controls.select.hint_idle'),
-															  'data-placeholder-filter' => __('base.controls.select.hint_filter'),
-															  'disabled'                => $disabled
-														 ]
+								attributesForShownInput:
+								[
+									'placeholder'             => __('base.controls.select.hint_idle'),
+									'data-placeholder-select' => __('base.controls.select.hint_idle'),
+									'data-placeholder-filter' => __('base.controls.select.hint_filter'),
+									'disabled'                => $disabled
+								]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -595,14 +598,20 @@ class ContributorView extends VisitorView
 						'.$this->createHeadingForInput(__('contributor.edit.artist.alias_of'), 2, false).'
 						'.$this->createSearchableSelect
 						(
-							iteratedOptions:        $originalArtists,
-							disabledOptions:        [$artist],
-							selectedOption:         $originalArtist,
-							addEmptyOption:         true,
-							keyToShownValue:        'transliterated_name',
-							keysToShownHints:       ['original_name', 'localized_name'],
-							keyToSentValue:         'id',
-							attributesForSentInput: ['name' => 'original_artist_id']
+							iteratedOptions:         $originalArtists,
+							disabledOptions:         [$artist],
+							selectedOption:          $originalArtist,
+							addEmptyOption:          true,
+							keyToShownValue:         'transliterated_name',
+							keysToShownHints:        ['original_name', 'localized_name'],
+							keyToSentValue:          'id',
+							attributesForSentInput:  ['name' => 'original_artist_id'],
+							attributesForShownInput:
+							[
+								'placeholder'             => __('base.controls.select.hint_idle'),
+								'data-placeholder-select' => __('base.controls.select.hint_idle'),
+								'data-placeholder-filter' => __('base.controls.select.hint_filter')
+							]
 						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="9">
@@ -786,12 +795,13 @@ class ContributorView extends VisitorView
 								keysToShownHints:        ['original_name', 'localized_name'],
 								keyToSentValue:          'id',
 								attributesForSentInput:  ['name' => 'game_ids[]', 'disabled' => $disabled],
-								attributesForShownInput: [
-								                              'placeholder'             => __('base.controls.select.hint_idle'),
-															  'data-placeholder-select' => __('base.controls.select.hint_idle'),
-															  'data-placeholder-filter' => __('base.controls.select.hint_filter'),
-															  'disabled'                => $disabled
-														 ]
+								attributesForShownInput:
+								[
+									'placeholder'             => __('base.controls.select.hint_idle'),
+									'data-placeholder-select' => __('base.controls.select.hint_idle'),
+									'data-placeholder-filter' => __('base.controls.select.hint_filter'),
+									'disabled'                => $disabled
+								]
 							).'
 							'.$this->createAddRowButton
 							(
@@ -962,7 +972,13 @@ class ContributorView extends VisitorView
 							addEmptyOption:         true,
 							keyToShownValue:        'value',
 							keyToSentValue:         'id',
-							attributesForSentInput: ['name' => 'has_vocal']
+							attributesForSentInput: ['name' => 'has_vocal'],
+							attributesForShownInput:
+							[
+								'placeholder'             => __('base.controls.select.hint_idle'),
+								'data-placeholder-select' => __('base.controls.select.hint_idle'),
+								'data-placeholder-filter' => __('base.controls.select.hint_filter')
+							]
 						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="6">
@@ -1128,12 +1144,13 @@ class ContributorView extends VisitorView
 								keysToShownHints:        ['artist_original_name', 'artist_localized_name'],
 								keyToSentValue:          'artist_id',
 								attributesForSentInput:  ['name' => 'artist_ids[]', 'disabled' => $disabled],
-								attributesForShownInput: [
-								                              'placeholder'             => __('base.controls.select.hint_idle'),
-															  'data-placeholder-select' => __('base.controls.select.hint_idle'),
-															  'data-placeholder-filter' => __('base.controls.select.hint_filter'),
-															  'disabled'                => $disabled
-														 ]
+								attributesForShownInput:
+								[
+									'placeholder'             => __('base.controls.select.hint_idle'),
+									'data-placeholder-select' => __('base.controls.select.hint_idle'),
+									'data-placeholder-filter' => __('base.controls.select.hint_filter'),
+									'disabled'                => $disabled
+								]
 							).'
 							<span>'.__('contributor.edit.lyrics.performs_as').'</span>
 							'.$this->createSearchableSelect
@@ -1145,12 +1162,13 @@ class ContributorView extends VisitorView
 								keysToShownHints:        ['character_original_name', 'character_localized_name'],
 								keyToSentValue:          'character_id',
 								attributesForSentInput:  ['name' => 'character_ids[]', 'disabled' => $disabled],
-								attributesForShownInput: [
-								                              'placeholder'             => __('base.controls.select.hint_idle'),
-															  'data-placeholder-select' => __('base.controls.select.hint_idle'),
-															  'data-placeholder-filter' => __('base.controls.select.hint_filter'),
-															  'disabled'                => $disabled
-														 ]
+								attributesForShownInput:
+								[
+									'placeholder'             => __('base.controls.select.hint_idle'),
+									'data-placeholder-select' => __('base.controls.select.hint_idle'),
+									'data-placeholder-filter' => __('base.controls.select.hint_filter'),
+									'disabled'                => $disabled
+								]
 							).'
 							'.$addRowButton = $this->createAddRowButton
 							(
@@ -1177,7 +1195,13 @@ class ContributorView extends VisitorView
 							keyToShownValue:        'transliterated_name',
 							keysToShownHints:       ['original_name', 'localized_name'],
 							keyToSentValue:         'id',
-							attributesForSentInput: ['name' => 'original_song_id', 'id' => 'original-song-select']
+							attributesForSentInput: ['name' => 'original_song_id', 'id' => 'original-song-select'],
+							attributesForShownInput:
+							[
+								  'placeholder'             => __('base.controls.select.hint_idle'),
+								  'data-placeholder-select' => __('base.controls.select.hint_idle'),
+								  'data-placeholder-filter' => __('base.controls.select.hint_filter')
+							]
 						).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
@@ -1190,7 +1214,13 @@ class ContributorView extends VisitorView
 							keyToShownValue:        Localizer::localizeLanguageKey(),
 							keysToShownHints:       ['language_own_name'],
 							keyToSentValue:         'language_id',
-							attributesForSentInput: ['name' => 'language_id', 'id' => 'language-select', 'required' => true]
+							attributesForSentInput: ['name' => 'language_id', 'id' => 'language-select', 'required' => true],
+							attributesForShownInput:
+							[
+								  'placeholder'             => __('base.controls.select.hint_idle'),
+								  'data-placeholder-select' => __('base.controls.select.hint_idle'),
+								  'data-placeholder-filter' => __('base.controls.select.hint_filter')
+							]
 						).'
 					</section>
 					<section class="has-tooltip lyrics-textarea" tooltip-id="4">
@@ -1316,7 +1346,13 @@ class ContributorView extends VisitorView
 				keyToShownValue:        Localizer::localizeLanguageKey(),
 				keysToShownHints:       ['language_own_name'],
 				keyToSentValue:         'id',
-				attributesForSentInput: ['name' => 'translation_language_id', 'required' => true, 'disabled' => $translation !== null]
+				attributesForSentInput: ['name' => 'translation_language_id', 'required' => true, 'disabled' => $translation !== null],
+				attributesForShownInput:
+				[
+					  'placeholder'             => __('base.controls.select.hint_idle'),
+					  'data-placeholder-select' => __('base.controls.select.hint_idle'),
+					  'data-placeholder-filter' => __('base.controls.select.hint_filter')
+				]
 			);
 			
 			$returnLink = Http::buildPath($this->language, 'album', $album['uri'], 'song', $song['uri']);
@@ -1341,7 +1377,7 @@ class ContributorView extends VisitorView
 					</section>
 					<section class="has-tooltip" tooltip-id="2">
 						'.$this->createHeadingForInput(__('contributor.edit.translation.target_name'), 2, true).'
-						'.$this->createTextInput(['name' => 'translation_name', 'value' => $translationName, 'required' => true]).'
+						'.$this->createTextInput(['name' => 'translation_name', 'placeholder' => __('base.controls.textarea.hint'), 'value' => $translationName, 'required' => true]).'
 					</section>
 					<section class="has-tooltip" tooltip-id="3">
 						'.$this->createHeadingForInput(__('contributor.edit.translation.target_lyrics'), 2, true).'
