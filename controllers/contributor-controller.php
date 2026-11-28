@@ -35,7 +35,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -145,7 +145,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -246,7 +246,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -341,7 +341,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -451,7 +451,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -580,7 +580,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -743,7 +743,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -858,7 +858,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -995,7 +995,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -1118,7 +1118,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -1221,7 +1221,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -1336,7 +1336,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -1444,7 +1444,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -1653,7 +1653,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -1733,7 +1733,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -1801,7 +1801,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -1866,7 +1866,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -1934,7 +1934,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -2018,7 +2018,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -2104,7 +2104,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -2191,7 +2191,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -2254,7 +2254,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -2342,7 +2342,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -2440,7 +2440,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -2534,7 +2534,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
@@ -2604,7 +2604,7 @@ class ContributorController extends VisitorController
 				throw HttpStatus::MethodNotAllowed->exception();
 			
 			default:
-				throw HttpNotImplemented501();
+				throw HttpStatus::NotImplemented->exception();
 		}
 	}
 	
