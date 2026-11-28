@@ -8,17 +8,28 @@ final class Logger
 	private const ACCESS_LOG_DIRNAME  = 'logs/access-logs';
 	private const ACCESS_LOG_FILENAME = '-access.log';
 	
-	private const SENSITIVE_PARAMETER_NAMES = ['nonce', 'email', 'password'];
+	private const SENSITIVE_PARAMETER_KEYS = ['nonce', 'email', 'password'];
 	
-	private static function hideSensitiveParameters(array $values): array
+	private static function hideSensitiveParameters(array $parameters): array
 	{
-		foreach (self::SENSITIVE_PARAMETER_NAMES as $sensitiveParameterName)
+		foreach ($parameters as $key => $value)
 		{
-			if (array_key_exists($sensitiveParameterName, $values))
-				$values[$sensitiveParameterName] = '[hidden]';
+			if (is_array($parameters[$key]))
+			{
+				$parameters[$key] = self::hideSensitiveParameters($parameters[$key]);
+				continue;
+			}
+			
+			$lowercasedKey = mb_strtolower($key);
+			
+			foreach (self::SENSITIVE_PARAMETER_KEYS as $sensitiveKey)
+			{
+				if (str_contains($lowercasedKey, $sensitiveKey))
+					$parameters[$key] = '[hidden]';
+			}
 		}
 		
-		return $values;
+		return $parameters;
 	}
 	
 	private static function calculatePageGenerationTimeInMicroseconds(): float
@@ -46,7 +57,7 @@ final class Logger
 			
 			if (isset($trace[$i]['args']))
 			{
-				$args = self::hideSensitiveParameters($trace[$i]['args']);
+				$args = self::hideSensitiveParameters($trace[$i]['args'];);
 				$args = print_r($args, true);
 			}
 			else
