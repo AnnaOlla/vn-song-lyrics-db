@@ -57,7 +57,7 @@ final class Logger
 			
 			if (isset($trace[$i]['args']))
 			{
-				$args = self::hideSensitiveParameters($trace[$i]['args'];);
+				$args = self::hideSensitiveParameters($trace[$i]['args']);
 				$args = print_r($args, true);
 			}
 			else
@@ -75,10 +75,11 @@ final class Logger
 		
 		$log['date_time']    = date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME']);
 		$log['empty_line_1'] = '';
-		$log['agent_ip']     = 'IP:         '     .$_SERVER['REMOTE_ADDR'];
-		$log['agent_info']   = 'User agent: '     .$_SERVER['HTTP_USER_AGENT'];
-		$log['request']      = 'URI:        '     .$_SERVER['REQUEST_URI'];
-		$log['method']       = 'Method:     '     .$_SERVER['REQUEST_METHOD'];
+		$log['agent_ip']     = 'IP:         '     .($_SERVER['REMOTE_ADDR']     ?? '');
+		$log['agent_info']   = 'User agent: '     .($_SERVER['HTTP_USER_AGENT'] ?? '');
+		$log['request']      = 'URI:        '     .($_SERVER['REQUEST_URI']     ?? '');
+		$log['referrer']     = 'Referrer:   '     .($_SERVER['HTTP_REFERER']    ?? '');
+		$log['method']       = 'Method:     '     .($_SERVER['REQUEST_METHOD']  ?? '');
 		$log['http_code']    = 'HTTP code:  '     .http_response_code();
 		$log['class']        = 'Exception:  '     .get_class($exception);
 		$log['message']      = 'Message:    '     .$exception->getMessage();
@@ -109,10 +110,11 @@ final class Logger
 		
 		$log['date_time']    = date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME']);
 		$log['empty_line_1'] = '';
-		$log['agent_ip']     = 'IP:         '     .$_SERVER['REMOTE_ADDR'];
-		$log['agent_info']   = 'User agent: '     .$_SERVER['HTTP_USER_AGENT'];
-		$log['request']      = 'URI:        '     .$_SERVER['REQUEST_URI'];
-		$log['method']       = 'Method:     '     .$_SERVER['REQUEST_METHOD'];
+		$log['agent_ip']     = 'IP:         '     .($_SERVER['REMOTE_ADDR']     ?? '');
+		$log['agent_info']   = 'User agent: '     .($_SERVER['HTTP_USER_AGENT'] ?? '');
+		$log['request']      = 'URI:        '     .($_SERVER['REQUEST_URI']     ?? '');
+		$log['referrer']     = 'Referrer:   '     .($_SERVER['HTTP_REFERER']    ?? '');
+		$log['method']       = 'Method:     '     .($_SERVER['REQUEST_METHOD']  ?? '');
 		$log['empty_line_2'] = '';
 		$log['get']          = '$_GET = '         .print_r($get, true);
 		$log['post']         = '$_POST = '        .print_r($post, true);
